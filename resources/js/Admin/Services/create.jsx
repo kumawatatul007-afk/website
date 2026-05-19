@@ -198,7 +198,7 @@ export default function AdminServiceCreate() {
                         <button type="submit" className="btn-primary" disabled={processing}>
                             {processing ? 'Saving…' : 'Create Service'}
                         </button>
-                        <Link href="/admin/services" className="btn-cancel">Cancel</Link>
+                        <Link href="/admin/services" className="btn-cancel">Close</Link>
                     </div>
                 </form>
             </div>
