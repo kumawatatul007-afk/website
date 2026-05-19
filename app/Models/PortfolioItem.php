@@ -9,28 +9,48 @@ class PortfolioItem extends Model
 {
     use HasFactory;
 
+    // Actual table name in the database
+    protected $table = 'portfolio';
+
     protected $fillable = [
+        'category_id',
         'title',
-        'category',
+        'slug',
+        'image',
+        'clint_name',
+        'status',
+        'date',
+        'website_link',
+        'short_description',
         'description',
-        'challenge',
-        'approach',
-        'tech_stack',
-        'result',
-        'client',
-        'duration',
-        'image_url',
-        'project_url',
-        'type',
-        'is_featured',
-        'sort_order',
+        'meta_keyword',
+        'meta_description',
+        'is_publish',
     ];
 
-    protected function casts(): array
+    protected $casts = [
+        'is_publish'  => 'integer',
+        'category_id' => 'integer',
+        'date'        => 'date',
+        'created_at'  => 'datetime',
+        'updated_at'  => 'datetime',
+    ];
+
+    /**
+     * Get the full image URL.
+     */
+    public function getImageUrlAttribute(): string
     {
-        return [
-            'is_featured' => 'boolean',
-            'sort_order'  => 'integer',
-        ];
+        if (!$this->image) return '';
+        if (str_starts_with($this->image, 'http')) return $this->image;
+        return '/images/portfolio/' . $this->image;
+    }
+
+    /**
+     * Scope: only published items.
+     */
+    public function scopePublished($query)
+    {
+        return $query->where('is_publish', 1);
     }
 }

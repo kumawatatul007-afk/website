@@ -16,20 +16,15 @@ class PublicController extends Controller
      */
     public function home()
     {
-        $blogPosts = BlogPost::latest()
+        $blogPosts = BlogPost::where('status', 1)
+            ->latest()
             ->take(3)
-            ->get(['id', 'title', 'slug', 'description', 'image', 'created_by', 'created_at']);
+            ->get(['id', 'title', 'slug', 'content', 'main_image', 'meta_description', 'created_at']);
 
-        $portfolios = PortfolioItem::where('is_featured', true)
-            ->orderBy('sort_order')
+        $portfolios = PortfolioItem::where('is_publish', 1)
+            ->latest()
             ->take(6)
-            ->get(['id', 'title', 'category', 'image_url', 'project_url', 'type']);
-
-        if ($portfolios->isEmpty()) {
-            $portfolios = PortfolioItem::orderBy('sort_order')
-                ->take(6)
-                ->get(['id', 'title', 'category', 'image_url', 'project_url', 'type']);
-        }
+            ->get(['id', 'title', 'image', 'website_link', 'short_description', 'slug']);
 
         $services = \App\Models\Service::where('is_active', true)
             ->orderBy('sort_order')
@@ -58,8 +53,9 @@ class PublicController extends Controller
      */
     public function blog()
     {
-        $posts = BlogPost::latest()
-            ->get(['id', 'title', 'slug', 'description', 'image', 'meta_title', 'category_id', 'created_by', 'created_at']);
+        $posts = BlogPost::where('status', 1)
+            ->latest()
+            ->get(['id', 'title', 'slug', 'content', 'main_image', 'meta_description', 'category_id', 'tags', 'created_at']);
 
         $setting  = Setting::first();
         $siteName = $setting?->website_title ?: 'Nikhil Sharma';
@@ -83,17 +79,47 @@ class PublicController extends Controller
     {
         $post = BlogPost::where('slug', $slug)->firstOrFail();
 
-        $setting  = Setting::first();
-        $siteName = $setting?->website_title ?: 'Nikhil Sharma';
-        $descText = strip_tags($post->description ?? '');
+        // Previous post (older)
+        $prevPost = BlogPost::where('status', 1)
+            ->where('id', '<', $post->id)
+            ->orderBy('id', 'desc')
+            ->select('id', 'title', 'slug')
+            ->first();
+
+        // Next post (newer)
+        $nextPost = BlogPost::where('status', 1)
+            ->where('id', '>', $post->id)
+            ->orderBy('id', 'asc')
+            ->select('id', 'title', 'slug')
+            ->first();
+
+        // Recent posts for sidebar
+        $recentPosts = BlogPost::where('status', 1)
+            ->where('id', '!=', $post->id)
+            ->latest()
+            ->take(5)
+            ->get(['id', 'title', 'slug', 'main_image', 'created_at']);
+
+        $setting   = Setting::first();
+        $siteName  = $setting?->website_title ?: 'Nikhil Sharma';
+        $descText  = strip_tags($post->content ?? '');
         $descShort = mb_substr($descText, 0, 160);
 
+        // Parse meta_keywords JSON to plain string
+        $metaKw = $post->meta_keywords_plain ?: "{$post->title}, {$siteName}, Web Development Blog";
+
+        // Append prev/next to the post object
+        $postData              = $post->toArray();
+        $postData['prev_post'] = $prevPost;
+        $postData['next_post'] = $nextPost;
+
         return Inertia::render('Blog/BlogDetail/index', [
-            'post' => $post,
-            'seo'  => [
-                'title'       => ($post->meta_title ?: $post->title) . " | {$siteName}",
+            'post'        => $postData,
+            'recentPosts' => $recentPosts,
+            'seo'         => [
+                'title'       => $post->title . " | {$siteName}",
                 'description' => $post->meta_description ?: ($descShort ?: "Read {$post->title} on {$siteName}'s blog."),
-                'keywords'    => $post->meta_keywords ?? "{$post->title}, {$siteName}, Web Development Blog",
+                'keywords'    => $metaKw,
                 'canonical'   => url()->current(),
                 'robots'      => 'index, follow',
             ],
@@ -115,23 +141,26 @@ class PublicController extends Controller
     {
         $post = BlogPost::where('slug', $slug)->firstOrFail();
 
-        $recentPosts = BlogPost::latest()
+        $recentPosts = BlogPost::where('status', 1)
+            ->latest()
             ->where('id', '!=', $post->id)
             ->take(5)
-            ->get(['id', 'title', 'slug', 'image', 'created_at']);
+            ->get(['id', 'title', 'slug', 'main_image', 'created_at']);
 
-        $setting  = Setting::first();
-        $siteName = $setting?->website_title ?: 'Nikhil Sharma';
-        $descText = strip_tags($post->description ?? '');
+        $setting   = Setting::first();
+        $siteName  = $setting?->website_title ?: 'Nikhil Sharma';
+        $descText  = strip_tags($post->content ?? '');
         $descShort = mb_substr($descText, 0, 160);
+
+        $metaKw = $post->meta_keywords_plain ?: "{$post->title}, {$siteName}, Web Development Blog";
 
         return Inertia::render('Blog/BlogDetailSidebar/index', [
             'post'        => $post,
             'recentPosts' => $recentPosts,
             'seo'         => [
-                'title'       => ($post->meta_title ?: $post->title) . " | {$siteName}",
+                'title'       => $post->title . " | {$siteName}",
                 'description' => $post->meta_description ?: ($descShort ?: "Read {$post->title} on {$siteName}'s blog."),
-                'keywords'    => $post->meta_keywords ?? "{$post->title}, {$siteName}, Web Development Blog",
+                'keywords'    => $metaKw,
                 'canonical'   => url()->current(),
                 'robots'      => 'index, follow',
             ],
@@ -151,8 +180,9 @@ class PublicController extends Controller
      */
     public function portfolio()
     {
-        $items = PortfolioItem::orderBy('sort_order')
-            ->get(['id', 'title', 'category', 'description', 'image_url', 'project_url', 'type', 'is_featured']);
+        $items = PortfolioItem::where('is_publish', 1)
+            ->latest()
+            ->get(['id', 'title', 'image', 'website_link', 'short_description', 'description', 'slug', 'category_id', 'clint_name', 'date']);
 
         $setting  = Setting::first();
         $siteName = $setting?->website_title ?: 'Nikhil Sharma';
@@ -174,8 +204,9 @@ class PublicController extends Controller
      */
     public function portfolioList()
     {
-        $items = PortfolioItem::orderBy('sort_order')
-            ->get(['id', 'title', 'category', 'description', 'image_url', 'project_url', 'type', 'is_featured']);
+        $items = PortfolioItem::where('is_publish', 1)
+            ->latest()
+            ->get(['id', 'title', 'image', 'website_link', 'short_description', 'description', 'slug', 'category_id', 'clint_name', 'date']);
 
         $setting  = Setting::first();
         $siteName = $setting?->website_title ?: 'Nikhil Sharma';
@@ -199,14 +230,15 @@ class PublicController extends Controller
     {
         $item = PortfolioItem::findOrFail($id);
 
-        $related = PortfolioItem::where('id', '!=', $id)
-            ->where('category', $item->category)
+        $related = PortfolioItem::where('is_publish', 1)
+            ->where('id', '!=', $id)
+            ->where('category_id', $item->category_id)
             ->take(3)
-            ->get(['id', 'title', 'category', 'image_url']);
+            ->get(['id', 'title', 'image', 'slug']);
 
-        $setting  = Setting::first();
-        $siteName = $setting?->website_title ?: 'Nikhil Sharma';
-        $descText = strip_tags($item->description ?? '');
+        $setting   = Setting::first();
+        $siteName  = $setting?->website_title ?: 'Nikhil Sharma';
+        $descText  = strip_tags($item->description ?? $item->short_description ?? '');
         $descShort = mb_substr($descText, 0, 160);
 
         return Inertia::render('Portfolio/ProjectDetail/index', [
@@ -215,8 +247,8 @@ class PublicController extends Controller
             'related' => $related,
             'seo'     => [
                 'title'       => "{$item->title} — Portfolio | {$siteName}",
-                'description' => $descShort ?: "View the {$item->title} project by {$siteName} — {$item->category} development in Jaipur.",
-                'keywords'    => "{$item->title}, {$item->category}, Portfolio, {$siteName}",
+                'description' => $descShort ?: "View the {$item->title} project by {$siteName}.",
+                'keywords'    => $item->meta_keyword ?: "{$item->title}, Portfolio, {$siteName}",
                 'canonical'   => url()->current(),
                 'robots'      => 'index, follow',
             ],

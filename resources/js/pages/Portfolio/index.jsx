@@ -88,29 +88,32 @@ export default function PortfolioPage({ items: dbItems }) {
                   style={{ transitionDelay: `${i * 0.08}s` }}
                 >
                   <div className="port-img-wrap">
-                    {project.is_featured && (
-                      <span className="port-badge">Featured</span>
-                    )}
                     <img
-                      src={project.image_url || 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/project-5.jpg'}
+                      src={
+                        project.image
+                          ? (project.image.startsWith('http') ? project.image : `/images/portfolio/${project.image}`)
+                          : (project.image_url || 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/project-5.jpg')
+                      }
                       alt={project.title}
                       className="port-img"
                       loading="lazy"
+                      onError={e => { e.target.src = 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/project-5.jpg'; }}
                     />
                     <div className="port-overlay">
                       <div className="port-overlay-content">
-                        <p className="port-overlay-cat">{project.category}</p>
                         <h4 className="port-overlay-title">{project.title}</h4>
-                        {project.type && <p className="port-overlay-type">{project.type}</p>}
-                        {project.project_url && (
+                        {project.short_description && (
+                          <p className="port-overlay-cat">{project.short_description.slice(0, 80)}</p>
+                        )}
+                        {project.website_link && (
                           <a
                             className="port-link"
-                            href={project.project_url}
+                            href={project.website_link}
                             target="_blank"
                             rel="noreferrer"
                             onClick={(e) => e.stopPropagation()}
                           >
-                            View Project
+                            View Project →
                           </a>
                         )}
                       </div>

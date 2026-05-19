@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\BlogPost;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -17,8 +18,8 @@ class AdminBlogController extends Controller
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('title', 'like', "%{$request->search}%")
-                  ->orWhere('created_by', 'like', "%{$request->search}%")
-                  ->orWhere('meta_title', 'like', "%{$request->search}%");
+                  ->orWhere('slug', 'like', "%{$request->search}%")
+                  ->orWhere('tags', 'like', "%{$request->search}%");
             });
         }
 
@@ -26,33 +27,42 @@ class AdminBlogController extends Controller
             $query->where('category_id', $request->category_id);
         }
 
-        $posts = $query->latest()->paginate(10)->withQueryString();
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $posts = $query->latest()->paginate(15)->withQueryString();
+
+        $categories = Category::orderBy('name')->get(['id', 'name']);
 
         return Inertia::render('Admin/Blog/index', [
-            'posts'   => $posts,
-            'filters' => $request->only(['search', 'category_id']),
+            'posts'      => $posts,
+            'categories' => $categories,
+            'filters'    => $request->only(['search', 'category_id', 'status']),
         ]);
     }
 
     public function create()
     {
-        return Inertia::render('Admin/Blog/create');
+        $categories = Category::orderBy('name')->get(['id', 'name']);
+        return Inertia::render('Admin/Blog/create', [
+            'categories' => $categories,
+        ]);
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title'            => 'required|string|max:251',
-            'description'      => 'nullable|string',
-            'image'            => 'nullable|string|max:500',
-            'created_by'       => 'required|string|max:251',
+            'title'            => 'required|string|max:255',
+            'content'          => 'nullable|string',
+            'main_image'       => 'nullable|string|max:500',
             'category_id'      => 'nullable|integer',
-            'meta_title'       => 'nullable|string|max:251',
-            'og_title'         => 'nullable|string|max:251',
-            'og_description'   => 'nullable|string',
-            'meta_keyword'     => 'nullable|string|max:251',
-            'image_alt'        => 'nullable|string|max:251',
+            'serial_number'    => 'nullable|integer',
+            'meta_keywords'    => 'nullable|string',
             'meta_description' => 'nullable|string',
+            'tags'             => 'nullable|string',
+            'type'             => 'nullable|integer',
+            'status'           => 'nullable|integer',
         ]);
 
         $validated['slug'] = Str::slug($validated['title']);
@@ -64,6 +74,10 @@ class AdminBlogController extends Controller
             $validated['slug'] = $baseSlug . '-' . $count++;
         }
 
+        $validated['serial_number'] = $validated['serial_number'] ?? 0;
+        $validated['status']        = $validated['status'] ?? 1;
+        $validated['type']          = $validated['type'] ?? 0;
+
         BlogPost::create($validated);
 
         return redirect()->route('admin.blog.index')
@@ -72,25 +86,26 @@ class AdminBlogController extends Controller
 
     public function edit(BlogPost $blog)
     {
+        $categories = Category::orderBy('name')->get(['id', 'name']);
         return Inertia::render('Admin/Blog/edit', [
-            'post' => $blog,
+            'post'       => $blog,
+            'categories' => $categories,
         ]);
     }
 
     public function update(Request $request, BlogPost $blog)
     {
         $validated = $request->validate([
-            'title'            => 'required|string|max:251',
-            'description'      => 'nullable|string',
-            'image'            => 'nullable|string|max:500',
-            'created_by'       => 'required|string|max:251',
+            'title'            => 'required|string|max:255',
+            'content'          => 'nullable|string',
+            'main_image'       => 'nullable|string|max:500',
             'category_id'      => 'nullable|integer',
-            'meta_title'       => 'nullable|string|max:251',
-            'og_title'         => 'nullable|string|max:251',
-            'og_description'   => 'nullable|string',
-            'meta_keyword'     => 'nullable|string|max:251',
-            'image_alt'        => 'nullable|string|max:251',
+            'serial_number'    => 'nullable|integer',
+            'meta_keywords'    => 'nullable|string',
             'meta_description' => 'nullable|string',
+            'tags'             => 'nullable|string',
+            'type'             => 'nullable|integer',
+            'status'           => 'nullable|integer',
         ]);
 
         $blog->update($validated);

@@ -149,6 +149,9 @@ Route::get('/{prefix}/{service}/{location}', [PublicController::class, 'keywordD
 // Contact form submission
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
+// Blog comment submission
+Route::post('/blog-comment', [\App\Http\Controllers\BlogCommentController::class, 'store'])->name('blog.comment.store');
+
 // ─── Auth ────────────────────────────────────────────────────────────────────
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');

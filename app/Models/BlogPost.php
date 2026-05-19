@@ -16,21 +16,22 @@ class BlogPost extends Model
         'category_id',
         'title',
         'slug',
-        'description',
-        'image',
-        'meta_title',
-        'og_title',
-        'og_description',
-        'meta_keyword',
-        'image_alt',
+        'serial_number',
+        'meta_keywords',
         'meta_description',
-        'created_by',
+        'type',
+        'tags',
+        'main_image',
+        'content',
+        'status',
     ];
 
     protected $casts = [
-        'description' => 'string',
-        'created_at'  => 'datetime',
-        'updated_at'  => 'datetime',
+        'content'    => 'string',
+        'status'     => 'integer',
+        'type'       => 'integer',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     /**
@@ -39,5 +40,29 @@ class BlogPost extends Model
     public static function generateSlug(string $title): string
     {
         return Str::slug($title);
+    }
+
+    /**
+     * Get meta_keywords as a plain comma-separated string.
+     * The DB stores them as JSON array: [{"value":"website"},...]
+     */
+    public function getMetaKeywordsPlainAttribute(): string
+    {
+        if (!$this->meta_keywords) return '';
+        $decoded = json_decode($this->meta_keywords, true);
+        if (is_array($decoded)) {
+            return implode(', ', array_column($decoded, 'value'));
+        }
+        return $this->meta_keywords;
+    }
+
+    /**
+     * Get the main image URL.
+     */
+    public function getImageUrlAttribute(): string
+    {
+        if (!$this->main_image) return '';
+        if (str_starts_with($this->main_image, 'http')) return $this->main_image;
+        return '/images/blogs/' . $this->main_image;
     }
 }

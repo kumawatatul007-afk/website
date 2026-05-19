@@ -26,47 +26,28 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
       id: p.id,
       slug: p.slug,
       title: p.title,
-      excerpt: stripHtml(p.description),
-      image_url: getBlogImage(p.image),
+      // DB field is 'content' (not 'description'), and image is 'main_image' (not 'image')
+      excerpt: p.meta_description
+        ? (p.meta_description.length > 130 ? p.meta_description.slice(0, 130) + '...' : p.meta_description)
+        : stripHtml(p.content),
+      image_url: getBlogImage(p.main_image),
       author: p.created_by || 'Nikhil Sharma',
       date: p.created_at ? new Date(p.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Recent',
-    })) : [
-    {
-      id: 1,
-      title: 'How to Build a Portfolio Website with React & Laravel',
-      excerpt: 'Step-by-step guide to building a modern portfolio website using React for the frontend and Laravel for the backend.',
-      image_url: 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/blog-fi-1.jpg',
-      author: 'Nikhil Sharma',
-      date: 'May 2026',
-    },
-    {
-      id: 2,
-      title: 'Top 10 SEO Tips for Developers in 2026',
-      excerpt: 'Boost your website ranking with these actionable SEO tips tailored for developers and technical founders.',
-      image_url: 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/blog-fi-2.jpg',
-      author: 'Nikhil Sharma',
-      date: 'May 2026',
-    },
-    {
-      id: 3,
-      title: 'Laravel vs Node.js: Which Backend Should You Choose?',
-      excerpt: 'A practical comparison of Laravel and Node.js for building scalable web applications in 2026.',
-      image_url: 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/blog-fi-3.jpg',
-      author: 'Nikhil Sharma',
-      date: 'May 2026',
-    },
-  ]);
+    })) : []);
 
   // Portfolio items from database (Inertia props se)
+  const mapPortfolio = (p) => ({
+    id:       p.id,
+    title:    p.title,
+    category: p.short_description || '',
+    image:    p.image
+      ? (p.image.startsWith('http') ? p.image : `/images/portfolio/${p.image}`)
+      : (p.image_url || 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/project-5.jpg'),
+    url:      p.website_link || null,
+  });
+
   const [portfolios, setPortfolios] = useState(
-    (dbPortfolios && dbPortfolios.length > 0) ? dbPortfolios.map(p => ({
-      id: p.id,
-      title: p.title,
-      category: p.category,
-      image: p.image_url || 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/project-5.jpg',
-      type: p.type || 'image',
-      url: p.project_url || null,
-    })) : []
+    (dbPortfolios && dbPortfolios.length > 0) ? dbPortfolios.map(mapPortfolio) : []
   );
 
   // Agar Inertia se data nahi aaya toh API fallback
@@ -74,14 +55,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
     if (!dbPortfolios || dbPortfolios.length === 0) {
       fetch('/api/portfolio')
         .then(res => res.json())
-        .then(data => setPortfolios(data.slice(0, 6).map(p => ({
-          id: p.id,
-          title: p.title,
-          category: p.category,
-          image: p.image_url || 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/project-5.jpg',
-          type: p.type || 'image',
-          url: p.project_url || null,
-        }))))
+        .then(data => setPortfolios(data.slice(0, 6).map(mapPortfolio)))
         .catch(() => {});
     }
   }, []);
@@ -1011,11 +985,12 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
                     data-aos="fade-in"
                     data-aos-delay={idx * 150}
                     data-aos-duration="600"
+                    onError={e => { e.target.src = 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/project-5.jpg'; }}
                   />
                   <div className="port-overlay">
                     <div className="port-overlay-content">
-                      <p className="port-overlay-cat">{project.category}</p>
                       <h4 className="port-overlay-title">{project.title}</h4>
+                      {project.category && <p className="port-overlay-cat">{project.category}</p>}
                     </div>
                   </div>
                 </div>
@@ -1170,24 +1145,35 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
                 data-aos-duration="800"
               > 
                 <div className="blog-img-wrap">
-                  <img src={post.image_url || 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/blog-fi-1.jpg'} alt={post.title} className="blog-img" loading="lazy" decoding="async" width="400" height="240"
+                  <img src={
+                    post.main_image
+                      ? (post.main_image.startsWith('http') ? post.main_image : `/images/blogs/${post.main_image}`)
+                      : 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/blog-fi-1.jpg'
+                  } alt={post.title} className="blog-img" loading="lazy" decoding="async" width="400" height="240"
                     onError={e => { e.target.src = 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/blog-fi-1.jpg'; }}
                   />
                 </div>
                 <div className="blog-card-body">
                   <h4 className="blog-card-title">{post.title}</h4>
-                  <p className="blog-card-excerpt">{post.excerpt}</p>
+                  <p className="blog-card-excerpt">
+                    {post.meta_description
+                      ? (post.meta_description.length > 120 ? post.meta_description.slice(0, 120) + '...' : post.meta_description)
+                      : (post.content ? post.content.replace(/<[^>]*>/g, '').slice(0, 120) + '...' : '')
+                    }
+                  </p>
                   <div className="blog-card-meta">
                     <div className="blog-card-author-wrap">
                       <div className="blog-card-avatar">
                         <img
                           src="https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/client-profile-1.jpg"
-                          alt={post.author}
+                          alt="Nikhil Sharma"
                         />
                       </div>
-                      <span className="blog-card-author">{post.author}</span>
+                      <span className="blog-card-author">Nikhil Sharma</span>
                     </div>
-                    <span className="blog-card-date">{post.date}</span>
+                    <span className="blog-card-date">
+                      {post.created_at ? new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : ''}
+                    </span>
                   </div>
                 </div>
               </div>

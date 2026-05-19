@@ -98,17 +98,22 @@ export default function BlogDetailSidebarPage({ post: serverPost, recentPosts: s
             <div className="bds-content-col">
               <figure className="bds-featured-image">
                 <img
-                  src={post.image_url || 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/blog-1.jpg'}
+                  src={
+                    post.main_image
+                      ? (post.main_image.startsWith('http') ? post.main_image : `/images/blogs/${post.main_image}`)
+                      : 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/blog-1.jpg'
+                  }
                   alt={post.title}
+                  onError={e => { e.target.src = 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/blog-1.jpg'; }}
                 />
               </figure>
 
               <h1 className="bds-title">{post.title}</h1>
 
               <div className="bds-meta">
-                <span className="bds-date">{formatDate(post.published_at)}</span>
+                <span className="bds-date">{formatDate(post.created_at)}</span>
                 <span className="bds-meta-sep">—</span>
-                <span className="bds-author">by <strong>{post.author || 'Admin'}</strong></span>
+                <span className="bds-author">by <strong>Nikhil Sharma</strong></span>
               </div>
 
               <div className="bds-content">
@@ -120,7 +125,7 @@ export default function BlogDetailSidebarPage({ post: serverPost, recentPosts: s
                   />
                 ) : (
                   <p className="bds-paragraph" ref={addToRefs}>
-                    {post.excerpt || 'No content available for this post.'}
+                    {post.meta_description || 'No content available for this post.'}
                   </p>
                 )}
               </div>
@@ -231,12 +236,17 @@ export default function BlogDetailSidebarPage({ post: serverPost, recentPosts: s
                           <Link href={`/${rp.slug || rp.id}/sidebar`} className="bds-recent-link">
                             <div className="bds-recent-img">
                               <img
-                                src={rp.image_url || 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/blog-fi-1.jpg'}
+                                src={
+                                  rp.main_image
+                                    ? (rp.main_image.startsWith('http') ? rp.main_image : `/images/blogs/${rp.main_image}`)
+                                    : 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/blog-fi-1.jpg'
+                                }
                                 alt={rp.title}
+                                onError={e => { e.target.src = 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/blog-fi-1.jpg'; }}
                               />
                             </div>
                             <div className="bds-recent-info">
-                              <span className="bds-recent-date">{formatDate(rp.published_at)}</span>
+                              <span className="bds-recent-date">{formatDate(rp.created_at)}</span>
                               <span className="bds-recent-title">{rp.title}</span>
                             </div>
                           </Link>

@@ -90,7 +90,7 @@ const ContactPage = () => {
                 </div>
                 <div className="contact-item-text">
                   <h4 className="contact-item-label">PHONE / WHATSAPP</h4>
-                  <p className="contact-item-value">+91 98765 43210</p>
+                  <p className="contact-item-value">+91 9529921038</p>
                 </div>
               </div>
 

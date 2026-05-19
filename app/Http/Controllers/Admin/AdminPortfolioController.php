@@ -4,14 +4,15 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\PortfolioItem;
+use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class AdminPortfolioController extends Controller
 {
     public function index(Request $request)
     {
-        // Only show results when user has explicitly searched
         $hasSearched = $request->has('searched');
 
         if (!$hasSearched) {
@@ -19,6 +20,7 @@ class AdminPortfolioController extends Controller
                 'items'       => null,
                 'filters'     => ['search' => ''],
                 'hasSearched' => false,
+                'categories'  => Category::orderBy('name')->get(['id', 'name']),
             ]);
         }
 
@@ -27,36 +29,57 @@ class AdminPortfolioController extends Controller
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('title', 'like', "%{$request->search}%")
-                  ->orWhere('category', 'like', "%{$request->search}%");
+                  ->orWhere('short_description', 'like', "%{$request->search}%");
             });
         }
 
-        $items = $query->orderBy('sort_order')->latest()->paginate(10)->withQueryString();
+        if ($request->filled('status')) {
+            $query->where('is_publish', $request->status);
+        }
+
+        $items = $query->latest()->paginate(15)->withQueryString();
 
         return Inertia::render('Admin/Portfolio/index', [
             'items'       => $items,
-            'filters'     => $request->only(['search']),
+            'filters'     => $request->only(['search', 'status']),
             'hasSearched' => true,
+            'categories'  => Category::orderBy('name')->get(['id', 'name']),
         ]);
     }
 
     public function create()
     {
-        return Inertia::render('Admin/Portfolio/create');
+        return Inertia::render('Admin/Portfolio/create', [
+            'categories' => Category::orderBy('name')->get(['id', 'name']),
+        ]);
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title'       => 'required|string|max:255',
-            'category'    => 'required|string|max:100',
-            'description' => 'nullable|string',
-            'image_url'   => 'nullable|url|max:500',
-            'project_url' => 'nullable|url|max:500',
-            'type'        => 'required|in:image,video',
-            'is_featured' => 'boolean',
-            'sort_order'  => 'integer|min:0',
+            'title'             => 'required|string|max:255',
+            'category_id'       => 'nullable|integer',
+            'image'             => 'nullable|string|max:500',
+            'clint_name'        => 'nullable|string|max:255',
+            'status'            => 'nullable|string|max:50',
+            'date'              => 'nullable|date',
+            'website_link'      => 'nullable|string|max:500',
+            'short_description' => 'nullable|string',
+            'description'       => 'nullable|string',
+            'meta_keyword'      => 'nullable|string|max:255',
+            'meta_description'  => 'nullable|string|max:255',
+            'is_publish'        => 'nullable|integer',
         ]);
+
+        $validated['slug']       = Str::slug($validated['title']);
+        $validated['is_publish'] = $validated['is_publish'] ?? 1;
+
+        // Ensure unique slug
+        $base  = $validated['slug'];
+        $count = 1;
+        while (PortfolioItem::where('slug', $validated['slug'])->exists()) {
+            $validated['slug'] = $base . '-' . $count++;
+        }
 
         PortfolioItem::create($validated);
 
@@ -67,21 +90,26 @@ class AdminPortfolioController extends Controller
     public function edit(PortfolioItem $portfolio)
     {
         return Inertia::render('Admin/Portfolio/edit', [
-            'item' => $portfolio,
+            'item'       => $portfolio,
+            'categories' => Category::orderBy('name')->get(['id', 'name']),
         ]);
     }
 
     public function update(Request $request, PortfolioItem $portfolio)
     {
         $validated = $request->validate([
-            'title'       => 'required|string|max:255',
-            'category'    => 'required|string|max:100',
-            'description' => 'nullable|string',
-            'image_url'   => 'nullable|url|max:500',
-            'project_url' => 'nullable|url|max:500',
-            'type'        => 'required|in:image,video',
-            'is_featured' => 'boolean',
-            'sort_order'  => 'integer|min:0',
+            'title'             => 'required|string|max:255',
+            'category_id'       => 'nullable|integer',
+            'image'             => 'nullable|string|max:500',
+            'clint_name'        => 'nullable|string|max:255',
+            'status'            => 'nullable|string|max:50',
+            'date'              => 'nullable|date',
+            'website_link'      => 'nullable|string|max:500',
+            'short_description' => 'nullable|string',
+            'description'       => 'nullable|string',
+            'meta_keyword'      => 'nullable|string|max:255',
+            'meta_description'  => 'nullable|string|max:255',
+            'is_publish'        => 'nullable|integer',
         ]);
 
         $portfolio->update($validated);

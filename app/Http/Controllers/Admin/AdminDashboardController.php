@@ -20,7 +20,7 @@ class AdminDashboardController extends Controller
             'total_blogs'       => BlogPost::count(),
             'unread_messages'   => ContactMessage::where('is_read', false)->count(),
             'total_messages'    => ContactMessage::count(),
-            'featured_projects' => PortfolioItem::where('is_featured', true)->count(),
+            'featured_projects' => PortfolioItem::where('is_publish', 1)->count(),
         ];
 
         $recent_users = User::latest()

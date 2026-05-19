@@ -10,19 +10,26 @@ use App\Models\BlogComment;
 
 // Get all blog posts (for public listing)
 Route::get('/blog', function () {
-    $posts = BlogPost::latest()
-        ->get(['id', 'title', 'slug', 'excerpt', 'content', 'image_url', 'author', 'created_by', 'category', 'status', 'published_at', 'created_at']);
+    $posts = BlogPost::where('status', 1)
+        ->latest()
+        ->get(['id', 'title', 'slug', 'content', 'main_image', 'meta_description', 'category_id', 'tags', 'created_at']);
 
     $posts = $posts->map(function ($p) {
+        $imgUrl = $p->main_image
+            ? (str_starts_with($p->main_image, 'http') ? $p->main_image : '/images/blogs/' . $p->main_image)
+            : null;
         return [
             'id'           => $p->id,
             'title'        => $p->title,
             'slug'         => $p->slug,
-            'excerpt'      => $p->excerpt ?: ($p->content ? \Illuminate\Support\Str::limit(strip_tags($p->content), 160) : null),
-            'image_url'    => $p->image_url,
-            'author'       => $p->author ?: $p->created_by,
-            'category'     => $p->category,
-            'published_at' => $p->published_at ?: $p->created_at,
+            'excerpt'      => $p->meta_description ?: ($p->content ? \Illuminate\Support\Str::limit(strip_tags($p->content), 160) : null),
+            'image_url'    => $imgUrl,
+            'main_image'   => $p->main_image,
+            'author'       => 'Nikhil Sharma',
+            'category_id'  => $p->category_id,
+            'tags'         => $p->tags,
+            'published_at' => $p->created_at,
+            'created_at'   => $p->created_at,
         ];
     });
 
@@ -38,22 +45,37 @@ Route::get('/blog/{slug}', function ($slug) {
         ->orderBy('created_at', 'asc')
         ->get(['id', 'name', 'email', 'description as comment', 'created_at']);
 
-    $prev = BlogPost::where('id', '<', $post->id)->orderBy('id', 'desc')->first(['id', 'title', 'slug', 'image_url']);
-    $next = BlogPost::where('id', '>', $post->id)->orderBy('id', 'asc')->first(['id', 'title', 'slug', 'image_url']);
+    $prev = BlogPost::where('id', '<', $post->id)->orderBy('id', 'desc')->first(['id', 'title', 'slug', 'main_image']);
+    $next = BlogPost::where('id', '>', $post->id)->orderBy('id', 'asc')->first(['id', 'title', 'slug', 'main_image']);
+
+    $imgUrl = $post->main_image
+        ? (str_starts_with($post->main_image, 'http') ? $post->main_image : '/images/blogs/' . $post->main_image)
+        : null;
+
+    $prevImgUrl = $prev && $prev->main_image
+        ? (str_starts_with($prev->main_image, 'http') ? $prev->main_image : '/images/blogs/' . $prev->main_image)
+        : null;
+
+    $nextImgUrl = $next && $next->main_image
+        ? (str_starts_with($next->main_image, 'http') ? $next->main_image : '/images/blogs/' . $next->main_image)
+        : null;
 
     return response()->json([
         'id'           => $post->id,
         'title'        => $post->title,
         'slug'         => $post->slug,
-        'excerpt'      => $post->excerpt,
+        'excerpt'      => $post->meta_description,
         'content'      => $post->content,
-        'image_url'    => $post->image_url,
-        'author'       => $post->author ?: $post->created_by,
-        'category'     => $post->category,
-        'published_at' => $post->published_at ?: $post->created_at,
+        'image_url'    => $imgUrl,
+        'main_image'   => $post->main_image,
+        'author'       => 'Nikhil Sharma',
+        'category_id'  => $post->category_id,
+        'tags'         => $post->tags,
+        'published_at' => $post->created_at,
+        'created_at'   => $post->created_at,
         'comments'     => $comments,
-        'prev_post'    => $prev ? ['id' => $prev->id, 'slug' => $prev->slug, 'title' => $prev->title, 'image' => $prev->image_url] : null,
-        'next_post'    => $next ? ['id' => $next->id, 'slug' => $next->slug, 'title' => $next->title, 'image' => $next->image_url] : null,
+        'prev_post'    => $prev ? ['id' => $prev->id, 'slug' => $prev->slug, 'title' => $prev->title, 'image_url' => $prevImgUrl, 'main_image' => $prev->main_image] : null,
+        'next_post'    => $next ? ['id' => $next->id, 'slug' => $next->slug, 'title' => $next->title, 'image_url' => $nextImgUrl, 'main_image' => $next->main_image] : null,
     ]);
 });
 
@@ -61,21 +83,24 @@ Route::get('/blog/{slug}', function ($slug) {
 
 // Get all portfolio items (for public listing)
 Route::get('/portfolio', function () {
-    $items = PortfolioItem::orderBy('sort_order')->get();
+    $items = PortfolioItem::where('is_publish', 1)->latest()->get();
 
     $items = $items->map(function ($item) {
         return [
-            'id'          => $item->id,
-            'title'       => $item->title,
-            'category'    => $item->category,
-            'description' => $item->description,
-            'image_url'   => $item->image_url,
-            'project_url' => $item->project_url,
-            'type'        => $item->type,
-            'is_featured' => (bool) $item->is_featured,
-            'sort_order'  => $item->sort_order,
-            'created_at'  => $item->created_at,
-            'updated_at'  => $item->updated_at,
+            'id'                => $item->id,
+            'title'             => $item->title,
+            'slug'              => $item->slug,
+            'category_id'       => $item->category_id,
+            'short_description' => $item->short_description,
+            'description'       => $item->description,
+            'image_url'         => $item->image_url,
+            'image'             => $item->image,
+            'website_link'      => $item->website_link,
+            'clint_name'        => $item->clint_name,
+            'status'            => $item->status,
+            'is_publish'        => $item->is_publish,
+            'date'              => $item->date,
+            'created_at'        => $item->created_at,
         ];
     });
 
@@ -86,26 +111,28 @@ Route::get('/portfolio', function () {
 Route::get('/portfolio/{id}', function ($id) {
     $item = PortfolioItem::findOrFail($id);
 
-    // Get prev/next portfolio items
-    $prev = PortfolioItem::where('id', '<', $id)->orderBy('id', 'desc')->first(['id', 'title', 'image_url']);
-    $next = PortfolioItem::where('id', '>', $id)->orderBy('id', 'asc')->first(['id', 'title', 'image_url']);
+    $prev = PortfolioItem::where('id', '<', $id)->orderBy('id', 'desc')->first(['id', 'title', 'image', 'slug']);
+    $next = PortfolioItem::where('id', '>', $id)->orderBy('id', 'asc')->first(['id', 'title', 'image', 'slug']);
 
     return response()->json([
         'item' => [
-            'id'          => $item->id,
-            'title'       => $item->title,
-            'category'    => $item->category,
-            'description' => $item->description,
-            'image_url'   => $item->image_url,
-            'project_url' => $item->project_url,
-            'type'        => $item->type,
-            'is_featured' => (bool) $item->is_featured,
-            'sort_order'  => $item->sort_order,
-            'created_at'  => $item->created_at,
-            'updated_at'  => $item->updated_at,
+            'id'                => $item->id,
+            'title'             => $item->title,
+            'slug'              => $item->slug,
+            'category_id'       => $item->category_id,
+            'short_description' => $item->short_description,
+            'description'       => $item->description,
+            'image_url'         => $item->image_url,
+            'image'             => $item->image,
+            'website_link'      => $item->website_link,
+            'clint_name'        => $item->clint_name,
+            'status'            => $item->status,
+            'is_publish'        => $item->is_publish,
+            'date'              => $item->date,
+            'created_at'        => $item->created_at,
         ],
-        'prev_item' => $prev,
-        'next_item' => $next,
+        'prev_item' => $prev ? ['id' => $prev->id, 'title' => $prev->title, 'image_url' => $prev->image_url, 'slug' => $prev->slug] : null,
+        'next_item' => $next ? ['id' => $next->id, 'title' => $next->title, 'image_url' => $next->image_url, 'slug' => $next->slug] : null,
     ]);
 });
 
