@@ -1,8 +1,39 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { Link } from '@inertiajs/react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import SEO from '../../components/SEO';
+
+/* ── Hero Slides — 5 alag ultra-HD tech images ── */
+const HERO_SLIDES = [
+  { url: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1920&q=100&auto=format&fit=crop', label: 'Business Meeting' },
+  { url: 'https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1920&q=100&auto=format&fit=crop', label: 'Strategy Planning' },
+  { url: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1920&q=100&auto=format&fit=crop', label: 'Remote Work' },
+];
+
+/* ── Image Slider Component ── */
+function HeroImageSlider() {
+  const [current, setCurrent] = useState(0);
+  const [animating, setAnimating] = useState(false);
+  const timerRef = useRef(null);
+
+  const goTo = useCallback((idx) => {
+    if (animating || idx === current) return;
+    setAnimating(true);
+    setCurrent(idx);
+    setTimeout(() => setAnimating(false), 800);
+  }, [animating, current]);
+
+  const next = useCallback(() => goTo((current + 1) % HERO_SLIDES.length), [current, goTo]);
+  const prev = useCallback(() => goTo((current - 1 + HERO_SLIDES.length) % HERO_SLIDES.length), [current, goTo]);
+
+  useEffect(() => {
+    timerRef.current = setInterval(next, 5000);
+    return () => clearInterval(timerRef.current);
+  }, [next]);
+
+  return { current, next, prev, goTo, slides: HERO_SLIDES };
+}
 
 const PAGE_STYLES = `
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
@@ -10,54 +41,112 @@ const PAGE_STYLES = `
 
   .kd-root { font-family: 'Space Grotesk', sans-serif; background: #f5f5f5; color: #1a1a1a; min-height: 100vh; }
 
+  /* ── HERO SLIDER ── */
   .kd-hero {
     position: relative;
-    background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #0f3460 100%);
-    padding: clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,3rem) clamp(3rem,6vw,5rem);
+    height: clamp(380px, 52vh, 500px);
+    display: flex;
+    align-items: center;
     overflow: hidden;
+    isolation: isolate;
   }
-  .kd-hero-dots {
-    position: absolute; inset: 0; pointer-events: none;
-    background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
-    background-size: 30px 30px;
+  .kd-slide {
+    position: absolute; inset: 0;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    will-change: opacity;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transition: opacity 0.8s ease;
   }
-  .kd-hero-glow {
-    position: absolute; width: 600px; height: 600px; pointer-events: none;
-    background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 65%);
-    top: -200px; right: -100px;
+  .kd-overlay-dark {
+    position: absolute; inset: 0; z-index: 2;
+    background: rgba(5,5,15,0.30);
   }
-  .kd-hero-inner { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; }
+  .kd-overlay-grad {
+    position: absolute; inset: 0; z-index: 3;
+    background: linear-gradient(135deg, rgba(10,10,30,0.25) 0%, rgba(30,10,60,0.15) 50%, rgba(10,30,80,0.20) 100%);
+  }
+  .kd-overlay-dots {
+    position: absolute; inset: 0; z-index: 4; pointer-events: none;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+  .kd-slide-label-wrap {
+    position: absolute; top: 1.2rem; right: 4.5rem; z-index: 10;
+  }
+  .kd-slide-label {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: rgba(255,255,255,0.1); backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 0.3rem 0.9rem; border-radius: 100px;
+    font-size: 0.68rem; font-weight: 600; letter-spacing: 0.15em;
+    text-transform: uppercase; color: rgba(255,255,255,0.8);
+  }
+  .kd-slide-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: #6366f1; display: inline-block;
+    animation: kd-pulse 2s infinite;
+  }
+  .kd-hero-inner {
+    position: relative; z-index: 10;
+    max-width: 900px; margin: 0 auto;
+    padding: clamp(2rem,5vw,3rem) clamp(1.5rem,5vw,3rem);
+    width: 100%;
+  }
+  .kd-slider-arrow {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    z-index: 20; width: 42px; height: 42px; border-radius: 50%;
+    background: rgba(255,255,255,0.12); backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: #fff; transition: all 0.2s ease;
+  }
+  .kd-slider-arrow:hover { background: rgba(255,255,255,0.25); transform: translateY(-50%) scale(1.1); }
+  .kd-slider-arrow-left { left: 1.2rem; }
+  .kd-slider-arrow-right { right: 1.2rem; }
+  .kd-dot-row {
+    position: absolute; bottom: 1.2rem; left: 50%; transform: translateX(-50%);
+    z-index: 20; display: flex; gap: 7px;
+  }
+  .kd-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: rgba(255,255,255,0.35); border: none; cursor: pointer;
+    transition: all 0.3s ease; padding: 0;
+  }
+  .kd-dot-active { width: 24px; border-radius: 4px; background: #6366f1; }
 
   .kd-breadcrumb {
     display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-    font-size: 0.75rem; color: rgba(255,255,255,0.45); margin-bottom: 2rem;
+    font-size: 0.75rem; color: rgba(255,255,255,0.6); margin-bottom: 0.8rem;
   }
-  .kd-breadcrumb a { color: rgba(255,255,255,0.45); text-decoration: none; transition: color 0.2s; }
-  .kd-breadcrumb a:hover { color: rgba(255,255,255,0.8); }
-  .kd-bc-sep { opacity: 0.3; }
-  .kd-bc-cur { color: rgba(255,255,255,0.7); }
+  .kd-breadcrumb a { color: rgba(255,255,255,0.6); text-decoration: none; transition: color 0.2s; }
+  .kd-breadcrumb a:hover { color: rgba(255,255,255,0.9); }
+  .kd-bc-sep { opacity: 0.4; }
+  .kd-bc-cur { color: rgba(255,255,255,0.85); }
 
   .kd-badge {
     display: inline-flex; align-items: center; gap: 8px;
     background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3);
-    padding: 0.4rem 1.2rem; border-radius: 100px; margin-bottom: 1.5rem;
-    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.2em;
+    padding: 0.35rem 1rem; border-radius: 100px; margin-bottom: 0.8rem;
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.2em;
     text-transform: uppercase; color: #a5b4fc;
   }
   .kd-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: #6366f1; animation: kd-pulse 2s infinite; }
   @keyframes kd-pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
 
   .kd-hero h1 {
-    font-size: clamp(2rem,5vw,3.8rem); font-weight: 700; color: #fff;
-    letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 1.2rem;
+    font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 700; color: #fff;
+    letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 0.7rem;
   }
   .kd-hero h1 .accent {
-    background: linear-gradient(135deg, #6366f1, #ec4899);
+    background: linear-gradient(135deg, #818cf8, #ec4899);
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }
   .kd-hero-sub {
-    font-size: clamp(0.95rem,1.8vw,1.1rem); color: rgba(255,255,255,0.6);
-    line-height: 1.75; max-width: 600px; margin-bottom: 2.5rem;
+    font-size: clamp(0.88rem,1.4vw,1rem); color: rgba(255,255,255,0.80);
+    line-height: 1.65; max-width: 580px; margin-bottom: 1.4rem; font-weight: 400;
   }
   .kd-hero-btns { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
   .kd-btn-primary {
@@ -227,6 +316,8 @@ export default function KeywordDetailPage({ keyword, services = [], relatedKeywo
     url: `https://thenikhilsharma.in${toKeywordUrl(safeKeyword)}`,
   }];
 
+  const slider = HeroImageSlider();
+
   return (
     <main className="kd-root">
       <SEO
@@ -237,10 +328,35 @@ export default function KeywordDetailPage({ keyword, services = [], relatedKeywo
       />
       <style>{PAGE_STYLES}</style>
 
-      {/* HERO */}
+      {/* ── HERO WITH IMAGE SLIDER ── */}
       <section className="kd-hero">
-        <div className="kd-hero-dots" />
-        <div className="kd-hero-glow" />
+        {/* Slides */}
+        {HERO_SLIDES.map((slide, i) => (
+          <div
+            key={i}
+            className="kd-slide"
+            style={{
+              backgroundImage: `url(${slide.url})`,
+              opacity: i === slider.current ? 1 : 0,
+              zIndex: i === slider.current ? 1 : 0,
+            }}
+          />
+        ))}
+
+        {/* Overlays */}
+        <div className="kd-overlay-dark" />
+        <div className="kd-overlay-grad" />
+        <div className="kd-overlay-dots" />
+
+        {/* Slide label */}
+        <div className="kd-slide-label-wrap">
+          <span className="kd-slide-label">
+            <span className="kd-slide-dot" />
+            {HERO_SLIDES[slider.current].label}
+          </span>
+        </div>
+
+        {/* Hero Content */}
         <div className="kd-hero-inner">
           <nav className="kd-breadcrumb" aria-label="Breadcrumb">
             <Link href="/">Home</Link>
@@ -248,24 +364,49 @@ export default function KeywordDetailPage({ keyword, services = [], relatedKeywo
             <span className="kd-bc-cur">{safeKeyword}</span>
           </nav>
 
-          <h1 data-aos="fade-up" data-aos-duration="700">
+          <div className="kd-badge" data-aos="fade-up" data-aos-delay="50">
+            <span className="kd-badge-dot" />
+            Top Rated Developer
+          </div>
+
+          <h1 data-aos="fade-up" data-aos-delay="100" data-aos-duration="700">
             {titleMain
               ? <>{titleMain} <span className="accent">{titleLast}</span></>
               : <span className="accent">{titleLast}</span>
             }
           </h1>
 
-          <p className="kd-hero-sub" data-aos="fade-up" data-aos-delay="100" data-aos-duration="700">
+          <p className="kd-hero-sub" data-aos="fade-up" data-aos-delay="160" data-aos-duration="700">
             {siteName} is a top-rated freelance developer in {location} with 8+ years of experience building websites, mobile apps, and digital solutions for businesses across India and the Middle East.
           </p>
 
-          <div className="kd-hero-btns" data-aos="fade-up" data-aos-delay="200" data-aos-duration="700">
+          <div className="kd-hero-btns" data-aos="fade-up" data-aos-delay="220" data-aos-duration="700">
             <Link href="/contact" className="kd-btn-primary">
               Get a Free Quote
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </Link>
             <Link href="/portfolio" className="kd-btn-ghost">View My Work</Link>
           </div>
+        </div>
+
+        {/* Arrows */}
+        <button className="kd-slider-arrow kd-slider-arrow-left" onClick={slider.prev} aria-label="Previous">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </button>
+        <button className="kd-slider-arrow kd-slider-arrow-right" onClick={slider.next} aria-label="Next">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+
+        {/* Dots */}
+        <div className="kd-dot-row">
+          {HERO_SLIDES.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => slider.goTo(i)}
+              className={`kd-dot${i === slider.current ? ' kd-dot-active' : ''}`}
+              aria-label={`Slide ${i + 1}`}
+            />
+          ))}
         </div>
       </section>
 
