@@ -212,28 +212,49 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
     { id: 3, title: 'UI/UX Design', slug: 'ui-ux-design', description: 'Visually compelling, brand-consistent designs in Figma grounded in user research.' },
   ];
 
-  // Keywords from Setting.strating_keyword (comma-separated) — no dummy fallback
+  // Keywords from Setting.strating_keyword (comma-separated)
   const keywordHighlights = (() => {
     if (setting && setting.strating_keyword) {
-      return setting.strating_keyword.split(',').map(k => k.trim()).filter(Boolean);
+      const parsed = setting.strating_keyword.split(',').map(k => k.trim()).filter(Boolean);
+      if (parsed.length > 0) return parsed;
     }
-    return [];
+    // Static fallback so section is never empty
+    return [
+      'Best Software Developer in Jaipur',
+      'Best Website Developer in Jaipur',
+      'Best PHP Developer in Jaipur',
+      'Best React Developer in Jaipur',
+      'Best Mobile App Developer in Jaipur',
+      'Best Full Stack Developer in Jaipur',
+      'Best IT Freelancer in Jaipur',
+      'Best Front-End Developer in Jaipur',
+    ];
   })();
 
   // Service highlights from DB setting.service_keyword — format: "title|slug,title|slug"
   // Each entry is clickable and links to /services/{slug}
   const serviceHighlights = (() => {
+    // Priority 1: service_keyword from settings
     if (setting && setting.service_keyword) {
-      return setting.service_keyword.split(',').map(entry => {
+      const parsed = setting.service_keyword.split(',').map(entry => {
         const parts = entry.trim().split('|');
         return { title: parts[0] ? parts[0].trim() : '', slug: parts[1] ? parts[1].trim() : '', isFallback: false };
       }).filter(s => s.title);
+      if (parsed.length > 0) return parsed;
     }
-    // Fallback: use DB service titles with their slugs
+    // Priority 2: use DB service titles with their slugs
     if (dbServices && dbServices.length > 0) {
       return dbServices.map(s => ({ title: s.title, slug: s.slug, isFallback: true }));
     }
-    return [];
+    // Priority 3: static fallback so section is never empty
+    return [
+      { title: 'Web Development',    slug: 'web-development',    isFallback: true },
+      { title: 'App Development',    slug: 'app-development',    isFallback: true },
+      { title: 'UI/UX Design',       slug: 'ui-ux-design',       isFallback: true },
+      { title: 'PHP Laravel',        slug: 'php-laravel',        isFallback: true },
+      { title: 'React.js',           slug: 'react-js',           isFallback: true },
+      { title: 'Flutter Apps',       slug: 'flutter-apps',       isFallback: true },
+    ];
   })();
 
   const experiences = [
