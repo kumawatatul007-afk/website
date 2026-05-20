@@ -17,14 +17,14 @@ function stripHtml(html) {
 }
 
 const ICONS = [
-  <svg key="0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" width="26" height="26"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><polyline points="8 9 10 11 8 13"/><line x1="12" y1="13" x2="15" y2="13"/></svg>,
-  <svg key="1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" width="26" height="26"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18" strokeWidth="2.5"/></svg>,
-  <svg key="2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" width="26" height="26"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><path d="M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>,
-  <svg key="3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" width="26" height="26"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>,
-  <svg key="4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" width="26" height="26"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>,
-  <svg key="5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" width="26" height="26"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>,
-  <svg key="6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" width="26" height="26"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>,
-  <svg key="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" width="26" height="26"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>,
+  <svg key="0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" width="26" height="26"><rect x="2" y="3" width="20" height="14" rx="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" /><polyline points="8 9 10 11 8 13" /><line x1="12" y1="13" x2="15" y2="13" /></svg>,
+  <svg key="1" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" width="26" height="26"><rect x="5" y="2" width="14" height="20" rx="2" /><line x1="12" y1="18" x2="12.01" y2="18" strokeWidth="2.5" /></svg>,
+  <svg key="2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" width="26" height="26"><circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3" /><path d="M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1" /></svg>,
+  <svg key="3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" width="26" height="26"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" /><line x1="11" y1="8" x2="11" y2="14" /><line x1="8" y1="11" x2="14" y2="11" /></svg>,
+  <svg key="4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" width="26" height="26"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" /></svg>,
+  <svg key="5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" width="26" height="26"><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></svg>,
+  <svg key="6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" width="26" height="26"><path d="M12 2L2 7l10 5 10-5-10-5z" /><path d="M2 17l10 5 10-5" /><path d="M2 12l10 5 10-5" /></svg>,
+  <svg key="7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" width="26" height="26"><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18M9 21V9" /></svg>,
 ];
 
 const ACCENT_COLORS = [
@@ -55,7 +55,7 @@ function toServiceUrl(slug) {
   const parts = slug.split('-');
   const prefix = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
   const rest = parts.slice(1).join('-');
-  return rest ? `/service/${prefix}/${rest}` : `/service/${prefix}`;
+  return rest ? `/${prefix}/${rest}` : `/${prefix}`;
 }
 
 // Count-up hook — animates from 0 to target when element enters viewport
@@ -110,6 +110,22 @@ function StatItem({ num, label }) {
       <span className="srv-stat-label">{label}</span>
     </div>
   );
+}
+
+function generatePagination(currentPage, totalPages) {
+  if (totalPages <= 7) {
+    return Array.from({ length: totalPages }, (_, i) => i);
+  }
+
+  if (currentPage < 3) {
+    return [0, 1, 2, 3, 4, '...', totalPages - 1];
+  }
+
+  if (currentPage >= totalPages - 3) {
+    return [0, '...', totalPages - 5, totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1];
+  }
+
+  return [0, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages - 1];
 }
 
 export default function ServicesPage({ services = [] }) {
@@ -653,7 +669,7 @@ export default function ServicesPage({ services = [] }) {
           <div className="srv-hero-btns">
             <Link href="/contact" className="srv-btn-primary">
               Get a Free Quote
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
             </Link>
             <Link href="/portfolio" className="srv-btn-ghost">View My Work</Link>
           </div>
@@ -663,10 +679,10 @@ export default function ServicesPage({ services = [] }) {
       {/* ── STATS ── */}
       <div className="srv-stats">
         {[
-          { num: '8+',   label: 'Years Experience' },
+          { num: '8+', label: 'Years Experience' },
           { num: '120+', label: 'Projects Delivered' },
-          { num: '3',    label: 'Countries Served' },
-          { num: '98%',  label: 'Client Satisfaction' },
+          { num: '3', label: 'Countries Served' },
+          { num: '98%', label: 'Client Satisfaction' },
         ].map((s) => (
           <StatItem key={s.label} num={s.num} label={s.label} />
         ))}
@@ -697,7 +713,7 @@ export default function ServicesPage({ services = [] }) {
         ) : services.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '5rem 0', color: '#9ca3af' }}>
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" style={{ margin: '0 auto 1rem', display: 'block', opacity: 0.4 }}>
-              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+              <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
             </svg>
             <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '0.95rem' }}>No services available at the moment.</p>
           </div>
@@ -745,7 +761,7 @@ export default function ServicesPage({ services = [] }) {
                       <div className="srv-card-footer">
                         {service.price_range ? (
                           <span className="srv-price-tag" style={{ background: color.light, color: color.accent }}>
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
                             Starting from {service.price_range}
                           </span>
                         ) : (
@@ -757,7 +773,7 @@ export default function ServicesPage({ services = [] }) {
                           style={{ background: `linear-gradient(135deg, ${color.accent}, ${color.accent}dd)`, boxShadow: `0 6px 18px ${color.accent}40` }}
                         >
                           {service.cta_text || 'Get a Quote'}
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                         </Link>
                       </div>
                     </div>
@@ -773,7 +789,7 @@ export default function ServicesPage({ services = [] }) {
                               <li key={fi}>
                                 <span className="srv-feat-check" style={{ background: color.light }}>
                                   <svg viewBox="0 0 12 12" fill="none" stroke={color.accent} strokeWidth="2.5">
-                                    <polyline points="2 6 5 9 10 3"/>
+                                    <polyline points="2 6 5 9 10 3" />
                                   </svg>
                                 </span>
                                 <span style={{ color: '#374151' }}>{stripHtml(feat)}</span>
@@ -805,7 +821,7 @@ export default function ServicesPage({ services = [] }) {
                               <div key={pi} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
                                 <span style={{ flexShrink: 0, width: 20, height: 20, borderRadius: '50%', background: color.light, display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 1 }}>
                                   <svg viewBox="0 0 12 12" fill="none" stroke={color.accent} strokeWidth="2.5" width="9" height="9">
-                                    <polyline points="2 6 5 9 10 3"/>
+                                    <polyline points="2 6 5 9 10 3" />
                                   </svg>
                                 </span>
                                 <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: '0.87rem', color: '#374151', fontWeight: 500, lineHeight: 1.5 }}>{point}</span>
@@ -821,7 +837,7 @@ export default function ServicesPage({ services = [] }) {
                               style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: "'Space Grotesk',sans-serif", fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: color.accent, textDecoration: 'none', borderBottom: `1.5px solid ${color.accent}`, paddingBottom: 2 }}
                             >
                               Discuss Project
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                             </Link>
                           </div>
                         </div>
@@ -836,15 +852,19 @@ export default function ServicesPage({ services = [] }) {
             {totalPages > 1 && (
               <div className="srv-pagination">
                 <button className="srv-pg-arrow" onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0} aria-label="Previous">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 18l-6-6 6-6" /></svg>
                 </button>
-                {Array.from({ length: totalPages }, (_, i) => (
-                  <button key={i} className={`srv-pg-num${page === i ? ' active' : ''}`} onClick={() => setPage(i)} aria-label={`Page ${i + 1}`}>
-                    {i + 1}
-                  </button>
+                {generatePagination(page, totalPages).map((p, i) => (
+                  p === '...' ? (
+                    <span key={`ellipsis-${i}`} style={{ padding: '0 8px', color: '#9ca3af', fontWeight: 600 }}>...</span>
+                  ) : (
+                    <button key={p} className={`srv-pg-num${page === p ? ' active' : ''}`} onClick={() => setPage(p)} aria-label={`Page ${p + 1}`}>
+                      {p + 1}
+                    </button>
+                  )
                 ))}
                 <button className="srv-pg-arrow" onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={page === totalPages - 1} aria-label="Next">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 18l6-6-6-6"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 18l6-6-6-6" /></svg>
                 </button>
               </div>
             )}
@@ -863,7 +883,7 @@ export default function ServicesPage({ services = [] }) {
               <button className="srv-faq-btn" onClick={() => setOpenFaq(openFaq === i ? null : i)} aria-expanded={openFaq === i}>
                 {faq.q}
                 <svg className={`srv-faq-chevron${openFaq === i ? ' open' : ''}`} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <polyline points="6 9 12 15 18 9"/>
+                  <polyline points="6 9 12 15 18 9" />
                 </svg>
               </button>
               <div className={`srv-faq-body${openFaq === i ? ' open' : ''}`}>{faq.a}</div>

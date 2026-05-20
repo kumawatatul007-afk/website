@@ -23,10 +23,15 @@ body {
 }
 
 /* Button hover effects */
-.about-resume-btn, .contact-submit-btn, .whatsapp-hero-btn {
+.about-resume-btn,
+.contact-submit-btn,
+.whatsapp-hero-btn {
   transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
 }
-.about-resume-btn:hover, .contact-submit-btn:hover, .whatsapp-hero-btn:hover {
+
+.about-resume-btn:hover,
+.contact-submit-btn:hover,
+.whatsapp-hero-btn:hover {
   transform: translateY(-2px);
   box-shadow: 6px 6px 0 0 rgba(30, 58, 138, 0.25);
 }
@@ -37,12 +42,15 @@ body {
   overflow: hidden;
   transition: clip-path 0.4s ease;
 }
+
 .port-img {
   transition: transform 0.6s ease;
 }
+
 .port-item:hover .port-img {
   transform: scale(1.05);
 }
+
 .port-overlay {
   transition: opacity 0.3s ease;
 }
@@ -79,6 +87,7 @@ body {
 }
 
 @media (max-width: 768px) {
+
   .services-section,
   .about-section,
   .resume-section,
@@ -90,6 +99,7 @@ body {
   .marquee-section {
     margin-bottom: 3rem;
   }
+
   .container {
     padding: 0 1.5rem;
   }
@@ -206,11 +216,13 @@ body {
   transition: all 0.28s ease;
   text-decoration: none;
 }
+
 .whatsapp-hero-btn:hover {
   background-color: #1ebe5d;
   transform: translateY(-2px);
   box-shadow: 6px 6px 0 0 rgba(37, 211, 102, 0.3);
 }
+
 .whatsapp-hero-btn svg {
   width: 1rem;
   height: 1rem;
@@ -289,13 +301,16 @@ body {
     flex-direction: column-reverse;
     gap: 2.5rem;
   }
+
   .hero-image {
     flex: none;
   }
+
   .profile-circle-wrapper {
     width: 380px;
     height: 380px;
   }
+
   .hero-stroke-name {
     font-size: clamp(4rem, 14vw, 6rem);
   }
@@ -306,6 +321,7 @@ body {
     width: 290px;
     height: 290px;
   }
+
   .profile-circle-wrapper::after {
     display: none;
   }
@@ -345,7 +361,7 @@ body {
   white-space: nowrap;
   line-height: 1.1;
 }
-  
+
 .svc-header-title {
   flex: 1;
 }
@@ -380,7 +396,7 @@ body {
 
 .svc-card:hover {
   background-color: #f9fafb;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
 }
 
 .svc-card-icon {
@@ -429,7 +445,11 @@ body {
   padding-bottom: 1px;
   transition: color 0.2s ease, border-color 0.2s ease;
 }
-.svc-card-link:hover { color: #0A3981; border-color: #0A3981; }
+
+.svc-card-link:hover {
+  color: #0A3981;
+  border-color: #0A3981;
+}
 
 /* ---------- SERVICES PAGINATION ---------- */
 .svc-pagination {
@@ -455,10 +475,12 @@ body {
   transition: background 0.2s ease, color 0.2s ease;
   flex-shrink: 0;
 }
+
 .svc-pg-btn:hover:not(:disabled) {
   background: #131313;
   color: #ffffff;
 }
+
 .svc-pg-btn:disabled {
   opacity: 0.3;
   cursor: not-allowed;
@@ -480,10 +502,12 @@ body {
   cursor: pointer;
   transition: all 0.2s ease;
 }
+
 .svc-pg-dot:hover {
   border-color: #2d2d2d;
   color: #131313;
 }
+
 .svc-pg-dot-active {
   background: #131313;
   border-color: #131313;
@@ -494,6 +518,7 @@ body {
   .svc-header {
     gap: 2rem;
   }
+
   .svc-big-title {
     font-size: clamp(2rem, 5vw, 3rem);
   }
@@ -504,6 +529,7 @@ body {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
+
   .svc-header {
     flex-direction: column;
     gap: 1rem;
@@ -664,13 +690,16 @@ body {
     flex-direction: column;
     gap: 2.5rem;
   }
+
   .about-img-col {
     flex: none;
   }
+
   .about-circle-wrapper {
     width: 320px;
     height: 320px;
   }
+
   .about-header {
     gap: 2rem;
   }
@@ -681,12 +710,15 @@ body {
     width: 260px;
     height: 260px;
   }
+
   .about-circle-outline {
     display: none;
   }
+
   .about-checklist {
     grid-template-columns: 1fr;
   }
+
   .about-header {
     flex-direction: column;
     gap: 1rem;
@@ -727,8 +759,13 @@ body {
 }
 
 @keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 @media (max-width: 768px) {
@@ -929,10 +966,12 @@ body {
   .edu-timeline-line {
     left: 1rem;
   }
+
   .edu-item {
     flex-direction: column;
     padding-left: 2.5rem;
   }
+
   .edu-item-left,
   .edu-item-right,
   .edu-item-reverse .edu-item-left,
@@ -941,17 +980,21 @@ body {
     padding: 0 !important;
     order: unset !important;
   }
+
   .edu-item-dot {
     position: absolute;
     left: 0.3rem;
     top: 0.4rem;
   }
+
   .edu-item-reverse .edu-item-dot {
     order: unset;
   }
+
   .edu-title-line {
     max-width: 60px;
   }
+
   .edu-item-desc {
     max-width: 100%;
     margin: 0 !important;
@@ -1028,8 +1071,13 @@ body {
 }
 
 @keyframes skillBarGrow {
-  from { width: 0%; }
-  to   { width: var(--skill-width); }
+  from {
+    width: 0%;
+  }
+
+  to {
+    width: var(--skill-width);
+  }
 }
 
 .skill-badge {
@@ -1062,6 +1110,7 @@ body {
   .skill-layout {
     gap: 3rem;
   }
+
   .skill-label-col {
     flex: 0 0 200px;
   }
@@ -1072,6 +1121,7 @@ body {
     flex-direction: column;
     gap: 2rem;
   }
+
   .skill-label-col {
     flex: none;
   }
@@ -1339,6 +1389,7 @@ body {
   .testi-card {
     flex: 0 0 calc(100% - 0rem);
   }
+
   .testi-header {
     flex-direction: column;
     gap: 1rem;
@@ -1358,6 +1409,7 @@ body {
   border-top: 1px solid #e5e7eb;
   border-bottom: 1px solid #e5e7eb;
 }
+
 .clients-label {
   text-align: center;
   font-size: 0.68rem;
@@ -1368,6 +1420,7 @@ body {
   margin-bottom: 1.5rem;
   font-family: 'Space Grotesk', sans-serif;
 }
+
 .clients-logos-row {
   display: flex;
   align-items: center;
@@ -1375,6 +1428,7 @@ body {
   flex-wrap: wrap;
   gap: 0.75rem;
 }
+
 .client-logo-pill {
   display: inline-flex;
   align-items: center;
@@ -1386,11 +1440,13 @@ body {
   text-decoration: none;
   transition: border-color 0.2s, background 0.2s, transform 0.2s;
 }
+
 .client-logo-pill:hover {
   border-color: #1e3a8a;
   background: #eff6ff;
   transform: translateY(-2px);
 }
+
 .client-logo-abbr {
   display: inline-flex;
   align-items: center;
@@ -1406,6 +1462,7 @@ body {
   letter-spacing: 0.02em;
   flex-shrink: 0;
 }
+
 .client-logo-name {
   font-size: 0.82rem;
   font-weight: 700;
@@ -1413,7 +1470,10 @@ body {
   font-family: 'Space Grotesk', sans-serif;
   letter-spacing: 0.02em;
 }
-.client-logo-pill:hover .client-logo-name { color: #1e3a8a; }
+
+.client-logo-pill:hover .client-logo-name {
+  color: #1e3a8a;
+}
 
 /* ---------- BLOG ---------- */
 .blog-section {
@@ -1493,7 +1553,7 @@ body {
 }
 
 .blog-card:hover {
-  box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
 }
 
 .blog-img-wrap {
@@ -1578,6 +1638,7 @@ body {
   .blog-header {
     gap: 2rem;
   }
+
   .blog-big-title {
     font-size: clamp(2rem, 5vw, 3rem);
   }
@@ -1588,6 +1649,7 @@ body {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
+
   .blog-header {
     flex-direction: column;
     gap: 1rem;
@@ -1751,6 +1813,7 @@ body {
   cursor: pointer;
   transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
+
 .whatsapp-cta-btn:hover {
   background: #1ebe5d;
   transform: translateY(-2px);
@@ -1773,6 +1836,7 @@ body {
   border: 2px solid #1e3a8a;
   transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
+
 .view-all-btn:hover {
   background: #1e3a8a;
   color: #fff;
@@ -1830,6 +1894,7 @@ body {
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
+
 .keywords-chips::-webkit-scrollbar {
   display: none;
 }
@@ -1894,8 +1959,13 @@ body {
 }
 
 @keyframes fadeInOverlay {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .video-modal-box {
@@ -1906,8 +1976,15 @@ body {
 }
 
 @keyframes scaleInModal {
-  from { transform: scale(0.88); opacity: 0; }
-  to   { transform: scale(1);    opacity: 1; }
+  from {
+    transform: scale(0.88);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .video-modal-close {
@@ -1938,7 +2015,8 @@ body {
 .video-modal-iframe-wrap {
   position: relative;
   width: 100%;
-  padding-bottom: 56.25%; /* 16:9 */
+  padding-bottom: 56.25%;
+  /* 16:9 */
   background: #000;
 }
 
@@ -1966,9 +2044,11 @@ body {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
   transition: transform 0.2s ease;
 }
+
 .back-to-top-btn:hover {
   transform: translateY(-3px);
 }
+
 .progress-ring {
   position: absolute;
   top: 0;
@@ -1977,11 +2057,13 @@ body {
   height: 100%;
   transform: rotate(-90deg);
 }
+
 .progress-ring-bg {
   fill: none;
   stroke: #e2e8f0;
   stroke-width: 3;
 }
+
 .progress-ring-fill {
   fill: none;
   stroke: #1e3a8a;
@@ -1989,6 +2071,7 @@ body {
   stroke-dasharray: 283;
   transition: stroke-dashoffset 0.1s linear;
 }
+
 .arrow-icon {
   position: absolute;
   top: 50%;

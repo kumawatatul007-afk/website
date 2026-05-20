@@ -25,60 +25,6 @@ function stripHtml(html) {
     .trim();
 }
 
-const ICONS = {
-  'website-design-development': (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="40" height="40">
-      <rect x="2" y="3" width="20" height="14" rx="2"/>
-      <line x1="8" y1="21" x2="16" y2="21"/>
-      <line x1="12" y1="17" x2="12" y2="21"/>
-      <polyline points="8 9 10 11 8 13"/>
-      <line x1="12" y1="13" x2="15" y2="13"/>
-    </svg>
-  ),
-  'mobile-app-development': (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="40" height="40">
-      <rect x="5" y="2" width="14" height="20" rx="2"/>
-      <line x1="12" y1="18" x2="12.01" y2="18" strokeWidth="2.5"/>
-    </svg>
-  ),
-  'ui-ux-design': (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="40" height="40">
-      <circle cx="12" cy="12" r="3"/>
-      <path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>
-      <path d="M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/>
-    </svg>
-  ),
-  'e-commerce-development': (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="40" height="40">
-      <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-      <line x1="3" y1="6" x2="21" y2="6"/>
-      <path d="M16 10a4 4 0 0 1-8 0"/>
-    </svg>
-  ),
-  'seo-performance-optimisation': (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="40" height="40">
-      <circle cx="11" cy="11" r="8"/>
-      <path d="m21 21-4.35-4.35"/>
-      <polyline points="8 11 10 13 14 9"/>
-    </svg>
-  ),
-  'website-maintenance-support': (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="40" height="40">
-      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
-    </svg>
-  ),
-};
-
-function getIcon(slug) {
-  return ICONS[slug] || (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="40" height="40">
-      <circle cx="12" cy="12" r="10"/>
-      <line x1="12" y1="8" x2="12" y2="16"/>
-      <line x1="8" y1="12" x2="16" y2="12"/>
-    </svg>
-  );
-}
-
 const PAGE_STYLES = `
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -87,36 +33,53 @@ const PAGE_STYLES = `
 
   .sd-hero {
     position: relative;
-    background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #0f3460 100%);
     padding: clamp(5rem,10vw,8rem) clamp(1.5rem,5vw,3rem) clamp(3rem,6vw,5rem);
     overflow: hidden;
+    isolation: isolate;
+  }
+  /* Video Background */
+  .sd-hero-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+  }
+  /* Dark Overlay for better text readability */
+  .sd-hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    z-index: -1;
+  }
+  /* Gradient overlay to blend edges */
+  .sd-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(15,15,26,0.7) 0%, rgba(26,26,46,0.6) 100%);
+    z-index: -1;
   }
   .sd-hero-dots {
     position: absolute; inset: 0; pointer-events: none;
     background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
     background-size: 30px 30px;
+    z-index: 1;
   }
-  .sd-hero-glow {
-    position: absolute; width: 600px; height: 600px; pointer-events: none;
-    background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 65%);
-    top: -200px; right: -100px;
-  }
-  .sd-hero-inner { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; }
+  .sd-hero-inner { position: relative; z-index: 2; max-width: 860px; margin: 0 auto; }
 
   .sd-breadcrumb {
     display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-    font-size: 0.75rem; color: rgba(255,255,255,0.45); margin-bottom: 2rem;
+    font-size: 0.75rem; color: rgba(255,255,255,0.7); margin-bottom: 2rem;
   }
-  .sd-breadcrumb a { color: rgba(255,255,255,0.45); text-decoration: none; transition: color 0.2s; }
-  .sd-breadcrumb a:hover { color: rgba(255,255,255,0.8); }
-  .sd-bc-sep { opacity: 0.3; }
-  .sd-bc-cur { color: rgba(255,255,255,0.7); }
+  .sd-breadcrumb a { color: rgba(255,255,255,0.7); text-decoration: none; transition: color 0.2s; }
+  .sd-breadcrumb a:hover { color: rgba(255,255,255,0.95); }
+  .sd-bc-sep { opacity: 0.4; }
+  .sd-bc-cur { color: rgba(255,255,255,0.85); }
 
-  .sd-icon-wrap {
-    width: 80px; height: 80px; border-radius: 20px; margin-bottom: 1.8rem;
-    background: rgba(99,102,241,0.2); border: 1px solid rgba(99,102,241,0.3);
-    display: flex; align-items: center; justify-content: center; color: #a5b4fc;
-  }
   .sd-hero h1 {
     font-size: clamp(2.2rem,5vw,4rem); font-weight: 700; color: #fff;
     letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 1.2rem;
@@ -126,7 +89,7 @@ const PAGE_STYLES = `
     -webkit-background-clip: text; background-clip: text; color: transparent;
   }
   .sd-hero-sub {
-    font-size: clamp(1rem,1.8vw,1.15rem); color: rgba(255,255,255,0.6);
+    font-size: clamp(1rem,1.8vw,1.15rem); color: rgba(255,255,255,0.85);
     line-height: 1.75; max-width: 600px; margin-bottom: 2.5rem;
   }
   .sd-hero-meta { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
@@ -135,6 +98,7 @@ const PAGE_STYLES = `
     background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3);
     padding: 0.5rem 1.2rem; border-radius: 100px;
     font-size: 0.8rem; font-weight: 700; color: #a5b4fc; letter-spacing: 0.05em;
+    backdrop-filter: blur(4px);
   }
   .sd-cta-btn {
     display: inline-flex; align-items: center; gap: 10px;
@@ -242,7 +206,7 @@ function toServiceUrl(slug) {
   const parts = slug.split('-');
   const prefix = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
   const rest = parts.slice(1).join('-');
-  return rest ? `/service/${prefix}/${rest}` : `/service/${prefix}`;
+  return rest ? `/${prefix}/${rest}` : `/${prefix}`;
 }
 
 export default function ServiceDetailPage({ service, related = [], setting = null }) {
@@ -252,9 +216,9 @@ export default function ServiceDetailPage({ service, related = [], setting = nul
   }, [service?.id]);
 
   // ── Dynamic values from setting ──────────────────────────────────────────
-  const siteName  = setting?.website_title || 'Nikhil Sharma';
-  const sitePhone = setting?.phone         || null;
-  const siteEmail = setting?.email         || null;
+  const siteName = setting?.website_title || 'Nikhil Sharma';
+  const sitePhone = setting?.phone || null;
+  const siteEmail = setting?.email || null;
 
   if (!service) {
     return (
@@ -285,8 +249,10 @@ export default function ServiceDetailPage({ service, related = [], setting = nul
 
   const safeTitle = service.title || 'Service';
   const titleWords = safeTitle.split(' ');
-  const titleMain  = titleWords.length > 1 ? titleWords.slice(0, -1).join(' ') : '';
-  const titleLast  = titleWords[titleWords.length - 1] || safeTitle;
+  const titleMain = titleWords.length > 1 ? titleWords.slice(0, -1).join(' ') : '';
+  const titleLast = titleWords[titleWords.length - 1] || safeTitle;
+
+  const videoSrc = "https://player-vz-ba8aac0b-131.pek3.piluli.com/pexels_videos/33838590/33838590_2560_1440_60fps.mp4";
 
   return (
     <main className="sd-root">
@@ -299,10 +265,21 @@ export default function ServiceDetailPage({ service, related = [], setting = nul
 
       <style>{PAGE_STYLES}</style>
 
-      {/* ── HERO ── */}
+      {/* ── HERO WITH VIDEO BACKGROUND ── */}
       <section className="sd-hero">
+        {/* Background Video */}
+        <video
+          className="sd-hero-video"
+          autoPlay
+          loop
+          muted
+          playsInline
+        >
+          <source src="/videos/robot-bg.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+
         <div className="sd-hero-dots" />
-        <div className="sd-hero-glow" />
         <div className="sd-hero-inner">
 
           <nav className="sd-breadcrumb" aria-label="Breadcrumb">
@@ -330,8 +307,8 @@ export default function ServiceDetailPage({ service, related = [], setting = nul
             {service.price_range && (
               <span className="sd-price-badge">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="12" y1="1" x2="12" y2="23"/>
-                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                  <line x1="12" y1="1" x2="12" y2="23" />
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                 </svg>
                 {service.price_range}
               </span>
@@ -339,14 +316,14 @@ export default function ServiceDetailPage({ service, related = [], setting = nul
             <Link href="/contact" className="sd-cta-btn">
               {service.cta_text || 'Get a Free Quote'}
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
+                <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ── BODY ── */}
+      {/* ── BODY (Rest of the content remains exactly the same) ── */}
       <div className="sd-body">
         <div className="sd-grid">
 
@@ -374,7 +351,7 @@ export default function ServiceDetailPage({ service, related = [], setting = nul
                     <div key={i} className="sd-feat-item">
                       <span className="sd-feat-check">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                          <polyline points="20 6 9 17 4 12"/>
+                          <polyline points="20 6 9 17 4 12" />
                         </svg>
                       </span>
                       {feat}
@@ -393,7 +370,7 @@ export default function ServiceDetailPage({ service, related = [], setting = nul
               <Link href="/contact" className="sd-cta-card-btn">
                 Contact Me
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                  <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
               </Link>
             </div>
@@ -404,8 +381,8 @@ export default function ServiceDetailPage({ service, related = [], setting = nul
                 {[
                   { label: 'Location', value: 'Jaipur, India (Remote OK)' },
                   { label: 'Delivery', value: '2–12 weeks depending on scope' },
-                  { label: 'Stack',    value: 'React, Laravel, Flutter, PHP' },
-                  { label: 'Support',  value: 'Post-launch maintenance available' },
+                  { label: 'Stack', value: 'React, Laravel, Flutter, PHP' },
+                  { label: 'Support', value: 'Post-launch maintenance available' },
                   ...(sitePhone ? [{ label: 'Phone', value: sitePhone }] : []),
                   ...(siteEmail ? [{ label: 'Email', value: siteEmail }] : []),
                 ].map(item => (
@@ -419,7 +396,7 @@ export default function ServiceDetailPage({ service, related = [], setting = nul
 
             <Link href="/services" className="sd-back-btn" data-aos="fade-left" data-aos-delay="160" data-aos-duration="600">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <path d="M19 12H5M12 19l-7-7 7-7"/>
+                <path d="M19 12H5M12 19l-7-7 7-7" />
               </svg>
               All Services
             </Link>
@@ -441,7 +418,7 @@ export default function ServiceDetailPage({ service, related = [], setting = nul
                   <span className="sd-related-arrow">
                     View Details
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <path d="M5 12h14M12 5l7 7-7 7"/>
+                      <path d="M5 12h14M12 5l7 7-7 7" />
                     </svg>
                   </span>
                 </Link>

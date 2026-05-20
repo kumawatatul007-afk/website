@@ -328,7 +328,7 @@ export default function KeywordDetailPage({ keyword, services = [], relatedKeywo
                     const parts = (svc.slug || '').split('-');
                     const prefix = parts[0] ? parts[0].charAt(0).toUpperCase() + parts[0].slice(1) : '';
                     const rest = parts.slice(1).join('-');
-                    const href = prefix && rest ? `/service/${prefix}/${rest}` : prefix ? `/service/${prefix}` : '/services';
+                    const href = prefix && rest ? `/${prefix}/${rest}` : prefix ? `/${prefix}` : '/services';
                     return (
                       <Link key={svc.id} href={href} className="kd-service-link">
                         <span className="kd-service-link-title">{svc.title}</span>

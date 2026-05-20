@@ -26,9 +26,21 @@ class PublicController extends Controller
             ->take(6)
             ->get(['id', 'title', 'image', 'website_link', 'short_description', 'slug']);
 
-        $services = \App\Models\Service::where('is_active', true)
-            ->orderBy('sort_order')
-            ->get(['id', 'title', 'subtitle', 'slug', 'description', 'features', 'cta_text']);
+        $services = BlogPost::where('type', 1)
+            ->where('status', 1)
+            ->latest()
+            ->get(['id', 'title', 'slug', 'meta_description', 'content', 'tags'])
+            ->map(function ($post) {
+                return [
+                    'id'          => $post->id,
+                    'title'       => $post->title,
+                    'subtitle'    => $post->meta_description,
+                    'slug'        => $post->slug,
+                    'description' => $post->content,
+                    'features'    => $post->tags ? array_map('trim', explode(',', $post->tags)) : [],
+                    'cta_text'    => 'Get a Quote',
+                ];
+            });
 
         $setting  = \App\Models\Setting::first();
         $siteName = $setting?->website_title ?: 'Nikhil Sharma';
@@ -260,9 +272,22 @@ class PublicController extends Controller
      */
     public function services()
     {
-        $services = Service::where('is_active', true)
-            ->orderBy('sort_order')
-            ->get(['id', 'title', 'subtitle', 'slug', 'price_range', 'description', 'features', 'cta_text']);
+        $services = BlogPost::where('type', 1)
+            ->where('status', 1)
+            ->latest()
+            ->get(['id', 'title', 'slug', 'meta_description', 'content', 'tags'])
+            ->map(function ($post) {
+                return [
+                    'id'          => $post->id,
+                    'title'       => $post->title,
+                    'subtitle'    => $post->meta_description,
+                    'slug'        => $post->slug,
+                    'price_range' => null,
+                    'description' => $post->content,
+                    'features'    => $post->tags ? array_map('trim', explode(',', $post->tags)) : [],
+                    'cta_text'    => 'Get a Quote',
+                ];
+            });
 
         $setting  = Setting::first();
         $siteName = $setting?->website_title ?: 'Nikhil Sharma';
@@ -385,9 +410,9 @@ class PublicController extends Controller
         $rest   = $parts[1] ?? '';
 
         if ($rest) {
-            return "/service/{$prefix}/{$rest}";
+            return "/{$prefix}/{$rest}";
         }
-        return "/service/{$prefix}";
+        return "/{$prefix}";
     }
 
     /**
@@ -415,15 +440,43 @@ class PublicController extends Controller
         // Reconstruct slug: "Web" + "development" → "web-development"
         $slug = strtolower($prefix) . '-' . $rest;
 
-        $service = Service::where('slug', $slug)
-            ->where('is_active', true)
+        $blogPost = BlogPost::where('slug', $slug)
+            ->where('type', 1)
+            ->where('status', 1)
             ->firstOrFail();
 
-        $related = Service::where('is_active', true)
+        $service = (object)[
+            'id'               => $blogPost->id,
+            'title'            => $blogPost->title,
+            'subtitle'         => $blogPost->meta_description,
+            'slug'             => $blogPost->slug,
+            'price_range'      => null,
+            'description'      => $blogPost->content,
+            'features'         => $blogPost->tags ? array_map('trim', explode(',', $blogPost->tags)) : [],
+            'cta_text'         => 'Get a Quote',
+            'meta_title'       => $blogPost->title,
+            'meta_description' => $blogPost->meta_description,
+            'meta_keyword'     => $blogPost->meta_keywords_plain,
+        ];
+
+        $related = BlogPost::where('type', 1)
+            ->where('status', 1)
             ->where('id', '!=', $service->id)
-            ->orderBy('sort_order')
+            ->latest()
             ->take(3)
-            ->get(['id', 'title', 'subtitle', 'slug', 'price_range', 'cta_text']);
+            ->get(['id', 'title', 'slug', 'meta_description', 'content', 'tags'])
+            ->map(function ($post) {
+                return [
+                    'id'          => $post->id,
+                    'title'       => $post->title,
+                    'subtitle'    => $post->meta_description,
+                    'slug'        => $post->slug,
+                    'price_range' => null,
+                    'description' => $post->content,
+                    'features'    => $post->tags ? array_map('trim', explode(',', $post->tags)) : [],
+                    'cta_text'    => 'Get a Quote',
+                ];
+            });
 
         $setting  = Setting::first();
         $siteName = $setting?->website_title ?: 'Nikhil Sharma';
@@ -499,6 +552,15 @@ class PublicController extends Controller
      */
     public function keywordDetailNew($prefix, $service, $location = null)
     {
+        if (!$location) {
+            // Check if this matches a Service (BlogPost type=1)
+            $slug = strtolower($prefix) . '-' . $service;
+            $blogPost = BlogPost::where('slug', $slug)->where('type', 1)->where('status', 1)->first();
+            if ($blogPost) {
+                return $this->serviceDetailNew($prefix, $service);
+            }
+        }
+
         $setting     = Setting::first();
 
         // Check both strating_keyword and service_keyword
@@ -533,8 +595,9 @@ class PublicController extends Controller
             abort(404);
         }
 
-        $services = Service::where('is_active', true)
-            ->orderBy('sort_order')
+        $services = BlogPost::where('type', 1)
+            ->where('status', 1)
+            ->latest()
             ->take(10)
             ->get(['id', 'title', 'slug']);
 

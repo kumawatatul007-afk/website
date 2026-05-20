@@ -37,13 +37,13 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
 
   // Portfolio items from database (Inertia props se)
   const mapPortfolio = (p) => ({
-    id:       p.id,
-    title:    p.title,
+    id: p.id,
+    title: p.title,
     category: p.short_description || '',
-    image:    p.image
+    image: p.image
       ? (p.image.startsWith('http') ? p.image : `/images/portfolio/${p.image}`)
       : (p.image_url || 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/project-5.jpg'),
-    url:      p.website_link || null,
+    url: p.website_link || null,
   });
 
   const [portfolios, setPortfolios] = useState(
@@ -56,7 +56,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
       fetch('/api/portfolio')
         .then(res => res.json())
         .then(data => setPortfolios(data.slice(0, 6).map(mapPortfolio)))
-        .catch(() => {});
+        .catch(() => { });
     }
   }, []);
 
@@ -70,7 +70,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
     fetch('/api/testimonials')
       .then(res => res.json())
       .then(data => { if (Array.isArray(data) && data.length > 0) setTestimonials(data); })
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   // Video modal state
@@ -226,12 +226,12 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
     if (setting && setting.service_keyword) {
       return setting.service_keyword.split(',').map(entry => {
         const parts = entry.trim().split('|');
-        return { title: parts[0] ? parts[0].trim() : '', slug: parts[1] ? parts[1].trim() : '' };
+        return { title: parts[0] ? parts[0].trim() : '', slug: parts[1] ? parts[1].trim() : '', isFallback: false };
       }).filter(s => s.title);
     }
     // Fallback: use DB service titles with their slugs
     if (dbServices && dbServices.length > 0) {
-      return dbServices.map(s => ({ title: s.title, slug: s.slug }));
+      return dbServices.map(s => ({ title: s.title, slug: s.slug, isFallback: true }));
     }
     return [];
   })();
@@ -378,19 +378,19 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
     const preloaderKeywords = keywordHighlights.length > 0
       ? keywordHighlights
       : [
-          'Best Software Developer in Jaipur',
-          'Best IT Freelancer in Jaipur',
-          'Best Website Developer in Jaipur',
-          'Best PHP Developer in Jaipur',
-          'Best Mobile Application Development in Jaipur',
-          'Best Front-End Developer in Jaipur',
-          'Best SQL Database Developer in Jaipur',
-          'Best Freelancers Hire in Jaipur',
-          'Best Software Developer in Rajasthan',
-          'Best Website Developer in Rajasthan',
-          'Best IT Freelancer in Rajasthan',
-          'Best PHP Developer in Rajasthan',
-        ];
+        'Best Software Developer in Jaipur',
+        'Best IT Freelancer in Jaipur',
+        'Best Website Developer in Jaipur',
+        'Best PHP Developer in Jaipur',
+        'Best Mobile Application Development in Jaipur',
+        'Best Front-End Developer in Jaipur',
+        'Best SQL Database Developer in Jaipur',
+        'Best Freelancers Hire in Jaipur',
+        'Best Software Developer in Rajasthan',
+        'Best Website Developer in Rajasthan',
+        'Best IT Freelancer in Rajasthan',
+        'Best PHP Developer in Rajasthan',
+      ];
     // Duplicate for seamless infinite scroll
     const tickerItems = [...preloaderKeywords, ...preloaderKeywords];
 
@@ -608,7 +608,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
           ]
         }]}
       />
-      
+
       {/* Back to top button with scroll progress */}
       {showBackToTop && (
         <button className="back-to-top-btn" onClick={scrollToTop}>
@@ -650,7 +650,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
                 </p>
               </div>
               <p className="hero-description" data-aos="zoom-out" data-aos-delay="300" data-aos-duration="1000">
-              Hi, my name is Nikhil Sharma . I'm freelancer in India and throughout the Middle East. Over the past few years I have helped many small business owners in achieveing a presence online by developing quality websites and implementing successful online marketing strategies. I am an expert on helping start-up business and entrepreneurs who want an online presence with a simple, clean & effective websites but dont want to pay the high fees to larger web design corporations are charging. I believe in providing authentic and quality web development services at an affordable margin so that even small businesses can digitalize their services. I'm also a Full Stack Developer with over 8 Years of Exprience in IT              </p>
+                Hi, my name is Nikhil Sharma . I'm freelancer in India and throughout the Middle East. Over the past few years I have helped many small business owners in achieveing a presence online by developing quality websites and implementing successful online marketing strategies. I am an expert on helping start-up business and entrepreneurs who want an online presence with a simple, clean & effective websites but dont want to pay the high fees to larger web design corporations are charging. I believe in providing authentic and quality web development services at an affordable margin so that even small businesses can digitalize their services. I'm also a Full Stack Developer with over 8 Years of Exprience in IT              </p>
               <div className="hero-buttons" data-aos="fade-up" data-aos-delay="400" data-aos-duration="1000">
                 {/* WhatsApp Button (Replacing DOWNLOAD CV) */}
                 <a
@@ -661,14 +661,14 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
                   aria-label="Chat on WhatsApp"
                 >
                   <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
                   </svg>
                   <span>Chat on WhatsApp</span>
                 </a>
                 <button className="hero-btn-watch" onClick={() => setVideoOpen(true)}>
                   <span className="hero-play-circle">
                     <svg viewBox="0 0 24 24" fill="currentColor" className="hero-play-icon">
-                      <path d="M8 5v14l11-7z"/>
+                      <path d="M8 5v14l11-7z" />
                     </svg>
                   </span>
                   <span className="hero-watch-text">Watch Intro</span>
@@ -732,7 +732,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
                     const parts = service.slug.split('-');
                     const prefix = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
                     const rest = parts.slice(1).join('-');
-                    return rest ? `/service/${prefix}/${rest}` : `/service/${prefix}`;
+                    return rest ? `/${prefix}/${rest}` : `/${prefix}`;
                   })()}
                   className="svc-card-link"
                 >
@@ -771,7 +771,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
             </div>
             <div className="about-text-col" data-aos="fade-left" data-aos-delay="200" data-aos-duration="1000">
               <p className="about-description">
-              I am a Jaipur Rajasthan-based Full Stack Developer & Database architect with a focus on Software Development, Web Application, Mobile Application development. I am passionate about building excellent software that improves the lives of those around me.I have a diverse range of experience having worked across various fields and industries. I specialize in creating software for clients ranging from individuals and small-businesses all the way to large enterprise corporations. What would you do if you had a software expert available at your fingertips? I love helping pepole to build Awesome Application.              </p>
+                I am a Jaipur Rajasthan-based Full Stack Developer & Database architect with a focus on Software Development, Web Application, Mobile Application development. I am passionate about building excellent software that improves the lives of those around me.I have a diverse range of experience having worked across various fields and industries. I specialize in creating software for clients ranging from individuals and small-businesses all the way to large enterprise corporations. What would you do if you had a software expert available at your fingertips? I love helping pepole to build Awesome Application.              </p>
               <div className="about-checklist">
                 {[
                   'Holistic Approach',
@@ -847,10 +847,10 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
             <div className="edu-item" data-aos="fade-right" data-aos-delay="100" data-aos-duration="800">
               <div className="edu-item-left edu-item-logo-side">
                 <div className="edu-item-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" /></svg>
                 </div>
                 <h4 className="edu-item-company">Apple</h4>
-                <p className="edu-item-date">Jan 2023 – May 2024</p> 
+                <p className="edu-item-date">Jan 2023 – May 2024</p>
               </div>
               <div className="edu-item-dot"></div>
               <div className="edu-item-right edu-item-text-side">
@@ -868,7 +868,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
               <div className="edu-item-dot"></div>
               <div className="edu-item-right edu-item-logo-side">
                 <div className="edu-item-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg>
                 </div>
                 <h4 className="edu-item-company">Facebook</h4>
                 <p className="edu-item-date">June 2020 – Jan 2023</p>
@@ -879,7 +879,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
             <div className="edu-item" data-aos="fade-right" data-aos-delay="300" data-aos-duration="800">
               <div className="edu-item-left edu-item-logo-side">
                 <div className="edu-item-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.001 16.709c-1.013-1.271-1.609-2.386-1.808-3.34-.197-.769-.12-1.385.218-1.848.357-.532.89-.791 1.589-.791s1.231.259 1.589.796c.335.458.419 1.075.215 1.848-.218.974-.813 2.087-1.808 3.341l.005-.006zm7.196.855c-.14.934-.775 1.708-1.65 2.085-1.687.734-3.359-.437-4.789-2.026 2.365-2.961 2.803-5.268 1.787-6.758-.596-.855-1.449-1.271-2.544-1.271-2.206 0-3.419 1.867-2.942 4.034.276 1.173 1.013 2.506 2.186 3.996-.735.813-1.432 1.391-2.047 1.748-.478.258-.934.418-1.37.456-2.008.299-3.582-1.647-2.867-3.656.1-.259.297-.734.634-1.471l.019-.039c1.097-2.382 2.43-5.088 3.961-8.09l.039-.1.435-.836c.338-.616.477-.892 1.014-1.231.258-.157.576-.235.934-.235.715 0 1.271.418 1.511.753.118.18.259.419.436.716l.419.815.06.119c1.53 3.001 2.863 5.702 3.955 8.089l.02.019.401.915.237.573c.183.459.221.915.16 1.393z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.001 16.709c-1.013-1.271-1.609-2.386-1.808-3.34-.197-.769-.12-1.385.218-1.848.357-.532.89-.791 1.589-.791s1.231.259 1.589.796c.335.458.419 1.075.215 1.848-.218.974-.813 2.087-1.808 3.341l.005-.006zm7.196.855c-.14.934-.775 1.708-1.65 2.085-1.687.734-3.359-.437-4.789-2.026 2.365-2.961 2.803-5.268 1.787-6.758-.596-.855-1.449-1.271-2.544-1.271-2.206 0-3.419 1.867-2.942 4.034.276 1.173 1.013 2.506 2.186 3.996-.735.813-1.432 1.391-2.047 1.748-.478.258-.934.418-1.37.456-2.008.299-3.582-1.647-2.867-3.656.1-.259.297-.734.634-1.471l.019-.039c1.097-2.382 2.43-5.088 3.961-8.09l.039-.1.435-.836c.338-.616.477-.892 1.014-1.231.258-.157.576-.235.934-.235.715 0 1.271.418 1.511.753.118.18.259.419.436.716l.419.815.06.119c1.53 3.001 2.863 5.702 3.955 8.089l.02.019.401.915.237.573c.183.459.221.915.16 1.393z" /></svg>
                 </div>
                 <h4 className="edu-item-company">Airbnb</h4>
                 <p className="edu-item-date">March 2019 – May 2020</p>
@@ -900,7 +900,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
               <div className="edu-item-dot"></div>
               <div className="edu-item-right edu-item-logo-side">
                 <div className="edu-item-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z" /></svg>
                 </div>
                 <h4 className="edu-item-company">University</h4>
                 <p className="edu-item-date">March 2016 – March 2019</p>
@@ -910,7 +910,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
             <div className="edu-item" data-aos="fade-right" data-aos-delay="500" data-aos-duration="800">
               <div className="edu-item-left edu-item-logo-side">
                 <div className="edu-item-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z" /></svg>
                 </div>
                 <h4 className="edu-item-company">University</h4>
                 <p className="edu-item-date">March 2013 – March 2016</p>
@@ -971,32 +971,32 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
             {portfolios.length === 0
               ? Array.from({ length: 6 }).map((_, i) => <ShimmerPortfolioCard key={i} />)
               : portfolios.map((project, idx) => (
-              <a key={project.id} href={`/portfolio/${project.id}`} style={{ textDecoration: 'none' }}>
-              <div className="port-item" data-aos="zoom-in" data-aos-delay={idx * 100} data-aos-duration="800">
-                <div className="port-img-wrap">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="port-img"
-                    loading="lazy"
-                    decoding="async"
-                    width="400"
-                    height="300"
-                    data-aos="fade-in"
-                    data-aos-delay={idx * 150}
-                    data-aos-duration="600"
-                    onError={e => { e.target.src = 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/project-5.jpg'; }}
-                  />
-                  <div className="port-overlay">
-                    <div className="port-overlay-content">
-                      <h4 className="port-overlay-title">{project.title}</h4>
-                      {project.category && <p className="port-overlay-cat">{project.category}</p>}
+                <a key={project.id} href={`/portfolio/${project.id}`} style={{ textDecoration: 'none' }}>
+                  <div className="port-item" data-aos="zoom-in" data-aos-delay={idx * 100} data-aos-duration="800">
+                    <div className="port-img-wrap">
+                      <img
+                        src={project.image}
+                        alt={project.title}
+                        className="port-img"
+                        loading="lazy"
+                        decoding="async"
+                        width="400"
+                        height="300"
+                        data-aos="fade-in"
+                        data-aos-delay={idx * 150}
+                        data-aos-duration="600"
+                        onError={e => { e.target.src = 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/project-5.jpg'; }}
+                      />
+                      <div className="port-overlay">
+                        <div className="port-overlay-content">
+                          <h4 className="port-overlay-title">{project.title}</h4>
+                          {project.category && <p className="port-overlay-cat">{project.category}</p>}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-              </a>
-            ))}
+                </a>
+              ))}
           </div>
           <div style={{ textAlign: 'center', marginTop: '2.5rem' }} data-aos="fade-up" data-aos-delay="200">
             <a href="/portfolio" className="view-all-btn">
@@ -1034,9 +1034,9 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
                 >
                   {/* Star rating */}
                   <div className="testi-stars" aria-label={`${t.rating || 5} out of 5 stars`}>
-                    {[1,2,3,4,5].map(s => (
+                    {[1, 2, 3, 4, 5].map(s => (
                       <svg key={s} viewBox="0 0 20 20" fill={s <= (t.rating || 5) ? '#f59e0b' : '#e5e7eb'} width="14" height="14">
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                       </svg>
                     ))}
                   </div>
@@ -1093,13 +1093,13 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
           <p className="clients-label">TRUSTED BY CLIENTS & FEATURED ON</p>
           <div className="clients-logos-row">
             {[
-              { name: 'Upwork',     href: 'https://www.upwork.com/freelancers/nikhilsharma',          abbr: 'UW' },
-              { name: 'Clutch',     href: 'https://clutch.co/profile/nikhil-sharma-developer',        abbr: 'CL' },
-              { name: 'GoodFirms', href: 'https://www.goodfirms.co/company/nikhil-sharma',            abbr: 'GF' },
-              { name: 'Sulekha',   href: 'https://www.sulekha.com/nikhilsharma',                      abbr: 'SU' },
-              { name: 'Justdial',  href: 'https://www.justdial.com/nikhilsharma',                     abbr: 'JD' },
-              { name: 'LinkedIn',  href: 'https://www.linkedin.com/in/nikhil-sharma-jaipur',          abbr: 'LI' },
-              { name: 'GitHub',    href: 'https://github.com/nikhilsharma',                           abbr: 'GH' },
+              { name: 'Upwork', href: 'https://www.upwork.com/freelancers/nikhilsharma', abbr: 'UW' },
+              { name: 'Clutch', href: 'https://clutch.co/profile/nikhil-sharma-developer', abbr: 'CL' },
+              { name: 'GoodFirms', href: 'https://www.goodfirms.co/company/nikhil-sharma', abbr: 'GF' },
+              { name: 'Sulekha', href: 'https://www.sulekha.com/nikhilsharma', abbr: 'SU' },
+              { name: 'Justdial', href: 'https://www.justdial.com/nikhilsharma', abbr: 'JD' },
+              { name: 'LinkedIn', href: 'https://www.linkedin.com/in/nikhil-sharma-jaipur', abbr: 'LI' },
+              { name: 'GitHub', href: 'https://github.com/nikhilsharma', abbr: 'GH' },
             ].map((c) => (
               <a
                 key={c.name}
@@ -1137,46 +1137,46 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
                 href={`/${post.slug || post.id}`}
                 style={{ textDecoration: 'none', color: 'inherit' }}
               >
-              <div
-                className={`blog-card ${blogVisible ? 'blog-card-visible' : ''}`}
-                style={{ transitionDelay: `${0.1 + i * 0.15}s` }}
-                data-aos="fade-up"
-                data-aos-delay={i * 150}
-                data-aos-duration="800"
-              > 
-                <div className="blog-img-wrap">
-                  <img src={
-                    post.main_image
-                      ? (post.main_image.startsWith('http') ? post.main_image : `/images/blogs/${post.main_image}`)
-                      : 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/blog-fi-1.jpg'
-                  } alt={post.title} className="blog-img" loading="lazy" decoding="async" width="400" height="240"
-                    onError={e => { e.target.src = 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/blog-fi-1.jpg'; }}
-                  />
-                </div>
-                <div className="blog-card-body">
-                  <h4 className="blog-card-title">{post.title}</h4>
-                  <p className="blog-card-excerpt">
-                    {post.meta_description
-                      ? (post.meta_description.length > 120 ? post.meta_description.slice(0, 120) + '...' : post.meta_description)
-                      : (post.content ? post.content.replace(/<[^>]*>/g, '').slice(0, 120) + '...' : '')
-                    }
-                  </p>
-                  <div className="blog-card-meta">
-                    <div className="blog-card-author-wrap">
-                      <div className="blog-card-avatar">
-                        <img
-                          src="https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/client-profile-1.jpg"
-                          alt="Nikhil Sharma"
-                        />
+                <div
+                  className={`blog-card ${blogVisible ? 'blog-card-visible' : ''}`}
+                  style={{ transitionDelay: `${0.1 + i * 0.15}s` }}
+                  data-aos="fade-up"
+                  data-aos-delay={i * 150}
+                  data-aos-duration="800"
+                >
+                  <div className="blog-img-wrap">
+                    <img src={
+                      post.main_image
+                        ? (post.main_image.startsWith('http') ? post.main_image : `/images/blogs/${post.main_image}`)
+                        : 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/blog-fi-1.jpg'
+                    } alt={post.title} className="blog-img" loading="lazy" decoding="async" width="400" height="240"
+                      onError={e => { e.target.src = 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/blog-fi-1.jpg'; }}
+                    />
+                  </div>
+                  <div className="blog-card-body">
+                    <h4 className="blog-card-title">{post.title}</h4>
+                    <p className="blog-card-excerpt">
+                      {post.meta_description
+                        ? (post.meta_description.length > 120 ? post.meta_description.slice(0, 120) + '...' : post.meta_description)
+                        : (post.content ? post.content.replace(/<[^>]*>/g, '').slice(0, 120) + '...' : '')
+                      }
+                    </p>
+                    <div className="blog-card-meta">
+                      <div className="blog-card-author-wrap">
+                        <div className="blog-card-avatar">
+                          <img
+                            src="https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/client-profile-1.jpg"
+                            alt="Nikhil Sharma"
+                          />
+                        </div>
+                        <span className="blog-card-author">Nikhil Sharma</span>
                       </div>
-                      <span className="blog-card-author">Nikhil Sharma</span>
+                      <span className="blog-card-date">
+                        {post.created_at ? new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : ''}
+                      </span>
                     </div>
-                    <span className="blog-card-date">
-                      {post.created_at ? new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : ''}
-                    </span>
                   </div>
                 </div>
-              </div>
               </a>
             ))}
           </div>
@@ -1190,12 +1190,12 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
                 LET'S<br />
                 <span className="contact-title-indent">GET</span><br />
                 IN TOUCH
-              </h2> 
+              </h2>
               <div className="contact-items" ref={contactRef}>
                 <div className={`contact-item ${contactVisible ? 'contact-item-visible' : ''}`} style={{ transitionDelay: '0s' }} data-aos="fade-right" data-aos-delay="100" data-aos-duration="600">
                   <div className="contact-icon-circle">
                     <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                      <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
                     </svg>
                   </div>
                   <div className="contact-item-text">
@@ -1206,18 +1206,18 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
                 <div className={`contact-item ${contactVisible ? 'contact-item-visible' : ''}`} style={{ transitionDelay: '0.15s' }} data-aos="fade-right" data-aos-delay="250" data-aos-duration="600">
                   <div className="contact-icon-circle">
                     <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                      <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
                     </svg>
                   </div>
                   <div className="contact-item-text">
                     <h4 className="contact-item-label">PHONE</h4>
-                    <p className="contact-item-value">+91 98765 43210</p>
+                    <p className="contact-item-value">+91 95299 21038</p>
                   </div>
                 </div>
                 <div className={`contact-item ${contactVisible ? 'contact-item-visible' : ''}`} style={{ transitionDelay: '0.3s' }} data-aos="fade-right" data-aos-delay="400" data-aos-duration="600">
                   <div className="contact-icon-circle">
                     <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                     </svg>
                   </div>
                   <div className="contact-item-text">
@@ -1247,7 +1247,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
                     }),
                   })
                     .then(res => res.ok && e.target.reset())
-                    .catch(() => {});
+                    .catch(() => { });
                 }}
               >
                 <div className="contact-field">
@@ -1268,14 +1268,14 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
               </form>
               {/* WhatsApp secondary CTA */}
               <a
-                href="https://wa.me/919876543210?text=Hi%20Nikhil%2C%20I%20found%20your%20portfolio%20and%20would%20like%20to%20discuss%20a%20project."
+                href="https://wa.me/919529921038?text=Hi%20Nikhil%2C%20I%20found%20your%20portfolio%20and%20would%20like%20to%20discuss%20a%20project."
                 target="_blank"
                 rel="noopener noreferrer"
                 className="whatsapp-cta-btn"
                 aria-label="Chat on WhatsApp"
               >
                 <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
                 </svg>
                 Chat on WhatsApp
               </a>
@@ -1321,19 +1321,29 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
               <p className="keywords-title">#SERVICES</p>
               <div className="keywords-chips" data-lenis-prevent>
                 {serviceHighlights.map((svc, idx) => {
-                  // Service chips use keyword-style URL from title
-                  // "Best Website Design Near Me" → "/Best/website-design-near-me"
-                  const title = svc.title || '';
-                  const inParts = title.split(' in ');
-                  const servicePart = (inParts[0] || title).trim();
-                  const location = (inParts[1] || '').trim();
-                  const words = servicePart.split(/\s+/);
-                  const prefix = words[0] || 'Best';
-                  const rest = words.slice(1).join(' ');
-                  const serviceSlug = rest.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-                  const href = location
-                    ? `/${prefix}/${serviceSlug}/${location}`
-                    : `/${prefix}/${serviceSlug}`;
+                  let href = '/services';
+                  if (svc.isFallback) {
+                    if (svc.slug) {
+                      const parts = svc.slug.split('-');
+                      const prefix = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
+                      const rest = parts.slice(1).join('-');
+                      href = rest ? `/${prefix}/${rest}` : `/${prefix}`;
+                    }
+                  } else {
+                    // Service chips use keyword-style URL from title
+                    // "Best Website Design Near Me" → "/Best/website-design-near-me"
+                    const title = svc.title || '';
+                    const inParts = title.split(' in ');
+                    const servicePart = (inParts[0] || title).trim();
+                    const location = (inParts[1] || '').trim();
+                    const words = servicePart.split(/\s+/);
+                    const prefix = words[0] || 'Best';
+                    const rest = words.slice(1).join(' ');
+                    const serviceSlug = rest.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+                    href = location
+                      ? `/${prefix}/${serviceSlug}/${location}`
+                      : `/${prefix}/${serviceSlug}`;
+                  }
                   return (
                     <a
                       key={idx}

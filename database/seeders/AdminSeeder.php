@@ -21,6 +21,7 @@ class AdminSeeder extends Seeder
                 'password'  => bcrypt('12345678'),
                 'role'      => 'admin',
                 'is_active' => true,
+                'number'    => '9876543210',
             ]
         );
 
@@ -32,6 +33,7 @@ class AdminSeeder extends Seeder
                 'password'  => bcrypt('admin123'),
                 'role'      => 'admin',
                 'is_active' => true,
+                'number'    => '0000000000',
             ]
         );
 

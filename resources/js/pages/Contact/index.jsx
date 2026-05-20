@@ -125,7 +125,7 @@ const ContactPage = () => {
             {/* Quick-contact CTAs - ENHANCED THICK BUTTONS */}
             <div className="contact-quick-btns">
               <a
-                href="https://wa.me/919876543210?text=Hi%20Nikhil%2C%20I%20found%20your%20portfolio%20and%20would%20like%20to%20discuss%20a%20project."
+                href="https://wa.me/919529921038?text=Hi%20Nikhil%2C%20I%20found%20your%20portfolio%20and%20would%20like%20to%20discuss%20a%20project."
                 target="_blank"
                 rel="noopener noreferrer"
                 className="contact-quick-btn contact-quick-btn--whatsapp"
