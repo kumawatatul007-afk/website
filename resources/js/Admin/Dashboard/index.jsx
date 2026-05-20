@@ -128,12 +128,11 @@ function ComboChart({ labels = [], blogs = [], messages = [] }) {
 }
 
 // ── Stat Card ─────────────────────────────────────────────────────────────────
-function StatCard({ label, value, sub, icon, gradient, sparkData, sparkColor, sparkFill, href }) {
+function StatCard({ label, value, sub, gradient, sparkData, sparkColor, sparkFill, href }) {
     return (
         <Link href={href || '#'} style={{ textDecoration: 'none' }}>
             <div className="stat-card" style={{ background: gradient }}>
                 <div className="stat-card-top">
-                    <div className="stat-icon-wrap">{icon}</div>
                     <div className="stat-spark">
                         <Sparkline data={sparkData} color={sparkColor} fill={sparkFill} />
                     </div>
@@ -173,7 +172,6 @@ export default function AdminDashboard({ stats = {}, recent_users = [], recent_m
             label: 'Total Users',
             value: stats.total_users ?? 0,
             sub: 'Registered accounts',
-            icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
             gradient: 'linear-gradient(135deg,#7c3aed 0%,#6d28d9 100%)',
             sparkData: [2,4,3,6,5,8,7,9,stats.total_users ?? 0],
             sparkColor: 'rgba(255,255,255,0.9)',
@@ -184,7 +182,6 @@ export default function AdminDashboard({ stats = {}, recent_users = [], recent_m
             label: 'Blog Posts',
             value: stats.total_blogs ?? 0,
             sub: 'Published articles',
-            icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>,
             gradient: 'linear-gradient(135deg,#2563eb 0%,#1d4ed8 100%)',
             sparkData: [1,3,2,5,4,7,6,8,stats.total_blogs ?? 0],
             sparkColor: 'rgba(255,255,255,0.9)',
@@ -192,10 +189,19 @@ export default function AdminDashboard({ stats = {}, recent_users = [], recent_m
             href: '/admin/blog',
         },
         {
+            label: 'Categories',
+            value: stats.total_categories ?? 0,
+            sub: 'Blog categories',
+            gradient: 'linear-gradient(135deg,#059669 0%,#047857 100%)',
+            sparkData: [1,2,3,3,4,4,5,5,stats.total_categories ?? 0],
+            sparkColor: 'rgba(255,255,255,0.9)',
+            sparkFill: 'rgba(255,255,255,0.15)',
+            href: '/admin/categories',
+        },
+        {
             label: 'Portfolio Items',
             value: stats.total_portfolio ?? 0,
             sub: `${stats.featured_projects ?? 0} featured`,
-            icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>,
             gradient: 'linear-gradient(135deg,#0891b2 0%,#0e7490 100%)',
             sparkData: [1,2,2,3,4,4,5,6,stats.total_portfolio ?? 0],
             sparkColor: 'rgba(255,255,255,0.9)',
@@ -206,7 +212,6 @@ export default function AdminDashboard({ stats = {}, recent_users = [], recent_m
             label: 'Unread Messages',
             value: stats.unread_messages ?? 0,
             sub: `${stats.total_messages ?? 0} total received`,
-            icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9 2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>,
             gradient: 'linear-gradient(135deg,#db2777 0%,#be185d 100%)',
             sparkData: [3,5,4,8,6,9,7,10,stats.unread_messages ?? 0],
             sparkColor: 'rgba(255,255,255,0.9)',
@@ -271,8 +276,9 @@ export default function AdminDashboard({ stats = {}, recent_users = [], recent_m
                 .db-date-time { font-size: 0.75rem; color: rgba(255,255,255,0.7); margin-top: 0.2rem; }
 
                 /* ── Stat cards ── */
-                .db-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; margin-bottom: 1.75rem; }
-                @media (max-width: 1100px) { .db-stats { grid-template-columns: repeat(2, 1fr); } }
+                .db-stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.25rem; margin-bottom: 1.75rem; }
+                @media (max-width: 1200px) { .db-stats { grid-template-columns: repeat(3, 1fr); } }
+                @media (max-width: 900px)  { .db-stats { grid-template-columns: repeat(2, 1fr); } }
                 @media (max-width: 600px)  { .db-stats { grid-template-columns: 1fr; } }
 
                 .stat-card {
@@ -285,14 +291,7 @@ export default function AdminDashboard({ stats = {}, recent_users = [], recent_m
                     overflow: hidden;
                 }
                 .stat-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.2); }
-                .stat-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem; }
-                .stat-icon-wrap {
-                    width: 46px; height: 46px;
-                    border-radius: 14px;
-                    background: rgba(255,255,255,0.2);
-                    display: flex; align-items: center; justify-content: center;
-                    flex-shrink: 0;
-                }
+                .stat-card-top { display: flex; align-items: flex-start; justify-content: flex-end; margin-bottom: 1rem; }
                 .stat-spark { opacity: 0.9; }
                 .stat-value { font-size: 2rem; font-weight: 800; color: #fff; letter-spacing: -0.04em; line-height: 1; margin-bottom: 0.35rem; }
                 .stat-label { font-size: 0.82rem; font-weight: 600; color: rgba(255,255,255,0.85); text-transform: uppercase; letter-spacing: 0.06em; }
@@ -341,13 +340,6 @@ export default function AdminDashboard({ stats = {}, recent_users = [], recent_m
                 .db-mini-card:hover { transform: translateX(4px); }
                 .db-mini-label { font-size: 0.78rem; font-weight: 600; color: #6d28d9; text-transform: uppercase; letter-spacing: 0.06em; }
                 .db-mini-val { font-size: 1.5rem; font-weight: 800; color: #4c1d95; margin-top: 0.1rem; }
-                .db-mini-icon {
-                    width: 40px; height: 40px;
-                    border-radius: 12px;
-                    background: linear-gradient(135deg, #7c3aed, #6d28d9);
-                    display: flex; align-items: center; justify-content: center;
-                    box-shadow: 0 4px 12px rgba(124,58,237,0.35);
-                }
 
                 /* ── Tables ── */
                 .db-tables { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.75rem; }
@@ -486,26 +478,23 @@ export default function AdminDashboard({ stats = {}, recent_users = [], recent_m
                                         <div className="db-mini-label">Portfolio</div>
                                         <div className="db-mini-val">{stats.total_portfolio ?? 0}</div>
                                     </div>
-                                    <div className="db-mini-icon">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
-                                    </div>
                                 </Link>
                                 <Link href="/admin/portfolio" className="db-mini-card">
                                     <div>
                                         <div className="db-mini-label">Featured Projects</div>
                                         <div className="db-mini-val">{stats.featured_projects ?? 0}</div>
                                     </div>
-                                    <div className="db-mini-icon">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                </Link>
+                                <Link href="/admin/categories" className="db-mini-card">
+                                    <div>
+                                        <div className="db-mini-label">Categories</div>
+                                        <div className="db-mini-val">{stats.total_categories ?? 0}</div>
                                     </div>
                                 </Link>
                                 <Link href="/admin/messages" className="db-mini-card">
                                     <div>
                                         <div className="db-mini-label">Total Messages</div>
                                         <div className="db-mini-val">{stats.total_messages ?? 0}</div>
-                                    </div>
-                                    <div className="db-mini-icon">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                                     </div>
                                 </Link>
                             </div>

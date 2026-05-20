@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\BlogPost;
+use App\Models\Category;
 use App\Models\ContactMessage;
 use App\Models\PortfolioItem;
 use App\Models\User;
@@ -18,6 +19,7 @@ class AdminDashboardController extends Controller
             'total_users'       => User::count(),
             'total_portfolio'   => PortfolioItem::count(),
             'total_blogs'       => BlogPost::count(),
+            'total_categories'  => Category::count(),
             'unread_messages'   => ContactMessage::where('is_read', false)->count(),
             'total_messages'    => ContactMessage::count(),
             'featured_projects' => PortfolioItem::where('is_publish', 1)->count(),
