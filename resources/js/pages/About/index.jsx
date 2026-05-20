@@ -153,7 +153,7 @@ export default function AboutPage() {
                 data-aos-duration="800"
                 data-aos-delay="200"
               >
-                Web Developer
+                Web Developer.
               </h3>
 
               <p
