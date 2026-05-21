@@ -11,7 +11,7 @@ export default function MainLayout({ children }) {
   const siteName    = setting.title || setting.website_title || 'Nikhil Sharma'
   const logoUrl     = setting.logo
     ? `/storage/${setting.logo}`
-    : 'https://www.thenikhilsharma.in/public/admin/images/logo/GUJKF-100621-yYB.png'
+    : '/images/logo.png' // local fallback logo
   const siteEmail   = setting.email   || 'nikhilsharma@thenikhilsharma.in'
   const sitePhone   = setting.phonenumber || setting.phone || '+91 95299 21038'
   const siteAddress = setting.address || 'Jaipur, Rajasthan, India'
