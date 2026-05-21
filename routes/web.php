@@ -144,7 +144,7 @@ Route::get('/{prefix}/{service}', [PublicController::class, 'keywordDetailNew'])
 Route::get('/{prefix}/{service}/{location}', [PublicController::class, 'keywordDetailNew'])
     ->where('prefix', '[A-Za-z][A-Za-z0-9]*')
     ->where('service', '[a-z0-9\-]+')
-    ->where('location', '[A-Za-z][A-Za-z0-9\s\-]*');
+    ->where('location', '[A-Za-z][A-Za-z0-9\-]*');
 
 // Contact form submission
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');

@@ -499,9 +499,10 @@ class PublicController extends Controller
 
     /**
      * Convert a keyword string to the new clean URL format.
-     * "Best Software Developer in Jaipur" → "/Best/software-developer/Jaipur"
-     * "Top 10 Website Design Near Me" → "/Top10/website-design-near-me"
-     * "No1 Website Design Near Me" → "/No1/website-design-near-me"
+     * "Best Software Developer in Jaipur"     → "/Best/software-developer/Jaipur"
+     * "Best Software Developer in Kalwar Road" → "/Best/software-developer/Kalwar-Road"
+     * "Top 10 Website Design Near Me"          → "/Top10/website-design-near-me"
+     * "No1 Website Design Near Me"             → "/No1/website-design-near-me"
      */
     public static function keywordToUrl(string $keyword): string
     {
@@ -525,7 +526,10 @@ class PublicController extends Controller
         $serviceSlug = trim($serviceSlug, '-');
 
         if ($location) {
-            return "/{$prefix}/{$serviceSlug}/{$location}";
+            // Convert location to slug: "Kalwar Road" → "Kalwar-Road"
+            $locationSlug = preg_replace('/\s+/', '-', $location);
+            $locationSlug = preg_replace('/[^A-Za-z0-9\-]/', '', $locationSlug);
+            return "/{$prefix}/{$serviceSlug}/{$locationSlug}";
         }
         return "/{$prefix}/{$serviceSlug}";
     }
@@ -592,8 +596,10 @@ class PublicController extends Controller
         $allKeywords = array_filter(array_unique($allKeywords));
 
         $keyword    = null;
-        $currentUrl = $location
-            ? strtolower("/{$prefix}/{$service}/{$location}")
+        // Normalize location: "Kalwar Road" (space) or "Kalwar-Road" (hyphen) both should match
+        $normalizedLocation = $location ? preg_replace('/\s+/', '-', trim($location)) : null;
+        $currentUrl = $normalizedLocation
+            ? strtolower("/{$prefix}/{$service}/{$normalizedLocation}")
             : strtolower("/{$prefix}/{$service}");
 
         foreach ($allKeywords as $kw) {

@@ -4,11 +4,20 @@ import AOS from 'aos';
 import 'aos/dist/aos.css';
 import SEO from '../../components/SEO';
 
-/* ── Hero Slides — 5 alag ultra-HD tech images ── */
+/* ── Hero Slides — unique HD Unsplash images for Keyword page ── */
 const HERO_SLIDES = [
-  { url: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1920&q=100&auto=format&fit=crop', label: 'Business Meeting' },
-  { url: 'https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1920&q=100&auto=format&fit=crop', label: 'Strategy Planning' },
-  { url: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1920&q=100&auto=format&fit=crop', label: 'Remote Work' },
+  {
+    url: 'https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1920&q=100&auto=format&fit=crop',
+    label: 'Strategy Planning',
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1920&q=100&auto=format&fit=crop',
+    label: 'Business Meeting',
+  },
+  {
+    url: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1920&q=100&auto=format&fit=crop',
+    label: 'Remote Collaboration',
+  },
 ];
 
 /* ── Image Slider Component ── */
@@ -261,6 +270,7 @@ function toSlug(text) {
 }
 
 // "Best Software Developer in Jaipur" → "/Best/software-developer/Jaipur"
+// "Best Software Developer in Kalwar Road" → "/Best/software-developer/Kalwar-Road"
 // "Top 10 Website Design Near Me" → "/Top10/website-design-near-me"
 function toKeywordUrl(keyword) {
   const inParts = keyword.split(' in ');
@@ -278,7 +288,11 @@ function toKeywordUrl(keyword) {
   }
   const rest = restWords.join(' ');
   const serviceSlug = rest.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  return location ? `/${prefix}/${serviceSlug}/${location}` : `/${prefix}/${serviceSlug}`;
+  // Convert location to slug: "Kalwar Road" → "Kalwar-Road"
+  const locationSlug = location
+    ? location.replace(/\s+/g, '-').replace(/[^A-Za-z0-9\-]/g, '')
+    : '';
+  return locationSlug ? `/${prefix}/${serviceSlug}/${locationSlug}` : `/${prefix}/${serviceSlug}`;
 }
 
 export default function KeywordDetailPage({ keyword, services = [], relatedKeywords = [], setting = null }) {
