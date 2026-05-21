@@ -500,6 +500,8 @@ class PublicController extends Controller
     /**
      * Convert a keyword string to the new clean URL format.
      * "Best Software Developer in Jaipur" → "/Best/software-developer/Jaipur"
+     * "Top 10 Website Design Near Me" → "/Top10/website-design-near-me"
+     * "No1 Website Design Near Me" → "/No1/website-design-near-me"
      */
     public static function keywordToUrl(string $keyword): string
     {
@@ -509,7 +511,16 @@ class PublicController extends Controller
 
         $words       = preg_split('/\s+/', $servicePart);
         $prefix      = $words[0] ?? 'Best';
-        $rest        = implode(' ', array_slice($words, 1));
+
+        // If second word is a number (e.g. "Top 10", "Top 5"), merge it into prefix
+        if (isset($words[1]) && is_numeric($words[1])) {
+            $prefix = $prefix . $words[1];
+            $restWords = array_slice($words, 2);
+        } else {
+            $restWords = array_slice($words, 1);
+        }
+
+        $rest        = implode(' ', $restWords);
         $serviceSlug = strtolower(preg_replace('/[^a-z0-9]+/i', '-', $rest));
         $serviceSlug = trim($serviceSlug, '-');
 
@@ -549,6 +560,7 @@ class PublicController extends Controller
     /**
      * Keyword detail page — /{prefix}/{service}  OR  /{prefix}/{service}/{location}
      * New clean URL: /Best/software-developer/Jaipur  OR  /Best/website-developer-for-hire
+     * Also handles: /Top10/website-design-near-me  (Top 10 merged into prefix)
      */
     public function keywordDetailNew($prefix, $service, $location = null)
     {
@@ -569,7 +581,7 @@ class PublicController extends Controller
             $allKeywords = array_merge($allKeywords, array_map('trim', explode(',', $setting->strating_keyword)));
         }
         if ($setting && $setting->service_keyword) {
-            // service_keyword format: "title|slug,title|slug" — extract titles only
+            // service_keyword format: "title|slug,title|slug" OR just "title,title"
             foreach (explode(',', $setting->service_keyword) as $entry) {
                 $parts = explode('|', trim($entry), 2);
                 if (!empty($parts[0])) {

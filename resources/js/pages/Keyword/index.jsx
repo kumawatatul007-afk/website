@@ -261,13 +261,22 @@ function toSlug(text) {
 }
 
 // "Best Software Developer in Jaipur" → "/Best/software-developer/Jaipur"
+// "Top 10 Website Design Near Me" → "/Top10/website-design-near-me"
 function toKeywordUrl(keyword) {
   const inParts = keyword.split(' in ');
   const servicePart = (inParts[0] || keyword).trim();
   const location = (inParts[1] || '').trim();
   const words = servicePart.split(/\s+/);
-  const prefix = words[0] || 'Best';
-  const rest = words.slice(1).join(' ');
+  let prefix = words[0] || 'Best';
+  let restWords;
+  // If second word is a number (e.g. "Top 10", "Top 5"), merge into prefix
+  if (words[1] && /^\d+$/.test(words[1])) {
+    prefix = prefix + words[1];
+    restWords = words.slice(2);
+  } else {
+    restWords = words.slice(1);
+  }
+  const rest = restWords.join(' ');
   const serviceSlug = rest.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   return location ? `/${prefix}/${serviceSlug}/${location}` : `/${prefix}/${serviceSlug}`;
 }

@@ -138,11 +138,11 @@ Route::get('/{slug}', [PublicController::class, 'blogDetail'])
     ->where('slug', '[a-z0-9][a-z0-9\-]+[a-z0-9]');
 // 2-segment: /Best/website-developer-for-hire  (no location)
 Route::get('/{prefix}/{service}', [PublicController::class, 'keywordDetailNew'])
-    ->where('prefix', '[A-Za-z]+')
+    ->where('prefix', '[A-Za-z][A-Za-z0-9]*')
     ->where('service', '[a-z0-9][a-z0-9\-]+');
 // 3-segment: /Best/software-developer/Jaipur  (with location)
 Route::get('/{prefix}/{service}/{location}', [PublicController::class, 'keywordDetailNew'])
-    ->where('prefix', '[A-Za-z]+')
+    ->where('prefix', '[A-Za-z][A-Za-z0-9]*')
     ->where('service', '[a-z0-9\-]+')
     ->where('location', '[A-Za-z][A-Za-z0-9\s\-]*');
 

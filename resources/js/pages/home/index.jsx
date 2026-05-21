@@ -1314,13 +1314,21 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
               <p className="keywords-title">#KEYWORD</p>
               <div className="keywords-chips" data-lenis-prevent>
                 {keywordHighlights.map((label, idx) => {
-                  // New URL format: "Best Software Developer in Jaipur" → "/Best/software-developer/Jaipur"
+                  // URL format: "Best Software Developer in Jaipur" → "/Best/software-developer/Jaipur"
+                  // "Top 10 Website Design Near Me" → "/Top10/website-design-near-me"
                   const inParts = label.split(' in ');
                   const servicePart = (inParts[0] || label).trim();
                   const location = (inParts[1] || '').trim();
                   const words = servicePart.split(/\s+/);
-                  const prefix = words[0] || 'Best';
-                  const rest = words.slice(1).join(' ');
+                  let prefix = words[0] || 'Best';
+                  let restWords;
+                  if (words[1] && /^\d+$/.test(words[1])) {
+                    prefix = prefix + words[1];
+                    restWords = words.slice(2);
+                  } else {
+                    restWords = words.slice(1);
+                  }
+                  const rest = restWords.join(' ');
                   const serviceSlug = rest.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
                   const href = location ? `/${prefix}/${serviceSlug}/${location}` : `/${prefix}/${serviceSlug}`;
                   return (
@@ -1351,15 +1359,24 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
                       href = rest ? `/${prefix}/${rest}` : `/${prefix}`;
                     }
                   } else {
-                    // Service chips use keyword-style URL from title
+                    // Build keyword-style URL from title
+                    // "Top 10 Website Design Near Me" → "/Top10/website-design-near-me"
                     // "Best Website Design Near Me" → "/Best/website-design-near-me"
                     const title = svc.title || '';
                     const inParts = title.split(' in ');
                     const servicePart = (inParts[0] || title).trim();
                     const location = (inParts[1] || '').trim();
                     const words = servicePart.split(/\s+/);
-                    const prefix = words[0] || 'Best';
-                    const rest = words.slice(1).join(' ');
+                    let prefix = words[0] || 'Best';
+                    let restWords;
+                    // If second word is a number (e.g. "Top 10", "Top 5"), merge into prefix
+                    if (words[1] && /^\d+$/.test(words[1])) {
+                      prefix = prefix + words[1];
+                      restWords = words.slice(2);
+                    } else {
+                      restWords = words.slice(1);
+                    }
+                    const rest = restWords.join(' ');
                     const serviceSlug = rest.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
                     href = location
                       ? `/${prefix}/${serviceSlug}/${location}`
