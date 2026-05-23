@@ -10,20 +10,20 @@ import './index.css';
 ───────────────────────────────────────────── */
 const HERO_SLIDES = [
   {
-    url: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&q=100&auto=format&fit=crop',
-    label: 'Team Collaboration',
+    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTy-H-aAlNcOsIEG3NkUM7ZINr388poAPsuFg&s',
+    label: 'Digital Solutions',
   },
   {
-    url: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=100&auto=format&fit=crop',
-    label: 'Modern Office',
+    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgzblunZEH_LL8eULPvLay-LdxfNQFuRQClg&s',
+    label: 'Business Growth',
   },
   {
-    url: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1920&q=100&auto=format&fit=crop',
-    label: 'Digital Innovation',
+    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDoj50mM17IIqJYWImlYTDysfmUIiEoHRgSw&s',
+    label: 'Expert Team',
   },
   {
-    url: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1920&q=100&auto=format&fit=crop',
-    label: 'Creative Workspace',
+    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTYek9Fd5UyHr-TY3EQsiZGDQ4iXx4Idh41A&s',
+    label: 'Web Development',
   },
 ];
 

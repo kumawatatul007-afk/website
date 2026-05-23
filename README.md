@@ -1,92 +1,86 @@
-# MMB IT Solutions — Laravel + React (Inertia.js)
+# My Laravel App — Setup Guide
 
-## Git Clone ke Baad Setup (Fresh Install)
+Clone karne ke baad yeh steps follow karo:
 
-Jab bhi naye machine pe ya fresh clone karo, ye steps follow karo:
+## Requirements
+- PHP 8.2+
+- Composer
+- Node.js 18+
+- MySQL
 
-### Step 1 — PHP Dependencies Install karo
+---
+
+## Step 1 — Dependencies install karo
+
 ```bash
 composer install
+npm install
 ```
 
-### Step 2 — .env File Banao
+## Step 2 — .env file banao
+
 ```bash
 cp .env.example .env
 php artisan key:generate
 ```
 
-### Step 3 — Database Setup karo
-`.env` file mein check karo:
+Phir `.env` file open karo aur apna database configure karo:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=your_database_name
+DB_USERNAME=root
+DB_PASSWORD=your_password
 ```
-DB_CONNECTION=sqlite
-```
-SQLite use ho raha hai to koi change nahi chahiye. Phir:
+
+## Step 3 — Database setup karo
+
 ```bash
-php artisan migrate --seed
-```
-Ye command:
-- Saari tables banayegi
-- Admin user create karega (email: `admin@mora.com`, password: `admin123`)
-- Site settings aur services seed karega
-
-### Step 4 — Storage Link banao
-```bash
-php artisan storage:link
-```
-
-### Step 5 — Node Modules Install karo
-```bash
-npm install
-```
-
-### Step 6 — Frontend Build karo
-```bash
-npm run build
-```
-> **Note:** `npm run dev` sirf development ke liye hai. Production ya testing ke liye `npm run build` use karo.
-
-### Step 7 — Server Chalao
-```bash
-php artisan serve
-```
-Site ab `http://localhost:8000` pe chalegi.
-
----
-
-## Kya Git Mein Nahi Hota (Isliye Clone ke Baad Setup Zaroori Hai)
-
-| File/Folder | Reason |
-|---|---|
-| `/vendor` | PHP packages — `composer install` se aata hai |
-| `/node_modules` | JS packages — `npm install` se aata hai |
-| `/public/build` | Compiled JS/CSS — `npm run build` se banta hai |
-| `.env` | Secrets/config — manually banao |
-| `database.sqlite` | Database — `migrate --seed` se banta hai |
-| `storage/*.key` | App keys — `key:generate` se banta hai |
-
----
-
-## Admin Panel
-URL: `/admin/login`
-- Email: `admin@mora.com`
-- Password: `admin123`
-
----
-
-## Common Issues
-
-**Services/Keywords 404 aa raha hai?**
-Database mein data nahi hai. Run karo:
-```bash
+php artisan migrate
 php artisan db:seed
 ```
 
-**CSS/JS nahi load ho raha?**
+## Step 4 — Storage link banao (IMPORTANT — images ke liye)
+
+```bash
+php artisan storage:link
+```
+
+> Yeh step zaroor karo warna uploaded images show nahi hongi.
+
+## Step 5 — Frontend build karo
+
 ```bash
 npm run build
 ```
 
-**Images nahi dikh rahi?**
+## Step 6 — Server start karo
+
 ```bash
-php artisan storage:link
+php artisan serve
 ```
+
+Website ab `http://localhost:8000` pe chalegi.
+
+---
+
+## Admin Login
+
+Default admin credentials (`database/seeders/AdminSeeder.php` se):
+
+| Email | Password |
+|-------|----------|
+| admin@mora.com | admin123 |
+
+---
+
+## Images / Uploads ke baare mein
+
+- `storage/app/public/` mein uploaded files hoti hain
+- `public/storage` ek symlink hai jo `storage:link` se banta hai
+- Agar images phir bhi nahi aa rahi toh dobara run karo:
+  ```bash
+  php artisan storage:link
+  ```
