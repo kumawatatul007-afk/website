@@ -171,7 +171,7 @@ export default function AboutPage() {
                 data-aos-duration="800"
                 data-aos-delay="400"
               >
-                With a deep understanding of both design and development, I specialize
+                With a deep understanding of both design and development, I specialize.
                 in creating seamless online experiences that resonate with users.
               </p>
             </div>
