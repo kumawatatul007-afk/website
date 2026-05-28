@@ -218,31 +218,36 @@ export default function PortfolioListPage({ items: dbItems }) {
           {!loading && projects.length > 0 && (
             <div className="pl-grid" ref={gridRef}>
               {projects.map((project, i) => (
-                <div
+                <a
                   key={project.id}
+                  href={project.website_link || '#'}
+                  target={project.website_link ? '_blank' : '_self'}
+                  rel="noopener noreferrer"
                   className="pl-item"
-                  style={{ transitionDelay: `${i * 0.07}s` }}
-                  onClick={() => navigate(`/portfolio/${project.id}`)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => e.key === 'Enter' && navigate(`/portfolio/${project.id}`)}
-                  aria-label={`View ${project.title}`}
+                  style={{ transitionDelay: `${i * 0.07}s`, textDecoration: 'none', display: 'block' }}
+                  aria-label={`Visit ${project.title}`}
                 >
                   <div className="pl-img-wrap">
                     <img
-                      src={project.image_url || 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/project-5.jpg'}
+                      src={
+                        project.image
+                          ? (project.image.startsWith('http') ? project.image : `/images/portfolio/${project.image}`)
+                          : (project.image_url || 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/project-5.jpg')
+                      }
                       alt={project.title}
                       className="pl-img"
                       loading="lazy"
+                      onError={e => { e.target.src = 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/project-5.jpg'; }}
                     />
                     <div className="pl-overlay">
                       <div className="pl-overlay-content">
-                        <p className="pl-overlay-cat">{project.category}</p>
+                        <p className="pl-overlay-cat">{project.short_description || project.category}</p>
                         <h4 className="pl-overlay-title">{project.title}</h4>
+                        {project.website_link && <span style={{ fontSize: '0.75rem', color: '#0A3981', fontWeight: 700, marginTop: '0.3rem', display: 'block' }}>Visit Website →</span>}
                       </div>
                     </div>
                   </div>
-                </div>
+                </a>
               ))}
             </div>
           )}

@@ -28,6 +28,8 @@ class PortfolioItem extends Model
         'is_publish',
     ];
 
+    protected $appends = ['image_url'];
+
     protected $casts = [
         'is_publish'  => 'integer',
         'category_id' => 'integer',

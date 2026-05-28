@@ -154,7 +154,7 @@ Route::get('/testimonials', function () {
             'id'       => $r->id,
             'name'     => $r->name,
             'position' => $r->designation ?? '',
-            'text'     => $r->description ?? '',
+            'text'     => html_entity_decode(strip_tags($r->description ?? ''), ENT_QUOTES | ENT_HTML5, 'UTF-8'),
             'image'    => $r->image ? url('storage/' . $r->image) : null,
         ];
     });

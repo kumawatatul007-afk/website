@@ -78,9 +78,11 @@ export default function PortfolioPage({ items: dbItems }) {
         {!loading && (
           <div className="port-grid" ref={gridRef}>
             {portfolios.map((project, i) => (
-              <Link
+              <a
                 key={project.id}
-                href={`/portfolio/${project.id}`}
+                href={project.website_link || project.image_url || '#'}
+                target={project.website_link ? '_blank' : '_self'}
+                rel="noopener noreferrer"
                 style={{ textDecoration: 'none' }}
               >
                 <div
@@ -106,21 +108,13 @@ export default function PortfolioPage({ items: dbItems }) {
                           <p className="port-overlay-cat">{project.short_description.slice(0, 80)}</p>
                         )}
                         {project.website_link && (
-                          <a
-                            className="port-link"
-                            href={project.website_link}
-                            target="_blank"
-                            rel="noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            View Project →
-                          </a>
+                          <span className="port-link">Visit Website →</span>
                         )}
                       </div>
                     </div>
                   </div>
                 </div>
-              </Link>
+              </a>
             ))}
           </div>
         )}

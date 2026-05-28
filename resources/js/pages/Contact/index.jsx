@@ -71,8 +71,8 @@ const ContactPage = () => {
                 <div className="contact-item-text">
                   <h4 className="contact-item-label">E-MAIL</h4>
                   <p className="contact-item-value">
-                    <a href="mailto:nikhilsharma@thenikhilsharma.in" style={{ color: 'inherit', textDecoration: 'none' }}>
-                      nikhilsharma@thenikhilsharma.in
+                    <a href="mailto:technikhilsharma7@gmail.com" style={{ color: 'inherit', textDecoration: 'none' }}>
+                      technikhilsharma7@gmail.com
                     </a>
                   </p>
                 </div>
@@ -136,7 +136,7 @@ const ContactPage = () => {
                 Chat on WhatsApp
               </a>
               <a
-                href="https://calendly.com/nikhilsharma/30min"
+                href="https://calendly.com/technikhilsharma7/30min"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="contact-quick-btn contact-quick-btn--calendly"

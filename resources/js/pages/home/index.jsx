@@ -383,10 +383,11 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
 
 
   const skills = [
-    { name: 'HTML', percent: 85 },
-    { name: 'CSS', percent: 90 },
-    { name: 'JAVASCRIPT', percent: 85 },
-    { name: 'FIGMA', percent: 80 }
+    { name: 'Laravel',    percent: 92 },
+    { name: 'PHP',        percent: 90 },
+    { name: 'JavaScript', percent: 85 },
+    { name: 'React',      percent: 88 },
+    { name: 'Flutter',    percent: 80 },
   ];
 
   // Skills animation - animate bars when section comes into view
@@ -759,8 +760,10 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
                   </span>
                 </p>
               </div>
-              <p className="hero-description" data-aos="zoom-out" data-aos-delay="300" data-aos-duration="1000">
-                Hi, my name is Nikhil Sharma . I'm freelancer in India and throughout the Middle East. Over the past few years I have helped many small business owners in achieveing a presence online by developing quality websites and implementing successful online marketing strategies. I am an expert on helping start-up business and entrepreneurs who want an online presence with a simple, clean & effective websites but dont want to pay the high fees to larger web design corporations are charging. I believe in providing authentic and quality web development services at an affordable margin so that even small businesses can digitalize their services. I'm also a Full Stack Developer with over 8 Years of Exprience in IT              </p>
+              <div className="hero-description" data-aos="zoom-out" data-aos-delay="300" data-aos-duration="1000">
+                <p>I'm <strong>Nikhil Sharma</strong>, a Freelance Full Stack Developer with <strong>8+ years of experience</strong> helping small businesses &amp; startups build a strong online presence — across <strong>India &amp; the Middle East</strong>.</p>
+                <p>I specialise in crafting clean, effective websites &amp; apps that are affordable, fast, and built to grow your business — without the high agency fees.</p>
+              </div>
               <div className="hero-buttons" data-aos="fade-up" data-aos-delay="400" data-aos-duration="1000">
                 {/* WhatsApp Button (Replacing DOWNLOAD CV) */}
                 <a
@@ -904,35 +907,6 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
         </div>
       </section>
 
-      {/* Services ticker — static crawlable HTML, visually animated via CSS */}
-      <div className="marquee-section" aria-label="Services offered">
-        <ul className="marquee-track" aria-hidden="false">
-          {[
-            'Custom Web Development',
-            'React JS Development',
-            'PHP Laravel Development',
-            'Mobile App Development',
-            'Flutter App Development',
-            'UI/UX Design',
-            'E-Commerce Development',
-            'SEO Optimisation',
-            'Custom Web Development',
-            'React JS Development',
-            'PHP Laravel Development',
-            'Mobile App Development',
-            'Flutter App Development',
-            'UI/UX Design',
-            'E-Commerce Development',
-            'SEO Optimisation',
-          ].map((text, idx) => (
-            <li key={idx} className="marquee-text">
-              {text}
-              {idx % 2 === 0 && <span className="marquee-star" aria-hidden="true">✦</span>}
-            </li>
-          ))}
-        </ul>
-      </div>
-
       {/* Resume/Experience Section */}
       <section className="resume-section">
         <div className="container">
@@ -1073,7 +1047,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
             </div>
             <div className="port-header-title">
               <h2 className="port-big-title" data-aos="zoom-out-down" data-aos-delay="200" data-aos-duration="1000">
-                Selected Projects — Web, App & UI/UX Work
+                My Work — Live Projects & Real Results
               </h2>
             </div>
           </div>
@@ -1081,7 +1055,13 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
             {portfolios.length === 0
               ? Array.from({ length: 6 }).map((_, i) => <ShimmerPortfolioCard key={i} />)
               : portfolios.map((project, idx) => (
-                <a key={project.id} href={`/portfolio/${project.id}`} style={{ textDecoration: 'none' }}>
+                <a
+                  key={project.id}
+                  href={project.url || `/portfolio/${project.id}`}
+                  target={project.url ? '_blank' : '_self'}
+                  rel={project.url ? 'noopener noreferrer' : undefined}
+                  style={{ textDecoration: 'none' }}
+                >
                   <div className="port-item" data-aos="zoom-in" data-aos-delay={idx * 100} data-aos-duration="800">
                     <div className="port-img-wrap">
                       <img
@@ -1101,6 +1081,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
                         <div className="port-overlay-content">
                           <h4 className="port-overlay-title">{project.title}</h4>
                           {project.category && <p className="port-overlay-cat">{project.category}</p>}
+                          {project.url && <span className="port-overlay-link">Visit Website →</span>}
                         </div>
                       </div>
                     </div>

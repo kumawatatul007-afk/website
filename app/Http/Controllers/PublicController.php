@@ -24,7 +24,10 @@ class PublicController extends Controller
         $portfolios = PortfolioItem::where('is_publish', 1)
             ->latest()
             ->take(6)
-            ->get(['id', 'title', 'image', 'website_link', 'short_description', 'slug']);
+            ->get(['id', 'title', 'image', 'website_link', 'short_description', 'slug'])
+            ->map(function ($item) {
+                return array_merge($item->toArray(), ['image_url' => $item->image_url]);
+            });
 
         $services = BlogPost::where('type', 1)
             ->where('status', 1)
@@ -194,7 +197,12 @@ class PublicController extends Controller
     {
         $items = PortfolioItem::where('is_publish', 1)
             ->latest()
-            ->get(['id', 'title', 'image', 'website_link', 'short_description', 'description', 'slug', 'category_id', 'clint_name', 'date']);
+            ->get(['id', 'title', 'image', 'website_link', 'short_description', 'description', 'slug', 'category_id', 'clint_name', 'date'])
+            ->map(function ($item) {
+                return array_merge($item->toArray(), [
+                    'image_url' => $item->image_url,
+                ]);
+            });
 
         $setting  = Setting::first();
         $siteName = $setting?->website_title ?: 'Nikhil Sharma';
@@ -218,7 +226,12 @@ class PublicController extends Controller
     {
         $items = PortfolioItem::where('is_publish', 1)
             ->latest()
-            ->get(['id', 'title', 'image', 'website_link', 'short_description', 'description', 'slug', 'category_id', 'clint_name', 'date']);
+            ->get(['id', 'title', 'image', 'website_link', 'short_description', 'description', 'slug', 'category_id', 'clint_name', 'date'])
+            ->map(function ($item) {
+                return array_merge($item->toArray(), [
+                    'image_url' => $item->image_url,
+                ]);
+            });
 
         $setting  = Setting::first();
         $siteName = $setting?->website_title ?: 'Nikhil Sharma';
@@ -246,15 +259,23 @@ class PublicController extends Controller
             ->where('id', '!=', $id)
             ->where('category_id', $item->category_id)
             ->take(3)
-            ->get(['id', 'title', 'image', 'slug']);
+            ->get(['id', 'title', 'image', 'slug'])
+            ->map(function ($r) {
+                return array_merge($r->toArray(), ['image_url' => $r->image_url]);
+            });
 
         $setting   = Setting::first();
         $siteName  = $setting?->website_title ?: 'Nikhil Sharma';
         $descText  = strip_tags($item->description ?? $item->short_description ?? '');
         $descShort = mb_substr($descText, 0, 160);
 
+        $itemData = array_merge($item->toArray(), [
+            'image_url' => $item->image_url,
+            'category'  => optional(Category::find($item->category_id))->name ?? $item->short_description ?? '',
+        ]);
+
         return Inertia::render('Portfolio/ProjectDetail/index', [
-            'item'    => $item,
+            'item'    => $itemData,
             'id'      => $id,
             'related' => $related,
             'seo'     => [

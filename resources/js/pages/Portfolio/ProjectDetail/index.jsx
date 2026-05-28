@@ -565,7 +565,7 @@ export default function ProjectDetailPage({ id, item: dbItem, related: dbRelated
               "name": project.title,
               "description": project.description ? project.description.replace(/<[^>]+>/g, '') : project.title,
               "url": typeof window !== 'undefined' ? window.location.href : '',
-              "image": project.image_url || '',
+              "image": project.image_url || (project.image ? (project.image.startsWith('http') ? project.image : `/images/portfolio/${project.image}`) : ''),
               "creator": {
                 "@type": "Person",
                 "name": "Nikhil Sharma",
@@ -601,13 +601,33 @@ export default function ProjectDetailPage({ id, item: dbItem, related: dbRelated
             <span className="pd-breadcrumb-current">{project.title}</span>
           </div>
 
-          {/* Featured Image */}
+          {/* Featured Image — clickable, opens website */}
           <div className="pd-featured-image">
             <div style={{ width: '100%' }}>
-              <img
-                src={project.image_url || 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/project-detail-fi-1.jpg'}
-                alt={project.title}
-              />
+              {project.website_link ? (
+                <a href={project.website_link} target="_blank" rel="noopener noreferrer" style={{ display: 'block' }}>
+                  <img
+                    src={
+                      project.image_url ||
+                      (project.image
+                        ? (project.image.startsWith('http') ? project.image : `/images/portfolio/${project.image}`)
+                        : 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/project-detail-fi-1.jpg')
+                    }
+                    alt={project.title}
+                    style={{ cursor: 'pointer' }}
+                  />
+                </a>
+              ) : (
+                <img
+                  src={
+                    project.image_url ||
+                    (project.image
+                      ? (project.image.startsWith('http') ? project.image : `/images/portfolio/${project.image}`)
+                      : 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/project-detail-fi-1.jpg')
+                  }
+                  alt={project.title}
+                />
+              )}
             </div>
           </div>
 
@@ -617,18 +637,23 @@ export default function ProjectDetailPage({ id, item: dbItem, related: dbRelated
           <div className="pd-info-row-custom">
             <div className="pd-info-item">
               <h4>Category</h4>
-              <p>{project.category}</p>
+              <p>{project.category || project.short_description || 'Web Development'}</p>
             </div>
             <div className="pd-info-item">
-              <h4>Type</h4>
-              <p>{project.type || 'Image'}</p>
+              <h4>Client</h4>
+              <p>{project.clint_name || project.title}</p>
             </div>
-            {project.project_url && (
+            {(project.website_link || project.project_url) && (
               <div className="pd-info-item">
-                <h4>Live Link</h4>
+                <h4>Live Website</h4>
                 <p>
-                  <a href={project.project_url} target="_blank" rel="noopener noreferrer" style={{ color: '#0A3981' }}>
-                    View Project
+                  <a
+                    href={project.website_link || project.project_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: '#0A3981', fontWeight: 600 }}
+                  >
+                    Visit Website →
                   </a>
                 </p>
               </div>
@@ -643,6 +668,8 @@ export default function ProjectDetailPage({ id, item: dbItem, related: dbRelated
                   className="pd-blog-content"
                   dangerouslySetInnerHTML={{ __html: project.description }}
                 />
+              ) : project.short_description ? (
+                <p className="pd-description-text">{project.short_description}</p>
               ) : (
                 <p className="pd-description-text">
                   This project showcases creative design and development work. Check back for more details.

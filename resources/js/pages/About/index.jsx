@@ -11,10 +11,11 @@ import SEO from '../../components/SEO'
 import OptimizedImage from '../../components/OptimizedImage'
 
 const SKILLS = [
-  { label: 'HTML',       pct: 85 },
-  { label: 'CSS',        pct: 90 },
-  { label: 'JAVASCRIPT', pct: 85 },
-  { label: 'FIGMA',      pct: 80 },
+  { label: 'Laravel',    pct: 92 },
+  { label: 'PHP',        pct: 90 },
+  { label: 'JavaScript', pct: 85 },
+  { label: 'React',      pct: 88 },
+  { label: 'Flutter',    pct: 80 },
 ]
 
 const FALLBACK_TESTIMONIALS = [

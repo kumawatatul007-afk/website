@@ -92,8 +92,8 @@ body {
   margin-bottom: 5rem;
 }
 
-.marquee-section {
-  margin-bottom: 5rem;
+.services-strip {
+  margin-bottom: 0;
 }
 
 .services-section {
@@ -109,8 +109,7 @@ body {
   .portfolio-section,
   .testimonials-section,
   .blog-section,
-  .contact-section,
-  .marquee-section {
+  .contact-section {
     margin-bottom: 3rem;
   }
 
@@ -201,8 +200,21 @@ body {
   color: #6b7280;
   font-size: 0.88rem;
   line-height: 1.9;
-  max-width: 400px;
+  max-width: 420px;
   margin-bottom: 2.25rem;
+}
+
+.hero-description p {
+  margin: 0 0 0.75rem;
+}
+
+.hero-description p:last-child {
+  margin-bottom: 0;
+}
+
+.hero-description strong {
+  color: #131313;
+  font-weight: 600;
 }
 
 .hero-buttons {
@@ -739,52 +751,48 @@ body {
   }
 }
 
-/* ---------- MARQUEE ---------- */
-.marquee-section {
-  background-color: #0A3981;
-  color: white;
-  padding: 1.5rem 0;
-  overflow: hidden;
-  white-space: nowrap;
+/* ---------- SERVICES STRIP ---------- */
+.services-strip {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem 0;
+  background: linear-gradient(135deg, #0A3981 0%, #1a55b0 100%);
+  padding: 1.1rem 2rem;
+  margin-bottom: 0;
 }
 
-.marquee-track {
+.services-strip-item {
   display: inline-flex;
   align-items: center;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  animation: marquee 30s linear infinite;
-}
-
-.marquee-text {
-  display: inline-flex;
-  align-items: center;
-  font-size: 2rem;
-  font-weight: 900;
+  gap: 0.5rem;
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 700;
   text-transform: uppercase;
-  margin: 0 1rem;
-  white-space: nowrap;
+  letter-spacing: 0.1em;
+  padding: 0.35rem 1.25rem;
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 999px;
+  margin: 0.25rem 0.3rem;
+  transition: background 0.2s, border-color 0.2s;
 }
 
-.marquee-star {
-  margin-left: 2rem;
-  font-size: 2rem;
+.services-strip-item:hover {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.5);
 }
 
-@keyframes marquee {
-  0% {
-    transform: translateX(0);
-  }
-
-  100% {
-    transform: translateX(-50%);
-  }
+.services-strip-dot {
+  font-size: 0.5rem;
+  opacity: 0.7;
 }
 
-@media (max-width: 768px) {
-  .marquee-text {
-    font-size: 1.5rem;
+@media (max-width: 640px) {
+  .services-strip-item {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.9rem;
   }
 }
 
@@ -1217,6 +1225,16 @@ body {
 .port-overlay-title {
   font-size: 1rem;
   font-weight: 700;
+  text-transform: uppercase;
+}
+
+.port-overlay-link {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #0A3981;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
