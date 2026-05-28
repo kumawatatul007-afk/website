@@ -26,7 +26,6 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
       id: p.id,
       slug: p.slug,
       title: p.title,
-      // DB field is 'content' (not 'description'), and image is 'main_image' (not 'image')
       excerpt: p.meta_description
         ? (p.meta_description.length > 130 ? p.meta_description.slice(0, 130) + '...' : p.meta_description)
         : stripHtml(p.content),
@@ -221,39 +220,105 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
     // Static fallback so section is never empty
     return [
       'Best Software Developer in Jaipur',
-      'Best Website Developer in Jaipur',
-      'Best PHP Developer in Jaipur',
-      'Best React Developer in Jaipur',
-      'Best Mobile App Developer in Jaipur',
-      'Best Full Stack Developer in Jaipur',
+      'Best Software Developer in Malviya Nagar',
+      'Best Software Developer in Vaishali Nagar',
+      'Best Software Developer in C-Scheme',
+      'Best Software Developer in Mansarovar',
+      'Best Software Developer in Ajmer Road',
+      'Best Software Developer in Jagatpura',
+      'Best Software Developer in Civil Lines',
+      'Best Software Developer in Kalwar Road',
+      'Best Software Developer in Jhotwara',
+      'Best Software Developer in Rajasthan',
+      'Best Software Developer in Ajmer',
+      'Best Software Developer in Jodhpur',
+      'Best Software Developer in Udaipur',
+      'Best Software Developer in Kota',
+      'Best Software Developer in Bikaner',
+      'Best Software Developer in Alwar',
+      'Best Software Developer in Sikar',
+      'Best Software Developer in Tonk',
+      'Best Software Developer in Pali',
+      'Best Software Developer in Nagaur',
+      'Best Software Developer in Bhilwara',
+      'Best Software Developer in Bangalore',
+      'Best Software Developer in Pune',
+      'Best Software Developer in Kolkata',
       'Best IT Freelancer in Jaipur',
-      'Best Front-End Developer in Jaipur',
+      'Best IT Freelancer in Malviya Nagar',
+      'Best IT Freelancer in Vaishali Nagar',
+      'Best IT Freelancer in C-Scheme',
+      'Best IT Freelancer in Mansarovar',
+      'Best IT Freelancer in Ajmer Road',
+      'Best IT Freelancer in Rajasthan',
+      'Best IT Freelancer in Ajmer',
+      'Best IT Freelancer in Jodhpur',
+      'Best IT Freelancer in Udaipur',
+      'Best IT Freelancer in Kota',
+      'Best IT Freelancer in Bikaner',
+      'Best IT Freelancer in Bangalore',
+      'Best IT Freelancer in Pune',
+      'Best Website Developer in Jaipur',
+      'Best Website Developer in Malviya Nagar',
+      'Best Website Developer in Vaishali Nagar',
+      'Best Website Developer in C-Scheme',
+      'Best Website Developer in Mansarovar',
+      'Best Website Developer in Ajmer Road',
+      'Best Website Developer in Rajasthan',
+      'Best Website Developer in Ajmer',
+      'Best Website Developer in Jodhpur',
+      'Best Website Developer in Udaipur',
+      'Best Website Developer in Kota',
+      'Best Website Developer in Bikaner',
+      'Best Website Developer in Bangalore',
+      'Best Website Developer in Pune',
+      'Best Mobile Application Development in Jaipur',
+      'Best Mobile Application Development in Malviya Nagar',
+      'Best Mobile Application Development in Vaishali Nagar',
+      'Best Mobile Application Development in C-Scheme',
+      'Best Mobile Application Development in Mansarovar',
+      'Best Mobile Application Development in Ajmer Road',
+      'Best Mobile Application Development in Rajasthan',
+      'Best Mobile Application Development in Ajmer',
+      'Best Mobile Application Development in Jodhpur',
+      'Best Mobile Application Development in Udaipur',
+      'Best Mobile Application Development in Kota',
+      'Best Mobile Application Development in Bikaner',
+      'Best Mobile Application Development in Bangalore',
     ];
   })();
 
-  // Service highlights from DB setting.service_keyword — format: "title|slug,title|slug"
-  // Each entry is clickable and links to /services/{slug}
+  // Service highlights — always shows these 18 fixed SEO keyword chips
+  // Only overridden if Admin has saved custom service_keyword in DB settings
   const serviceHighlights = (() => {
-    // Priority 1: service_keyword from settings
     if (setting && setting.service_keyword) {
       const parsed = setting.service_keyword.split(',').map(entry => {
         const parts = entry.trim().split('|');
-        return { title: parts[0] ? parts[0].trim() : '', slug: parts[1] ? parts[1].trim() : '', isFallback: false };
+        const title = parts[0] ? parts[0].trim() : '';
+        const slug  = parts[1] ? parts[1].trim() : '';
+        return { title, slug };
       }).filter(s => s.title);
       if (parsed.length > 0) return parsed;
     }
-    // Priority 2: use DB service titles with their slugs
-    if (dbServices && dbServices.length > 0) {
-      return dbServices.map(s => ({ title: s.title, slug: s.slug, isFallback: true }));
-    }
-    // Priority 3: static fallback so section is never empty
     return [
-      { title: 'Web Development',    slug: 'web-development',    isFallback: true },
-      { title: 'App Development',    slug: 'app-development',    isFallback: true },
-      { title: 'UI/UX Design',       slug: 'ui-ux-design',       isFallback: true },
-      { title: 'PHP Laravel',        slug: 'php-laravel',        isFallback: true },
-      { title: 'React.js',           slug: 'react-js',           isFallback: true },
-      { title: 'Flutter Apps',       slug: 'flutter-apps',       isFallback: true },
+      { title: 'Best Website Design Near Me',             slug: '' },
+      { title: 'Best WEBSITE DEVELOPER FOR HIRE',         slug: '' },
+      { title: 'Top Website Design Near Me',              slug: '' },
+      { title: 'Top WEBSITE DEVELOPER FOR HIRE',          slug: '' },
+      { title: 'Top 10 Website Design Near Me',           slug: '' },
+      { title: 'Top 10 WEBSITE DEVELOPER FOR HIRE',       slug: '' },
+      { title: 'Top 5 Website Design Near Me',            slug: '' },
+      { title: 'Top 5 WEBSITE DEVELOPER FOR HIRE',        slug: '' },
+      { title: 'Top 20 Website Design Near Me',           slug: '' },
+      { title: 'Top 20 WEBSITE DEVELOPER FOR HIRE',       slug: '' },
+      { title: 'Find Website Design Near Me',             slug: '' },
+      { title: 'Find WEBSITE DEVELOPER FOR HIRE',         slug: '' },
+      { title: 'No1 Website Design Near Me',              slug: '' },
+      { title: 'No1 WEBSITE DEVELOPER FOR HIRE',          slug: '' },
+      { title: 'The Best Website Design Near Me',         slug: '' },
+      { title: 'The Best WEBSITE DEVELOPER FOR HIRE',     slug: '' },
+      { title: 'Hire Website Design Near Me',             slug: '' },
+      { title: 'Hire WEBSITE DEVELOPER FOR HIRE',         slug: '' },
     ];
   })();
 
@@ -281,7 +346,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
   };
 
   const stopAutoScroll = () => {
-    if (autoScrollRef.current) {
+    if (autoScrollRef.current) {  
       clearInterval(autoScrollRef.current);
       autoScrollRef.current = null;
     }
@@ -1314,9 +1379,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
               <p className="keywords-title">#KEYWORD</p>
               <div className="keywords-chips" data-lenis-prevent>
                 {keywordHighlights.map((label, idx) => {
-                  // URL format: "Best Software Developer in Jaipur"     → "/Best/software-developer/Jaipur"
-                  // URL format: "Best Software Developer in Kalwar Road" → "/Best/software-developer/Kalwar-Road"
-                  // "Top 10 Website Design Near Me" → "/Top10/website-design-near-me"
+                 
                   const inParts = label.split(' in ');
                   const servicePart = (inParts[0] || label).trim();
                   const location = (inParts[1] || '').trim();
@@ -1335,7 +1398,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
                   const locationSlug = location ? location.replace(/\s+/g, '-').replace(/[^A-Za-z0-9\-]/g, '') : '';
                   const href = locationSlug ? `/${prefix}/${serviceSlug}/${locationSlug}` : `/${prefix}/${serviceSlug}`;
                   return (
-                    <a
+                    <a 
                       key={idx}
                       href={href}
                       className="keyword-chip"
@@ -1343,7 +1406,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
                     >
                       {label}
                     </a>
-                  );
+                  ); 
                 })}
               </div>
             </div>
@@ -1353,16 +1416,20 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
               <p className="keywords-title">#SERVICES</p>
               <div className="keywords-chips" data-lenis-prevent>
                 {serviceHighlights.map((svc, idx) => {
-                  let href = '/services';
-                  if (svc.isFallback) {
+                  // Unified URL builder — works for both slug-based and keyword-style titles
+                  function buildServiceHref(svc) {
+                    // If a slug is provided (DB services), use slug-based URL
+                    // e.g. slug="web-development" → /Web/development
                     if (svc.slug) {
                       const parts = svc.slug.split('-');
                       const prefix = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
                       const rest = parts.slice(1).join('-');
-                      href = rest ? `/${prefix}/${rest}` : `/${prefix}`;
+                      return rest ? `/${prefix}/${rest}` : `/${prefix}`;
                     }
-                  } else {
-
+                    // Otherwise treat title as a keyword string and build URL from it
+                    // e.g. "Best Website Design Near Me"   → /Best/website-design-near-me
+                    // e.g. "Top 10 Website Developer For Hire" → /Top10/website-developer-for-hire
+                    // e.g. "Best Website Design Near Me in Jaipur" → /Best/website-design-near-me/Jaipur
                     const title = svc.title || '';
                     const inParts = title.split(' in ');
                     const servicePart = (inParts[0] || title).trim();
@@ -1370,7 +1437,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
                     const words = servicePart.split(/\s+/);
                     let prefix = words[0] || 'Best';
                     let restWords;
-                  
+                    // Merge numeric second word into prefix: "Top 10" → "Top10"
                     if (words[1] && /^\d+$/.test(words[1])) {
                       prefix = prefix + words[1];
                       restWords = words.slice(2);
@@ -1379,16 +1446,18 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
                     }
                     const rest = restWords.join(' ');
                     const serviceSlug = rest.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-                    // Convert location to slug: "Kalwar Road" → "Kalwar-Road"
-                    const locationSlug = location ? location.replace(/\s+/g, '-').replace(/[^A-Za-z0-9\-]/g, '') : '';
-                    href = locationSlug
+                    const locationSlug = location
+                      ? location.replace(/\s+/g, '-').replace(/[^A-Za-z0-9\-]/g, '')
+                      : '';
+                    return locationSlug
                       ? `/${prefix}/${serviceSlug}/${locationSlug}`
                       : `/${prefix}/${serviceSlug}`;
                   }
+
                   return (
                     <a
                       key={idx}
-                      href={href}
+                      href={buildServiceHref(svc)}
                       className="keyword-chip"
                       style={{ textDecoration: 'none', cursor: 'pointer' }}
                     >

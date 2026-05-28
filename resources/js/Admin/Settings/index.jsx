@@ -72,6 +72,11 @@ export default function AdminSettingsIndex({ setting }) {
             ? setting.strating_keyword.split(',').map(s => s.trim()).filter(Boolean)
             : []
     );
+    const [serviceKeywords, setServiceKeywords] = useState(
+        setting?.service_keyword
+            ? setting.service_keyword.split(',').map(s => s.trim()).filter(Boolean)
+            : []
+    );
     const [locations, setLocations] = useState(
         setting?.locations
             ? setting.locations.split(',').map(s => s.trim()).filter(Boolean)
@@ -104,6 +109,7 @@ export default function AdminSettingsIndex({ setting }) {
         const payload = {
             ...form,
             strating_keyword: keywords.join(','),
+            service_keyword:  serviceKeywords.join(','),
             locations:        locations.join(','),
         };
         router.put('/admin/settings', payload, {
@@ -432,6 +438,22 @@ export default function AdminSettingsIndex({ setting }) {
                                 color="teal"
                             />
                         </div>
+                    </div>
+
+                    {/* Service Keywords — full width tag input */}
+                    <div style={{ marginBottom: '1.25rem' }}>
+                        <label className="gs-label">
+                            Service Keywords{' '}
+                            <span style={{ color: '#9ca3af', fontWeight: 400, fontSize: '0.75rem' }}>
+                                (shown in #SERVICES section on home page — e.g. "Best Website Design Near Me", "Top 10 Website Developer For Hire")
+                            </span>
+                        </label>
+                        <TagInput
+                            tags={serviceKeywords}
+                            onChange={setServiceKeywords}
+                            placeholder="Type service keyword and press Enter..."
+                            color="teal"
+                        />
                     </div>
 
                     {/* Address */}

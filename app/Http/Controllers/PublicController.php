@@ -609,8 +609,27 @@ class PublicController extends Controller
             }
         }
 
+        // ── Fallback: reconstruct keyword from URL segments ──────────────────
+        // If keyword not found in settings, build it from the URL so the page
+        // still renders instead of returning 404.
         if (!$keyword) {
-            abort(404);
+            // Convert service slug back to words: "software-developer" → "Software Developer"
+            $serviceWords = ucwords(str_replace('-', ' ', $service));
+
+            // Extract any numeric suffix from prefix: "Top10" → prefix="Top", num="10"
+            if (preg_match('/^([A-Za-z]+)(\d+)$/', $prefix, $m)) {
+                $prefixWord = $m[1];
+                $numWord    = $m[2];
+                $keyword    = "{$prefixWord} {$numWord} {$serviceWords}";
+            } else {
+                $keyword = "{$prefix} {$serviceWords}";
+            }
+
+            if ($location) {
+                // Convert location slug back to readable: "Kalwar-Road" → "Kalwar Road"
+                $locationReadable = str_replace('-', ' ', $location);
+                $keyword .= " in {$locationReadable}";
+            }
         }
 
         $services = BlogPost::where('type', 1)
@@ -621,16 +640,16 @@ class PublicController extends Controller
 
         $parts       = explode(' in ', $keyword, 2);
         $serviceType = $parts[0] ?? '';
-        $loc         = $parts[1] ?? '';
+        $loc         = $parts[1] ?? ($location ? str_replace('-', ' ', $location) : '');
 
-        $relatedKeywords = array_filter($allKeywords, function ($kw) use ($keyword, $loc, $serviceType) {
-            if ($kw === $keyword) return false;
-            return (str_contains($kw, $loc) || str_contains($kw, $serviceType));
-        });
+        $relatedKeywords = array_values(array_filter(array_slice(
+            array_filter($allKeywords, function ($kw) use ($keyword, $loc, $serviceType) {
+                if ($kw === $keyword) return false;
+                return ($loc && str_contains($kw, $loc)) || str_contains($kw, $serviceType);
+            }),
+            0, 8
+        )));
 
-        $relatedKeywords = array_values(array_slice($relatedKeywords, 0, 8));
-
-        $setting = Setting::first();
         $siteName = $setting?->website_title ?: 'Nikhil Sharma';
 
         return Inertia::render('Keyword/index', [
@@ -640,8 +659,8 @@ class PublicController extends Controller
             'setting'         => $setting,
             'seo'             => [
                 'title'       => "{$keyword} — {$siteName} | Jaipur",
-                'description' => "Looking for {$keyword}? {$siteName} is a top-rated freelance developer in {$loc} with 8+ years of experience. Affordable rates, fast delivery, real results.",
-                'keywords'    => "{$keyword}, {$serviceType} {$loc}, hire " . strtolower($serviceType) . ", freelance developer {$loc}",
+                'description' => "Looking for {$keyword}? {$siteName} is a top-rated freelance developer in " . ($loc ?: 'Jaipur') . " with 8+ years of experience. Affordable rates, fast delivery, real results.",
+                'keywords'    => "{$keyword}, {$serviceType} " . ($loc ?: 'Jaipur') . ", hire " . strtolower($serviceType) . ", freelance developer " . ($loc ?: 'Jaipur'),
                 'canonical'   => url()->current(),
                 'robots'      => 'index, follow',
             ],

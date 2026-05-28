@@ -11,7 +11,7 @@ export default function MainLayout({ children }) {
   const siteName    = setting.title || setting.website_title || 'Nikhil Sharma'
   const logoUrl     = setting.logo
     ? `/storage/${setting.logo}`
-    : '/images/logo.png' // local fallback logo
+    : '/images/logo.png'
   const siteEmail   = setting.email   || 'nikhilsharma@thenikhilsharma.in'
   const sitePhone   = setting.phonenumber || setting.phone || '+91 95299 21038'
   const siteAddress = setting.address || 'Jaipur, Rajasthan, India'
@@ -113,19 +113,21 @@ export default function MainLayout({ children }) {
         .mora-logo-svg {
           height: 44px; width: auto;
         }
-        /* Header logo — force black */
         .mora-logo-img {
-          height: 52px; width: auto;
+          height: 48px; width: auto; max-width: 160px;
+          object-fit: contain;
           filter: brightness(0);
-          transition: transform 0.3s ease, filter 0.3s ease;
+          transition: transform 0.3s ease, opacity 0.3s ease, filter 0.3s ease;
         }
         .mora-brand:hover .mora-logo-img {
           transform: scale(1.05);
-          filter: brightness(0) opacity(0.75);
+          opacity: 0.85;
+          filter: brightness(0);
         }
         /* Footer logo — force white */
         .mora-footer-logo {
-          height: 36px; width: auto;
+          height: 40px; width: auto; max-width: 140px;
+          object-fit: contain;
           filter: brightness(0) invert(1);
           opacity: 0.85;
           transition: opacity 0.2s ease;
@@ -287,7 +289,8 @@ export default function MainLayout({ children }) {
         /* Brand column */
         .mora-footer-brand { display: flex; flex-direction: column; gap: 0.4rem; }
         .mora-footer-logo {
-          height: 30px; width: auto;
+          height: 40px; width: auto; max-width: 140px;
+          object-fit: contain;
           filter: brightness(0) invert(1);
           opacity: 0.9;
         }
@@ -384,13 +387,14 @@ export default function MainLayout({ children }) {
         <div className="mora-nav-inner">
 
           {/* ── LOGO ── */}
-          <Link href="/" className="mora-brand" aria-label={`${siteName} — Home`}>
-            <img
-              src={logoUrl}
-              alt={`${siteName} Logo`}
-              className="mora-logo-img"
-            />
-          </Link>
+        <Link href="/" className="mora-brand" aria-label={`${siteName} — Home`}>
+          <img
+            src={logoUrl}
+            alt={`${siteName} Logo`}
+            className="mora-logo-img"
+            onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/images/logo.png'; }}
+          />
+        </Link>
 
           <div className="mora-links">
             <Link href="/"        className={`mora-link${currentPath === '/' || currentPath === '/dashboard' ? ' active' : ''}`}>Home</Link>
@@ -459,6 +463,7 @@ export default function MainLayout({ children }) {
                 src={logoUrl}
                 alt={`${siteName} — Full Stack Developer Jaipur`}
                 className="mora-footer-logo"
+                onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/images/logo.png'; }}
               />
             </Link>
             <p className="mora-footer-tagline">
