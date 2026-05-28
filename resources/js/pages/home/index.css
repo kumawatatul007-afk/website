@@ -40,15 +40,21 @@ body {
 .port-img-wrap {
   position: relative;
   overflow: hidden;
+  height: 280px;
   transition: clip-path 0.4s ease;
 }
 
 .port-img {
-  transition: transform 0.6s ease;
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: unset;
+  transform: translateY(0);
+  transition: transform 5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .port-item:hover .port-img {
-  transform: scale(1.05);
+  transform: translateY(calc(-100% + 280px));
 }
 
 .port-overlay {
@@ -1187,17 +1193,20 @@ body {
 .port-img-wrap {
   position: relative;
   overflow: hidden;
+  height: 280px;
 }
 
 .port-img {
   width: 100%;
-  height: 260px;
-  object-fit: cover;
-  transition: transform 0.6s ease;
+  height: auto;
+  display: block;
+  object-fit: unset;
+  transform: translateY(0);
+  transition: transform 5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .port-item:hover .port-img {
-  transform: scale(1.05);
+  transform: translateY(calc(-100% + 280px));
 }
 
 .port-overlay {

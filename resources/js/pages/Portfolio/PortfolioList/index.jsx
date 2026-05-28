@@ -130,19 +130,26 @@ export default function PortfolioListPage({ items: dbItems }) {
           clip-path: inset(10px);
         }
 
+        .pl-img-wrap {
+          position: relative;
+          overflow: hidden;
+          height: 280px;
+        }
         .pl-img {
           width: 100%;
-          height: 280px;
-          object-fit: cover;
+          height: auto;
           display: block;
-          transition: transform 1.8s cubic-bezier(0.4,0,0.2,1);
+          object-fit: unset;
+          transform: translateY(0);
+          transition: transform 5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
         .pl-item:hover .pl-img {
-          transform: scale(1.06) rotate(0.001deg);
+          transform: translateY(calc(-100% + 280px));
         }
 
         @media (max-width: 560px) {
-          .pl-img { height: 220px; }
+          .pl-img-wrap { height: 220px; }
+          .pl-item:hover .pl-img { transform: translateY(calc(-100% + 220px)); }
         }
 
         .pl-overlay {

@@ -1057,9 +1057,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
               : portfolios.map((project, idx) => (
                 <a
                   key={project.id}
-                  href={project.url || `/portfolio/${project.id}`}
-                  target={project.url ? '_blank' : '_self'}
-                  rel={project.url ? 'noopener noreferrer' : undefined}
+                  href={`/portfolio/${project.id}`}
                   style={{ textDecoration: 'none' }}
                 >
                   <div className="port-item" data-aos="zoom-in" data-aos-delay={idx * 100} data-aos-duration="800">
@@ -1081,7 +1079,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
                         <div className="port-overlay-content">
                           <h4 className="port-overlay-title">{project.title}</h4>
                           {project.category && <p className="port-overlay-cat">{project.category}</p>}
-                          {project.url && <span className="port-overlay-link">Visit Website →</span>}
+                          <span className="port-overlay-link">View Details →</span>
                         </div>
                       </div>
                     </div>
