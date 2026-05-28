@@ -12,7 +12,7 @@ const PROJECT_DATA = {
     accentBorder: '#a5d6a7',
     category: 'Agriculture & Farming Platform',
     client: 'Kisan Gateway',
-    year: '2023',
+    year: '2026',
     website: 'https://kisangateway.com',
     tech: ['Laravel','PHP','React JS','MySQL','REST API','Bootstrap','Razorpay','Redis'],
     stats:[
@@ -35,7 +35,7 @@ const PROJECT_DATA = {
     accentBorder: '#ef9a9a',
     category: 'Shipping & Logistics Platform',
     client: 'CKShip',
-    year: '2023',
+    year: '2026',
     website: 'https://ckship.in',
     tech:['Laravel','PHP','React JS','MySQL','Delhivery API','DTDC API','Razorpay','Webhooks'],
     stats:[
@@ -58,7 +58,7 @@ const PROJECT_DATA = {
     accentBorder: '#ffab91',
     category: 'Restaurant & Food Platform',
     client: 'Cloves Rinagar',
-    year: '2023',
+    year: '2026',
     website: 'https://www.clovesrinagar.com',
     tech:['Laravel','PHP','React JS','MySQL','Figma','WhatsApp API','CSS Animations','SEO'],
     stats:[
@@ -194,8 +194,8 @@ export default function ProjectDetailPage({ id, slug, item: dbItem }) {
   );
   if (!project) return <div style={{textAlign:'center',padding:'5rem',fontFamily:"'Space Grotesk',sans-serif"}}><p style={{color:'#9ca3af'}}>Project not found.</p><Link href="/portfolio" style={{color:'#0A3981',fontWeight:600}}>← Back to Portfolio</Link></div>;
 
-  const slug        = project.slug || '';
-  const ex          = PROJECT_DATA[slug] || {};
+  const projectSlug = project.slug || '';
+  const ex          = PROJECT_DATA[projectSlug] || {};
   const accent      = ex.accent      || '#0A3981';
   const accentRgb   = ex.accentRgb   || '10,57,129';
   const accentLight = ex.accentLight || '#eff6ff';

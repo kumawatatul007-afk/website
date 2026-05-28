@@ -111,6 +111,12 @@ Route::prefix('admin')->name('admin.')->middleware(\App\Http\Middleware\AdminMid
 // ─── Public / Portfolio Site ────────────────────────────────────────────────
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index']);
+Route::get('/sitemap-pages.xml', [SitemapController::class, 'pages']);
+Route::get('/sitemap-blog.xml', [SitemapController::class, 'blog']);
+Route::get('/sitemap-portfolio.xml', [SitemapController::class, 'portfolio']);
+Route::get('/sitemap-services.xml', [SitemapController::class, 'services']);
+Route::get('/keywords.xml', [SitemapController::class, 'keywords']);
+Route::get('/tags.xml', [SitemapController::class, 'tags']);
 Route::get('/robots.txt', [SitemapController::class, 'robots']);
 
 Route::get('/', [PublicController::class, 'home']);

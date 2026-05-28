@@ -485,196 +485,108 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
   };
 
   if (isLoading) {
-    // Keywords for preloader ticker — use DB data if available, else static fallback
-    const preloaderKeywords = keywordHighlights.length > 0
-      ? keywordHighlights
-      : [
-        'Best Software Developer in Jaipur',
-        'Best IT Freelancer in Jaipur',
-        'Best Website Developer in Jaipur',
-        'Best PHP Developer in Jaipur',
-        'Best Mobile Application Development in Jaipur',
-        'Best Front-End Developer in Jaipur',
-        'Best SQL Database Developer in Jaipur',
-        'Best Freelancers Hire in Jaipur',
-        'Best Software Developer in Rajasthan',
-        'Best Website Developer in Rajasthan',
-        'Best IT Freelancer in Rajasthan',
-        'Best PHP Developer in Rajasthan',
-      ];
-    // Duplicate for seamless infinite scroll
-    const tickerItems = [...preloaderKeywords, ...preloaderKeywords];
-
     return (
       <>
         <style>{`
-          @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
-
           .mora-preloader {
             position: fixed;
             inset: 0;
             z-index: 99999;
-            display: flex;
-            overflow: hidden;
-            pointer-events: all;
-          }
-          .mora-preloader__panel {
-            flex: 1;
-            background: #0f172a;
-            transition: transform 0.75s cubic-bezier(0.76, 0, 0.24, 1);
-          }
-          .mora-preloader__panel:first-child { transform-origin: left center; }
-          .mora-preloader__panel:last-child  { transform-origin: right center; }
-          .mora-preloader.exiting .mora-preloader__panel:first-child { transform: translateX(-100%); }
-          .mora-preloader.exiting .mora-preloader__panel:last-child  { transform: translateX(100%); }
-          .mora-preloader__center {
-            position: absolute;
-            inset: 0;
+            background: #0b1120;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 1.5rem;
-            transition: opacity 0.4s ease;
+            gap: 2rem;
+            opacity: 1;
+            transition: opacity 0.5s ease;
           }
-          .mora-preloader.exiting .mora-preloader__center { opacity: 0; }
-          .mora-preloader__brand {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            font-size: clamp(2rem, 8vw, 5rem);
-            letter-spacing: 0.1em;
-            text-transform: none;
-            color: #f8fafc;
-            display: flex;
-            gap: 0.1em;
-            font-style: italic;
+          .mora-preloader.exiting { opacity: 0; }
+
+          /* Orbital ring spinner */
+          .mora-pl-orbit {
+            width: 72px;
+            height: 72px;
+            position: relative;
           }
-          .mora-preloader__brand span {
-            display: inline-block;
-            opacity: 0;
-            transform: translateY(60px);
-            animation: pl-letter-in 0.6s cubic-bezier(0.33, 1, 0.68, 1) forwards;
-          }
-          .mora-preloader__brand span:nth-child(1) { animation-delay: 0.1s; }
-          .mora-preloader__brand span:nth-child(2) { animation-delay: 0.15s; }
-          .mora-preloader__brand span:nth-child(3) { animation-delay: 0.2s; }
-          .mora-preloader__brand span:nth-child(4) { animation-delay: 0.25s; }
-          .mora-preloader__brand span:nth-child(5) { animation-delay: 0.3s; }
-          .mora-preloader__brand span:nth-child(6) { animation-delay: 0.35s; }
-          .mora-preloader__brand span:nth-child(7) { animation-delay: 0.4s; }
-          .mora-preloader__brand span:nth-child(8) { animation-delay: 0.45s; }
-          .mora-preloader__brand span:nth-child(9) { animation-delay: 0.5s; }
-          .mora-preloader__brand span:nth-child(10) { animation-delay: 0.55s; }
-          .mora-preloader__brand span:nth-child(11) { animation-delay: 0.6s; }
-          .mora-preloader__brand span:nth-child(12) { animation-delay: 0.65s; }
-          .mora-preloader__brand span:nth-child(13) { animation-delay: 0.7s; }
-          @keyframes pl-letter-in {
-            to { opacity: 1; transform: translateY(0); }
-          }
-          .mora-preloader__bar-wrap {
-            width: clamp(120px, 20vw, 220px);
-            height: 2px;
-            background: rgba(255,255,255,0.12);
-            border-radius: 2px;
-            overflow: hidden;
-          }
-          .mora-preloader__bar {
+          .mora-pl-orbit svg {
+            width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, #1e3a8a, #60a5fa);
-            border-radius: 2px;
-            animation: pl-bar 1.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            animation: pl-spin 1.4s linear infinite;
           }
-          @keyframes pl-bar {
-            0%   { width: 0%; }
-            60%  { width: 75%; }
-            100% { width: 100%; }
+          @keyframes pl-spin { to { transform: rotate(360deg); } }
+          .mora-pl-orbit circle.track {
+            fill: none;
+            stroke: rgba(255,255,255,0.06);
+            stroke-width: 2.5;
           }
-          .mora-preloader__tagline {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 0.72rem;
-            letter-spacing: 0.35em;
-            text-transform: uppercase;
-            color: rgba(248,250,252,0.45);
-            opacity: 0;
-            animation: pl-fade 0.5s ease 0.7s forwards;
+          .mora-pl-orbit circle.arc {
+            fill: none;
+            stroke: url(#plGrad);
+            stroke-width: 2.5;
+            stroke-dasharray: 170;
+            stroke-dashoffset: 42;
+            stroke-linecap: round;
           }
-          .mora-preloader__dot {
+
+          /* Three dots pulse */
+          .mora-pl-dots {
+            display: flex;
+            gap: 8px;
+          }
+          .mora-pl-dots span {
             width: 6px;
             height: 6px;
             border-radius: 50%;
             background: #3b82f6;
-            opacity: 0;
-            animation: pl-fade 0.4s ease 0.5s forwards;
+            animation: pl-pulse 1.2s ease-in-out infinite;
           }
-          @keyframes pl-fade { to { opacity: 1; } }
+          .mora-pl-dots span:nth-child(1) { animation-delay: 0s; }
+          .mora-pl-dots span:nth-child(2) { animation-delay: 0.2s; }
+          .mora-pl-dots span:nth-child(3) { animation-delay: 0.4s; }
+          @keyframes pl-pulse {
+            0%, 80%, 100% { transform: scale(0.6); opacity: 0.3; }
+            40%            { transform: scale(1);   opacity: 1; }
+          }
 
-          /* Keywords ticker */
-          .mora-preloader__ticker-wrap {
+          /* Bottom progress bar */
+          .mora-pl-bar {
             position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            overflow: hidden;
-            padding: 0.6rem 0;
-            background: rgba(255,255,255,0.04);
-            border-top: 1px solid rgba(255,255,255,0.07);
-            opacity: 0;
-            animation: pl-fade 0.5s ease 0.9s forwards;
+            bottom: 0; left: 0; right: 0;
+            height: 2px;
+            background: rgba(255,255,255,0.05);
           }
-          .mora-preloader__ticker {
-            display: flex;
-            gap: 0;
-            white-space: nowrap;
-            animation: pl-ticker 60s linear infinite;
-            will-change: transform;
+          .mora-pl-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #1e3a8a, #60a5fa);
+            border-radius: 2px;
+            animation: pl-bar 2s cubic-bezier(0.4,0,0.2,1) forwards;
           }
-          .mora-preloader.exiting .mora-preloader__ticker {
-            animation-play-state: paused;
-          }
-          @keyframes pl-ticker {
-            0%   { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-          }
-          .mora-preloader__ticker-item {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0 1.5rem;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 0.7rem;
-            letter-spacing: 0.06em;
-            color: rgba(248,250,252,0.5);
-            text-transform: uppercase;
-            flex-shrink: 0;
-          }
-          .mora-preloader__ticker-item::after {
-            content: '✦';
-            color: #3b82f6;
-            font-size: 0.5rem;
-            opacity: 0.7;
+          @keyframes pl-bar {
+            0%   { width: 0%; }
+            65%  { width: 78%; }
+            100% { width: 100%; }
           }
         `}</style>
 
         <div className={`mora-preloader${isExiting ? ' exiting' : ''}`}>
-          <div className="mora-preloader__panel" />
-          <div className="mora-preloader__panel" />
-          <div className="mora-preloader__center">
-            <div className="mora-preloader__dot" />
-            <div className="mora-preloader__brand">
-              <span>N</span><span>i</span><span>k</span><span>h</span><span>i</span><span>l</span><span>&nbsp;</span><span>S</span><span>h</span><span>a</span><span>r</span><span>m</span><span>a</span>
-            </div>
-            <div className="mora-preloader__bar-wrap">
-              <div className="mora-preloader__bar" />
-            </div>
-            <p className="mora-preloader__tagline">Portfolio &amp; Creative Studio</p>
+          <div className="mora-pl-orbit">
+            <svg viewBox="0 0 72 72">
+              <defs>
+                <linearGradient id="plGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#1e3a8a" />
+                  <stop offset="100%" stopColor="#60a5fa" />
+                </linearGradient>
+              </defs>
+              <circle className="track" cx="36" cy="36" r="31" />
+              <circle className="arc"   cx="36" cy="36" r="31" />
+            </svg>
           </div>
-          {/* Keywords scrolling ticker at bottom */}
-          <div className="mora-preloader__ticker-wrap" aria-hidden="true">
-            <div className="mora-preloader__ticker">
-              {tickerItems.map((kw, i) => (
-                <span key={i} className="mora-preloader__ticker-item">{kw}</span>
-              ))}
-            </div>
+          <div className="mora-pl-dots">
+            <span /><span /><span />
+          </div>
+          <div className="mora-pl-bar">
+            <div className="mora-pl-bar-fill" />
           </div>
         </div>
       </>
@@ -1175,7 +1087,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
           <div className="clients-logos-row">
             {[
               { name: 'Upwork', href: 'https://www.upwork.com/freelancers/nikhilsharma', abbr: 'UW' },
-              { name: 'Fiverr', href: 'https://www.fiverr.com/', abbr: 'FV' },
+              { name: 'Fiverr', href: 'https://www.fiverr.com/technikhil7/', abbr: 'FV' },
               { name: 'LinkedIn', href: 'https://www.linkedin.com/in/nikhil-sharma-jaipur', abbr: 'LI' },
               { name: 'GitHub', href: 'https://github.com/technikhilsharma7', abbr: 'GH' },
             ].map((c) => (
@@ -1278,7 +1190,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
                   </div>
                   <div className="contact-item-text">
                     <h4 className="contact-item-label">E-MAIL</h4>
-                    <p className="contact-item-value">nikhilsharma@thenikhilsharma.in</p>
+                    <p className="contact-item-value">technikhilsharma7@gmail.com</p>
                   </div>
                 </div>
                 <div className={`contact-item ${contactVisible ? 'contact-item-visible' : ''}`} style={{ transitionDelay: '0.15s' }} data-aos="fade-right" data-aos-delay="250" data-aos-duration="600">

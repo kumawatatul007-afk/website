@@ -1,10 +1,44 @@
 import { useState, useEffect, useRef } from 'react'
-import { Link, usePage } from '@inertiajs/react'
+import { Link, usePage, router } from '@inertiajs/react'
 import SEO from '../SEO'
 
 export default function MainLayout({ children }) {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [pageReady, setPageReady] = useState(false)
+  const [navProgress, setNavProgress] = useState(0)
+  const [navActive, setNavActive] = useState(false)
+  const progressTimer = useRef(null)
   const { props } = usePage()
+
+  // ── Inertia page transition ───────────────────────────────────────────────
+  useEffect(() => {
+    const offStart = router.on('start', () => {
+      setNavActive(true)
+      setNavProgress(0)
+      setPageReady(false)
+      let p = 0
+      clearInterval(progressTimer.current)
+      progressTimer.current = setInterval(() => {
+        p = Math.min(p + Math.random() * 12, 85)
+        setNavProgress(p)
+      }, 120)
+    })
+    const offFinish = router.on('finish', () => {
+      clearInterval(progressTimer.current)
+      setNavProgress(100)
+      setTimeout(() => {
+        setNavActive(false)
+        setNavProgress(0)
+        setPageReady(true)
+      }, 350)
+    })
+    return () => { offStart(); offFinish(); clearInterval(progressTimer.current) }
+  }, [])
+
+  useEffect(() => {
+    const t = setTimeout(() => setPageReady(true), 80)
+    return () => clearTimeout(t)
+  }, [])
 
   // ── Settings from DB ──────────────────────────────────────────────────────
   const setting     = props.setting || {}
@@ -14,7 +48,7 @@ export default function MainLayout({ children }) {
     : '/images/logo.png'
   const siteEmail   = setting.email   || 'technikhilsharma7@gmail.com'
   const sitePhone   = setting.phonenumber || setting.phone || '+91 9529921038'
-  const siteAddress = setting.address || 'Jaipur, Rajasthan, India'
+  const siteAddress = 'Nikhil Sharma, Jaipur, Rajasthan, India'
 
   // social_links is stored as JSON: { facebook, twitter, linkedin, github, ... }
   const rawSocial   = setting.social_links
@@ -26,6 +60,8 @@ export default function MainLayout({ children }) {
   const liUrl       = socialLinks.linkedin  || 'https://www.linkedin.com/in/nikhil-sharma-jaipur'
   const ghUrl       = socialLinks.github    || 'https://github.com/nikhilsharma'
   const waUrl       = socialLinks.whatsapp  || 'https://wa.me/919529921038'
+  const upUrl       = socialLinks.upwork    || 'https://www.upwork.com/freelancers/nikhilsharma'
+  const fvUrl       = socialLinks.fiverr    || 'https://www.fiverr.com/technikhil7/'
 
   // Custom cursor
   const dotRef  = useRef(null)
@@ -65,13 +101,31 @@ export default function MainLayout({ children }) {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#f8fafc', fontFamily: "'Space Grotesk', sans-serif" }}>
       <SEO />
-      
+
+
+      {/* Top navigation progress bar */}
+      {navActive && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, height: '2px',
+          zIndex: 99999, background: 'rgba(255,255,255,0.1)',
+        }}>
+          <div style={{
+            height: '100%',
+            width: `${navProgress}%`,
+            background: 'linear-gradient(90deg, #1e3a8a, #60a5fa)',
+            transition: navProgress === 100 ? 'width 0.25s ease' : 'width 0.12s linear',
+            boxShadow: '0 0 8px #60a5fa88',
+          }} />
+        </div>
+      )}
+
       {/* Custom Cursor */}
       <div ref={dotRef}  className="cursor-dot"  />
       <div ref={ringRef} className="cursor-ring" />
 
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap');
+
 
         * { cursor: none !important; }
 
@@ -448,7 +502,12 @@ export default function MainLayout({ children }) {
       </nav>
 
       {/* ── PAGE CONTENT ── */}
-      <main style={{ flex: 1, width: '100%' }}>
+      <main style={{
+        flex: 1, width: '100%',
+        opacity: pageReady ? 1 : 0,
+        transform: pageReady ? 'translateY(0)' : 'translateY(6px)',
+        transition: 'opacity 0.3s ease, transform 0.3s ease',
+      }}>
         {children}
       </main>
 
@@ -480,10 +539,10 @@ export default function MainLayout({ children }) {
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                 {sitePhone}
               </a>
-              <span className="mora-footer-contact-item">
+              <a href="https://www.google.com/local/place/fid/0x396db74dacd6be85:0x30b84e6c3b6c2dc2/photosphere?iu=https://streetviewpixels-pa.googleapis.com/v1/thumbnail?panoid%3DaupdZA-J5xA0VHqtwuz8vg%26cb_client%3Dlu.gallery.gps%26w%3D160%26h%3D106%26yaw%3D64.31543%26pitch%3D0%26thumbfov%3D100&ik=CAISFmF1cGRaQS1KNXhBMFZIcXR3dXo4dmc%3D" target="_blank" rel="noopener noreferrer" className="mora-footer-contact-item">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                 {siteAddress}
-              </span>
+              </a>
             </div>
           </div>
 
@@ -512,12 +571,12 @@ export default function MainLayout({ children }) {
           {/* Find Me */}
           <div className="mora-footer-col">
             <p className="mora-footer-col-title">Find Me On</p>
-            <a href="https://www.upwork.com/freelancers/nikhilsharma"       target="_blank" rel="noopener noreferrer" className="mora-footer-col-link">Upwork</a>
-            <a href="https://clutch.co/profile/nikhil-sharma-developer"     target="_blank" rel="noopener noreferrer" className="mora-footer-col-link">Clutch</a>
-            <a href="https://www.linkedin.com/in/nikhil-sharma-jaipur"      target="_blank" rel="noopener noreferrer" className="mora-footer-col-link">LinkedIn</a>
-            <a href="https://github.com/nikhilsharma"                       target="_blank" rel="noopener noreferrer" className="mora-footer-col-link">GitHub</a>
-            <a href="https://www.goodfirms.co/company/nikhil-sharma"        target="_blank" rel="noopener noreferrer" className="mora-footer-col-link">GoodFirms</a>
-            <a href="https://www.justdial.com/nikhilsharma"                 target="_blank" rel="noopener noreferrer" className="mora-footer-col-link">Justdial</a>
+            <a href={upUrl} target="_blank" rel="noopener noreferrer" className="mora-footer-col-link">Upwork</a>
+            <a href={fvUrl} target="_blank" rel="noopener noreferrer" className="mora-footer-col-link">Fiverr</a>
+            <a href={liUrl} target="_blank" rel="noopener noreferrer" className="mora-footer-col-link">LinkedIn</a>
+            <a href={ghUrl} target="_blank" rel="noopener noreferrer" className="mora-footer-col-link">GitHub</a>
+            <a href={twUrl} target="_blank" rel="noopener noreferrer" className="mora-footer-col-link">Twitter</a>
+            <a href={fbUrl} target="_blank" rel="noopener noreferrer" className="mora-footer-col-link">Facebook</a>
           </div>
 
         </div>
@@ -527,29 +586,12 @@ export default function MainLayout({ children }) {
         {/* Bottom bar */}
         <div className="mora-footer-bottom">
           <p className="mora-footer-copy">
-            © {new Date().getFullYear()} <a href="https://thenikhilsharma.in">{siteName}</a>. All Rights Reserved. | {siteAddress}
+            © {new Date().getFullYear()} <a href="https://thenikhilsharma.in">Nikhil Sharma</a> | Freelancer Web Designer &amp; Software Developer. All Rights Reserved.
           </p>
           <div className="mora-footer-bottom-links">
             <a href="/sitemap.xml"       className="mora-footer-bottom-link" target="_blank" rel="noopener noreferrer">Sitemap</a>
             <Link href="/privacy-policy"   className="mora-footer-bottom-link">Privacy Policy</Link>
             <Link href="/terms-of-service" className="mora-footer-bottom-link">Terms of Service</Link>
-          </div>
-          <div className="mora-footer-socials">
-            <a href={fbUrl} target="_blank" rel="noopener noreferrer" className="mora-social-icon" aria-label="Facebook">
-              <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-            </a>
-            <a href={twUrl} target="_blank" rel="noopener noreferrer" className="mora-social-icon" aria-label="X (Twitter)">
-              <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-            </a>
-            <a href={liUrl} target="_blank" rel="noopener noreferrer" className="mora-social-icon" aria-label="LinkedIn">
-              <svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-            </a>
-            <a href={ghUrl} target="_blank" rel="noopener noreferrer" className="mora-social-icon" aria-label="GitHub">
-              <svg viewBox="0 0 24 24"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
-            </a>
-            <a href="https://dribbble.com/nikhilsharma" target="_blank" rel="noopener noreferrer" className="mora-social-icon" aria-label="Dribbble">
-              <svg viewBox="0 0 24 24"><path d="M12 24C5.385 24 0 18.615 0 12S5.385 0 12 0s12 5.385 12 12-5.385 12-12 12zm10.12-10.358c-.35-.11-3.17-.953-6.384-.438 1.34 3.684 1.887 6.684 1.992 7.308 2.3-1.555 3.936-4.02 4.395-6.87zm-6.115 7.808c-.153-.9-.75-4.032-2.19-7.77l-.066.02c-5.79 2.015-7.86 6.017-8.04 6.4 1.73 1.358 3.92 2.166 6.29 2.166 1.42 0 2.77-.29 4-.816zm-11.62-2.073c.232-.4 3.045-5.055 8.332-6.765.135-.045.27-.084.405-.12-.26-.585-.54-1.167-.832-1.74C7.17 11.775 2.206 11.71 1.756 11.7l-.004.312c0 2.633.998 5.037 2.634 6.855zm-2.42-8.955c.46.008 4.683.026 9.477-1.248-1.698-3.018-3.53-5.558-3.8-5.928-2.868 1.35-5.01 3.99-5.676 7.176zM9.6 2.052c.282.38 2.145 2.914 3.822 6 3.645-1.365 5.19-3.44 5.373-3.702-1.81-1.61-4.19-2.586-6.795-2.586-.477 0-.945.04-1.4.112zm13.44 9.483c-.453-.14-3.773-.993-7.76-.43 1.5 4.11 2.11 7.47 2.23 8.13 2.87-1.9 4.84-5.01 5.53-7.7z"/></svg>
-            </a> 
           </div>
         </div>
 

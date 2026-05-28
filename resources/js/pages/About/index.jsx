@@ -397,7 +397,7 @@ export default function AboutPage() {
           <div className="ap-dirs-grid" data-aos="fade-up" data-aos-delay="200">
             {[
               { name: 'Upwork',   href: 'https://www.upwork.com/freelancers/nikhilsharma',    desc: 'Freelance marketplace — verified profile & client reviews' },
-              { name: 'Fiverr',   href: 'https://www.fiverr.com/',                             desc: 'Freelance services marketplace — hire me for your project' },
+              { name: 'Fiverr',   href: 'https://www.fiverr.com/technikhil7/',                  desc: 'Freelance services marketplace — hire me for your project' },
               { name: 'LinkedIn', href: 'https://www.linkedin.com/in/nikhil-sharma-jaipur',   desc: '8+ years experience, endorsements & recommendations' },
               { name: 'GitHub',   href: 'https://github.com/technikhilsharma7',               desc: 'Open source contributions & public repositories' },
             ].map((d) => (
