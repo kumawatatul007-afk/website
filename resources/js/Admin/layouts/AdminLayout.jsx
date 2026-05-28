@@ -296,13 +296,13 @@ export default function AdminLayout({ children, title = 'Admin Panel' }) {
           {sidebarOpen && (
             <div className="help-card">
               <div className="help-title">Need Help?</div>
-              <div className="help-text">Contact support@nexus.io</div>
+              <div className="help-text">info@thenikhilsharma.in</div>
             </div>
           )}
         </div>
       </aside>
 
-      <div className="admin-main">
+      <div className={`admin-main ${!sidebarOpen ? 'collapsed' : ''}`}>
         <header className="admin-topbar">
           <div className="topbar-left">
             <button className="admin-toggle-btn" onClick={() => setSidebarOpen(p => !p)} aria-label="Toggle sidebar">
@@ -313,13 +313,19 @@ export default function AdminLayout({ children, title = 'Admin Panel' }) {
             <span className="admin-topbar-title">{title}</span>
           </div>
           <div className="topbar-right">
+            <button className="topbar-notif-btn" title="Notifications">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+              </svg>
+            </button>
+            <div className="topbar-divider" />
             <div className="user-info">
-              <span className="user-name">Admin User</span>
+              <span className="user-name">Nikhil Sharma</span>
               <span className="user-role">Super Admin</span>
             </div>
-            <div className="topbar-user-badge">A</div>
+            <div className="topbar-user-badge">N</div>
             <button className="topbar-logout-btn" onClick={handleLogout}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
                 <polyline points="16 17 21 12 16 7" />
                 <line x1="21" y1="12" x2="9" y2="12" />

@@ -2,6 +2,7 @@ import AdminLayout from '../layouts/AdminLayout';
 import { Link, router } from '@inertiajs/react';
 import Pagination from '../../components/admin/Pagination';
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { ShimmerTableRows } from '../../components/ShimmerLoader';
 
 export default function AdminBlogIndex({ posts, filters, categories = [] }) {
@@ -128,7 +129,7 @@ export default function AdminBlogIndex({ posts, filters, categories = [] }) {
                 .card        { animation:fadeSlideUp 0.5s cubic-bezier(0.22,1,0.36,1) 0.15s both; }
 
                 /* Modal */
-                .modal-overlay { position:fixed; inset:0; background:rgba(15,23,42,0.6); display:flex; align-items:center; justify-content:center; z-index:1000; padding:1.5rem; animation:fadeIn 0.2s ease; backdrop-filter:blur(8px); }
+                .modal-overlay { position:fixed; inset:0; background:rgba(15,23,42,0.55); display:flex; align-items:center; justify-content:center; z-index:9999; padding:1.5rem; animation:fadeIn 0.2s ease; }
                 @keyframes fadeIn { from{opacity:0} to{opacity:1} }
                 .modal-box { background:#fff; border-radius:24px; box-shadow:0 25px 80px rgba(15,23,42,0.3); width:100%; max-width:680px; max-height:90vh; overflow-y:auto; animation:slideUp 0.3s cubic-bezier(0.22,1,0.36,1); }
                 @keyframes slideUp { from{transform:translateY(30px);opacity:0} to{transform:translateY(0);opacity:1} }
@@ -299,7 +300,7 @@ export default function AdminBlogIndex({ posts, filters, categories = [] }) {
             </div>
 
             {/* ── Edit Modal ── */}
-            {editModal && (
+            {editModal && createPortal(
                 <div className="modal-overlay" onClick={e => e.target === e.currentTarget && setEditModal(false)}>
                     <div className="modal-box">
                         <div className="modal-header">
@@ -422,11 +423,12 @@ export default function AdminBlogIndex({ posts, filters, categories = [] }) {
                             </div>
                         </form>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
 
             {/* ── Delete Modal ── */}
-            {deleteModal && (
+            {deleteModal && createPortal(
                 <div className="modal-overlay" onClick={e => e.target === e.currentTarget && setDeleteModal(false)}>
                     <div className="delete-modal-box">
                         <div style={{ padding:'2rem', textAlign:'center' }}>
@@ -443,7 +445,8 @@ export default function AdminBlogIndex({ posts, filters, categories = [] }) {
                             </button>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </AdminLayout>
     );

@@ -60,6 +60,20 @@ body {
   transition: filter 0.4s ease;
 }
 
+.testi-avatar-initials {
+  border-radius: 50%;
+  background: #1e3a6e;
+  color: #fff;
+  font-weight: 700;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: 0.05em;
+  object-fit: cover;
+}
+
 /* ---------- SECTION SPACING ---------- */
 .hero-section {
   padding-top: 5rem;

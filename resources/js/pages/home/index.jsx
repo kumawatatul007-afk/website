@@ -6,6 +6,30 @@ import SEO from '../../components/SEO';
 import OptimizedImage from '../../components/OptimizedImage';
 import { ShimmerBlogCard, ShimmerPortfolioCard } from '../../components/ShimmerLoader';
 
+function TAvatar({ name, image, size = 48, className = '' }) {
+  const [broken, setBroken] = useState(false);
+  const initials = name ? name.trim().split(/\s+/).map(n => n[0]).join('').toUpperCase().slice(0, 2) : '?';
+  if (!image || broken) {
+    return (
+      <div className={`testi-avatar-initials ${className}`} style={{ width: size, height: size }} aria-label={name}>
+        {initials}
+      </div>
+    );
+  }
+  return (
+    <img
+      src={image}
+      alt={name}
+      className={className}
+      loading="lazy"
+      decoding="async"
+      width={size}
+      height={size}
+      onError={() => setBroken(true)}
+    />
+  );
+}
+
 export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPortfolios, services: dbServices = [], setting }) {
   const [totalPosts] = useState(0);
 
@@ -1128,15 +1152,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
                   </div>
                   <p className="testi-text">"{t.text}"</p>
                   <div className="testi-client-row">
-                    <img
-                      src={t.image}
-                      alt={t.name}
-                      className="testi-avatar"
-                      loading="lazy"
-                      decoding="async"
-                      width="48"
-                      height="48"
-                    />
+                    <TAvatar name={t.name} image={t.image} size={48} className="testi-avatar" />
                     <div>
                       <h4 className="testi-name">{t.name}</h4>
                       <p className="testi-position">{t.position}{t.company ? `, ${t.company}` : ''}</p>
@@ -1180,12 +1196,9 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
           <div className="clients-logos-row">
             {[
               { name: 'Upwork', href: 'https://www.upwork.com/freelancers/nikhilsharma', abbr: 'UW' },
-              { name: 'Clutch', href: 'https://clutch.co/profile/nikhil-sharma-developer', abbr: 'CL' },
-              { name: 'GoodFirms', href: 'https://www.goodfirms.co/company/nikhil-sharma', abbr: 'GF' },
-              { name: 'Sulekha', href: 'https://www.sulekha.com/nikhilsharma', abbr: 'SU' },
-              { name: 'Justdial', href: 'https://www.justdial.com/nikhilsharma', abbr: 'JD' },
+              { name: 'Fiverr', href: 'https://www.fiverr.com/', abbr: 'FV' },
               { name: 'LinkedIn', href: 'https://www.linkedin.com/in/nikhil-sharma-jaipur', abbr: 'LI' },
-              { name: 'GitHub', href: 'https://github.com/nikhilsharma', abbr: 'GH' },
+              { name: 'GitHub', href: 'https://github.com/technikhilsharma7', abbr: 'GH' },
             ].map((c) => (
               <a
                 key={c.name}

@@ -12,8 +12,8 @@ export default function MainLayout({ children }) {
   const logoUrl     = setting.logo
     ? `/storage/${setting.logo}`
     : '/images/logo.png'
-  const siteEmail   = setting.email   || 'nikhilsharma@thenikhilsharma.in'
-  const sitePhone   = setting.phonenumber || setting.phone || '+91 95299 21038'
+  const siteEmail   = setting.email   || 'technikhilsharma7@gmail.com'
+  const sitePhone   = setting.phonenumber || setting.phone || '+91 9529921038'
   const siteAddress = setting.address || 'Jaipur, Rajasthan, India'
 
   // social_links is stored as JSON: { facebook, twitter, linkedin, github, ... }
@@ -78,18 +78,20 @@ export default function MainLayout({ children }) {
         .cursor-dot {
           position: fixed; top: 0; left: 0;
           width: 6px; height: 6px;
-          background: #131313; border-radius: 50%;
+          background: #ffffff; border-radius: 50%;
           pointer-events: none; z-index: 99999;
           margin-left: -3px; margin-top: -3px;
           will-change: transform;
+          mix-blend-mode: difference;
         }
         .cursor-ring {
           position: fixed; top: 0; left: 0;
           width: 36px; height: 36px;
-          border: 1.5px solid #131313; border-radius: 50%;
+          border: 1.5px solid #ffffff; border-radius: 50%;
           pointer-events: none; z-index: 99998;
           margin-left: -18px; margin-top: -18px;
           will-change: transform; background: transparent;
+          mix-blend-mode: difference;
         }
 
         .mora-nav {
@@ -547,7 +549,7 @@ export default function MainLayout({ children }) {
             </a>
             <a href="https://dribbble.com/nikhilsharma" target="_blank" rel="noopener noreferrer" className="mora-social-icon" aria-label="Dribbble">
               <svg viewBox="0 0 24 24"><path d="M12 24C5.385 24 0 18.615 0 12S5.385 0 12 0s12 5.385 12 12-5.385 12-12 12zm10.12-10.358c-.35-.11-3.17-.953-6.384-.438 1.34 3.684 1.887 6.684 1.992 7.308 2.3-1.555 3.936-4.02 4.395-6.87zm-6.115 7.808c-.153-.9-.75-4.032-2.19-7.77l-.066.02c-5.79 2.015-7.86 6.017-8.04 6.4 1.73 1.358 3.92 2.166 6.29 2.166 1.42 0 2.77-.29 4-.816zm-11.62-2.073c.232-.4 3.045-5.055 8.332-6.765.135-.045.27-.084.405-.12-.26-.585-.54-1.167-.832-1.74C7.17 11.775 2.206 11.71 1.756 11.7l-.004.312c0 2.633.998 5.037 2.634 6.855zm-2.42-8.955c.46.008 4.683.026 9.477-1.248-1.698-3.018-3.53-5.558-3.8-5.928-2.868 1.35-5.01 3.99-5.676 7.176zM9.6 2.052c.282.38 2.145 2.914 3.822 6 3.645-1.365 5.19-3.44 5.373-3.702-1.81-1.61-4.19-2.586-6.795-2.586-.477 0-.945.04-1.4.112zm13.44 9.483c-.453-.14-3.773-.993-7.76-.43 1.5 4.11 2.11 7.47 2.23 8.13 2.87-1.9 4.84-5.01 5.53-7.7z"/></svg>
-            </a>
+            </a> 
           </div>
         </div>
 

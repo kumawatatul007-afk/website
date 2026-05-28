@@ -155,7 +155,7 @@ Route::get('/testimonials', function () {
             'name'     => $r->name,
             'position' => $r->designation ?? '',
             'text'     => $r->description ?? '',
-            'image'    => $r->image ?? null,
+            'image'    => $r->image ? url('storage/' . $r->image) : null,
         ];
     });
 
