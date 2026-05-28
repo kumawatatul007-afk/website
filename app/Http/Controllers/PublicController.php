@@ -251,12 +251,12 @@ class PublicController extends Controller
     /**
      * Portfolio project detail
      */
-    public function portfolioDetail($id)
+    public function portfolioDetail($slug)
     {
-        $item = PortfolioItem::findOrFail($id);
+        $item = PortfolioItem::where('slug', $slug)->firstOrFail();
 
         $related = PortfolioItem::where('is_publish', 1)
-            ->where('id', '!=', $id)
+            ->where('id', '!=', $item->id)
             ->where('category_id', $item->category_id)
             ->take(3)
             ->get(['id', 'title', 'image', 'slug'])
@@ -276,7 +276,7 @@ class PublicController extends Controller
 
         return Inertia::render('Portfolio/ProjectDetail/index', [
             'item'    => $itemData,
-            'id'      => $id,
+            'slug'    => $slug,
             'related' => $related,
             'seo'     => [
                 'title'       => "{$item->title} — Portfolio | {$siteName}",

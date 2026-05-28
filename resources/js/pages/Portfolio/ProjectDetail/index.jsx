@@ -162,8 +162,8 @@ function useVisible(ref) {
   return vis;
 }
 
-export default function ProjectDetailPage({ id, item: dbItem }) {
-  const pathId = id ? Number(id) : Number(window.location.pathname.split('/').pop());
+export default function ProjectDetailPage({ id, slug, item: dbItem }) {
+  const pathSlug = (typeof slug !== 'undefined' && slug) ? slug : window.location.pathname.split('/').pop();
   const [project, setProject] = useState(dbItem || null);
   const [prevItem, setPrevItem] = useState(null);
   const [nextItem, setNextItem] = useState(null);
@@ -180,11 +180,11 @@ export default function ProjectDetailPage({ id, item: dbItem }) {
     window.scrollTo(0, 0);
     if (!dbItem) {
       setLoading(true);
-      fetch(`/api/portfolio/${pathId}`).then(r=>r.json()).then(d=>{ setProject(d.item||d); setPrevItem(d.prev_item||null); setNextItem(d.next_item||null); setLoading(false); }).catch(()=>setLoading(false));
+      fetch(`/api/portfolio/${pathSlug}`).then(r=>r.json()).then(d=>{ setProject(d.item||d); setPrevItem(d.prev_item||null); setNextItem(d.next_item||null); setLoading(false); }).catch(()=>setLoading(false));
     } else {
-      fetch(`/api/portfolio/${pathId}`).then(r=>r.json()).then(d=>{ setPrevItem(d.prev_item||null); setNextItem(d.next_item||null); }).catch(()=>{});
+      fetch(`/api/portfolio/${pathSlug}`).then(r=>r.json()).then(d=>{ setPrevItem(d.prev_item||null); setNextItem(d.next_item||null); }).catch(()=>{});
     }
-  }, [pathId]);
+  }, [pathSlug]);
 
   if (loading) return (
     <div style={{display:'flex',alignItems:'center',justifyContent:'center',minHeight:'70vh',flexDirection:'column',gap:'1.25rem',fontFamily:"'Space Grotesk',sans-serif"}}>
@@ -537,8 +537,8 @@ export default function ProjectDetailPage({ id, item: dbItem }) {
 
           {/* Prev / Next */}
           <div className={`pd3-nav${navVis ? ' pd3-vis' : ''}`} ref={navRef}>
-            <div>{prevItem ? <Link href={`/portfolio/${prevItem.id}`} className="pd3-nav-card pd3-nav-prev"><span className="pd3-nav-label">← Previous</span><span className="pd3-nav-title">{prevItem.title}</span></Link> : <div/>}</div>
-            <div>{nextItem ? <Link href={`/portfolio/${nextItem.id}`} className="pd3-nav-card pd3-nav-next"><span className="pd3-nav-label">Next →</span><span className="pd3-nav-title">{nextItem.title}</span></Link> : <div/>}</div>
+            <div>{prevItem ? <Link href={`/portfolio/${prevItem.slug}`} className="pd3-nav-card pd3-nav-prev"><span className="pd3-nav-label">← Previous</span><span className="pd3-nav-title">{prevItem.title}</span></Link> : <div/>}</div>
+            <div>{nextItem ? <Link href={`/portfolio/${nextItem.slug}`} className="pd3-nav-card pd3-nav-next"><span className="pd3-nav-label">Next →</span><span className="pd3-nav-title">{nextItem.title}</span></Link> : <div/>}</div>
           </div>
 
           <Link href="/portfolio" className="pd3-back-link">← Back to All Projects</Link>

@@ -107,12 +107,14 @@ Route::get('/portfolio', function () {
     return response()->json($items);
 });
 
-// Get single portfolio item by ID
-Route::get('/portfolio/{id}', function ($id) {
-    $item = PortfolioItem::findOrFail($id);
+// Get single portfolio item by slug (or ID for fallback)
+Route::get('/portfolio/{slug}', function ($slug) {
+    $item = is_numeric($slug)
+        ? PortfolioItem::findOrFail($slug)
+        : PortfolioItem::where('slug', $slug)->firstOrFail();
 
-    $prev = PortfolioItem::where('id', '<', $id)->orderBy('id', 'desc')->first(['id', 'title', 'image', 'slug']);
-    $next = PortfolioItem::where('id', '>', $id)->orderBy('id', 'asc')->first(['id', 'title', 'image', 'slug']);
+    $prev = PortfolioItem::where('id', '<', $item->id)->orderBy('id', 'desc')->first(['id', 'title', 'image', 'slug']);
+    $next = PortfolioItem::where('id', '>', $item->id)->orderBy('id', 'asc')->first(['id', 'title', 'image', 'slug']);
 
     return response()->json([
         'item' => [

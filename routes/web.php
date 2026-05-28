@@ -121,7 +121,7 @@ Route::get('/blog/{slug}', [PublicController::class, 'blogDetailLegacy']);
 Route::get('/blog/{slug}/sidebar', [PublicController::class, 'blogDetailSidebarLegacy']);
 Route::get('/contact', [PublicController::class, 'contact']);
 Route::get('/portfolio/list', [PublicController::class, 'portfolioList']);
-Route::get('/portfolio/{id}', [PublicController::class, 'portfolioDetail']);
+Route::get('/portfolio/{slug}', [PublicController::class, 'portfolioDetail']);
 Route::get('/portfolio', [PublicController::class, 'portfolio']);
 Route::get('/services', [PublicController::class, 'services']);
 Route::get('/services/{slug}', [PublicController::class, 'serviceDetail']);

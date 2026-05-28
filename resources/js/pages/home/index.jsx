@@ -1057,7 +1057,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
               : portfolios.map((project, idx) => (
                 <a
                   key={project.id}
-                  href={`/portfolio/${project.id}`}
+                  href={`/portfolio/${project.slug || project.id}`}
                   style={{ textDecoration: 'none' }}
                 >
                   <div className="port-item" data-aos="zoom-in" data-aos-delay={idx * 100} data-aos-duration="800">

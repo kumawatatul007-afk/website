@@ -80,7 +80,7 @@ export default function PortfolioPage({ items: dbItems }) {
             {portfolios.map((project, i) => (
               <a
                 key={project.id}
-                href={`/portfolio/${project.id}`}
+                href={`/portfolio/${project.slug || project.id}`}
                 style={{ textDecoration: 'none' }}
               >
                 <div
