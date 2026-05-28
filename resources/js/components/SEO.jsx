@@ -52,7 +52,7 @@ const SEO = ({
         "url": "https://thenikhilsharma.in",
         "image": "https://www.thenikhilsharma.in/public/profile/images/n2.png",
         "jobTitle": "Full Stack Developer & UI/UX Designer",
-        "description": "Jaipur-based Full Stack Developer with 8+ years of experience in web and mobile application development.",
+        "description": "Jaipur-based Full Stack Developer with 9+ years of experience in web and mobile application development.",
         "address": {
             "@type": "PostalAddress",
             "addressLocality": "Jaipur",

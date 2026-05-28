@@ -257,7 +257,7 @@ export default function ServiceDetailPage({ service, related = [], setting = nul
       {/* ── STATS STRIP ── */}
       <div className="sd-stats-strip" data-aos="fade-up" data-aos-duration="600">
         {[
-          { num: '8+', label: 'Years Experience' },
+          { num: '9+', label: 'Years Experience' },
           { num: '120+', label: 'Projects Delivered' },
           { num: '3', label: 'Countries Served' },
           { num: '98%', label: 'Client Satisfaction' },

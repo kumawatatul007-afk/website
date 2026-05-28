@@ -325,7 +325,7 @@ export default function WebDeveloperJaipurPage() {
         <span className="ll-hero-label">Jaipur, Rajasthan</span>
         <h1>Web Developer in Jaipur<br />PHP, React & Flutter</h1>
         <p>
-          Nikhil Sharma is a Jaipur-based freelance web developer with 8+ years of experience
+          Nikhil Sharma is a Jaipur-based freelance web developer with 9+ years of experience
           building fast, SEO-optimised websites and apps for businesses across India and the Middle East.
         </p>
         <div className="ll-hero-btns">
@@ -363,7 +363,7 @@ export default function WebDeveloperJaipurPage() {
           <h2>Freelance Web Developer Based in Jaipur</h2>
           <p>
             If you are searching for a reliable <strong>web developer in Jaipur</strong>, you have come to the right place.
-            I am Nikhil Sharma, a full stack developer and UI/UX designer with over 8 years of professional experience
+            I am Nikhil Sharma, a full stack developer and UI/UX designer with over 9 years of professional experience
             building digital products for startups, small businesses, and enterprise clients.
           </p>
           <p>
