@@ -55,8 +55,8 @@ export default function MainLayout({ children }) {
   const socialLinks = typeof rawSocial === 'string'
     ? (() => { try { return JSON.parse(rawSocial) } catch { return {} } })()
     : (rawSocial || {})
-  const fbUrl       = socialLinks.facebook  || 'https://www.facebook.com/nikhilsharma'
-  const twUrl       = socialLinks.twitter   || 'https://twitter.com/nikhilsharma_in'
+  const fbUrl       = socialLinks.facebook  || 'https://www.facebook.com/nikhilsharma7developer'
+  const twUrl       = socialLinks.twitter   || 'https://x.com/NikhilSharma881'
   const liUrl       = socialLinks.linkedin  || 'https://www.linkedin.com/in/nikhil-sharma-jaipur'
   const ghUrl       = socialLinks.github    || 'https://github.com/nikhilsharma'
   const waUrl       = socialLinks.whatsapp  || 'https://wa.me/919529921038'
