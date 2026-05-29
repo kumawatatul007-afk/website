@@ -12,8 +12,14 @@ const POSTS_PER_PAGE = 6
 
 export default function BlogPage({ posts, seo }) {
   const allPosts = Array.isArray(posts) ? posts : [];
+  const [activeTag, setActiveTag] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [shimmer, setShimmer] = useState(true);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setActiveTag(params.get('tag') || '');
+  }, []);
 
   useEffect(() => {
     const t = setTimeout(() => setShimmer(false), 600);
@@ -37,8 +43,15 @@ export default function BlogPage({ posts, seo }) {
     }
   }, [shimmer, allPosts]);
 
-  const totalPages = Math.ceil(allPosts.length / POSTS_PER_PAGE);
-  const paginatedPosts = allPosts.slice(
+  const filteredPosts = activeTag
+    ? allPosts.filter(post => {
+        if (!post.tags) return false;
+        return post.tags.split(',').map(t => t.trim()).includes(activeTag);
+      })
+    : allPosts;
+
+  const totalPages = Math.ceil(filteredPosts.length / POSTS_PER_PAGE);
+  const paginatedPosts = filteredPosts.slice(
     (currentPage - 1) * POSTS_PER_PAGE,
     currentPage * POSTS_PER_PAGE
   );
@@ -87,15 +100,37 @@ export default function BlogPage({ posts, seo }) {
         <div className="blogpage-section-header" data-aos="fade-up" data-aos-duration="800">
           <span className="blogpage-stroke-label">My Blog</span>
           <h1 className="blogpage-big-title">Latest Articles & Insights</h1>
+          {activeTag && (
+            <div style={{ marginTop: '1rem', display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+              <span style={{ fontSize: '1rem', color: '#6b7280' }}>
+                Tag: <strong style={{ color: '#1d4ed8' }}>{activeTag}</strong>
+              </span>
+              <Link
+                href="/blog"
+                style={{ fontSize: '0.85rem', color: '#ef4444', border: '1px solid #ef4444', borderRadius: '999px', padding: '2px 12px', textDecoration: 'none' }}
+              >
+                ✕ Clear
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Empty state */}
-        {!shimmer && allPosts.length === 0 && (
+        {!shimmer && filteredPosts.length === 0 && (
           <div style={{ textAlign: 'center', padding: '3rem', color: '#9ca3af', fontFamily: "'Space Grotesk', sans-serif" }}>
-            No blog posts published yet.<br />
-            <span style={{ fontSize: '0.9em', color: '#bdbdbd' }}>
-              (Check your admin panel or database for published blog posts)
-            </span>
+            {activeTag ? (
+              <>
+                No posts found for tag <strong style={{ color: '#1d4ed8' }}>"{activeTag}"</strong>.<br />
+                <Link href="/blog" style={{ color: '#1d4ed8', fontSize: '0.9em' }}>View all posts</Link>
+              </>
+            ) : (
+              <>
+                No blog posts published yet.<br />
+                <span style={{ fontSize: '0.9em', color: '#bdbdbd' }}>
+                  (Check your admin panel or database for published blog posts)
+                </span>
+              </>
+            )}
           </div>
         )}
 
@@ -109,7 +144,7 @@ export default function BlogPage({ posts, seo }) {
         )}
 
         {/* Blog Cards Grid */}
-        {!shimmer && allPosts.length > 0 && (
+        {!shimmer && filteredPosts.length > 0 && (
           <>
             <div className="blog-grid">
               {paginatedPosts.map((post, index) => {

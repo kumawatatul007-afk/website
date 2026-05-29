@@ -24,7 +24,7 @@ export default function BlogDetailPage({ post, recentPosts = [], seo }) {
           }
         });
       },
-      { threshold: 0.08, rootMargin: '0px 0px -20px 0px' }
+      { threshold: 0, rootMargin: '0px 0px -20px 0px' }
     );
     animatedRefs.current.forEach((el) => { if (el) observer.observe(el); });
     return () => observer.disconnect();

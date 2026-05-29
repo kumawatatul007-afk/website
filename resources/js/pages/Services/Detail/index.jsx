@@ -10,19 +10,19 @@ import './index.css';
 ───────────────────────────────────────────── */
 const HERO_SLIDES = [
   {
-    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTy-H-aAlNcOsIEG3NkUM7ZINr388poAPsuFg&s',
+    url: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1920&q=90&fit=crop',
     label: 'Digital Solutions',
   },
   {
-    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgzblunZEH_LL8eULPvLay-LdxfNQFuRQClg&s',
+    url: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1920&q=90&fit=crop',
     label: 'Business Growth',
   },
   {
-    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDoj50mM17IIqJYWImlYTDysfmUIiEoHRgSw&s',
+    url: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&q=90&fit=crop',
     label: 'Expert Team',
   },
   {
-    url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTYek9Fd5UyHr-TY3EQsiZGDQ4iXx4Idh41A&s',
+    url: 'https://images.unsplash.com/photo-1547658719-da2b51169166?w=1920&q=90&fit=crop',
     label: 'Web Development',
   },
 ];
