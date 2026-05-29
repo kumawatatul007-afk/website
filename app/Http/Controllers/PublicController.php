@@ -253,7 +253,9 @@ class PublicController extends Controller
      */
     public function portfolioDetail($slug)
     {
-        $item = PortfolioItem::where('slug', $slug)->firstOrFail();
+        $item = is_numeric($slug)
+            ? PortfolioItem::findOrFail($slug)
+            : PortfolioItem::where('slug', $slug)->firstOrFail();
 
         $related = PortfolioItem::where('is_publish', 1)
             ->where('id', '!=', $item->id)

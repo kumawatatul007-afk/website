@@ -112,6 +112,17 @@ class AdminPortfolioController extends Controller
             'is_publish'        => 'nullable|integer',
         ]);
 
+        // Backfill slug if the item doesn't have one yet
+        if (empty($portfolio->slug)) {
+            $base  = Str::slug($validated['title']);
+            $slug  = $base;
+            $count = 1;
+            while (PortfolioItem::where('slug', $slug)->where('id', '!=', $portfolio->id)->exists()) {
+                $slug = $base . '-' . $count++;
+            }
+            $validated['slug'] = $slug;
+        }
+
         $portfolio->update($validated);
 
         return redirect()->route('admin.portfolio.index')

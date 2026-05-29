@@ -62,6 +62,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
   const mapPortfolio = (p) => ({
     id: p.id,
     title: p.title,
+    slug: p.slug || null,
     category: p.short_description || '',
     image: p.image
       ? (p.image.startsWith('http') ? p.image : `/images/portfolio/${p.image}`)

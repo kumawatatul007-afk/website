@@ -167,26 +167,26 @@ const NAV_ITEMS = [
     children: [
       { label: 'General', href: '/admin/settings', icon: Icons.General, animation: 'rotate', exactMatch: true },
       { label: 'Email', href: '/admin/settings/email', icon: Icons.Email, animation: 'bounce' },
-      {
-        label: 'User Management',
-        href: '/admin/settings/user-management',
-        icon: Icons.UserManagement,
-        animation: 'pop',
-        children: [
-          { label: 'Add Role', href: '/admin/settings/user-management/add-role', icon: Icons.Role, animation: 'rotate' },
-          { label: 'Add Users', href: '/admin/users', icon: Icons.Users, animation: 'wiggle' },
-          { label: 'Permission', href: '/admin/settings/user-management/permission', icon: Icons.Permission, animation: 'shake' },
-        ],
-      },
-      {
-        label: 'Plugins', href: '/admin/settings/plugin', icon: Icons.Plugin, animation: 'bounce',
-        children: [
-          { label: 'Scripts', href: '/admin/settings/scripts', icon: Icons.Scripts, animation: 'pulse' },
-        ],
-      },
-      { label: 'Tags', href: '/admin/settings/tags', icon: Icons.Tags, animation: 'pop' },
     ],
   },
+  {
+    label: 'User Management',
+    href: '/admin/settings/user-management',
+    icon: Icons.UserManagement,
+    animation: 'pop',
+    children: [
+      { label: 'Add Role', href: '/admin/settings/user-management/add-role', icon: Icons.Role, animation: 'rotate' },
+      { label: 'Add Users', href: '/admin/users', icon: Icons.Users, animation: 'wiggle' },
+      { label: 'Permission', href: '/admin/settings/user-management/permission', icon: Icons.Permission, animation: 'shake' },
+    ],
+  },
+  {
+    label: 'Plugins', href: '/admin/settings/plugin', icon: Icons.Plugin, animation: 'bounce',
+    children: [
+      { label: 'Scripts', href: '/admin/settings/scripts', icon: Icons.Scripts, animation: 'pulse' },
+    ],
+  },
+  { label: 'Tags', href: '/admin/settings/tags', icon: Icons.Tags, animation: 'pop' },
 ];
 
 export default function AdminLayout({ children, title = 'Admin Panel' }) {
@@ -205,8 +205,11 @@ export default function AdminLayout({ children, title = 'Admin Panel' }) {
       if (navRef.current) savedNavScroll.current = navRef.current.scrollTop;
     });
     const removeNavigate = router.on('navigate', () => {
+      const target = savedNavScroll.current;
       requestAnimationFrame(() => {
-        if (navRef.current) navRef.current.scrollTop = savedNavScroll.current;
+        requestAnimationFrame(() => {
+          if (navRef.current) navRef.current.scrollTop = target;
+        });
       });
     });
     return () => { removeBeforeNav(); removeNavigate(); };
@@ -217,7 +220,12 @@ export default function AdminLayout({ children, title = 'Admin Panel' }) {
     if (url.startsWith('/admin/blog') || url.startsWith('/admin/gallery') || url.startsWith('/admin/comments')) {
       auto['/admin/blog'] = true;
     }
-    if (url.startsWith('/admin/settings')) {
+    if (
+      url.startsWith('/admin/settings') &&
+      !url.startsWith('/admin/settings/user-management') &&
+      !url.startsWith('/admin/settings/plugin') &&
+      !url.startsWith('/admin/settings/scripts')
+    ) {
       auto['/admin/settings'] = true;
     }
     if (url.startsWith('/admin/settings/user-management')) {
@@ -226,7 +234,7 @@ export default function AdminLayout({ children, title = 'Admin Panel' }) {
     if (url.startsWith('/admin/settings/plugin') || url.startsWith('/admin/settings/scripts')) {
       auto['/admin/settings/plugin'] = true;
     }
-    setOpenMenus(auto);
+    setOpenMenus(prev => ({ ...prev, ...auto }));
   }, [url]);
 
   const toggleMenu = (href) => {
@@ -293,10 +301,7 @@ export default function AdminLayout({ children, title = 'Admin Panel' }) {
         <div key={item.href}>
           <button
             className={`admin-nav-item ${isGroupActive ? 'group-active' : ''} ${animationClass}`}
-            onClick={() => {
-              toggleMenu(item.href);
-              router.visit(item.href);
-            }}
+            onClick={() => toggleMenu(item.href)}
           >
             <span className="nav-icon">{item.icon}</span>
             {sidebarOpen && <span>{item.label}</span>}
