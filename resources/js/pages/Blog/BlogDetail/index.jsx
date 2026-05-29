@@ -1,12 +1,27 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, useForm, usePage } from '@inertiajs/react';
+import { Link, useForm, router, usePage } from '@inertiajs/react';
 import SEO from '../../../components/SEO';
 import './index.css';
 
 export default function BlogDetailPage({ post, recentPosts = [], seo }) {
   const { props } = usePage();
   const flashSuccess = props.flash?.comment_success;
+  const newsletterSuccess = props.flash?.newsletter_success;
   const [loading] = useState(!post);
+  const [subEmail, setSubEmail] = useState('');
+  const [subLoading, setSubLoading] = useState(false);
+  const [subError, setSubError] = useState('');
+
+  const handleSubscribe = (e) => {
+    e.preventDefault();
+    setSubLoading(true);
+    setSubError('');
+    router.post('/newsletter-subscribe', { email: subEmail }, {
+      preserveScroll: true,
+      onSuccess: () => { setSubEmail(''); setSubLoading(false); },
+      onError: (errors) => { setSubError(errors.email || 'Something went wrong.'); setSubLoading(false); },
+    });
+  };
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -132,6 +147,36 @@ export default function BlogDetailPage({ post, recentPosts = [], seo }) {
               <span className="hero-meta-icon"></span>
               <span>{comments.length} Comments</span>
             </div>
+          </div>
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginTop: '1.5rem', justifyContent: 'center' }}>
+            <Link
+              href="/contact"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '8px',
+                padding: '0.75rem 1.8rem', borderRadius: '8px', textDecoration: 'none',
+                background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: '#fff',
+                fontSize: '0.82rem', fontWeight: 700, letterSpacing: '0.06em',
+                textTransform: 'uppercase', boxShadow: '0 8px 24px rgba(99,102,241,0.4)',
+                transition: 'all 0.25s ease',
+              }}
+            >
+              Get a Quote
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+            </Link>
+            <Link
+              href="/services"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '8px',
+                padding: '0.75rem 1.6rem', borderRadius: '8px', textDecoration: 'none',
+                background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.85)',
+                border: '1.5px solid rgba(255,255,255,0.3)',
+                fontSize: '0.82rem', fontWeight: 600, letterSpacing: '0.06em',
+                textTransform: 'uppercase', backdropFilter: 'blur(4px)',
+                transition: 'all 0.25s ease',
+              }}
+            >
+              All Services
+            </Link>
           </div>
         </div>
       </header>
@@ -369,7 +414,31 @@ export default function BlogDetailPage({ post, recentPosts = [], seo }) {
               <div className="bd-widget cta-widget">
                 <h3>Never Miss a Post</h3>
                 <p>Join 5,000+ readers getting weekly insights.</p>
-                <button className="bd-btn-secondary">Subscribe →</button>
+                {newsletterSuccess ? (
+                  <div style={{ color: '#22c55e', fontWeight: 600, fontSize: '0.9rem', marginTop: '0.5rem' }}>
+                    ✓ Subscribed successfully!
+                  </div>
+                ) : (
+                  <form onSubmit={handleSubscribe} style={{ marginTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <input
+                      type="email"
+                      value={subEmail}
+                      onChange={e => setSubEmail(e.target.value)}
+                      placeholder="Enter your email"
+                      required
+                      style={{
+                        padding: '0.6rem 0.9rem', borderRadius: '8px',
+                        border: '1.5px solid rgba(255,255,255,0.2)',
+                        background: 'rgba(255,255,255,0.1)', color: '#fff',
+                        fontSize: '0.85rem', outline: 'none', width: '100%', boxSizing: 'border-box',
+                      }}
+                    />
+                    {subError && <span style={{ color: '#f87171', fontSize: '0.8rem' }}>{subError}</span>}
+                    <button type="submit" className="bd-btn-secondary" disabled={subLoading}>
+                      {subLoading ? 'Subscribing...' : 'Subscribe →'}
+                    </button>
+                  </form>
+                )}
               </div>
 
               {/* Navigation Widget */}

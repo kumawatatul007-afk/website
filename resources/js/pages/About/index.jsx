@@ -198,6 +198,41 @@ export default function AboutPage() {
                 With a deep understanding of both design and development, I specialize.
                 in creating seamless online experiences that resonate with users.
               </p>
+
+              <div
+                data-aos="fade-up"
+                data-aos-duration="800"
+                data-aos-delay="500"
+                style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginTop: '2rem' }}
+              >
+                <Link
+                  href="/contact"
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: '8px',
+                    padding: '0.85rem 2rem', borderRadius: '8px', textDecoration: 'none',
+                    background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: '#fff',
+                    fontSize: '0.82rem', fontWeight: 700, letterSpacing: '0.06em',
+                    textTransform: 'uppercase', boxShadow: '0 8px 24px rgba(99,102,241,0.4)',
+                    transition: 'all 0.25s ease',
+                  }}
+                >
+                  Get a Quote
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                </Link>
+                <Link
+                  href="/services"
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: '8px',
+                    padding: '0.85rem 1.8rem', borderRadius: '8px', textDecoration: 'none',
+                    background: 'transparent', color: '#374151',
+                    border: '1.5px solid #d1d5db',
+                    fontSize: '0.82rem', fontWeight: 600, letterSpacing: '0.06em',
+                    textTransform: 'uppercase', transition: 'all 0.25s ease',
+                  }}
+                >
+                  All Services
+                </Link>
+              </div>
             </div>
 
             {/* Right — profile image */}

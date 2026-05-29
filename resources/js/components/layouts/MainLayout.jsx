@@ -58,10 +58,12 @@ export default function MainLayout({ children }) {
   const fbUrl       = socialLinks.facebook  || 'https://www.facebook.com/nikhilsharma7developer'
   const twUrl       = socialLinks.twitter   || 'https://x.com/NikhilSharma881'
   const liUrl       = socialLinks.linkedin  || 'https://www.linkedin.com/in/nikhil-sharma-jaipur'
-  const ghUrl       = socialLinks.github    || 'https://github.com/nikhilsharma'
+  const ghUrl       = socialLinks.github    || 'https://github.com/technikhilsharma7'
   const waUrl       = socialLinks.whatsapp  || 'https://wa.me/919529921038'
-  const upUrl       = socialLinks.upwork    || 'https://www.upwork.com/freelancers/nikhilsharma'
-  const fvUrl       = socialLinks.fiverr    || 'https://www.fiverr.com/technikhil7/'
+  const upUrl       = socialLinks.upwork     || 'https://www.upwork.com/freelancers/nikhilsharma'
+  const fvUrl       = socialLinks.fiverr     || 'https://www.fiverr.com/technikhil7/'
+  const igUrl       = socialLinks.instagram  || 'https://www.instagram.com/nikhil_sharma__7'
+  const ptUrl       = socialLinks.pinterest  || 'https://in.pinterest.com/nikhilsharma881/'
 
   // Custom cursor
   const dotRef  = useRef(null)
@@ -577,6 +579,8 @@ export default function MainLayout({ children }) {
             <a href={ghUrl} target="_blank" rel="noopener noreferrer" className="mora-footer-col-link">GitHub</a>
             <a href={twUrl} target="_blank" rel="noopener noreferrer" className="mora-footer-col-link">Twitter</a>
             <a href={fbUrl} target="_blank" rel="noopener noreferrer" className="mora-footer-col-link">Facebook</a>
+            <a href={igUrl} target="_blank" rel="noopener noreferrer" className="mora-footer-col-link">Instagram</a>
+            <a href={ptUrl} target="_blank" rel="noopener noreferrer" className="mora-footer-col-link">Pinterest</a>
           </div>
 
         </div>

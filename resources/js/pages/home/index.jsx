@@ -364,9 +364,10 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
   })();
 
   const experiences = [
-    { id: 1, company: 'Apple', title: 'UX / UI Designer', duration: 'Jan 2023 – May 2024', description: 'Cursus risus at ultrices mi tempus imperdiet nulla malesuada pellentesque elit eget gravida cum sociis natoque penatibus', logo: 'M19.665 16.811a10.316 10.316 0 0 1-1.021 1.837c-.537.767-.978 1.297-1.316 1.592-.525.482-1.089.73-1.692.744-.432 0-.954-.123-1.562-.373-.61-.249-1.17-.371-1.683-.371-.537 0-1.113.122-1.73.371-.616.25-1.114.381-1.495.393-.577.025-1.154-.229-1.729-.764-.367-.32-.826-.87-1.377-1.648-.59-.829-1.075-1.794-1.455-2.891-.407-1.187-.611-2.335-.611-3.447 0-1.273.275-2.372.826-3.292a4.857 4.857 0 0 1 1.73-1.751 4.65 4.65 0 0 1 2.34-.662c.46 0 1.063.142 1.81.422s1.227.422 1.436.422c.158 0 .689-.167 1.593-.498.853-.307 1.573-.434 2.163-.384 1.6.129 2.801.759 3.6 1.895-1.43.867-2.137 2.08-2.123 3.637.012 1.213.453 2.222 1.317 3.023a4.33 4.33 0 0 0 1.315.863c-.106.307-.218.6-.336.882zM15.998 2.38c0 .95-.348 1.838-1.039 2.659-.836.976-1.846 1.541-2.941 1.452a2.955 2.955 0 0 1-.021-.36c0-.913.396-1.889 1.103-2.688.352-.404.8-.741 1.343-1.009.542-.264 1.054-.41 1.536-.435.013.128.019.255.019.381z' },
-    { id: 2, company: 'Facebook', title: 'UX / UI Designer', duration: 'June 2020 – Jan 2023', description: 'Cursus risus at ultrices mi tempus imperdiet nulla malesuada pellentesque elit eget gravida cum sociis natoque penatibus', logo: 'M12.001 2.002c-5.522 0-9.999 4.477-9.999 9.999 0 4.99 3.656 9.126 8.437 9.879v-6.988h-2.54v-2.891h2.54V9.798c0-2.508 1.493-3.891 3.776-3.891 1.094 0 2.24.195 2.24.195v2.459h-1.264c-1.24 0-1.628.772-1.628 1.563v1.875h2.771l-.443 2.891h-2.328v6.988C18.344 21.129 22 16.992 22 12.001c0-5.522-4.477-9.999-9.999-9.999z' },
-    { id: 3, company: 'Airbnb', title: 'Web Developer', duration: 'March 2019 – May 2020', description: 'Cursus risus at ultrices mi tempus imperdiet nulla malesuada pellentesque elit eget gravida cum sociis natoque penatibus', logo: 'M12.001 16.709c-1.013-1.271-1.609-2.386-1.808-3.34-.197-.769-.12-1.385.218-1.848.357-.532.89-.791 1.589-.791s1.231.259 1.589.796c.335.458.419 1.075.215 1.848-.218.974-.813 2.087-1.808 3.341l.005-.006zm7.196.855c-.14.934-.775 1.708-1.65 2.085-1.687.734-3.359-.437-4.789-2.026 2.365-2.961 2.803-5.268 1.787-6.758-.596-.855-1.449-1.271-2.544-1.271-2.206 0-3.419 1.867-2.942 4.034.276 1.173 1.013 2.506 2.186 3.996-.735.813-1.432 1.391-2.047 1.748-.478.258-.934.418-1.37.456-2.008.299-3.582-1.647-2.867-3.656.1-.259.297-.734.634-1.471l.019-.039c1.097-2.382 2.43-5.088 3.961-8.09l.039-.1.435-.836c.338-.616.477-.892 1.014-1.231.258-.157.576-.235.934-.235.715 0 1.271.418 1.511.753.118.18.259.419.436.716l.419.815.06.119c1.53 3.001 2.863 5.702 3.955 8.089l.02.019.401.915.237.573c.183.459.221.915.16 1.393z' }
+    { id: 1, company: 'American Express', title: 'Frontend Engineer & SRE', duration: 'Sep 2023 – Present' },
+    { id: 2, company: 'Keendroid Pvt. Ltd.', title: 'Full Stack Developer', duration: 'Dec 2018 – Aug 2023' },
+    { id: 3, company: 'Jaipur National University', title: 'MCA', duration: '2020 – 2022' },
+    { id: 4, company: 'Jaipur National University', title: 'BCA', duration: '2017 – 2020' },
   ];
 
   // Testimonials slider state
@@ -930,82 +931,67 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
           <div className="edu-timeline">
             <div className="edu-timeline-line"></div>
 
-            {/* Row 1: Left = logo+company+date | Right = title+desc */}
+            {/* Row 1: American Express — Left = logo+company+date | Right = title+desc */}
             <div className="edu-item" data-aos="fade-right" data-aos-delay="100" data-aos-duration="800">
               <div className="edu-item-left edu-item-logo-side">
                 <div className="edu-item-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" /></svg>
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 7H4c-1.1 0-2 .9-2 2v6c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zm-9 5H4v-1h7v1zm0-2H4V9h7v1zm9 4h-2v-1h2v1zm0-2h-6v-1h6v1zm0-2h-6V9h6v1z"/></svg>
                 </div>
-                <h4 className="edu-item-company">Apple</h4>
-                <p className="edu-item-date">Jan 2023 – May 2024</p>
+                <h4 className="edu-item-company">American Express</h4>
+                <p className="edu-item-date">Sep 2023 – Present</p>
               </div>
               <div className="edu-item-dot"></div>
               <div className="edu-item-right edu-item-text-side">
-                <h4 className="edu-item-title">UX / UI Designer</h4>
-                <p className="edu-item-desc">Cursus risus at ultrices mi tempus imperdiet nulla malesuada pellentesque elit eget gravida cum sociis natoque penatibus</p>
+                <h4 className="edu-item-title">Frontend Engineer &amp; Site Reliability Engineer</h4>
+                <p className="edu-item-desc">Engineered 15+ React.js homepage components for the Amex consumer platform serving 5M+ monthly sessions. Orchestrated Jenkins CI/CD pipelines cutting deployment failures by 60% and reducing release time from 2 hours to 25 minutes. Maintained 99.9% uptime via Dynatrace &amp; Splunk with defined SLOs/SLIs.</p>
               </div>
             </div>
 
-            {/* Row 2: Left = title+desc | Right = logo+company+date */}
+            {/* Row 2: Keendroid — Left = title+desc | Right = logo+company+date */}
             <div className="edu-item edu-item-reverse" data-aos="fade-left" data-aos-delay="200" data-aos-duration="800">
               <div className="edu-item-left edu-item-text-side">
-                <h4 className="edu-item-title">UX / UI Designer</h4>
-                <p className="edu-item-desc">Cursus risus at ultrices mi tempus imperdiet nulla malesuada pellentesque elit eget gravida cum sociis natoque penatibus</p>
+                <h4 className="edu-item-title">Full Stack Developer</h4>
+                <p className="edu-item-desc">Architected a multi-tenant AI Agent SaaS platform with RAG pipelines (Pinecone + OpenAI) supporting 500+ concurrent users. Built a courier aggregator processing 10,000+ daily shipments across 8 partners. Delivered School ERP, Real Estate ERP &amp; a React Native live-tracking app used by 300+ field agents.</p>
               </div>
               <div className="edu-item-dot"></div>
               <div className="edu-item-right edu-item-logo-side">
                 <div className="edu-item-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg>
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
                 </div>
-                <h4 className="edu-item-company">Facebook</h4>
-                <p className="edu-item-date">June 2020 – Jan 2023</p>
+                <h4 className="edu-item-company">Keendroid Pvt. Ltd.</h4>
+                <p className="edu-item-date">Dec 2018 – Aug 2023</p>
               </div>
             </div>
 
-            {/* Row 3: Left = logo+company+date | Right = title+desc */}
+            {/* Row 3: MCA — Left = logo+company+date | Right = title+desc */}
             <div className="edu-item" data-aos="fade-right" data-aos-delay="300" data-aos-duration="800">
               <div className="edu-item-left edu-item-logo-side">
                 <div className="edu-item-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.001 16.709c-1.013-1.271-1.609-2.386-1.808-3.34-.197-.769-.12-1.385.218-1.848.357-.532.89-.791 1.589-.791s1.231.259 1.589.796c.335.458.419 1.075.215 1.848-.218.974-.813 2.087-1.808 3.341l.005-.006zm7.196.855c-.14.934-.775 1.708-1.65 2.085-1.687.734-3.359-.437-4.789-2.026 2.365-2.961 2.803-5.268 1.787-6.758-.596-.855-1.449-1.271-2.544-1.271-2.206 0-3.419 1.867-2.942 4.034.276 1.173 1.013 2.506 2.186 3.996-.735.813-1.432 1.391-2.047 1.748-.478.258-.934.418-1.37.456-2.008.299-3.582-1.647-2.867-3.656.1-.259.297-.734.634-1.471l.019-.039c1.097-2.382 2.43-5.088 3.961-8.09l.039-.1.435-.836c.338-.616.477-.892 1.014-1.231.258-.157.576-.235.934-.235.715 0 1.271.418 1.511.753.118.18.259.419.436.716l.419.815.06.119c1.53 3.001 2.863 5.702 3.955 8.089l.02.019.401.915.237.573c.183.459.221.915.16 1.393z" /></svg>
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
                 </div>
-                <h4 className="edu-item-company">Airbnb</h4>
-                <p className="edu-item-date">March 2019 – May 2020</p>
+                <h4 className="edu-item-company">Jaipur National University</h4>
+                <p className="edu-item-date">2020 – 2022</p>
               </div>
               <div className="edu-item-dot"></div>
               <div className="edu-item-right edu-item-text-side">
-                <h4 className="edu-item-title">Web Developer</h4>
-                <p className="edu-item-desc">Cursus risus at ultrices mi tempus imperdiet nulla malesuada pellentesque elit eget gravida cum sociis natoque penatibus</p>
+                <h4 className="edu-item-title">Master of Computer Applications (MCA)</h4>
+                <p className="edu-item-desc">Advanced specialization in Software Engineering, System Architecture, and Computer Applications. Deepened expertise in algorithms, distributed computing, database systems, and enterprise application development.</p>
               </div>
             </div>
 
-            {/* Row 4: Left = title+desc | Right = logo+company+date */}
+            {/* Row 4: BCA — Left = title+desc | Right = logo+company+date */}
             <div className="edu-item edu-item-reverse" data-aos="fade-left" data-aos-delay="400" data-aos-duration="800">
               <div className="edu-item-left edu-item-text-side">
-                <h4 className="edu-item-title">Multimedia & Creative Technology</h4>
-                <p className="edu-item-desc">Cursus risus at ultrices mi tempus imperdiet nulla malesuada pellentesque elit eget gravida cum sociis natoque penatibus</p>
+                <h4 className="edu-item-title">Bachelor of Computer Applications (BCA)</h4>
+                <p className="edu-item-desc">Built a strong foundation in programming, web technologies, and database management. Developed core skills in PHP, JavaScript, and application development — launching the base for a full-stack career in Laravel, React.js, Node.js, and mobile apps.</p>
               </div>
               <div className="edu-item-dot"></div>
               <div className="edu-item-right edu-item-logo-side">
                 <div className="edu-item-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z" /></svg>
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
                 </div>
-                <h4 className="edu-item-company">University</h4>
-                <p className="edu-item-date">March 2016 – March 2019</p>
-              </div>
-            </div>
-            {/* Row 5: Left = logo+company+date | Right = title+desc */}
-            <div className="edu-item" data-aos="fade-right" data-aos-delay="500" data-aos-duration="800">
-              <div className="edu-item-left edu-item-logo-side">
-                <div className="edu-item-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z" /></svg>
-                </div>
-                <h4 className="edu-item-company">University</h4>
-                <p className="edu-item-date">March 2013 – March 2016</p>
-              </div>
-              <div className="edu-item-dot"></div>
-              <div className="edu-item-right edu-item-text-side">
-                <h4 className="edu-item-title">Multimedia & Creative Technology</h4>
-                <p className="edu-item-desc">Cursus risus at ultrices mi tempus imperdiet nulla malesuada pellentesque elit eget gravida cum sociis natoque penatibus</p>
+                <h4 className="edu-item-company">Jaipur National University</h4>
+                <p className="edu-item-date">2017 – 2020</p>
               </div>
             </div>
           </div>
@@ -1080,7 +1066,6 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
                       />
                       <div className="port-overlay">
                         <div className="port-overlay-content">
-                          <h4 className="port-overlay-title">{project.title}</h4>
                           {project.category && <p className="port-overlay-cat">{project.category}</p>}
                           <span className="port-overlay-link">View Details →</span>
                         </div>

@@ -14,7 +14,7 @@ const SEO = ({
     canonical: propCanonical,
     ogType = 'website',
     ogImage: propOgImage,
-    twitterHandle = '@nikhilsharma_in',
+    twitterHandle = '@NikhilSharma881',
     robots: propRobots,
     structuredData: propStructuredData = [],
     locale = 'en_IN',
@@ -64,7 +64,7 @@ const SEO = ({
         "telephone": "+91-98765-43210",
         "sameAs": [
             "https://www.linkedin.com/in/nikhil-sharma-jaipur",
-            "https://twitter.com/nikhilsharma_in",
+            "https://x.com/NikhilSharma881",
             "https://github.com/nikhilsharma",
             "https://dribbble.com/nikhilsharma",
             "https://www.upwork.com/freelancers/nikhilsharma",
@@ -116,7 +116,7 @@ const SEO = ({
         },
         "sameAs": [
             "https://www.linkedin.com/in/nikhil-sharma-jaipur",
-            "https://twitter.com/nikhilsharma_in",
+            "https://x.com/NikhilSharma881",
             "https://github.com/nikhilsharma",
             "https://www.upwork.com/freelancers/nikhilsharma",
             "https://clutch.co/profile/nikhil-sharma-developer",

@@ -161,6 +161,9 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 // Blog comment submission
 Route::post('/blog-comment', [\App\Http\Controllers\BlogCommentController::class, 'store'])->name('blog.comment.store');
 
+// Newsletter subscription
+Route::post('/newsletter-subscribe', [\App\Http\Controllers\NewsletterController::class, 'store'])->name('newsletter.subscribe');
+
 // ─── Auth ────────────────────────────────────────────────────────────────────
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
