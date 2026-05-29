@@ -23,6 +23,12 @@ class AdminUserController extends Controller
 
         $users = $query->latest()->paginate(10)->withQueryString();
 
+        $users->getCollection()->transform(function ($u) {
+            [$local, $domain] = explode('@', $u->email, 2) + ['', ''];
+            $u->email = substr($local, 0, 2) . str_repeat('*', max(1, strlen($local) - 2)) . '@' . $domain;
+            return $u;
+        });
+
         return Inertia::render('Admin/Users/index', [
             'users'   => $users,
             'filters' => $request->only(['search']),

@@ -95,6 +95,9 @@ Route::prefix('admin')->name('admin.')->middleware(\App\Http\Middleware\AdminMid
     Route::patch('/messages/{message}/read', [AdminMessageController::class, 'markRead'])->name('messages.read');
     Route::delete('/messages/{message}', [AdminMessageController::class, 'destroy'])->name('messages.destroy');
 
+    // Notifications API
+    Route::get('/notifications', [AdminMessageController::class, 'notifications'])->name('notifications');
+
     // Newsletters
     Route::get('/newsletters', [AdminNewsletterController::class, 'index'])->name('newsletters.index');
     Route::delete('/newsletters/{newsletter}', [AdminNewsletterController::class, 'destroy'])->name('newsletters.destroy');

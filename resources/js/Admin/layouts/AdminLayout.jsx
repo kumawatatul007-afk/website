@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, router, usePage } from '@inertiajs/react';
 import FlashMessage from '../../components/admin/FlashMessage';
 import './adminlayout.css';
@@ -165,7 +165,7 @@ const NAV_ITEMS = [
   {
     label: 'Settings', href: '/admin/settings', icon: Icons.Settings, animation: 'rotate',
     children: [
-      { label: 'General', href: '/admin/settings', icon: Icons.General, animation: 'rotate' },
+      { label: 'General', href: '/admin/settings', icon: Icons.General, animation: 'rotate', exactMatch: true },
       { label: 'Email', href: '/admin/settings/email', icon: Icons.Email, animation: 'bounce' },
       {
         label: 'User Management',
@@ -191,26 +191,73 @@ const NAV_ITEMS = [
 
 export default function AdminLayout({ children, title = 'Admin Panel' }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [blogOpen, setBlogOpen] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const [userManagementOpen, setUserManagementOpen] = useState(false);
-  const [pluginOpen, setPluginOpen] = useState(false);
+  const [openMenus, setOpenMenus] = useState({});
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const notifRef = useRef(null);
+  const navRef = useRef(null);
+  const savedNavScroll = useRef(0);
   const { url } = usePage();
 
   useEffect(() => {
+    const removeBeforeNav = router.on('before', () => {
+      if (navRef.current) savedNavScroll.current = navRef.current.scrollTop;
+    });
+    const removeNavigate = router.on('navigate', () => {
+      requestAnimationFrame(() => {
+        if (navRef.current) navRef.current.scrollTop = savedNavScroll.current;
+      });
+    });
+    return () => { removeBeforeNav(); removeNavigate(); };
+  }, []);
+
+  useEffect(() => {
+    const auto = {};
     if (url.startsWith('/admin/blog') || url.startsWith('/admin/gallery') || url.startsWith('/admin/comments')) {
-      setBlogOpen(true);
+      auto['/admin/blog'] = true;
     }
     if (url.startsWith('/admin/settings')) {
-      setSettingsOpen(true);
+      auto['/admin/settings'] = true;
     }
     if (url.startsWith('/admin/settings/user-management')) {
-      setUserManagementOpen(true);
+      auto['/admin/settings/user-management'] = true;
     }
-    if (url.startsWith('/admin/settings/plugin')) {
-      setPluginOpen(true);
+    if (url.startsWith('/admin/settings/plugin') || url.startsWith('/admin/settings/scripts')) {
+      auto['/admin/settings/plugin'] = true;
     }
+    setOpenMenus(auto);
   }, [url]);
+
+  const toggleMenu = (href) => {
+    setOpenMenus(prev => ({ ...prev, [href]: !prev[href] }));
+  };
+
+  const fetchNotifications = () => {
+    fetch('/admin/notifications')
+      .then(res => res.json())
+      .then(data => {
+        setNotifications(data.notifications || []);
+        setUnreadCount(data.unread_count || 0);
+      })
+      .catch(() => {});
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (notifRef.current && !notifRef.current.contains(e.target)) {
+        setNotifOpen(false);
+      }
+    };
+    if (notifOpen) document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [notifOpen]);
 
   const handleLogout = () => {
     router.post('/admin/logout');
@@ -227,22 +274,29 @@ export default function AdminLayout({ children, title = 'Admin Panel' }) {
     }
   };
 
+  const isItemActive = (item) => {
+    if (item.children) {
+      return url === item.href || url.startsWith(item.href + '/') || item.children.some(c => isItemActive(c));
+    }
+    if (item.exactMatch) return url === item.href;
+    return url === item.href || url.startsWith(item.href + '/');
+  };
+
   const renderNavItem = (item, depth = 0) => {
-    const isActive = url === item.href || url.startsWith(item.href + '/');
     const animationClass = getAnimationClass(item.animation);
 
     if (item.children) {
-      const isGroupActive = item.children.some(c => url.startsWith(c.href));
-      const isOpen = item.href.includes('/admin/blog') ? blogOpen : 
-                     item.href.includes('/admin/settings') ? settingsOpen : false;
-      const setOpen = item.href.includes('/admin/blog') ? setBlogOpen : 
-                      item.href.includes('/admin/settings') ? setSettingsOpen : () => {};
+      const isGroupActive = isItemActive(item);
+      const isOpen = !!openMenus[item.href];
 
       return (
         <div key={item.href}>
           <button
-            className={`admin-nav-item ${isGroupActive ? 'active' : ''} ${animationClass}`}
-            onClick={() => setOpen(o => !o)}
+            className={`admin-nav-item ${isGroupActive ? 'group-active' : ''} ${animationClass}`}
+            onClick={() => {
+              toggleMenu(item.href);
+              router.visit(item.href);
+            }}
           >
             <span className="nav-icon">{item.icon}</span>
             {sidebarOpen && <span>{item.label}</span>}
@@ -265,14 +319,18 @@ export default function AdminLayout({ children, title = 'Admin Panel' }) {
       );
     }
 
+    const isActive = item.exactMatch
+      ? url === item.href
+      : url === item.href || url.startsWith(item.href + '/');
+
     return (
       <Link
         key={item.href}
         href={item.href}
         className={`admin-nav-item ${isActive ? 'active' : ''} ${animationClass}`}
-        style={depth > 0 ? { 
-          fontSize: '0.82rem', 
-          paddingLeft: `${1 + depth * 0.5}rem` 
+        style={depth > 0 ? {
+          fontSize: '0.82rem',
+          paddingLeft: `${1 + depth * 0.5}rem`
         } : {}}
       >
         {depth === 0 && <span className="nav-icon">{item.icon}</span>}
@@ -287,7 +345,7 @@ export default function AdminLayout({ children, title = 'Admin Panel' }) {
       <aside className={`admin-sidebar ${!sidebarOpen ? 'collapsed' : ''}`}>
         <AdminLogo collapsed={!sidebarOpen} />
 
-        <nav className="admin-nav">
+        <nav className="admin-nav" ref={navRef}>
           {sidebarOpen && <p className="nav-section-label">Navigation</p>}
           {NAV_ITEMS.map(item => renderNavItem(item))}
         </nav>
@@ -313,11 +371,59 @@ export default function AdminLayout({ children, title = 'Admin Panel' }) {
             <span className="admin-topbar-title">{title}</span>
           </div>
           <div className="topbar-right">
-            <button className="topbar-notif-btn" title="Notifications">
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-              </svg>
-            </button>
+            <div className="notif-wrapper" ref={notifRef}>
+              <button
+                className="topbar-notif-btn"
+                title="Notifications"
+                onClick={() => setNotifOpen(o => !o)}
+              >
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                </svg>
+                {unreadCount > 0 && (
+                  <span className="notif-badge">{unreadCount > 9 ? '9+' : unreadCount}</span>
+                )}
+              </button>
+              {notifOpen && (
+                <div className="notif-dropdown">
+                  <div className="notif-header">
+                    <span className="notif-title">Notifications</span>
+                    {unreadCount > 0 && (
+                      <span className="notif-unread-label">{unreadCount} unread</span>
+                    )}
+                  </div>
+                  <div className="notif-list">
+                    {notifications.length === 0 ? (
+                      <div className="notif-empty">No notifications</div>
+                    ) : (
+                      notifications.map(n => (
+                        <Link
+                          key={n.id}
+                          href={`/admin/messages/${n.id}`}
+                          className={`notif-item ${!n.is_read ? 'notif-item-unread' : ''}`}
+                          onClick={() => setNotifOpen(false)}
+                        >
+                          <div className="notif-item-icon">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                            </svg>
+                          </div>
+                          <div className="notif-item-content">
+                            <p className="notif-item-name">{n.name}</p>
+                            <p className="notif-item-msg">{n.message ? n.message.slice(0, 50) + (n.message.length > 50 ? '…' : '') : ''}</p>
+                            <p className="notif-item-time">{n.created_at ? new Date(n.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : ''}</p>
+                          </div>
+                          {!n.is_read && <span className="notif-dot" />}
+                        </Link>
+                      ))
+                    )}
+                  </div>
+                  <Link href="/admin/messages" className="notif-footer" onClick={() => setNotifOpen(false)}>
+                    View all messages →
+                  </Link>
+                </div>
+              )}
+            </div>
             <div className="topbar-divider" />
             <div className="user-info">
               <span className="user-name">Nikhil Sharma</span>

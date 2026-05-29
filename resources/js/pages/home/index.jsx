@@ -155,6 +155,22 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
     }
   }, [isLoading]);
 
+  // Body scroll lock during preloader
+  useEffect(() => {
+    if (isLoading) {
+      window.scrollTo(0, 0);
+      document.body.style.overflow = 'hidden';
+      document.body.style.width = '100%';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.width = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.width = '';
+    };
+  }, [isLoading]);
+
   // Preloader and Lenis smooth scroll initialization
   useEffect(() => {
     // Exit animation pehle, phir unmount
@@ -511,7 +527,10 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
           @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
           .mora-preloader {
             position: fixed;
-            inset: 0;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
             z-index: 99999;
             display: flex;
             overflow: hidden;
@@ -528,12 +547,16 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
           .mora-preloader.exiting .mora-preloader__panel:last-child  { transform: translateX(100%); }
           .mora-preloader__center {
             position: absolute;
-            inset: 0;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             gap: 1.5rem;
+            z-index: 10;
             transition: opacity 0.4s ease;
           }
           .mora-preloader.exiting .mora-preloader__center { opacity: 0; }
@@ -606,6 +629,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
             padding: 0.6rem 0;
             background: rgba(255,255,255,0.04);
             border-top: 1px solid rgba(255,255,255,0.07);
+            z-index: 10;
             opacity: 0;
             animation: pl-fade 0.5s ease 0.9s forwards;
           }
@@ -648,7 +672,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
             <div className="mora-preloader__bar-wrap">
               <div className="mora-preloader__bar" />
             </div>
-            <p className="mora-preloader__tagline">Portfolio &amp; Creative Studio</p>
+            <p className="mora-preloader__tagline">Portfolio &amp; Creative</p>
           </div>
           <div className="mora-preloader__ticker-wrap" aria-hidden="true">
             <div className="mora-preloader__ticker">
