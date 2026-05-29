@@ -664,7 +664,7 @@ export default function ServicesPage({ services = [] }) {
             <span className="srv-h1-accent">Services in Jaipur</span>
           </h1>
           <p className="srv-hero-sub">
-            8+ years helping businesses across India and the Middle East build digital products that look great, load fast, and rank on Google.
+            9+ years helping businesses across India and the Middle East build digital products that look great, load fast, and rank on Google.
           </p>
           <div className="srv-hero-btns">
             <Link href="/contact" className="srv-btn-primary">
@@ -679,7 +679,7 @@ export default function ServicesPage({ services = [] }) {
       {/* ── STATS ── */}
       <div className="srv-stats">
         {[
-          { num: '8+', label: 'Years Experience' },
+          { num: '9+', label: 'Years Experience' },
           { num: '120+', label: 'Projects Delivered' },
           { num: '3', label: 'Countries Served' },
           { num: '98%', label: 'Client Satisfaction' },

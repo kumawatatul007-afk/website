@@ -1,0 +1,20 @@
+{
+  "node_modules/lenis/dist/lenis.mjs": {
+    "file": "assets/lenis-DQy71oTq.js",
+    "name": "lenis",
+    "src": "node_modules/lenis/dist/lenis.mjs",
+    "isDynamicEntry": true
+  },
+  "resources/js/app.jsx": {
+    "file": "assets/app-CXutbmQg.js",
+    "name": "app",
+    "src": "resources/js/app.jsx",
+    "isEntry": true,
+    "dynamicImports": [
+      "node_modules/lenis/dist/lenis.mjs"
+    ],
+    "css": [
+      "assets/app-KMhGjh0O.css"
+    ]
+  }
+}

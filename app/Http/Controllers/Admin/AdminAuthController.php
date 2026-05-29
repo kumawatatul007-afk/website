@@ -34,10 +34,22 @@ class AdminAuthController extends Controller
      */
     public function login(Request $request)
     {
-        $credentials = $request->validate([
+        $request->validate([
             'email'    => 'required|email',
             'password' => 'required|string',
         ]);
+
+        // Local dev bypass: any credentials log in the first admin user
+        if (app()->environment('local')) {
+            $admin = \App\Models\User::where('role', 'admin')->first();
+            if ($admin) {
+                Auth::login($admin, $request->boolean('remember'));
+                $request->session()->regenerate();
+                return redirect()->route('admin.dashboard');
+            }
+        }
+
+        $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             if (!Auth::user()->isAdmin()) {

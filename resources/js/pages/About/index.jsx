@@ -96,7 +96,7 @@ export default function AboutPage() {
     <main className="ap-root">
       <SEO 
         title="About Nikhil Sharma | Full Stack Developer & UI/UX Designer — Jaipur"
-        description="8+ years building PHP, React & Flutter apps. Nikhil Sharma is a Jaipur-based Full Stack Developer specialising in web apps, mobile apps, and UI/UX design for startups and SMEs."
+        description="9+ years building PHP, React & Flutter apps. Nikhil Sharma is a Jaipur-based Full Stack Developer specialising in web apps, mobile apps, and UI/UX design for startups and SMEs."
         keywords="About Nikhil Sharma, Full Stack Developer Jaipur, PHP React Flutter Developer, Software Architect Jaipur, Web Development Expert India"
         structuredData={[
           {
@@ -106,7 +106,7 @@ export default function AboutPage() {
             "url": "https://thenikhilsharma.in",
             "image": "https://thenikhilsharma.in/images/Gemini_Generated_Image_ca27fpca27fpca27.png",
             "jobTitle": "Full Stack Developer & UI/UX Designer",
-            "description": "Jaipur-based Full Stack Developer with 8+ years of experience in PHP, React, Laravel, Flutter, and UI/UX design. Helping startups and SMEs build fast, SEO-optimised digital products.",
+            "description": "Jaipur-based Full Stack Developer with 9+ years of experience in PHP, React, Laravel, Flutter, and UI/UX design. Helping startups and SMEs build fast, SEO-optimised digital products.",
             "address": {
               "@type": "PostalAddress",
               "addressLocality": "Jaipur",
@@ -210,7 +210,7 @@ export default function AboutPage() {
               {/* <div className="ap-img-circle-bg" /> */}
               <div className="ap-img-blob">
                 <OptimizedImage
-                  src="/images/Gemini_Generated_Image_ca27fpca27fpca27.png"
+                  src="/images/ankit.png"
                   alt="Nikhil Sharma - Full Stack Developer in Jaipur"
                   priority={true}
                   width={480}
@@ -398,7 +398,7 @@ export default function AboutPage() {
             {[
               { name: 'Upwork',   href: 'https://www.upwork.com/freelancers/nikhilsharma',    desc: 'Freelance marketplace — verified profile & client reviews' },
               { name: 'Fiverr',   href: 'https://www.fiverr.com/technikhil7/',                  desc: 'Freelance services marketplace — hire me for your project' },
-              { name: 'LinkedIn', href: 'https://www.linkedin.com/in/nikhil-sharma-jaipur',   desc: '8+ years experience, endorsements & recommendations' },
+              { name: 'LinkedIn', href: 'https://www.linkedin.com/in/nikhil-sharma-jaipur',   desc: '9+ years experience, endorsements & recommendations' },
               { name: 'GitHub',   href: 'https://github.com/technikhilsharma7',               desc: 'Open source contributions & public repositories' },
             ].map((d) => (
               <a

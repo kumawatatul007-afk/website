@@ -484,120 +484,186 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  if (isLoading) {
-    return (
+  // Keywords for preloader ticker — use DB data if available, else static fallback
+  const preloaderKeywords = keywordHighlights.length > 0
+    ? keywordHighlights
+    : [
+      'Best Software Developer in Jaipur',
+      'Best IT Freelancer in Jaipur',
+      'Best Website Developer in Jaipur',
+      'Best PHP Developer in Jaipur',
+      'Best Mobile Application Development in Jaipur',
+      'Best Front-End Developer in Jaipur',
+      'Best SQL Database Developer in Jaipur',
+      'Best Freelancers Hire in Jaipur',
+      'Best Software Developer in Rajasthan',
+      'Best Website Developer in Rajasthan',
+      'Best IT Freelancer in Rajasthan',
+      'Best PHP Developer in Rajasthan',
+    ];
+  const tickerItems = [...preloaderKeywords, ...preloaderKeywords];
+
+  return (
+    <>
+    {isLoading && (
       <>
         <style>{`
+          @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
           .mora-preloader {
             position: fixed;
             inset: 0;
             z-index: 99999;
-            background: #0b1120;
+            display: flex;
+            overflow: hidden;
+            pointer-events: all;
+          }
+          .mora-preloader__panel {
+            flex: 1;
+            background: #0f172a;
+            transition: transform 0.75s cubic-bezier(0.76, 0, 0.24, 1);
+          }
+          .mora-preloader__panel:first-child { transform-origin: left center; }
+          .mora-preloader__panel:last-child  { transform-origin: right center; }
+          .mora-preloader.exiting .mora-preloader__panel:first-child { transform: translateX(-100%); }
+          .mora-preloader.exiting .mora-preloader__panel:last-child  { transform: translateX(100%); }
+          .mora-preloader__center {
+            position: absolute;
+            inset: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 2rem;
-            opacity: 1;
-            transition: opacity 0.5s ease;
+            gap: 1.5rem;
+            transition: opacity 0.4s ease;
           }
-          .mora-preloader.exiting { opacity: 0; }
-
-          /* Orbital ring spinner */
-          .mora-pl-orbit {
-            width: 72px;
-            height: 72px;
-            position: relative;
-          }
-          .mora-pl-orbit svg {
-            width: 100%;
-            height: 100%;
-            animation: pl-spin 1.4s linear infinite;
-          }
-          @keyframes pl-spin { to { transform: rotate(360deg); } }
-          .mora-pl-orbit circle.track {
-            fill: none;
-            stroke: rgba(255,255,255,0.06);
-            stroke-width: 2.5;
-          }
-          .mora-pl-orbit circle.arc {
-            fill: none;
-            stroke: url(#plGrad);
-            stroke-width: 2.5;
-            stroke-dasharray: 170;
-            stroke-dashoffset: 42;
-            stroke-linecap: round;
-          }
-
-          /* Three dots pulse */
-          .mora-pl-dots {
+          .mora-preloader.exiting .mora-preloader__center { opacity: 0; }
+          .mora-preloader__brand {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            font-size: clamp(2rem, 8vw, 5rem);
+            letter-spacing: 0.1em;
+            text-transform: none;
+            color: #f8fafc;
             display: flex;
-            gap: 8px;
+            gap: 0.1em;
+            font-style: italic;
           }
-          .mora-pl-dots span {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: #3b82f6;
-            animation: pl-pulse 1.2s ease-in-out infinite;
+          .mora-preloader__brand span {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(60px);
+            animation: pl-letter-in 0.6s cubic-bezier(0.33, 1, 0.68, 1) forwards;
           }
-          .mora-pl-dots span:nth-child(1) { animation-delay: 0s; }
-          .mora-pl-dots span:nth-child(2) { animation-delay: 0.2s; }
-          .mora-pl-dots span:nth-child(3) { animation-delay: 0.4s; }
-          @keyframes pl-pulse {
-            0%, 80%, 100% { transform: scale(0.6); opacity: 0.3; }
-            40%            { transform: scale(1);   opacity: 1; }
-          }
-
-          /* Bottom progress bar */
-          .mora-pl-bar {
-            position: absolute;
-            bottom: 0; left: 0; right: 0;
+          .mora-preloader__brand span:nth-child(1)  { animation-delay: 0.10s; }
+          .mora-preloader__brand span:nth-child(2)  { animation-delay: 0.15s; }
+          .mora-preloader__brand span:nth-child(3)  { animation-delay: 0.20s; }
+          .mora-preloader__brand span:nth-child(4)  { animation-delay: 0.25s; }
+          .mora-preloader__brand span:nth-child(5)  { animation-delay: 0.30s; }
+          .mora-preloader__brand span:nth-child(6)  { animation-delay: 0.35s; }
+          .mora-preloader__brand span:nth-child(7)  { animation-delay: 0.40s; }
+          .mora-preloader__brand span:nth-child(8)  { animation-delay: 0.45s; }
+          .mora-preloader__brand span:nth-child(9)  { animation-delay: 0.50s; }
+          .mora-preloader__brand span:nth-child(10) { animation-delay: 0.55s; }
+          .mora-preloader__brand span:nth-child(11) { animation-delay: 0.60s; }
+          .mora-preloader__brand span:nth-child(12) { animation-delay: 0.65s; }
+          .mora-preloader__brand span:nth-child(13) { animation-delay: 0.70s; }
+          @keyframes pl-letter-in { to { opacity: 1; transform: translateY(0); } }
+          .mora-preloader__bar-wrap {
+            width: clamp(120px, 20vw, 220px);
             height: 2px;
-            background: rgba(255,255,255,0.05);
+            background: rgba(255,255,255,0.12);
+            border-radius: 2px;
+            overflow: hidden;
           }
-          .mora-pl-bar-fill {
+          .mora-preloader__bar {
             height: 100%;
             background: linear-gradient(90deg, #1e3a8a, #60a5fa);
             border-radius: 2px;
-            animation: pl-bar 2s cubic-bezier(0.4,0,0.2,1) forwards;
+            animation: pl-bar 1.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
           }
-          @keyframes pl-bar {
-            0%   { width: 0%; }
-            65%  { width: 78%; }
-            100% { width: 100%; }
+          @keyframes pl-bar { 0% { width: 0%; } 60% { width: 75%; } 100% { width: 100%; } }
+          .mora-preloader__tagline {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.72rem;
+            letter-spacing: 0.35em;
+            text-transform: uppercase;
+            color: rgba(248,250,252,0.45);
+            opacity: 0;
+            animation: pl-fade 0.5s ease 0.7s forwards;
+          }
+          .mora-preloader__dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: #3b82f6;
+            opacity: 0;
+            animation: pl-fade 0.4s ease 0.5s forwards;
+          }
+          @keyframes pl-fade { to { opacity: 1; } }
+          .mora-preloader__ticker-wrap {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            overflow: hidden;
+            padding: 0.6rem 0;
+            background: rgba(255,255,255,0.04);
+            border-top: 1px solid rgba(255,255,255,0.07);
+            opacity: 0;
+            animation: pl-fade 0.5s ease 0.9s forwards;
+          }
+          .mora-preloader__ticker {
+            display: flex;
+            gap: 0;
+            white-space: nowrap;
+            animation: pl-ticker 60s linear infinite;
+            will-change: transform;
+          }
+          .mora-preloader.exiting .mora-preloader__ticker { animation-play-state: paused; }
+          @keyframes pl-ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+          .mora-preloader__ticker-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0 1.5rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 0.06em;
+            color: rgba(248,250,252,0.5);
+            text-transform: uppercase;
+            flex-shrink: 0;
+          }
+          .mora-preloader__ticker-item::after {
+            content: '✦';
+            color: #3b82f6;
+            font-size: 0.5rem;
+            opacity: 0.7;
           }
         `}</style>
-
         <div className={`mora-preloader${isExiting ? ' exiting' : ''}`}>
-          <div className="mora-pl-orbit">
-            <svg viewBox="0 0 72 72">
-              <defs>
-                <linearGradient id="plGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#1e3a8a" />
-                  <stop offset="100%" stopColor="#60a5fa" />
-                </linearGradient>
-              </defs>
-              <circle className="track" cx="36" cy="36" r="31" />
-              <circle className="arc"   cx="36" cy="36" r="31" />
-            </svg>
+          <div className="mora-preloader__panel" />
+          <div className="mora-preloader__panel" />
+          <div className="mora-preloader__center">
+            <div className="mora-preloader__dot" />
+            <div className="mora-preloader__brand">
+              <span>N</span><span>i</span><span>k</span><span>h</span><span>i</span><span>l</span><span>&nbsp;</span><span>S</span><span>h</span><span>a</span><span>r</span><span>m</span><span>a</span>
+            </div>
+            <div className="mora-preloader__bar-wrap">
+              <div className="mora-preloader__bar" />
+            </div>
+            <p className="mora-preloader__tagline">Portfolio &amp; Creative Studio</p>
           </div>
-          <div className="mora-pl-dots">
-            <span /><span /><span />
-          </div>
-          <div className="mora-pl-bar">
-            <div className="mora-pl-bar-fill" />
+          <div className="mora-preloader__ticker-wrap" aria-hidden="true">
+            <div className="mora-preloader__ticker">
+              {tickerItems.map((kw, i) => (
+                <span key={i} className="mora-preloader__ticker-item">{kw}</span>
+              ))}
+            </div>
           </div>
         </div>
       </>
-    );
-  }
-
-  return (
+    )}
     <main className="dashboard-container">
       <SEO
         title="Nikhil Sharma — Freelance PHP & React Developer Jaipur | Affordable Rates"
-        description="Hire Nikhil Sharma, a Jaipur-based Full Stack Developer with 8+ years building websites, apps & digital solutions. Fast delivery, affordable rates, real results."
+        description="Hire Nikhil Sharma, a Jaipur-based Full Stack Developer with 9+ years building websites, apps & digital solutions. Fast delivery, affordable rates, real results."
         keywords="Web Developer Jaipur, PHP Developer Jaipur, React Developer India, Full Stack Developer Jaipur, Hire Web Developer, Nikhil Sharma Developer"
         ogType="website"
         structuredData={[{
@@ -673,7 +739,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
                 </p>
               </div>
               <div className="hero-description" data-aos="zoom-out" data-aos-delay="300" data-aos-duration="1000">
-                <p>I'm <strong>Nikhil Sharma</strong>, a Freelance Full Stack Developer with <strong>8+ years of experience</strong> helping small businesses &amp; startups build a strong online presence — across <strong>India &amp; the Middle East</strong>.</p>
+                <p>I'm <strong>Nikhil Sharma</strong>, a Freelance Full Stack Developer with <strong>9+ years of experience</strong> helping small businesses &amp; startups build a strong online presence — across <strong>India &amp; the Middle East</strong>.</p>
                 <p>I specialise in crafting clean, effective websites &amp; apps that are affordable, fast, and built to grow your business — without the high agency fees.</p>
               </div>
               <div className="hero-buttons" data-aos="fade-up" data-aos-delay="400" data-aos-duration="1000">
@@ -690,21 +756,21 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
                   </svg>
                   <span>Chat on WhatsApp</span>
                 </a>
-                <button className="hero-btn-watch" onClick={() => setVideoOpen(true)}>
+                {/* <button className="hero-btn-watch" onClick={() => setVideoOpen(true)}>
                   <span className="hero-play-circle">
                     <svg viewBox="0 0 24 24" fill="currentColor" className="hero-play-icon">
                       <path d="M8 5v14l11-7z" />
                     </svg>
                   </span>
                   <span className="hero-watch-text">Watch Intro</span>
-                </button>
+                </button> */}
               </div>
             </div>
             <div className="hero-image" data-aos="fade-left" data-aos-delay="200" data-aos-duration="1200">
               <div className="profile-circle-wrapper">
                 <div className="profile-circle-img-wrap">
                   <img
-                    src="/images/Gemini_Generated_Image_s2k77gs2k77gs2k7.png"
+                    src="/images/rohithgfgj.png"
                     alt="Nikhil Sharma - Full Stack Developer & UI/UX Designer in Jaipur"
                     className="profile-circle-img"
                     loading="eager"
@@ -787,7 +853,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
               <div className="about-circle-wrapper">
                 <div className="about-circle-img-wrap">
                   <img
-                    src="/images/Gemini_Generated_Image_ca27fpca27fpca27.png"
+                    src="/images/ankit.png"
                     alt="About Nikhil Sharma"
                     className="about-circle-img"
                   />
@@ -1399,5 +1465,6 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
         </div>
       )}
     </main>
+    </>
   );
 }

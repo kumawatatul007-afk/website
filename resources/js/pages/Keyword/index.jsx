@@ -345,7 +345,7 @@ export default function KeywordDetailPage({ keyword, services = [], relatedKeywo
     <main className="kd-root">
       <SEO
         title={`${safeKeyword} — ${siteName} | Jaipur`}
-        description={`Looking for ${safeKeyword}? ${siteName} is a top-rated freelance developer in ${location} with 8+ years of experience. Affordable rates, fast delivery, real results.`}
+        description={`Looking for ${safeKeyword}? ${siteName} is a top-rated freelance developer in ${location} with 9+ years of experience. Affordable rates, fast delivery, real results.`}
         keywords={`${safeKeyword}, ${serviceType} ${location}, hire ${serviceType.toLowerCase()}, freelance developer ${location}`}
         structuredData={structuredData}
       />
@@ -400,7 +400,7 @@ export default function KeywordDetailPage({ keyword, services = [], relatedKeywo
           </h1>
 
           <p className="kd-hero-sub" data-aos="fade-up" data-aos-delay="160" data-aos-duration="700">
-            {siteName} is a top-rated freelance developer in {location} with 8+ years of experience building websites, mobile apps, and digital solutions for businesses across India and the Middle East.
+            {siteName} is a top-rated freelance developer in {location} with 9+ years of experience building websites, mobile apps, and digital solutions for businesses across India and the Middle East.
           </p>
 
           <div className="kd-hero-btns" data-aos="fade-up" data-aos-delay="220" data-aos-duration="700">
@@ -449,7 +449,7 @@ export default function KeywordDetailPage({ keyword, services = [], relatedKeywo
                   across {location} and all of India.
                 </p>
                 <p>
-                  With over 8 years of hands-on experience in web development, mobile app development, and UI/UX design,
+                  With over 9 years of hands-on experience in web development, mobile app development, and UI/UX design,
                   {siteName} has helped 120+ businesses build their digital presence — from startups to established enterprises.
                 </p>
                 <h2>Why Choose {siteName} as Your {serviceType}?</h2>
@@ -458,7 +458,7 @@ export default function KeywordDetailPage({ keyword, services = [], relatedKeywo
                   unique combination of technical expertise, creative design, and business understanding that sets apart.
                 </p>
                 <ul>
-                  <li>8+ years of professional experience in web and app development</li>
+                  <li>9+ years of professional experience in web and app development</li>
                   <li>120+ successful projects delivered across India and the Middle East</li>
                   <li>Affordable pricing tailored for startups and small businesses</li>
                   <li>Fast turnaround — most projects delivered within 2–6 weeks</li>
@@ -521,7 +521,7 @@ export default function KeywordDetailPage({ keyword, services = [], relatedKeywo
             <div className="kd-info-card" data-aos="fade-left" data-aos-delay="80" data-aos-duration="600">
               <p className="kd-info-title">Quick Info</p>
               <div className="kd-info-row"><span className="kd-info-label">Location</span><span className="kd-info-value">{location}, India</span></div>
-              <div className="kd-info-row"><span className="kd-info-label">Experience</span><span className="kd-info-value">8+ Years</span></div>
+              <div className="kd-info-row"><span className="kd-info-label">Experience</span><span className="kd-info-value">9+ Years</span></div>
               <div className="kd-info-row"><span className="kd-info-label">Projects</span><span className="kd-info-value">120+ Delivered</span></div>
               <div className="kd-info-row"><span className="kd-info-label">Stack</span><span className="kd-info-value">React, Laravel, Flutter</span></div>
               {siteTiming && (
@@ -537,7 +537,7 @@ export default function KeywordDetailPage({ keyword, services = [], relatedKeywo
               <p className="kd-info-title">Stats</p>
               <div className="kd-stats">
                 {[
-                  { num: '8+', label: 'Years Exp.' },
+                  { num: '9+', label: 'Years Exp.' },
                   { num: '120+', label: 'Projects' },
                   { num: '98%', label: 'Satisfaction' },
                   { num: '3', label: 'Countries' },
