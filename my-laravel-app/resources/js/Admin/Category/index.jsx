@@ -392,7 +392,6 @@ export default function AdminCategoryIndex({ categories, filters }) {
                     <table className="cat-table">
                         <thead>
                             <tr>
-                                <th style={{ width:'52px' }}>#</th>
                                 <th style={{ width:'15%' }} className="col-type">Type</th>
                                 <th>Name</th>
                                 <th style={{ width:'24%' }} className="col-slug">Slug</th>
@@ -403,7 +402,7 @@ export default function AdminCategoryIndex({ categories, filters }) {
                         </thead>
                         <tbody>
                             {shimmer ? (
-                                <ShimmerTableRows count={8} cols={7} />
+                                <ShimmerTableRows count={8} cols={6} />
                             ) : categories?.data?.length > 0 ? (
                                 categories.data.map((cat, i) => {
                                     const palette = typePalette(cat.text_for);
@@ -414,7 +413,6 @@ export default function AdminCategoryIndex({ categories, filters }) {
 
                                     return (
                                         <tr key={cat.id}>
-                                            <td className="row-num">{(categories.from ?? 0) + i}</td>
                                             <td className="col-type">
                                                 {cat.text_for ? (
                                                     <span className="type-badge" style={{ background:palette.bg, color:palette.color }}>
@@ -455,7 +453,7 @@ export default function AdminCategoryIndex({ categories, filters }) {
                                 })
                             ) : (
                                 <tr>
-                                    <td colSpan={7} style={{ padding:0, borderBottom:'none' }}>
+                                    <td colSpan={6} style={{ padding:0, borderBottom:'none' }}>
                                         <div className="cat-empty">
                                             <div className="cat-empty-icon-wrap"><IconFolder /></div>
                                             <div className="cat-empty-title">{search ? 'No results found' : 'No categories yet'}</div>

@@ -76,6 +76,7 @@ export default function AdminServiceCreate() {
                 .toggle input:checked + .toggle-slider::before { transform: translateX(18px); }
                 .toggle-label { font-size: 0.875rem; color: #374151; font-weight: 500; }
                 .hint { font-size: 0.72rem; color: #94a3b8; margin-top: 0.2rem; }
+                .content-textarea { resize: vertical; min-height: 240px; line-height: 1.75; font-family: inherit; }
             `}</style>
 
             <div className="form-card">
@@ -134,12 +135,16 @@ export default function AdminServiceCreate() {
                             {errors.tags && <span className="error">{errors.tags}</span>}
                         </div>
 
-                        {/* Content */}
+                        {/* Content — Plain Text */}
                         <div className="form-group full">
                             <label>Content (Full Description)</label>
-                            <textarea className="form-textarea" rows={8} value={data.content}
+                            <textarea
+                                className="form-textarea content-textarea"
+                                value={data.content}
                                 onChange={e => setData('content', e.target.value)}
-                                placeholder="Full service description, HTML allowed..." />
+                                placeholder="Full service description..."
+                            />
+                            <span className="hint">Plain text only — no HTML tags</span>
                             {errors.content && <span className="error">{errors.content}</span>}
                         </div>
 

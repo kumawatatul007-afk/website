@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+﻿import { useEffect, useState, useRef } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import './index.css';
@@ -115,10 +115,27 @@ function TAvatar({ name, image, size = 48, className = '' }) {
 export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPortfolios, services: dbServices = [], setting }) {
   const [totalPosts] = useState(0);
 
-  function stripHtml(html) {
+  function stripHtml(html, maxLen = 130) {
     if (!html) return '';
-    const plain = html.replace(/<[^>]*>/g, '').trim();
-    return plain.length > 130 ? plain.slice(0, 130) + '...' : plain;
+    let decoded = html;
+    for (let pass = 0; pass < 3; pass++) {
+      decoded = decoded
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
+        .replace(/&apos;/g, "'")
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&mdash;/g, '—')
+        .replace(/&ndash;/g, '–')
+        .replace(/&hellip;/g, '...')
+        .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(parseInt(code, 10)))
+        .replace(/&[a-z]+;/gi, '');
+    }
+    decoded = decoded.replace(/ /g, ' ');
+    const plain = decoded.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+    return plain.length > maxLen ? plain.slice(0, maxLen) + '...' : plain;
   }
 
   function getBlogImage(image) {
@@ -132,9 +149,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
       id: p.id,
       slug: p.slug,
       title: p.title,
-      excerpt: p.meta_description
-        ? (p.meta_description.length > 130 ? p.meta_description.slice(0, 130) + '...' : p.meta_description)
-        : stripHtml(p.content),
+      excerpt: stripHtml(p.meta_description || p.content),
       image_url: getBlogImage(p.main_image),
       author: p.created_by || 'Nikhil Sharma',
       date: p.created_at ? new Date(p.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Recent',
@@ -921,9 +936,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
                 </div>
                 <h3 className="svc-card-title">{service.title}</h3>
                 <p className="svc-card-desc">
-                  {service.description
-                    ? service.description.replace(/<[^>]*>/g, '').slice(0, 160) + (service.description.replace(/<[^>]*>/g, '').length > 160 ? '…' : '')
-                    : ''}
+                  {stripHtml(service.description, 160)}
                 </p>
                 <a
                   href={(() => {
@@ -1293,22 +1306,14 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
                   data-aos-duration="800"
                 >
                   <div className="blog-img-wrap">
-                    <img src={
-                      post.main_image
-                        ? (post.main_image.startsWith('http') ? post.main_image : `/images/blogs/${post.main_image}`)
-                        : 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/blog-fi-1.jpg'
-                    } alt={post.title} className="blog-img" loading="lazy" decoding="async" width="400" height="240"
+                    <img src={post.image_url || 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/blog-fi-1.jpg'}
+                      alt={post.title} className="blog-img" loading="lazy" decoding="async" width="400" height="240"
                       onError={e => { e.target.src = 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/blog-fi-1.jpg'; }}
                     />
                   </div>
                   <div className="blog-card-body">
                     <h4 className="blog-card-title">{post.title}</h4>
-                    <p className="blog-card-excerpt">
-                      {post.meta_description
-                        ? (post.meta_description.length > 120 ? post.meta_description.slice(0, 120) + '...' : post.meta_description)
-                        : (post.content ? post.content.replace(/<[^>]*>/g, '').slice(0, 120) + '...' : '')
-                      }
-                    </p>
+                    <p className="blog-card-excerpt">{post.excerpt}</p>
                     <div className="blog-card-meta">
                       <div className="blog-card-author-wrap">
                         <div className="blog-card-avatar">
@@ -1319,9 +1324,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
                         </div>
                         <span className="blog-card-author">Nikhil Sharma</span>
                       </div>
-                      <span className="blog-card-date">
-                        {post.created_at ? new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : ''}
-                      </span>
+                      <span className="blog-card-date">{post.date}</span>
                     </div>
                   </div>
                 </div>

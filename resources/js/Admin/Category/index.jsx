@@ -606,7 +606,7 @@ export default function AdminCategoryIndex({ categories, filters }) {
                     <table className="cat-table">
                         <thead>
                             <tr>
-                                <th style={{ width: '52px' }}>#</th>
+                                {/* <th style={{ width: '52px' }}>#</th> */}
                                 <th style={{ width: '15%' }} className="col-type">Type</th>
                                 <th>Name</th>
                                 <th style={{ width: '24%' }} className="col-slug">Slug</th>

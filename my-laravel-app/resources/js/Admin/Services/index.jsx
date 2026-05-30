@@ -264,7 +264,6 @@ export default function AdminServicesIndex({ services = {} }) {
                         <table className="svc-table">
                             <thead>
                                 <tr>
-                                    <th className="col-num">#</th>
                                     <th className="col-title">Title</th>
                                     <th className="col-slug hide-xs">Slug</th>
                                     <th className="col-tags hide-sm">Tags</th>
@@ -276,11 +275,6 @@ export default function AdminServicesIndex({ services = {} }) {
                             <tbody>
                                 {data.length > 0 ? data.map((svc, i) => (
                                     <tr key={svc.id}>
-                                        {/* # */}
-                                        <td className="col-num" style={{ color: '#cbd5e1', fontWeight: 700 }}>
-                                            {(services.from ?? 0) + i}
-                                        </td>
-
                                         {/* Title + meta desc */}
                                         <td className="col-title">
                                             <span className="title-main">{svc.title}</span>
@@ -331,7 +325,7 @@ export default function AdminServicesIndex({ services = {} }) {
                                     </tr>
                                 )) : (
                                     <tr>
-                                        <td colSpan={7}>
+                                        <td colSpan={6}>
                                             <div className="empty-state">
                                                 <div className="empty-state-title">No services found</div>
                                                 <div className="empty-state-sub">Click "+ New Service" to add one.</div>

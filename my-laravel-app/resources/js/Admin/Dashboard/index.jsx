@@ -468,16 +468,15 @@ export default function AdminDashboard({
                     <Link href="/admin/blog" className="vbtn">View all <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></Link>
                 </div>
                 <table className="d-table">
-                    <thead><tr><th style={{width:42}}>#</th><th>Title</th><th>Published</th></tr></thead>
+                    <thead><tr><th>Title</th><th>Published</th></tr></thead>
                     <tbody>
                         {recent_blogs.length > 0 ? recent_blogs.map((b,i) => (
                             <tr key={b.id}>
-                                <td><div className="blog-rank">{i+1}</div></td>
                                 <td style={{ fontWeight:600, color:'#1e293b', maxWidth:500, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{b.title}</td>
                                 <td style={{ color:'#94a3b8', fontSize:'0.73rem', whiteSpace:'nowrap' }}>{new Date(b.created_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</td>
                             </tr>
                         )) : (
-                            <tr><td colSpan={3}><div className="empty-tbl"><div className="empty-ico">📝</div><div className="empty-txt">No blog posts yet</div></div></td></tr>
+                            <tr><td colSpan={2}><div className="empty-tbl"><div className="empty-ico">📝</div><div className="empty-txt">No blog posts yet</div></div></td></tr>
                         )}
                     </tbody>
                 </table>

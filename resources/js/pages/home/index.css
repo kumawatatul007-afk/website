@@ -410,7 +410,7 @@ body {
 
 .svc-cards-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
 }
 
@@ -419,6 +419,10 @@ body {
   background: #ffffff;
   padding: 0.75rem 1.25rem;
   transition: background 0.3s ease, box-shadow 0.3s ease;
+  min-width: 0;
+  overflow: hidden;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .svc-card-visible {
@@ -461,6 +465,13 @@ body {
   color: #6b7280;
   line-height: 1.7;
   flex: 1;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  -webkit-box-orient: vertical;
 }
 
 .svc-card-link {
@@ -1637,6 +1648,8 @@ body {
   color: #6b7280;
   line-height: 1.7;
   margin-bottom: 1rem;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .blog-card-meta {

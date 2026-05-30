@@ -266,11 +266,11 @@ export default function ProjectDetailPage({ id, slug, item: dbItem }) {
         .pd3-slide-active{opacity:1}
         .pd3-slide-img{width:100%;height:100%;object-fit:cover;display:block;transition:object-position 0.7s ease}
         .pd3-slider-controls{position:absolute;bottom:1rem;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:1rem;z-index:10}
-        .pd3-slider-arr{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;width:36px;height:36px;border-radius:50%;font-size:1.25rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:background 0.2s;flex-shrink:0}
-        .pd3-slider-arr:hover{background:rgba(255,255,255,0.25)}
+        .pd3-slider-arr{background:black;border:1px solid rgba(255,255,255,0.2);color:#fff;width:36px;height:36px;border-radius:50%;font-size:1.25rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:background 0.2s;flex-shrink:0}
+        .pd3-slider-arr:hover{background:black(255,255,255,0.25)}
         .pd3-slider-dots{display:flex;gap:6px}
-        .pd3-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.25);border:none;cursor:pointer;transition:background 0.2s,transform 0.2s;padding:0}
-        .pd3-dot-active{background:#fff;transform:scale(1.3)}
+        .pd3-dot{width:8px;height:8px;border-radius:50%;background:black;border:none;cursor:pointer;transition:background 0.2s,transform 0.2s;padding:0}
+        .pd3-dot-active{background:black;transform:scale(1.3)}
         .pd3-slide-label{position:absolute;top:1rem;right:1rem;background:rgba(0,0,0,0.5);backdrop-filter:blur(8px);color:#fff;font-size:0.7rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;padding:0.3rem 0.75rem;border-radius:100px;font-family:'Space Grotesk',sans-serif;z-index:10}
 
         /* ══ MAIN ══ */

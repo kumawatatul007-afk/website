@@ -88,6 +88,7 @@ Route::prefix('admin')->name('admin.')->middleware(\App\Http\Middleware\AdminMid
     // Gallery
     Route::get('/gallery', [AdminGalleryController::class, 'index'])->name('gallery.index');
     Route::post('/gallery', [AdminGalleryController::class, 'store'])->name('gallery.store');
+    Route::delete('/gallery/{gallery}', [AdminGalleryController::class, 'destroy'])->name('gallery.destroy');
     Route::get('/comments', [AdminBlogCommentController::class, 'index'])->name('comments.index');
     Route::put('/comments/{comment}', [AdminBlogCommentController::class, 'update'])->name('comments.update');
     Route::delete('/comments/{comment}', [AdminBlogCommentController::class, 'destroy'])->name('comments.destroy');

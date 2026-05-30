@@ -125,13 +125,13 @@ function EditModal({ comment, onClose }) {
     }, [loading, onClose]);
 
     const inpStyle = (field) => ({
-        width:'100%', padding:'.7rem .875rem', fontFamily:'inherit',
+        width:'100%', padding:'.6rem .8rem', fontFamily:'inherit',
         border:`1.5px solid ${errors[field] ? '#ef4444' : '#e2e8f0'}`,
         borderRadius:'10px', fontSize:'.875rem', color:'#0f172a',
         background:'#fff', outline:'none', boxSizing:'border-box',
         transition:'border-color .15s,box-shadow .15s',
     });
-    const lbl = { display:'block', fontSize:'.72rem', fontWeight:700, color:'#374151', textTransform:'uppercase', letterSpacing:'.07em', marginBottom:'.4rem' };
+    const lbl = { display:'block', fontSize:'.68rem', fontWeight:700, color:'#374151', textTransform:'uppercase', letterSpacing:'.07em', marginBottom:'.3rem' };
     const errTxt = { display:'block', fontSize:'.75rem', color:'#ef4444', marginTop:'.2rem' };
 
     const handleSubmit = (e) => {
@@ -147,25 +147,30 @@ function EditModal({ comment, onClose }) {
 
     return createPortal(
         <div
-            style={{ position:'fixed', inset:0, zIndex:9999, display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(15,23,42,0.55)', backdropFilter:'blur(10px)', WebkitBackdropFilter:'blur(10px)', animation:'cmOverlayIn .2s ease both', padding:'1rem' }}
+            style={{ position:'fixed', inset:0, zIndex:9999, display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(15,23,42,0.6)', backdropFilter:'blur(12px)', WebkitBackdropFilter:'blur(12px)', animation:'cmOverlayIn .2s ease both', padding:'1rem' }}
             onClick={(e) => e.target === e.currentTarget && !loading && onClose()}
         >
-            <div style={{ background:'#fff', borderRadius:'24px', padding:'2rem', width:'100%', maxWidth:'500px', boxShadow:'0 32px 80px rgba(15,23,42,0.25)', border:'1px solid rgba(255,255,255,0.85)', animation:'cmPanelIn .3s cubic-bezier(.22,1,.36,1) both', maxHeight:'90vh', overflowY:'auto' }}>
+            <div style={{ background:'linear-gradient(145deg,#ffffff,#f8faff)', borderRadius:'20px', padding:'1.5rem', width:'100%', maxWidth:'480px', boxShadow:'0 24px 60px rgba(15,23,42,0.22), 0 0 0 1px rgba(99,102,241,0.08)', animation:'cmPanelIn .3s cubic-bezier(.22,1,.36,1) both' }}>
 
                 {/* Header */}
-                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'1.5rem' }}>
-                    <div>
-                        <h3 style={{ margin:0, fontSize:'1.1rem', fontWeight:800, color:'#0f172a', marginBottom:'.25rem' }}>Edit Comment</h3>
-                        <span style={{ fontSize:'.72rem', background:'#f1f5f9', color:'#64748b', padding:'.15rem .5rem', borderRadius:'5px', fontWeight:600 }}>ID: {comment.id}</span>
+                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'1.1rem', paddingBottom:'1rem', borderBottom:'1.5px solid #f1f5f9' }}>
+                    <div style={{ display:'flex', alignItems:'center', gap:'.6rem' }}>
+                        <div style={{ width:34, height:34, borderRadius:'10px', background:'linear-gradient(135deg,#6366f1,#4f46e5)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        </div>
+                        <div>
+                            <h3 style={{ margin:0, fontSize:'1rem', fontWeight:800, color:'#0f172a', lineHeight:1.2 }}>Edit Comment</h3>
+                            <span style={{ fontSize:'.68rem', background:'#ede9fe', color:'#6366f1', padding:'.1rem .45rem', borderRadius:'5px', fontWeight:700 }}>ID: {comment.id}</span>
+                        </div>
                     </div>
-                    <button onClick={() => !loading && onClose()} style={{ width:32, height:32, borderRadius:'10px', border:'1.5px solid #e2e8f0', background:'#f8fafc', color:'#64748b', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer' }}>
+                    <button onClick={() => !loading && onClose()} style={{ width:30, height:30, borderRadius:'9px', border:'1.5px solid #e2e8f0', background:'#fff', color:'#94a3b8', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', flexShrink:0, transition:'all .15s' }}>
                         <IconClose />
                     </button>
                 </div>
 
                 <form onSubmit={handleSubmit}>
                     {/* Name + Email */}
-                    <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'.875rem', marginBottom:'.875rem' }}>
+                    <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'.65rem', marginBottom:'.65rem' }}>
                         <div>
                             <label style={lbl}>Name *</label>
                             <input style={inpStyle('name')} value={form.name} onChange={e => setForm(f => ({...f, name: e.target.value}))} placeholder="Commenter name" disabled={loading} />
@@ -179,16 +184,16 @@ function EditModal({ comment, onClose }) {
                     </div>
 
                     {/* Website */}
-                    <div style={{ marginBottom:'.875rem' }}>
+                    <div style={{ marginBottom:'.65rem' }}>
                         <label style={lbl}>Website</label>
                         <input style={inpStyle('website')} value={form.website} onChange={e => setForm(f => ({...f, website: e.target.value}))} placeholder="https://example.com" disabled={loading} />
                     </div>
 
                     {/* Comment text */}
-                    <div style={{ marginBottom:'.875rem' }}>
+                    <div style={{ marginBottom:'.65rem' }}>
                         <label style={lbl}>Comment *</label>
                         <textarea
-                            style={{ ...inpStyle('description'), resize:'vertical', minHeight:110, lineHeight:1.65 }}
+                            style={{ ...inpStyle('description'), resize:'none', minHeight:90, lineHeight:1.6 }}
                             value={form.description}
                             onChange={e => setForm(f => ({...f, description: e.target.value}))}
                             placeholder="Comment text…"
@@ -198,30 +203,35 @@ function EditModal({ comment, onClose }) {
                     </div>
 
                     {/* Publish toggle */}
-                    <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'.875rem 1rem', borderRadius:'12px', border:'1.5px solid', borderColor: form.is_publish ? 'rgba(34,197,94,.3)' : '#e2e8f0', background: form.is_publish ? 'linear-gradient(135deg,#f0fdf4,#dcfce7)' : '#f8fafc', marginBottom:'1.5rem', transition:'all .2s' }}>
-                        <div>
-                            <div style={{ fontSize:'.875rem', fontWeight:600, color:'#374151' }}>{form.is_publish ? '✓ Published' : '○ Hidden'}</div>
-                            <div style={{ fontSize:'.72rem', color:'#94a3b8', marginTop:'.1rem' }}>{form.is_publish ? 'Visible on blog post' : 'Not shown publicly'}</div>
+                    <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'.65rem .875rem', borderRadius:'12px', border:'1.5px solid', borderColor: form.is_publish ? 'rgba(34,197,94,.3)' : '#e2e8f0', background: form.is_publish ? 'linear-gradient(135deg,#f0fdf4,#dcfce7)' : '#f8fafc', marginBottom:'.875rem', transition:'all .2s' }}>
+                        <div style={{ display:'flex', alignItems:'center', gap:'.5rem' }}>
+                            <span style={{ fontSize:'1rem' }}>{form.is_publish ? '✅' : '🔒'}</span>
+                            <div>
+                                <div style={{ fontSize:'.82rem', fontWeight:700, color: form.is_publish ? '#15803d' : '#374151', lineHeight:1.2 }}>{form.is_publish ? 'Published' : 'Hidden'}</div>
+                                <div style={{ fontSize:'.68rem', color:'#94a3b8' }}>{form.is_publish ? 'Visible on blog post' : 'Not shown publicly'}</div>
+                            </div>
                         </div>
-                        <label style={{ position:'relative', width:46, height:26, flexShrink:0 }}>
+                        <label style={{ position:'relative', width:44, height:24, flexShrink:0, cursor:'pointer' }}>
                             <input type="checkbox" checked={!!form.is_publish} onChange={e => setForm(f => ({...f, is_publish: e.target.checked ? 1 : 0}))} style={{ opacity:0, width:0, height:0 }} />
-                            <span style={{ position:'absolute', cursor:'pointer', inset:0, background: form.is_publish ? '#22c55e' : '#cbd5e1', borderRadius:26, transition:'background .25s' }}>
-                                <span style={{ position:'absolute', height:20, width:20, left:3, bottom:3, background:'#fff', borderRadius:'50%', transition:'transform .25s', transform: form.is_publish ? 'translateX(20px)' : 'none', boxShadow:'0 1px 4px rgba(0,0,0,.2)' }} />
+                            <span style={{ position:'absolute', cursor:'pointer', inset:0, background: form.is_publish ? '#22c55e' : '#cbd5e1', borderRadius:24, transition:'background .25s' }}>
+                                <span style={{ position:'absolute', height:18, width:18, left:3, bottom:3, background:'#fff', borderRadius:'50%', transition:'transform .25s', transform: form.is_publish ? 'translateX(20px)' : 'none', boxShadow:'0 1px 4px rgba(0,0,0,.2)' }} />
                             </span>
                         </label>
                     </div>
 
                     {/* Buttons */}
-                    <div style={{ display:'flex', gap:'.75rem' }}>
+                    <div style={{ display:'flex', gap:'.6rem' }}>
                         <button type="button" onClick={() => !loading && onClose()} disabled={loading}
-                            style={{ flex:1, padding:'.875rem', borderRadius:'14px', border:'1.5px solid #e2e8f0', background:'#fff', color:'#475569', fontSize:'.875rem', fontWeight:600, cursor:loading?'not-allowed':'pointer', fontFamily:'inherit', opacity:loading?.5:1 }}>
+                            style={{ flex:1, padding:'.75rem', borderRadius:'12px', border:'1.5px solid #e2e8f0', background:'#fff', color:'#475569', fontSize:'.875rem', fontWeight:600, cursor:loading?'not-allowed':'pointer', fontFamily:'inherit', opacity:loading?.5:1, transition:'all .15s' }}>
                             Cancel
                         </button>
                         <button type="submit" disabled={loading}
-                            style={{ flex:1, padding:'.875rem', borderRadius:'14px', border:'none', background:loading?'#a5b4fc':'linear-gradient(135deg,#6366f1,#4f46e5)', color:'#fff', fontSize:'.875rem', fontWeight:700, cursor:loading?'not-allowed':'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', justifyContent:'center', gap:'.5rem', boxShadow:loading?'none':'0 4px 14px rgba(99,102,241,.4)' }}>
+                            style={{ flex:2, padding:'.75rem', borderRadius:'12px', border:'none', background:loading?'#a5b4fc':'linear-gradient(135deg,#6366f1,#4f46e5)', color:'#fff', fontSize:'.875rem', fontWeight:700, cursor:loading?'not-allowed':'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', justifyContent:'center', gap:'.5rem', boxShadow:loading?'none':'0 4px 14px rgba(99,102,241,.35)', transition:'all .15s' }}>
                             {loading ? (
-                                <><span style={{ width:14, height:14, border:'2px solid rgba(255,255,255,.35)', borderTopColor:'#fff', borderRadius:'50%', animation:'cmSpin .65s linear infinite', display:'inline-block' }} />Saving…</>
-                            ) : 'Save Changes'}
+                                <><span style={{ width:13, height:13, border:'2px solid rgba(255,255,255,.35)', borderTopColor:'#fff', borderRadius:'50%', animation:'cmSpin .65s linear infinite', display:'inline-block' }} />Saving…</>
+                            ) : (
+                                <><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Save Changes</>
+                            )}
                         </button>
                     </div>
                 </form>

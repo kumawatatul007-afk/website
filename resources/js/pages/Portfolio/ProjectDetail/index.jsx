@@ -103,50 +103,51 @@ function StatItem({ stat, isVisible }) {
 }
 
 function ImageSlider({ imgSrc, websiteUrl }) {
-  const SLIDES = [
-    { position: 'center top',   label: 'Homepage' },
-    { position: 'center 33%',   label: 'Features' },
-    { position: 'center 67%',   label: 'Details'  },
-  ];
-  const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
-
-  useEffect(() => {
-    if (paused) return;
-    const t = setInterval(() => setActive(a => (a + 1) % SLIDES.length), 3500);
-    return () => clearInterval(t);
-  }, [paused]);
+  const STEPS = 4;
+  const [step, setStep] = useState(0);
 
   return (
-    <div className="pd3-slider-wrap" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
-      {/* Browser chrome */}
+    <div className="pd3-slider-wrap">
       <div className="pd3-browser-chrome">
         <div className="pd3-browser-dots">
-          <span style={{background:'#fc5753'}} /><span style={{background:'#fdbc40'}} /><span style={{background:'#33c748'}} />
+          <span style={{background:'#ff5f57'}} /><span style={{background:'#febc2e'}} /><span style={{background:'#28c840'}} />
         </div>
         <div className="pd3-browser-addr">{websiteUrl || 'https://example.com'}</div>
         <div style={{width:60}} />
       </div>
-      {/* Slides */}
       <div className="pd3-slide-track">
-        {SLIDES.map((s, i) => (
-          <div key={i} className={`pd3-slide${i === active ? ' pd3-slide-active' : ''}`}>
-            <img src={imgSrc} alt={s.label} className="pd3-slide-img" style={{ objectPosition: s.position }} loading={i === 0 ? 'eager' : 'lazy'} />
+        <img
+          src={imgSrc}
+          alt="preview"
+          className="pd3-slide-img"
+          style={{ transform: `translateY(${-step * 25}%)`, transition: 'transform 0.75s cubic-bezier(0.4,0,0.2,1)' }}
+          loading="eager"
+        />
+        <div className="pd3-slider-controls">
+          <button
+            className="pd3-slider-arr"
+            onClick={() => setStep(s => Math.max(0, s - 1))}
+            disabled={step === 0}
+            aria-label="Scroll up"
+          >↑</button>
+          <div className="pd3-slider-dots">
+            {Array.from({ length: STEPS }).map((_, i) => (
+              <button
+                key={i}
+                className={`pd3-dot${i === step ? ' pd3-dot-active' : ''}`}
+                onClick={() => setStep(i)}
+                aria-label={`Go to section ${i + 1}`}
+              />
+            ))}
           </div>
-        ))}
-      </div>
-      {/* Controls */}
-      <div className="pd3-slider-controls">
-        <button className="pd3-slider-arr" onClick={() => setActive(a => (a - 1 + SLIDES.length) % SLIDES.length)} aria-label="Prev">‹</button>
-        <div className="pd3-slider-dots">
-          {SLIDES.map((s, i) => (
-            <button key={i} className={`pd3-dot${i === active ? ' pd3-dot-active' : ''}`} onClick={() => setActive(i)} aria-label={s.label} />
-          ))}
+          <button
+            className="pd3-slider-arr"
+            onClick={() => setStep(s => Math.min(STEPS - 1, s + 1))}
+            disabled={step === STEPS - 1}
+            aria-label="Scroll down"
+          >↓</button>
         </div>
-        <button className="pd3-slider-arr" onClick={() => setActive(a => (a + 1) % SLIDES.length)} aria-label="Next">›</button>
       </div>
-      {/* Slide label */}
-      <div className="pd3-slide-label">{SLIDES[active].label}</div>
     </div>
   );
 }
@@ -249,29 +250,28 @@ export default function ProjectDetailPage({ id, slug, item: dbItem }) {
         @keyframes pd3-fade{from{opacity:0}to{opacity:1}}
 
         /* ══ SLIDER ══ */
-        .pd3-slider-section{background:#0f172a;padding:5rem 2rem}
+        .pd3-slider-section{background:#000;padding:5rem 2rem}
         .pd3-slider-container{max-width:1100px;margin:0 auto}
         .pd3-slider-header{text-align:center;margin-bottom:2.5rem}
         .pd3-slider-tag{font-size:0.72rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:${accent};margin-bottom:0.5rem}
         .pd3-slider-headline{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.8rem);color:#fff;font-weight:700}
 
-        .pd3-slider-wrap{position:relative;border-radius:20px;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,0.6);background:#1e293b}
-        .pd3-browser-chrome{background:#1e293b;padding:0.75rem 1rem;display:flex;align-items:center;gap:0.75rem;border-bottom:1px solid rgba(255,255,255,0.06)}
+        .pd3-slider-wrap{position:relative;border-radius:16px;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,0.08),0 40px 80px rgba(0,0,0,0.8);background:#111}
+        .pd3-browser-chrome{background:#111;padding:0.75rem 1rem;display:flex;align-items:center;gap:0.75rem;border-bottom:1px solid rgba(255,255,255,0.1)}
         .pd3-browser-dots{display:flex;gap:6px}
         .pd3-browser-dots span{width:12px;height:12px;border-radius:50%;display:block}
-        .pd3-browser-addr{flex:1;background:rgba(255,255,255,0.06);border-radius:6px;padding:0.3rem 0.75rem;font-size:0.7rem;color:rgba(255,255,255,0.35);font-family:'Space Grotesk',sans-serif;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-        .pd3-slide-track{position:relative;height:520px;overflow:hidden}
+        .pd3-browser-addr{flex:1;background:rgba(255,255,255,0.08);border-radius:6px;padding:0.3rem 0.75rem;font-size:0.7rem;color:rgba(255,255,255,0.5);font-family:'Space Grotesk',sans-serif;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+        .pd3-slide-track{position:relative;height:520px;overflow:hidden;background:#000}
         @media(max-width:768px){.pd3-slide-track{height:320px}}
-        .pd3-slide{position:absolute;inset:0;opacity:0;transition:opacity 0.7s ease}
-        .pd3-slide-active{opacity:1}
-        .pd3-slide-img{width:100%;height:100%;object-fit:cover;display:block;transition:object-position 0.7s ease}
-        .pd3-slider-controls{position:absolute;bottom:1rem;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:1rem;z-index:10}
-        .pd3-slider-arr{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;width:36px;height:36px;border-radius:50%;font-size:1.25rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:background 0.2s;flex-shrink:0}
-        .pd3-slider-arr:hover{background:rgba(255,255,255,0.25)}
-        .pd3-slider-dots{display:flex;gap:6px}
-        .pd3-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.25);border:none;cursor:pointer;transition:background 0.2s,transform 0.2s;padding:0}
-        .pd3-dot-active{background:#fff;transform:scale(1.3)}
-        .pd3-slide-label{position:absolute;top:1rem;right:1rem;background:rgba(0,0,0,0.5);backdrop-filter:blur(8px);color:#fff;font-size:0.7rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;padding:0.3rem 0.75rem;border-radius:100px;font-family:'Space Grotesk',sans-serif;z-index:10}
+        .pd3-slide-img{width:100%;height:auto;object-fit:unset;display:block}
+        .pd3-slider-controls{position:absolute;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:1.5rem;z-index:20;background:rgba(0,0,0,0.78);backdrop-filter:blur(12px);padding:0.9rem 1.5rem;border-top:1px solid rgba(255,255,255,0.1)}
+        .pd3-slider-arr{background:black;border:2px solid rgba(255,255,255,0.85);color:#fff;width:42px;height:42px;border-radius:50%;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:background 0.2s,transform 0.2s,opacity 0.2s;flex-shrink:0;font-weight:700}
+        .pd3-slider-arr:hover:not(:disabled){background:black;transform:scale(1.1)}
+        .pd3-slider-arr:disabled{opacity:0.25;cursor:not-allowed}
+        .pd3-slider-dots{display:flex;gap:10px;align-items:center}
+        .pd3-dot{width:9px;height:9px;border-radius:50%;background:black;border:none;cursor:pointer;transition:background 0.2s,transform 0.2s;padding:0}
+        .pd3-dot-active{background:black;transform:scale(1.4)}
+        .pd3-slide-label{position:absolute;top:1rem;right:1rem;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);color:#fff;font-size:0.7rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;padding:0.3rem 0.75rem;border-radius:100px;font-family:'Space Grotesk',sans-serif;z-index:10;border:1px solid rgba(255,255,255,0.15)}
 
         /* ══ MAIN ══ */
         .pd3-main{max-width:1200px;margin:0 auto;padding:5rem 2rem 6rem}
@@ -351,7 +351,10 @@ export default function ProjectDetailPage({ id, slug, item: dbItem }) {
         .pd3-nav-card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:1.5rem;text-decoration:none;color:inherit;transition:border-color 0.2s,box-shadow 0.2s,transform 0.2s;display:flex;flex-direction:column;gap:0.35rem;box-shadow:0 2px 12px rgba(0,0,0,0.04)}
         .pd3-nav-card:hover{border-color:${accent};box-shadow:0 6px 28px rgba(0,0,0,0.08);transform:translateY(-2px)}
         .pd3-nav-prev{align-items:flex-start}
-        .pd3-nav-next{align-items:flex-end}
+        .pd3-nav-next{align-items:flex-end;background:linear-gradient(135deg,#ec4899,#f43f5e);border:none;box-shadow:0 4px 20px rgba(236,72,153,0.35)}
+        .pd3-nav-next:hover{border-color:transparent;box-shadow:0 8px 32px rgba(236,72,153,0.5);transform:translateY(-2px)}
+        .pd3-nav-next .pd3-nav-label{color:rgba(255,255,255,0.85)}
+        .pd3-nav-next .pd3-nav-title{color:black}
         .pd3-nav-label{font-size:0.68rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:${accent}}
         .pd3-nav-title{font-size:0.92rem;font-weight:600;color:#1a1a2e;line-height:1.4}
         @media(max-width:560px){.pd3-nav{grid-template-columns:1fr}}

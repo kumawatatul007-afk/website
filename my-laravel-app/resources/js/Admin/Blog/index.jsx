@@ -190,7 +190,6 @@ export default function AdminBlogIndex({ posts, filters, categories = [] }) {
                 <table className="table">
                     <thead>
                         <tr>
-                            <th style={{ width:'50px' }}>#</th>
                             <th style={{ width:'50px' }}>Img</th>
                             <th style={{ width:'25%' }}>Title / Slug</th>
                             <th style={{ width:'12%' }}>Category</th>
@@ -203,10 +202,9 @@ export default function AdminBlogIndex({ posts, filters, categories = [] }) {
                     </thead>
                     <tbody>
                         {shimmer ? (
-                            <ShimmerTableRows count={8} cols={9} />
+                            <ShimmerTableRows count={8} cols={8} />
                         ) : posts?.data?.length > 0 ? posts.data.map((post, i) => (
                             <tr key={post.id}>
-                                <td className="row-num">{(posts.from ?? 0) + i}</td>
                                 <td>
                                     {post.main_image ? (
                                         <img
@@ -264,7 +262,7 @@ export default function AdminBlogIndex({ posts, filters, categories = [] }) {
                             </tr>
                         )) : (
                             <tr>
-                                <td colSpan={9} className="empty">
+                                <td colSpan={8} className="empty">
                                     <div style={{ fontSize:'1rem', fontWeight:600, color:'#64748b', marginBottom:'0.25rem' }}>No blog posts found</div>
                                     <div style={{ fontSize:'0.875rem', color:'#94a3b8' }}>Try adjusting your filters or create a new post</div>
                                 </td>

@@ -1,6 +1,31 @@
 import AdminLayout from '../layouts/AdminLayout';
 import { useForm, Link } from '@inertiajs/react';
 
+function stripHtml(html) {
+    if (!html) return '';
+    return html
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/<\/p>|<\/div>|<\/h[1-6]>|<\/li>/gi, '\n')
+        .replace(/<li[^>]*>/gi, '• ')
+        .replace(/<[^>]+>/g, '')
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
+        .replace(/&mdash;/g, '—')
+        .replace(/&ndash;/g, '–')
+        .replace(/&hellip;/g, '…')
+        .replace(/&laquo;/g, '«')
+        .replace(/&raquo;/g, '»')
+        .replace(/&#\d+;/g, '')
+        .replace(/&[a-zA-Z]+;/g, '')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+}
+
+
 export default function AdminServiceEdit({ service }) {
     const { data, setData, put, processing, errors } = useForm({
         title:            service.title            ?? '',
@@ -8,7 +33,7 @@ export default function AdminServiceEdit({ service }) {
         meta_description: service.meta_description ?? '',
         meta_keywords:    service.meta_keywords    ?? '',
         tags:             service.tags             ?? '',
-        content:          service.content          ?? '',
+        content:          stripHtml(service.content  ?? ''),
         main_image:       service.main_image       ?? '',
         serial_number:    service.serial_number    ?? 100,
         status:           service.status           ?? 1,
@@ -77,6 +102,7 @@ export default function AdminServiceEdit({ service }) {
                 .toggle-label { font-size: 0.875rem; color: #374151; font-weight: 500; }
                 .hint { font-size: 0.72rem; color: #94a3b8; margin-top: 0.2rem; }
                 .id-badge { display: inline-block; background: #f1f5f9; color: #64748b; font-size: 0.72rem; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 6px; }
+                .content-textarea { resize: vertical; min-height: 240px; line-height: 1.75; font-family: inherit; }
             `}</style>
 
             <div className="form-card">
@@ -134,11 +160,15 @@ export default function AdminServiceEdit({ service }) {
                             {errors.tags && <span className="error">{errors.tags}</span>}
                         </div>
 
-                        {/* Content */}
+                        {/* Content — Plain Text */}
                         <div className="form-group full">
                             <label>Content (Full Description)</label>
-                            <textarea className="form-textarea" rows={8} value={data.content}
-                                onChange={e => setData('content', e.target.value)} />
+                            <textarea
+                                className="form-textarea content-textarea"
+                                value={data.content}
+                                onChange={e => setData('content', e.target.value)}
+                            />
+                            <span className="hint">Plain text only — HTML tags are stripped automatically</span>
                             {errors.content && <span className="error">{errors.content}</span>}
                         </div>
 

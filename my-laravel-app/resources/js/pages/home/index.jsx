@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+﻿import { useEffect, useState, useRef } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import './index.css';
@@ -115,10 +115,26 @@ function TAvatar({ name, image, size = 48, className = '' }) {
 export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPortfolios, services: dbServices = [], setting }) {
   const [totalPosts] = useState(0);
 
-  function stripHtml(html) {
+  function stripHtml(html, maxLen = 130) {
     if (!html) return '';
-    const plain = html.replace(/<[^>]*>/g, '').trim();
-    return plain.length > 130 ? plain.slice(0, 130) + '...' : plain;
+    let decoded = html;
+    for (let pass = 0; pass < 3; pass++) {
+      decoded = decoded
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
+        .replace(/&apos;/g, "'")
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&mdash;/g, '—')
+        .replace(/&ndash;/g, '–')
+        .replace(/&hellip;/g, '...')
+        .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(parseInt(code, 10)))
+        .replace(/&[a-z]+;/gi, '');
+    }
+    const plain = decoded.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+    return plain.length > maxLen ? plain.slice(0, maxLen) + '...' : plain;
   }
 
   function getBlogImage(image) {
@@ -921,9 +937,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
                 </div>
                 <h3 className="svc-card-title">{service.title}</h3>
                 <p className="svc-card-desc">
-                  {service.description
-                    ? service.description.replace(/<[^>]*>/g, '').slice(0, 160) + (service.description.replace(/<[^>]*>/g, '').length > 160 ? '…' : '')
-                    : ''}
+                  {stripHtml(service.description, 160)}
                 </p>
                 <a
                   href={(() => {
