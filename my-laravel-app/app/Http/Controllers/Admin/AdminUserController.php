@@ -23,6 +23,12 @@ class AdminUserController extends Controller
 
         $users = $query->latest()->paginate(10)->withQueryString();
 
+        $users->getCollection()->transform(function ($u) {
+            [$local, $domain] = explode('@', $u->email, 2) + ['', ''];
+            $u->email = substr($local, 0, 2) . str_repeat('*', max(1, strlen($local) - 2)) . '@' . $domain;
+            return $u;
+        });
+
         return Inertia::render('Admin/Users/index', [
             'users'   => $users,
             'filters' => $request->only(['search']),
@@ -57,6 +63,11 @@ class AdminUserController extends Controller
         return Inertia::render('Admin/Users/edit', [
             'user' => $user->only(['id', 'name', 'email', 'created_at']),
         ]);
+    }
+
+    public function userData(User $user)
+    {
+        return response()->json($user->only(['id', 'name', 'email', 'phone', 'role']));
     }
 
     public function update(Request $request, User $user)

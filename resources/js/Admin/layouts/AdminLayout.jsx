@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, router, usePage } from '@inertiajs/react';
 import FlashMessage from '../../components/admin/FlashMessage';
+import LiveChat from '../../components/admin/LiveChat';
 import './adminlayout.css';
 
 const Icons = {
@@ -128,24 +129,32 @@ const Icons = {
   ),
 };
 
-const AdminLogo = ({ collapsed }) => (
-  <div className={`admin-brand ${collapsed ? 'collapsed' : ''}`}>
-    <div className="admin-brand-content">
-      <div className="admin-brand-logo">
-        <img
-          src="https://www.thenikhilsharma.in/public/admin/images/logo/GUJKF-100621-yYB.png"
-          alt="Logo"
-        />
-      </div>
-      {!collapsed && (
-        <div className="admin-brand-text">
-          <span className="admin-brand-title">Nikhil Sharma</span>
-          <span className="admin-brand-subtitle">Admin Panel</span>
+const AdminLogo = ({ collapsed }) => {
+  const [imgErr, setImgErr] = useState(false);
+  return (
+    <div className={`admin-brand ${collapsed ? 'collapsed' : ''}`}>
+      <div className="admin-brand-content">
+        <div className="admin-brand-logo">
+          {imgErr ? (
+            <span style={{ color: '#fff', fontWeight: 900, fontSize: '1.1rem', fontFamily: 'Inter,sans-serif' }}>N</span>
+          ) : (
+            <img
+              src="/images/GUJKF-100621-yYB.png"
+              alt="Nikhil Sharma Logo"
+              onError={() => setImgErr(true)}
+            />
+          )}
         </div>
-      )}
+        {!collapsed && (
+          <div className="admin-brand-text">
+            <span className="admin-brand-title">Nikhil Sharma</span>
+            <span className="admin-brand-subtitle">Admin Panel</span>
+          </div>
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const NAV_ITEMS = [
   { label: 'Dashboard', href: '/admin/dashboard', icon: Icons.Dashboard, animation: 'pulse' },
@@ -189,7 +198,7 @@ const NAV_ITEMS = [
   { label: 'Tags', href: '/admin/settings/tags', icon: Icons.Tags, animation: 'pop' },
 ];
 
-export default function AdminLayout({ children, title = 'Admin Panel' }) {
+export default function AdminLayout({ children, title = 'Admin Panel', hideSidebar = false }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [openMenus, setOpenMenus] = useState({});
   const [notifOpen, setNotifOpen] = useState(false);
@@ -347,32 +356,36 @@ export default function AdminLayout({ children, title = 'Admin Panel' }) {
 
   return (
     <div className="admin-layout-container">
-      <aside className={`admin-sidebar ${!sidebarOpen ? 'collapsed' : ''}`}>
-        <AdminLogo collapsed={!sidebarOpen} />
+      {!hideSidebar && (
+        <aside className={`admin-sidebar ${!sidebarOpen ? 'collapsed' : ''}`}>
+          <AdminLogo collapsed={!sidebarOpen} />
 
-        <nav className="admin-nav" ref={navRef}>
-          {sidebarOpen && <p className="nav-section-label">Navigation</p>}
-          {NAV_ITEMS.map(item => renderNavItem(item))}
-        </nav>
+          <nav className="admin-nav" ref={navRef}>
+            {sidebarOpen && <p className="nav-section-label">Navigation</p>}
+            {NAV_ITEMS.map(item => renderNavItem(item))}
+          </nav>
 
-        <div className="admin-sidebar-footer">
-          {sidebarOpen && (
-            <div className="help-card">
-              <div className="help-title">Need Help?</div>
-              <div className="help-text">info@thenikhilsharma.in</div>
-            </div>
-          )}
-        </div>
-      </aside>
+          <div className="admin-sidebar-footer">
+            {sidebarOpen && (
+              <div className="help-card">
+                <div className="help-title">Need Help?</div>
+                <div className="help-text">info@thenikhilsharma.in</div>
+              </div>
+            )}
+          </div>
+        </aside>
+      )}
 
-      <div className={`admin-main ${!sidebarOpen ? 'collapsed' : ''}`}>
+      <div className={`admin-main ${hideSidebar ? 'nosidebar' : !sidebarOpen ? 'collapsed' : ''}`}>
         <header className="admin-topbar">
           <div className="topbar-left">
-            <button className="admin-toggle-btn" onClick={() => setSidebarOpen(p => !p)} aria-label="Toggle sidebar">
-              <span className="hamburger-line"></span>
-              <span className="hamburger-line"></span>
-              <span className="hamburger-line"></span>
-            </button>
+            {!hideSidebar && (
+              <button className="admin-toggle-btn" onClick={() => setSidebarOpen(p => !p)} aria-label="Toggle sidebar">
+                <span className="hamburger-line"></span>
+                <span className="hamburger-line"></span>
+                <span className="hamburger-line"></span>
+              </button>
+            )}
             <span className="admin-topbar-title">{title}</span>
           </div>
           <div className="topbar-right">
@@ -450,6 +463,7 @@ export default function AdminLayout({ children, title = 'Admin Panel' }) {
           {children}
         </main>
       </div>
+      <LiveChat />
     </div>
   );
 }

@@ -60,4 +60,15 @@ class AdminMessageController extends Controller
         return redirect()->route('admin.messages.index')
             ->with('success', 'Message deleted successfully.');
     }
+
+    public function notifications()
+    {
+        $unreadCount = ContactMessage::where('is_read', false)->count();
+        $recent = ContactMessage::latest()->take(5)->get(['id', 'name', 'email', 'message', 'is_read', 'created_at']);
+
+        return response()->json([
+            'unread_count' => $unreadCount,
+            'notifications' => $recent,
+        ]);
+    }
 }

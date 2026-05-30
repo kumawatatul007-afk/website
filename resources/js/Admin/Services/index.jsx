@@ -1,10 +1,13 @@
 import AdminLayout from '../layouts/AdminLayout';
 import { Link, router } from '@inertiajs/react';
+import Pagination from '../../components/admin/Pagination';
 
-export default function AdminServicesIndex({ services = [] }) {
+export default function AdminServicesIndex({ services = {} }) {
+    const data = services.data ?? [];
+
     const handleDelete = (id) => {
         if (confirm('Delete this service?')) {
-            router.delete(`/admin/services/${id}`);
+            router.delete(`/admin/services/${id}`, { preserveScroll: true });
         }
     };
 
@@ -192,14 +195,22 @@ export default function AdminServicesIndex({ services = [] }) {
                 .empty-state-title { font-size: 1rem; font-weight: 600; color: #64748b; margin-bottom: 0.4rem; }
                 .empty-state-sub   { font-size: 0.85rem; }
 
-                /* ── Count bar ── */
-                .count-bar {
-                    padding: 0.75rem 1.25rem;
+                /* ── Pagination footer ── */
+                .pagination-footer {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    flex-wrap: wrap;
+                    gap: 0.75rem;
+                    padding: 0.9rem 1.25rem;
                     border-top: 1px solid #f1f5f9;
                     background: #fafafa;
+                }
+                .pagination-info {
                     font-size: 0.78rem;
                     color: #94a3b8;
                     font-weight: 500;
+                    white-space: nowrap;
                 }
 
                 @keyframes fadeUp {
@@ -221,7 +232,7 @@ export default function AdminServicesIndex({ services = [] }) {
                 .svc-table tbody tr:nth-child(9)  { animation-delay: 0.42s; }
                 .svc-table tbody tr:nth-child(10) { animation-delay: 0.46s; }
 
-                /* Responsive: hide tags on small screens */
+                /* Responsive */
                 @media (max-width: 900px) {
                     .col-tags, .hide-sm { display: none; }
                     .col-title { width: 40%; }
@@ -229,13 +240,21 @@ export default function AdminServicesIndex({ services = [] }) {
                 @media (max-width: 640px) {
                     .col-slug, .hide-xs { display: none; }
                     .col-title { width: 55%; }
+                    .pagination-footer { flex-direction: column; align-items: flex-start; }
                 }
             `}</style>
 
             <div className="svc-wrap">
                 {/* Header */}
                 <div className="page-header">
-                    <h2 className="page-title">Services</h2>
+                    <h2 className="page-title">
+                        Services
+                        {services.total > 0 && (
+                            <span style={{ fontSize: '0.875rem', fontWeight: 500, color: '#64748b', marginLeft: '0.6rem' }}>
+                                ({services.total} total)
+                            </span>
+                        )}
+                    </h2>
                     <Link href="/admin/services/create" className="btn-new">+ New Service</Link>
                 </div>
 
@@ -255,11 +274,11 @@ export default function AdminServicesIndex({ services = [] }) {
                                 </tr>
                             </thead>
                             <tbody>
-                                {services.length > 0 ? services.map((svc, i) => (
+                                {data.length > 0 ? data.map((svc, i) => (
                                     <tr key={svc.id}>
                                         {/* # */}
                                         <td className="col-num" style={{ color: '#cbd5e1', fontWeight: 700 }}>
-                                            {i + 1}
+                                            {(services.from ?? 0) + i}
                                         </td>
 
                                         {/* Title + meta desc */}
@@ -324,10 +343,13 @@ export default function AdminServicesIndex({ services = [] }) {
                         </table>
                     </div>
 
-                    {/* Count footer */}
-                    {services.length > 0 && (
-                        <div className="count-bar">
-                            Showing {services.length} service{services.length !== 1 ? 's' : ''}
+                    {/* Pagination footer */}
+                    {data.length > 0 && (
+                        <div className="pagination-footer">
+                            <span className="pagination-info">
+                                Showing {services.from}–{services.to} of {services.total} service{services.total !== 1 ? 's' : ''}
+                            </span>
+                            {services.links && <Pagination links={services.links} />}
                         </div>
                     )}
                 </div>

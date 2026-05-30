@@ -26,7 +26,8 @@ class AdminBlogCommentController extends Controller
             $query->where('blog_id', $request->blog_id);
         }
 
-        $comments = $query->latest()->paginate(15)->withQueryString();
+        $perPage = in_array((int) $request->per_page, [10, 25, 50, 100]) ? (int) $request->per_page : 15;
+        $comments = $query->latest()->paginate($perPage)->withQueryString();
 
         // For filter dropdown - get blogs that have comments
         $blogs = BlogPost::whereIn('id', BlogComment::distinct()->pluck('blog_id'))
@@ -36,8 +37,24 @@ class AdminBlogCommentController extends Controller
         return Inertia::render('Admin/Comments/index', [
             'comments' => $comments,
             'blogs'    => $blogs,
-            'filters'  => $request->only(['search', 'blog_id']),
+            'filters'  => $request->only(['search', 'blog_id', 'per_page']),
         ]);
+    }
+
+    public function update(Request $request, BlogComment $comment)
+    {
+        $validated = $request->validate([
+            'name'        => 'required|string|max:255',
+            'email'       => 'nullable|email|max:255',
+            'website'     => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'is_publish'  => 'nullable|integer',
+        ]);
+
+        $comment->update($validated);
+
+        return redirect()->route('admin.comments.index')
+            ->with('success', 'Comment updated successfully.');
     }
 
     public function destroy(BlogComment $comment)

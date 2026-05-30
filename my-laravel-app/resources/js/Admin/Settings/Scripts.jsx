@@ -1,5 +1,18 @@
 import AdminLayout from '../layouts/AdminLayout';
 
+const stripHtml = (html) => {
+    if (!html) return '';
+    return html
+        .replace(/<[^>]*>/g, '')
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
+        .trim();
+};
+
 export default function AdminSettingsScripts({ scripts }) {
     return (
         <AdminLayout title="Scripts">
@@ -157,7 +170,7 @@ export default function AdminSettingsScripts({ scripts }) {
                                     <div className="field-group">
                                         <div className="field-label">Script</div>
                                         <div className="field-value" style={{ fontFamily: 'monospace', whiteSpace: 'pre-wrap' }}>
-                                            {script.script || '-'}
+                                            {stripHtml(script.script) || '-'}
                                         </div>
                                     </div>
                                 </div>

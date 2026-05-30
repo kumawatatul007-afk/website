@@ -619,6 +619,9 @@ body {
 
 .about-img-col {
   flex: 0 0 360px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* About profile circle — same as hero */
@@ -645,7 +648,7 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center top;
+  object-position: center center;
   display: block;
 }
 

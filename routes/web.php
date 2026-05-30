@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminSettingController;
 use App\Http\Controllers\Admin\AdminNewsletterController;
 use App\Http\Controllers\Admin\AdminServiceController;
+use App\Http\Controllers\Admin\AdminAiController;
 use App\Http\Controllers\SitemapController;
 
 // ─── Admin Panel ─────────────────────────────────────────────────────────────
@@ -61,8 +62,11 @@ Route::prefix('admin')->name('admin.')->middleware(\App\Http\Middleware\AdminMid
     Route::put('/blog/{blog}', [AdminBlogController::class, 'update'])->name('blog.update');
     Route::delete('/blog/{blog}', [AdminBlogController::class, 'destroy'])->name('blog.destroy');
 
-    // Categories
+    // Categories CRUD
     Route::get('/categories', [AdminCategoryController::class, 'index'])->name('categories.index');
+    Route::get('/categories/{category}/edit', [AdminCategoryController::class, 'edit'])->name('categories.edit');
+    Route::put('/categories/{category}', [AdminCategoryController::class, 'update'])->name('categories.update');
+    Route::delete('/categories/{category}', [AdminCategoryController::class, 'destroy'])->name('categories.destroy');
 
     // Settings
     Route::get('/settings', [AdminSettingController::class, 'index'])->name('settings.index');
@@ -98,6 +102,9 @@ Route::prefix('admin')->name('admin.')->middleware(\App\Http\Middleware\AdminMid
     // Notifications API
     Route::get('/notifications', [AdminMessageController::class, 'notifications'])->name('notifications');
 
+    // AI Assistant
+    Route::post('/ai/chat', [AdminAiController::class, 'chat'])->name('ai.chat');
+
     // Newsletters
     Route::get('/newsletters', [AdminNewsletterController::class, 'index'])->name('newsletters.index');
     Route::delete('/newsletters/{newsletter}', [AdminNewsletterController::class, 'destroy'])->name('newsletters.destroy');
@@ -119,7 +126,9 @@ Route::get('/sitemap-blog.xml', [SitemapController::class, 'blog']);
 Route::get('/sitemap-portfolio.xml', [SitemapController::class, 'portfolio']);
 Route::get('/sitemap-services.xml', [SitemapController::class, 'services']);
 Route::get('/keywords.xml', [SitemapController::class, 'keywords']);
+Route::get('/keywords-{page}.xml', [SitemapController::class, 'keywordsPage'])->where('page', '[1-9][0-9]*');
 Route::get('/tags.xml', [SitemapController::class, 'tags']);
+Route::get('/tags-{page}.xml', [SitemapController::class, 'tagsPage'])->where('page', '[1-9][0-9]*');
 Route::get('/robots.txt', [SitemapController::class, 'robots']);
 
 Route::get('/', [PublicController::class, 'home']);

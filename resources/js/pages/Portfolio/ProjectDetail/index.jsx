@@ -57,7 +57,7 @@ const PROJECT_DATA = {
     accentLight: '#fbe9e7',
     accentBorder: '#ffab91',
     category: 'Restaurant & Food Platform',
-    client: 'clove srinagar',
+    client: 'Clove Srinagar',
     year: '2026',
     website: 'https://www.clovesrinagar.com',
     tech:['Laravel','PHP','React JS','MySQL','Figma','WhatsApp API','CSS Animations','SEO'],

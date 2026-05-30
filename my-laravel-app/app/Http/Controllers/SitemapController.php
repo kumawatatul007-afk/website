@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Schema;
 
 class SitemapController extends Controller
 {
+    const URLS_PER_SITEMAP = 5000;
+
     private function xmlResponse(string $view, array $data): \Illuminate\Http\Response
     {
         return response(view($view, $data)->render(), 200)
@@ -39,9 +41,69 @@ class SitemapController extends Controller
         return array_values(array_filter(array_unique($all)));
     }
 
-    /** Main sitemap — all pages, blog, portfolio, services */
+    private function buildTagUrls(): array
+    {
+        $setting = Setting::first();
+
+        $rawPrefixes = $setting && $setting->start_keyword
+            ? array_map('trim', explode(',', $setting->start_keyword))
+            : [];
+
+        $prefixes = array_values(array_unique(array_filter($rawPrefixes, fn($p) => trim($p) !== '')));
+
+        $serviceTypes = [
+            'Software Developer',
+            'Website Developer',
+            'IT Freelancer',
+            'Mobile Application Development',
+            'Web Development Company',
+            'Web Designer',
+            'App Developer',
+        ];
+
+        $locations = [
+            // Jaipur areas
+            'Jaipur','Kalwar-Road','Jagatpura','Civil-Lines','C-Scheme',
+            'Malviya-Nagar','Vaishali-Nagar','Ajmer-Road','Jhotwara','Johri-bazar',
+            'Niwaru','niwaru','mansarovar','Galta-gate','Choti-Chopad','Chandpole',
+            'Ridhi-Sidhi','Raja-park','rajapark','Pratap-Nagar','badi-chopad',
+            'johri-bazar',
+            // Rajasthan cities
+            'Rajasthan','Alwar','Ajmer','Jodhpur','Udaipur','Kota','Bikaner',
+            'Bhilwara','Sikar','Tonk','Pali','Nagaur','Jaisalmer','Jhunjhunu',
+            'Hanumangarh','Ganganagar','Churu','Bharatpur','Barmer','Dhaulpur',
+            'Dungarpur','Dausa','Bundi','Banswara','Baran',
+            'Chittaurgarh','Jalor','Jhalawar','Karauli','Pratapgarh',
+            'Rajsamand','Sawai','Sirohi',
+            // Major Indian cities
+            'Bangalore','Pune','pune','Kolkata','Delhi','Mumbai','Hyderabad',
+            'Chennai','Ahmedabad','Surat','Lucknow','Bhopal','Indore','Nagpur',
+            'Patna','Chandigarh','Gurgaon','Noida','Jamshedpur','Ranchi',
+            'Coimbatore','Vadodara','Visakhapatnam','Amritsar','Ludhiana',
+            // States
+            'uttar-pradesh','punjab','maharashtra','Gujarat','Karnataka',
+            'Tamil-Nadu','Madhya-Pradesh','Bihar','Haryana','Telangana',
+        ];
+
+        $tagUrls = [];
+        foreach ($prefixes as $prefix) {
+            foreach ($serviceTypes as $service) {
+                foreach ($locations as $location) {
+                    $keyword   = "{$prefix} {$service} in {$location}";
+                    $tagUrls[] = PublicController::keywordToUrl($keyword);
+                }
+            }
+        }
+
+        return array_unique($tagUrls);
+    }
+
+    /** sitemap.xml — all URLs with <url> tags */
     public function index()
     {
+        ini_set('memory_limit', '512M');
+        set_time_limit(300);
+
         $posts = BlogPost::whereNotNull('slug')
             ->where('slug', '!=', '')
             ->where('status', 1)
@@ -57,10 +119,20 @@ class SitemapController extends Controller
         }
         $services = $query->latest('updated_at')->get();
 
+        $keywords    = $this->allKeywords();
+        $keywordUrls = array_map(fn($kw) => [
+            'url'     => PublicController::keywordToUrl($kw),
+            'keyword' => $kw,
+        ], $keywords);
+
+        $tagUrls = $this->buildTagUrls();
+
         return $this->xmlResponse('sitemap', [
-            'posts'      => $posts,
-            'portfolios' => $portfolios,
-            'services'   => $services,
+            'posts'       => $posts,
+            'portfolios'  => $portfolios,
+            'services'    => $services,
+            'keywordUrls' => $keywordUrls,
+            'tagUrls'     => $tagUrls,
         ]);
     }
 
@@ -103,65 +175,64 @@ class SitemapController extends Controller
         return $this->xmlResponse('sitemap-services', ['services' => $services]);
     }
 
-    /** Tags sitemap — prefix-based keyword combinations (Trusted, Affordable, etc.) */
-    public function tags()
+    /** Tags sitemap — paginated (5000 URLs per page) */
+    public function tagsPage(int $page)
     {
-        $setting = Setting::first();
+        $tagUrls = $this->buildTagUrls();
+        $chunk   = array_slice($tagUrls, ($page - 1) * self::URLS_PER_SITEMAP, self::URLS_PER_SITEMAP);
 
-        // Parse valid single-token prefixes from start_keyword (no spaces, no dots)
-        $rawPrefixes = $setting && $setting->start_keyword
-            ? array_map('trim', explode(',', $setting->start_keyword))
-            : [];
-
-        $prefixes = array_values(array_unique(array_filter($rawPrefixes, function ($p) {
-            // Only keep prefixes that match the route regex [A-Za-z][A-Za-z0-9]*
-            return $p !== '' && preg_match('/^[A-Za-z][A-Za-z0-9]*$/', $p);
-        })));
-
-        $serviceTypes = [
-            'Software Developer',
-            'Website Developer',
-            'IT Freelancer',
-            'Mobile App Developer',
-            'Web Development Company',
-        ];
-
-        $locations = [
-            'Jaipur','Kalwar-Road','Jagatpura','Civil-Lines','C-Scheme',
-            'Malviya-Nagar','Vaishali-Nagar','Ajmer-Road','Jhotwara','Johri-bazar',
-            'Niwaru','mansarovar','Galta-gate','Choti-Chopad','Chandpole',
-            'Ridhi-Sidhi','Raja-park','Pratap-Nagar','badi-chopad',
-            'Rajasthan','Alwar','Ajmer','Jodhpur','Udaipur','Kota','Bikaner',
-            'Bhilwara','Sikar','Tonk','Pali','Nagaur','Jaisalmer','Jhunjhunu',
-            'Hanumangarh','Ganganagar','Churu','Bharatpur','Barmer','Dhaulpur',
-            'Dungarpur','Dausa','Bundi','Banswara','Baran',
-            'Bangalore','Pune','Kolkata','Delhi','Mumbai','Hyderabad',
-            'uttar-pradesh','punjab','maharashtra',
-        ];
-
-        $tagUrls = [];
-        foreach ($prefixes as $prefix) {
-            foreach ($serviceTypes as $service) {
-                foreach ($locations as $location) {
-                    $keyword   = "{$prefix} {$service} in {$location}";
-                    $tagUrls[] = PublicController::keywordToUrl($keyword);
-                }
-            }
+        if (empty($chunk)) {
+            abort(404);
         }
 
-        return $this->xmlResponse('tags-sitemap', [
-            'tagUrls' => array_unique($tagUrls),
-        ]);
+        return $this->xmlResponse('tags-sitemap', ['tagUrls' => $chunk]);
     }
 
-    /** Keywords sitemap — all keyword pages from settings */
-    public function keywords()
+    /** tags.xml — all tag URL combinations */
+    public function tags()
+    {
+        ini_set('memory_limit', '512M');
+        set_time_limit(120);
+
+        $tagUrls = $this->buildTagUrls();
+
+        return $this->xmlResponse('tags-sitemap', ['tagUrls' => $tagUrls]);
+    }
+
+    /** Keywords sitemap — paginated (5000 URLs per page) */
+    public function keywordsPage(int $page)
     {
         $keywords    = $this->allKeywords();
         $keywordUrls = array_map(fn($kw) => [
             'url'     => PublicController::keywordToUrl($kw),
             'keyword' => $kw,
         ], $keywords);
+
+        $chunk = array_slice($keywordUrls, ($page - 1) * self::URLS_PER_SITEMAP, self::URLS_PER_SITEMAP);
+
+        if (empty($chunk)) {
+            abort(404);
+        }
+
+        return $this->xmlResponse('keywords-sitemap', ['keywordUrls' => $chunk]);
+    }
+
+    /** keywords.xml — all keyword URLs + all tag URL combinations */
+    public function keywords()
+    {
+        ini_set('memory_limit', '512M');
+        set_time_limit(120);
+
+        $keywords    = $this->allKeywords();
+        $keywordUrls = array_map(fn($kw) => [
+            'url'     => PublicController::keywordToUrl($kw),
+            'keyword' => $kw,
+        ], $keywords);
+
+        $tagUrls = $this->buildTagUrls();
+        foreach ($tagUrls as $tagUrl) {
+            $keywordUrls[] = ['url' => $tagUrl, 'keyword' => ''];
+        }
 
         return $this->xmlResponse('keywords-sitemap', [
             'keywordUrls' => $keywordUrls,
@@ -177,12 +248,6 @@ class SitemapController extends Controller
         $robots .= "Disallow: /register\n\n";
         $robots .= "# Sitemaps\n";
         $robots .= "Sitemap: " . url('sitemap.xml') . "\n";
-        $robots .= "Sitemap: " . url('keywords.xml') . "\n";
-        $robots .= "Sitemap: " . url('tags.xml') . "\n";
-        $robots .= "Sitemap: " . url('sitemap-blog.xml') . "\n";
-        $robots .= "Sitemap: " . url('sitemap-portfolio.xml') . "\n";
-        $robots .= "Sitemap: " . url('sitemap-pages.xml') . "\n";
-        $robots .= "Sitemap: " . url('sitemap-services.xml') . "\n";
 
         return response($robots, 200)
             ->header('Content-Type', 'text/plain; charset=UTF-8');

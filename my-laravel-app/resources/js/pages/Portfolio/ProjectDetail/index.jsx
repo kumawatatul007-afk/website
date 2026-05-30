@@ -57,7 +57,7 @@ const PROJECT_DATA = {
     accentLight: '#fbe9e7',
     accentBorder: '#ffab91',
     category: 'Restaurant & Food Platform',
-    client: 'Cloves Rinagar',
+    client: 'Clove Srinagar',
     year: '2026',
     website: 'https://www.clovesrinagar.com',
     tech:['Laravel','PHP','React JS','MySQL','Figma','WhatsApp API','CSS Animations','SEO'],
@@ -235,7 +235,7 @@ export default function ProjectDetailPage({ id, slug, item: dbItem }) {
         .pd3-badge-dot{width:8px;height:8px;border-radius:50%;background:${accent};box-shadow:0 0 12px rgba(${accentRgb},0.8);animation:pd3-pulse 2s ease-in-out infinite}
         @keyframes pd3-pulse{0%,100%{box-shadow:0 0 6px rgba(${accentRgb},0.6)}50%{box-shadow:0 0 18px rgba(${accentRgb},1)}}
         .pd3-badge-text{font-size:0.72rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.7)}
-        .pd3-hero-title{font-family:'Playfair Display',serif;font-size:clamp(3rem,7vw,6rem);font-weight:700;color:#fff;line-height:1.05;letter-spacing:-0.02em;animation:pd3-up 0.8s 0.1s ease both}
+        .pd3-hero-title{font-family:'Playfair Display',serif;font-size:clamp(3rem,7vw,6rem);font-weight:700;color:#fff;line-height:1.05;letter-spacing:-0.02em;animation:pd3-up 0.8s 0.1s ease both;hyphens:none;-webkit-hyphens:none;overflow-wrap:break-word;word-break:break-word}
         .pd3-hero-tagline{font-size:clamp(1rem,2.2vw,1.3rem);color:rgba(255,255,255,0.6);font-weight:400;max-width:560px;line-height:1.6;animation:pd3-up 0.8s 0.2s ease both}
         .pd3-hero-actions{display:flex;flex-wrap:wrap;gap:1rem;animation:pd3-up 0.8s 0.3s ease both}
         .pd3-btn-primary{display:inline-flex;align-items:center;gap:0.5rem;background:#fff;color:#1a1a2e;border-radius:100px;padding:0.9rem 2rem;font-size:0.82rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 8px 32px rgba(0,0,0,0.25)}
@@ -387,7 +387,7 @@ export default function ProjectDetailPage({ id, slug, item: dbItem }) {
               <div className="pd3-badge-dot" />
               <span className="pd3-badge-text">{ex.category || project.short_description || 'Web Development'}</span>
             </div>
-            <h1 className="pd3-hero-title">{project.title}</h1>
+            <h1 className="pd3-hero-title">{ex.client || project.title}</h1>
             {ex.tagline && <p className="pd3-hero-tagline">{ex.tagline}</p>}
             <div className="pd3-hero-actions">
               {project.website_link && (
@@ -428,7 +428,7 @@ export default function ProjectDetailPage({ id, slug, item: dbItem }) {
           <div className="pd3-meta-bar">
             <div className="pd3-meta-item">
               <span className="pd3-meta-label">Client</span>
-              <span className="pd3-meta-value">{project.clint_name || project.title}</span>
+              <span className="pd3-meta-value">{ex.client || project.clint_name || project.title}</span>
             </div>
             <div className="pd3-meta-item">
               <span className="pd3-meta-label">Category</span>

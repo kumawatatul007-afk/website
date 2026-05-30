@@ -18,7 +18,8 @@ class AdminServiceController extends Controller
         $services = BlogPost::where('type', self::TYPE_SERVICE)
             ->orderBy('serial_number')
             ->orderBy('id')
-            ->get();
+            ->paginate(10)
+            ->withQueryString();
 
         return Inertia::render('Admin/Services/index', [
             'services' => $services,

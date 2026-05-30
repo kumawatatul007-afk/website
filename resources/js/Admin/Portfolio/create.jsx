@@ -25,7 +25,7 @@ export default function AdminPortfolioCreate({ categories = [] }) {
     return (
         <AdminLayout title="Create Portfolio Item">
             <style>{`
-                .form-card { background:#fff; border-radius:12px; padding:2rem; box-shadow:0 1px 4px rgba(0,0,0,0.06); border:1px solid #f1f5f9; max-width:860px; }
+                .form-card { background:#fff; border-radius:12px; padding:2rem; box-shadow:0 1px 4px rgba(0,0,0,0.06); border:1px solid #f1f5f9; width:100%; }
                 .form-group { margin-bottom:1.25rem; }
                 .form-label { display:block; font-size:0.72rem; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.45rem; }
                 .form-input { width:100%; padding:0.7rem 0.875rem; border:1px solid #e2e8f0; border-radius:8px; font-size:0.875rem; color:#0f172a; outline:none; transition:border-color 0.15s,box-shadow 0.15s; background:#fff; box-sizing:border-box; }

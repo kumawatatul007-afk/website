@@ -63,6 +63,7 @@ export default function PortfolioPage({ items: dbItems }) {
             DESIGN WITH<br />
             FUNCTIONALITY
           </h1>
+
         </div>
 
         {/* Loading shimmer state */}
@@ -101,7 +102,6 @@ export default function PortfolioPage({ items: dbItems }) {
                     />
                     <div className="port-overlay">
                       <div className="port-overlay-content">
-                        <h4 className="port-overlay-title">{project.title}</h4>
                         {project.short_description && (
                           <p className="port-overlay-cat">{project.short_description.slice(0, 80)}</p>
                         )}

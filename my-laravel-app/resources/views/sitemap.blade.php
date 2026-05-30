@@ -15,50 +15,74 @@
     <url>
         <loc>{{ url('/about') }}</loc>
         <lastmod>{{ now()->toAtomString() }}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.90</priority>
+    </url>
+    <url>
+        <loc>{{ url('/profile') }}</loc>
+        <lastmod>{{ now()->toAtomString() }}</lastmod>
         <changefreq>weekly</changefreq>
-        <priority>1.00</priority>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>{{ url('/profile-credentials') }}</loc>
+        <lastmod>{{ now()->toAtomString() }}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>{{ url('/gallery') }}</loc>
+        <lastmod>{{ now()->toAtomString() }}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.80</priority>
+    </url>
+    <url>
+        <loc>{{ url('/thoughts') }}</loc>
+        <lastmod>{{ now()->toAtomString() }}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.80</priority>
     </url>
     <url>
         <loc>{{ url('/services') }}</loc>
         <lastmod>{{ now()->toAtomString() }}</lastmod>
         <changefreq>weekly</changefreq>
-        <priority>1.00</priority>
+        <priority>0.90</priority>
     </url>
     <url>
         <loc>{{ url('/portfolio') }}</loc>
         <lastmod>{{ now()->toAtomString() }}</lastmod>
         <changefreq>weekly</changefreq>
-        <priority>1.00</priority>
+        <priority>0.90</priority>
     </url>
     <url>
         <loc>{{ url('/blog') }}</loc>
         <lastmod>{{ now()->toAtomString() }}</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>1.00</priority>
+        <changefreq>daily</changefreq>
+        <priority>0.90</priority>
     </url>
     <url>
         <loc>{{ url('/contact') }}</loc>
         <lastmod>{{ now()->toAtomString() }}</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>1.00</priority>
+        <changefreq>monthly</changefreq>
+        <priority>0.80</priority>
     </url>
     <url>
         <loc>{{ url('/web-developer-jaipur') }}</loc>
         <lastmod>{{ now()->toAtomString() }}</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>1.00</priority>
+        <changefreq>monthly</changefreq>
+        <priority>0.90</priority>
     </url>
     <url>
         <loc>{{ url('/privacy-policy') }}</loc>
         <lastmod>{{ now()->toAtomString() }}</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>1.00</priority>
+        <changefreq>yearly</changefreq>
+        <priority>0.40</priority>
     </url>
     <url>
         <loc>{{ url('/terms-of-service') }}</loc>
         <lastmod>{{ now()->toAtomString() }}</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>1.00</priority>
+        <changefreq>yearly</changefreq>
+        <priority>0.40</priority>
     </url>
 
     {{-- ── Service Pages ── --}}
@@ -74,7 +98,7 @@
         <loc>{{ url($svcUrl) }}</loc>
         <lastmod>{{ $service->updated_at->toAtomString() }}</lastmod>
         <changefreq>weekly</changefreq>
-        <priority>1.00</priority>
+        <priority>0.85</priority>
     </url>
     @endif
     @endforeach
@@ -85,8 +109,8 @@
     <url>
         <loc>{{ url('/' . $post->slug) }}</loc>
         <lastmod>{{ $post->updated_at->toAtomString() }}</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>1.00</priority>
+        <changefreq>monthly</changefreq>
+        <priority>0.75</priority>
         @if ($post->main_image)
         <image:image>
             <image:loc>{{ url($post->image_url) }}</image:loc>
@@ -102,14 +126,34 @@
     <url>
         <loc>{{ url('/portfolio/' . ($portfolio->slug ?: $portfolio->id)) }}</loc>
         <lastmod>{{ $portfolio->updated_at->toAtomString() }}</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>1.00</priority>
+        <changefreq>monthly</changefreq>
+        <priority>0.70</priority>
         @if ($portfolio->image)
         <image:image>
             <image:loc>{{ url($portfolio->image_url) }}</image:loc>
             <image:title>{{ htmlspecialchars($portfolio->title, ENT_XML1) }}</image:title>
         </image:image>
         @endif
+    </url>
+    @endforeach
+
+    {{-- ── Keyword Pages ── --}}
+    @foreach ($keywordUrls as $item)
+    <url>
+        <loc>{{ url($item['url']) }}</loc>
+        <lastmod>{{ now()->toAtomString() }}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.80</priority>
+    </url>
+    @endforeach
+
+    {{-- ── Tag / Location Pages ── --}}
+    @foreach ($tagUrls as $tagUrl)
+    <url>
+        <loc>{{ url($tagUrl) }}</loc>
+        <lastmod>{{ now()->toAtomString() }}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.75</priority>
     </url>
     @endforeach
 

@@ -16,12 +16,6 @@ export default function AdminBlogIndex({ posts, filters, categories = [] }) {
         return () => clearTimeout(t);
     }, []);
 
-    const [editModal, setEditModal]     = useState(false);
-    const [editPost, setEditPost]       = useState(null);
-    const [editForm, setEditForm]       = useState({});
-    const [editErrors, setEditErrors]   = useState({});
-    const [editLoading, setEditLoading] = useState(false);
-
     const [deleteModal, setDeleteModal]     = useState(false);
     const [deletePost, setDeletePost]       = useState(null);
     const [deleteLoading, setDeleteLoading] = useState(false);
@@ -34,34 +28,6 @@ export default function AdminBlogIndex({ posts, filters, categories = [] }) {
         }, { preserveState: true, replace: true });
     };
 
-    const openEdit = (post) => {
-        setEditPost(post);
-        setEditForm({
-            title:            post.title            ?? '',
-            content:          post.content          ?? '',
-            main_image:       post.main_image        ?? '',
-            category_id:      post.category_id      ?? '',
-            serial_number:    post.serial_number     ?? '',
-            meta_keywords:    post.meta_keywords     ?? '',
-            meta_description: post.meta_description ?? '',
-            tags:             post.tags             ?? '',
-            type:             post.type             ?? 0,
-            status:           post.status           ?? 1,
-        });
-        setEditErrors({});
-        setEditModal(true);
-    };
-
-    const submitEdit = (e) => {
-        e.preventDefault();
-        setEditLoading(true);
-        router.put(`/admin/blog/${editPost.id}`, editForm, {
-            preserveScroll: true,
-            onSuccess: () => { setEditModal(false); setEditLoading(false); },
-            onError:   (errors) => { setEditErrors(errors); setEditLoading(false); },
-        });
-    };
-
     const openDelete = (post) => { setDeletePost(post); setDeleteModal(true); };
 
     const confirmDelete = () => {
@@ -71,6 +37,20 @@ export default function AdminBlogIndex({ posts, filters, categories = [] }) {
             onSuccess: () => { setDeleteModal(false); setDeleteLoading(false); },
             onFinish:  () => setDeleteLoading(false),
         });
+    };
+
+    const stripHtml = (html) => {
+        if (!html) return '';
+        return html
+            .replace(/<[^>]*>/g, '')
+            .replace(/&nbsp;/g, ' ')
+            .replace(/&amp;/g, '&')
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&quot;/g, '"')
+            .replace(/&#39;/g, "'")
+            .replace(/\n{3,}/g, '\n\n')
+            .trim();
     };
 
     const getImageUrl = (img) => {
@@ -277,7 +257,7 @@ export default function AdminBlogIndex({ posts, filters, categories = [] }) {
                                 </td>
                                 <td>
                                     <div style={{ display:'flex', gap:'0.4rem' }}>
-                                        <button className="btn-sm btn-edit" onClick={() => openEdit(post)}>Edit</button>
+                                        <Link href={`/admin/blog/${post.id}/edit`} className="btn-sm btn-edit">Edit</Link>
                                         <button className="btn-sm btn-delete" onClick={() => openDelete(post)}>Del</button>
                                     </div>
                                 </td>
@@ -298,134 +278,6 @@ export default function AdminBlogIndex({ posts, filters, categories = [] }) {
                     </div>
                 )}
             </div>
-
-            {/* ── Edit Modal ── */}
-            {editModal && createPortal(
-                <div className="modal-overlay" onClick={e => e.target === e.currentTarget && setEditModal(false)}>
-                    <div className="modal-box">
-                        <div className="modal-header">
-                            <span className="modal-title">Edit Blog Post</span>
-                            <button className="modal-close" onClick={() => setEditModal(false)}>✕</button>
-                        </div>
-                        <form onSubmit={submitEdit}>
-                            <div className="modal-body">
-
-                                <div className="form-group">
-                                    <label className="form-label">Title *</label>
-                                    <input
-                                        className={`form-control${editErrors.title ? ' error' : ''}`}
-                                        value={editForm.title}
-                                        onChange={e => setEditForm(f => ({ ...f, title: e.target.value }))}
-                                        placeholder="Post title"
-                                    />
-                                    {editErrors.title && <div className="form-error">{editErrors.title}</div>}
-                                </div>
-
-                                <div className="form-row">
-                                    <div className="form-group">
-                                        <label className="form-label">Category</label>
-                                        <select
-                                            className="form-control"
-                                            value={editForm.category_id}
-                                            onChange={e => setEditForm(f => ({ ...f, category_id: e.target.value }))}
-                                        >
-                                            <option value="">— Select Category —</option>
-                                            {categories.map(c => (
-                                                <option key={c.id} value={c.id}>{c.name}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                    <div className="form-group">
-                                        <label className="form-label">Status</label>
-                                        <select
-                                            className="form-control"
-                                            value={editForm.status}
-                                            onChange={e => setEditForm(f => ({ ...f, status: parseInt(e.target.value) }))}
-                                        >
-                                            <option value={1}>Published</option>
-                                            <option value={0}>Draft</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div className="form-row">
-                                    <div className="form-group">
-                                        <label className="form-label">Main Image (filename or URL)</label>
-                                        <input
-                                            className="form-control"
-                                            value={editForm.main_image}
-                                            onChange={e => setEditForm(f => ({ ...f, main_image: e.target.value }))}
-                                            placeholder="e.g. 1637216446.png"
-                                        />
-                                    </div>
-                                    <div className="form-group">
-                                        <label className="form-label">Serial Number</label>
-                                        <input
-                                            type="number"
-                                            className="form-control"
-                                            value={editForm.serial_number}
-                                            onChange={e => setEditForm(f => ({ ...f, serial_number: e.target.value }))}
-                                            placeholder="e.g. 100"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="form-group">
-                                    <label className="form-label">Tags (comma-separated)</label>
-                                    <input
-                                        className="form-control"
-                                        value={editForm.tags}
-                                        onChange={e => setEditForm(f => ({ ...f, tags: e.target.value }))}
-                                        placeholder="website, development, SEO"
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <label className="form-label">Content (HTML)</label>
-                                    <textarea
-                                        className="form-control"
-                                        rows={6}
-                                        value={editForm.content}
-                                        onChange={e => setEditForm(f => ({ ...f, content: e.target.value }))}
-                                        placeholder="Blog HTML content..."
-                                    />
-                                </div>
-
-                                <div className="section-label">SEO / Meta</div>
-
-                                <div className="form-group">
-                                    <label className="form-label">Meta Description</label>
-                                    <textarea
-                                        className="form-control"
-                                        rows={2}
-                                        value={editForm.meta_description}
-                                        onChange={e => setEditForm(f => ({ ...f, meta_description: e.target.value }))}
-                                        placeholder="Meta description for search engines"
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <label className="form-label">Meta Keywords (JSON or plain text)</label>
-                                    <input
-                                        className="form-control"
-                                        value={editForm.meta_keywords}
-                                        onChange={e => setEditForm(f => ({ ...f, meta_keywords: e.target.value }))}
-                                        placeholder='website, development, SEO'
-                                    />
-                                </div>
-
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn-cancel" onClick={() => setEditModal(false)}>Cancel</button>
-                                <button type="submit" className="btn-save" disabled={editLoading}>
-                                    {editLoading ? 'Saving…' : 'Save Changes'}
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>,
-                document.body
-            )}
 
             {/* ── Delete Modal ── */}
             {deleteModal && createPortal(

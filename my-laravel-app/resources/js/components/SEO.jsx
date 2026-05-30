@@ -14,7 +14,7 @@ const SEO = ({
     canonical: propCanonical,
     ogType = 'website',
     ogImage: propOgImage,
-    twitterHandle = '@nikhilsharma_in',
+    twitterHandle = '@NikhilSharma881',
     robots: propRobots,
     structuredData: propStructuredData = [],
     locale = 'en_IN',
@@ -52,7 +52,7 @@ const SEO = ({
         "url": "https://thenikhilsharma.in",
         "image": "https://www.thenikhilsharma.in/public/profile/images/n2.png",
         "jobTitle": "Full Stack Developer & UI/UX Designer",
-        "description": "Jaipur-based Full Stack Developer with 8+ years of experience in web and mobile application development.",
+        "description": "Jaipur-based Full Stack Developer with 9+ years of experience in web and mobile application development.",
         "address": {
             "@type": "PostalAddress",
             "addressLocality": "Jaipur",
@@ -64,7 +64,7 @@ const SEO = ({
         "telephone": "+91-98765-43210",
         "sameAs": [
             "https://www.linkedin.com/in/nikhil-sharma-jaipur",
-            "https://twitter.com/nikhilsharma_in",
+            "https://x.com/NikhilSharma881",
             "https://github.com/nikhilsharma",
             "https://dribbble.com/nikhilsharma",
             "https://www.upwork.com/freelancers/nikhilsharma",
@@ -116,7 +116,7 @@ const SEO = ({
         },
         "sameAs": [
             "https://www.linkedin.com/in/nikhil-sharma-jaipur",
-            "https://twitter.com/nikhilsharma_in",
+            "https://x.com/NikhilSharma881",
             "https://github.com/nikhilsharma",
             "https://www.upwork.com/freelancers/nikhilsharma",
             "https://clutch.co/profile/nikhil-sharma-developer",

@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminSettingController;
 use App\Http\Controllers\Admin\AdminNewsletterController;
 use App\Http\Controllers\Admin\AdminServiceController;
+use App\Http\Controllers\Admin\AdminAiController;
 use App\Http\Controllers\SitemapController;
 
 // ─── Admin Panel ─────────────────────────────────────────────────────────────
@@ -39,9 +40,8 @@ Route::prefix('admin')->name('admin.')->middleware(\App\Http\Middleware\AdminMid
 
     // Users CRUD
     Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
-    Route::get('/users/create', [AdminUserController::class, 'create'])->name('users.create');
     Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
-    Route::get('/users/{user}/edit', [AdminUserController::class, 'edit'])->name('users.edit');
+    Route::get('/users/{user}/data', [AdminUserController::class, 'userData'])->name('users.data');
     Route::put('/users/{user}', [AdminUserController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
 
@@ -63,6 +63,8 @@ Route::prefix('admin')->name('admin.')->middleware(\App\Http\Middleware\AdminMid
 
     // Categories
     Route::get('/categories', [AdminCategoryController::class, 'index'])->name('categories.index');
+    Route::put('/categories/{category}', [AdminCategoryController::class, 'update'])->name('categories.update');
+    Route::delete('/categories/{category}', [AdminCategoryController::class, 'destroy'])->name('categories.destroy');
 
     // Settings
     Route::get('/settings', [AdminSettingController::class, 'index'])->name('settings.index');
@@ -87,6 +89,7 @@ Route::prefix('admin')->name('admin.')->middleware(\App\Http\Middleware\AdminMid
     Route::get('/gallery', [AdminGalleryController::class, 'index'])->name('gallery.index');
     Route::post('/gallery', [AdminGalleryController::class, 'store'])->name('gallery.store');
     Route::get('/comments', [AdminBlogCommentController::class, 'index'])->name('comments.index');
+    Route::put('/comments/{comment}', [AdminBlogCommentController::class, 'update'])->name('comments.update');
     Route::delete('/comments/{comment}', [AdminBlogCommentController::class, 'destroy'])->name('comments.destroy');
 
     // Messages
@@ -94,6 +97,12 @@ Route::prefix('admin')->name('admin.')->middleware(\App\Http\Middleware\AdminMid
     Route::get('/messages/{message}', [AdminMessageController::class, 'show'])->name('messages.show');
     Route::patch('/messages/{message}/read', [AdminMessageController::class, 'markRead'])->name('messages.read');
     Route::delete('/messages/{message}', [AdminMessageController::class, 'destroy'])->name('messages.destroy');
+
+    // Notifications API
+    Route::get('/notifications', [AdminMessageController::class, 'notifications'])->name('notifications');
+
+    // AI Assistant
+    Route::post('/ai/chat', [AdminAiController::class, 'chat'])->name('ai.chat');
 
     // Newsletters
     Route::get('/newsletters', [AdminNewsletterController::class, 'index'])->name('newsletters.index');
@@ -116,7 +125,9 @@ Route::get('/sitemap-blog.xml', [SitemapController::class, 'blog']);
 Route::get('/sitemap-portfolio.xml', [SitemapController::class, 'portfolio']);
 Route::get('/sitemap-services.xml', [SitemapController::class, 'services']);
 Route::get('/keywords.xml', [SitemapController::class, 'keywords']);
+Route::get('/keywords-{page}.xml', [SitemapController::class, 'keywordsPage'])->where('page', '[1-9][0-9]*');
 Route::get('/tags.xml', [SitemapController::class, 'tags']);
+Route::get('/tags-{page}.xml', [SitemapController::class, 'tagsPage'])->where('page', '[1-9][0-9]*');
 Route::get('/robots.txt', [SitemapController::class, 'robots']);
 
 Route::get('/', [PublicController::class, 'home']);
@@ -157,6 +168,9 @@ Route::post('/contact', [ContactController::class, 'store'])->name('contact.stor
 
 // Blog comment submission
 Route::post('/blog-comment', [\App\Http\Controllers\BlogCommentController::class, 'store'])->name('blog.comment.store');
+
+// Newsletter subscription
+Route::post('/newsletter-subscribe', [\App\Http\Controllers\NewsletterController::class, 'store'])->name('newsletter.subscribe');
 
 // ─── Auth ────────────────────────────────────────────────────────────────────
 

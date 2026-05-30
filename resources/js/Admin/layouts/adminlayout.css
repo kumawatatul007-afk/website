@@ -80,19 +80,20 @@ body { font-family: 'Inter', system-ui, sans-serif; }
 }
 
 .admin-brand-logo {
-  width: 40px; height: 40px;
+  width: 44px; height: 44px;
   border-radius: 12px;
   background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
   box-shadow: 0 4px 16px rgba(99,102,241,0.4);
   overflow: hidden;
+  padding: 4px;
 }
 
 .admin-brand-logo img {
-  width: 28px; height: 28px;
+  width: 100%; height: 100%;
   object-fit: contain;
-  filter: brightness(0) invert(1);
+  border-radius: 8px;
 }
 
 .admin-brand-title {
@@ -265,6 +266,7 @@ body { font-family: 'Inter', system-ui, sans-serif; }
 }
 
 .admin-main.collapsed { margin-left: var(--sidebar-collapsed); }
+.admin-main.nosidebar { margin-left: 0; }
 
 /* ── Topbar ── */
 .admin-topbar {

@@ -27,7 +27,12 @@ class AdminDashboardController extends Controller
 
         $recent_users = User::latest()
             ->take(5)
-            ->get(['id', 'name', 'email', 'role', 'created_at']);
+            ->get(['id', 'name', 'email', 'role', 'created_at'])
+            ->map(function ($u) {
+                [$local, $domain] = explode('@', $u->email, 2) + ['', ''];
+                $u->email = substr($local, 0, 2) . str_repeat('*', max(1, strlen($local) - 2)) . '@' . $domain;
+                return $u;
+            });
 
         $recent_messages = ContactMessage::latest()
             ->take(5)

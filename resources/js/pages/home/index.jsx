@@ -6,6 +6,88 @@ import SEO from '../../components/SEO';
 import OptimizedImage from '../../components/OptimizedImage';
 import { ShimmerBlogCard, ShimmerPortfolioCard } from '../../components/ShimmerLoader';
 
+function ContactForm() {
+  const [status, setStatus] = useState(null); // null | 'sending' | 'success' | 'error'
+  const formRef = useRef(null);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setStatus('sending');
+    const fd = new FormData(e.target);
+    fetch('/contact', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        name: fd.get('name'),
+        email: fd.get('email'),
+        message: fd.get('message'),
+      }),
+    })
+      .then(res => {
+        if (res.ok) {
+          setStatus('success');
+          formRef.current?.reset();
+          setTimeout(() => setStatus(null), 5000);
+        } else {
+          setStatus('error');
+          setTimeout(() => setStatus(null), 5000);
+        }
+      })
+      .catch(() => {
+        setStatus('error');
+        setTimeout(() => setStatus(null), 5000);
+      });
+  };
+
+  return (
+    <form className="contact-form" onSubmit={handleSubmit} ref={formRef}>
+      {status === 'success' && (
+        <div style={{
+          background: '#d1fae5', border: '1px solid #6ee7b7', borderRadius: '10px',
+          padding: '14px 18px', marginBottom: '20px', display: 'flex',
+          alignItems: 'center', gap: '10px', color: '#065f46', fontWeight: '600', fontSize: '0.92rem'
+        }}>
+          <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          Message sent successfully! I'll get back to you soon.
+        </div>
+      )}
+      {status === 'error' && (
+        <div style={{
+          background: '#fee2e2', border: '1px solid #fca5a5', borderRadius: '10px',
+          padding: '14px 18px', marginBottom: '20px', display: 'flex',
+          alignItems: 'center', gap: '10px', color: '#991b1b', fontWeight: '600', fontSize: '0.92rem'
+        }}>
+          <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          Something went wrong. Please try again or email directly.
+        </div>
+      )}
+      <div className="contact-field">
+        <label className="contact-field-label">Name</label>
+        <input type="text" name="name" required className="contact-input" placeholder="" />
+      </div>
+      <div className="contact-field">
+        <label className="contact-field-label">Email</label>
+        <input type="email" name="email" required className="contact-input" placeholder="" />
+      </div>
+      <div className="contact-field">
+        <label className="contact-field-label">Message</label>
+        <textarea name="message" required className="contact-textarea" rows={5} placeholder=""></textarea>
+      </div>
+      <button type="submit" className="contact-submit-btn" disabled={status === 'sending'}>
+        {status === 'sending' ? 'SENDING...' : 'SEND MESSAGE'}
+      </button>
+    </form>
+  );
+}
+
 function TAvatar({ name, image, size = 48, className = '' }) {
   const [broken, setBroken] = useState(false);
   const initials = name ? name.trim().split(/\s+/).map(n => n[0]).join('').toUpperCase().slice(0, 2) : '?';
@@ -935,7 +1017,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
             <div className="edu-item" data-aos="fade-right" data-aos-delay="100" data-aos-duration="800">
               <div className="edu-item-left edu-item-logo-side">
                 <div className="edu-item-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 7H4c-1.1 0-2 .9-2 2v6c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zm-9 5H4v-1h7v1zm0-2H4V9h7v1zm9 4h-2v-1h2v1zm0-2h-6v-1h6v1zm0-2h-6V9h6v1z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
                 </div>
                 <h4 className="edu-item-company">American Express</h4>
                 <p className="edu-item-date">Sep 2023 – Present</p>
@@ -956,7 +1038,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
               <div className="edu-item-dot"></div>
               <div className="edu-item-right edu-item-logo-side">
                 <div className="edu-item-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/><line x1="14" y1="4" x2="10" y2="20"/></svg>
                 </div>
                 <h4 className="edu-item-company">Keendroid Pvt. Ltd.</h4>
                 <p className="edu-item-date">Dec 2018 – Aug 2023</p>
@@ -967,7 +1049,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
             <div className="edu-item" data-aos="fade-right" data-aos-delay="300" data-aos-duration="800">
               <div className="edu-item-left edu-item-logo-side">
                 <div className="edu-item-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
                 </div>
                 <h4 className="edu-item-company">Jaipur National University</h4>
                 <p className="edu-item-date">2020 – 2022</p>
@@ -988,7 +1070,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
               <div className="edu-item-dot"></div>
               <div className="edu-item-right edu-item-logo-side">
                 <div className="edu-item-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
                 </div>
                 <h4 className="edu-item-company">Jaipur National University</h4>
                 <p className="edu-item-date">2017 – 2020</p>
@@ -1294,44 +1376,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
               </div>
             </div>
             <div className="contact-right" data-aos="zoom-out" data-aos-delay="200" data-aos-duration="1000">
-              <form
-                className="contact-form"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  const fd = new FormData(e.target);
-                  fetch('/contact', {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json',
-                      'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
-                      'Accept': 'application/json',
-                    },
-                    body: JSON.stringify({
-                      name: fd.get('name'),
-                      email: fd.get('email'),
-                      message: fd.get('message'),
-                    }),
-                  })
-                    .then(res => res.ok && e.target.reset())
-                    .catch(() => { });
-                }}
-              >
-                <div className="contact-field">
-                  <label className="contact-field-label">Name</label>
-                  <input type="text" name="name" required className="contact-input" placeholder="" />
-                </div>
-                <div className="contact-field">
-                  <label className="contact-field-label">Email</label>
-                  <input type="email" name="email" required className="contact-input" placeholder="" />
-                </div>
-                <div className="contact-field">
-                  <label className="contact-field-label">Message</label>
-                  <textarea name="message" required className="contact-textarea" rows={5} placeholder=""></textarea>
-                </div>
-                <button type="submit" className="contact-submit-btn">
-                  SEND MESSAGE
-                </button>
-              </form>
+              <ContactForm />
               {/* WhatsApp secondary CTA */}
               <a
                 href="https://wa.me/919529921038?text=Hi%20Nikhil%2C%20I%20found%20your%20portfolio%20and%20would%20like%20to%20discuss%20a%20project."
