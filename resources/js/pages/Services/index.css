@@ -1,0 +1,833 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+/* ==========================================================================
+   ENTERPRISE ULTRA-PREMIUM PRODUCTION ARCHITECTURE (COMPACT MATRIX)
+   ========================================================================== */
+:root {
+  /* Luxury Dark Palette Matrix */
+  --srv-bg-raw: #05060b;
+  --srv-bg-deep: #0b0d19;
+  --srv-bg-surface: #111424;
+  --srv-bg-card: rgba(17, 20, 36, 0.75);
+  
+  /* Cyber-Glow Tokens */
+  --srv-primary-glow: #21a2a7;
+  --srv-secondary-glow: #8b5cf6;
+  --srv-pink-glow: #ec4899;
+  --srv-emerald-glow: #10b981;
+  
+  /* High Contrast Typography Tokens */
+  --srv-text-pure: #ffffff;
+  --srv-text-silver: #f1f5f9;
+  --srv-text-slate: #94a3b8;
+  --srv-text-muted: #475569;
+  
+  /* Structural Borders & Shadows */
+  --srv-glass-border: rgba(255, 255, 255, 0.05);
+  --srv-glow-border: rgba(33, 162, 167, 0.15);
+  --srv-radius-lg: 16px; /* Optimized sharper radius for clean enterprise design */
+  --srv-radius-md: 10px;
+  
+  /* Motion Curves */
+  --srv-ease-lux: cubic-bezier(0.16, 1, 0.3, 1);
+  --srv-shadow-premium: 0 30px 70px rgba(0, 0, 0, 0.6);
+}
+
+*, *::before, *::after { 
+  box-sizing: border-box; 
+  margin: 0; 
+  padding: 0; 
+}
+
+/* Smooth Scrolling & Custom Modern Scrollbar */
+html {
+  scroll-behavior: smooth;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--srv-bg-raw);
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--srv-primary-glow), var(--srv-secondary-glow));
+  border-radius: 20px;
+  border: 2px solid var(--srv-bg-raw);
+}
+
+.srv-root {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--srv-bg-raw);
+  color: var(--srv-text-slate);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   HERO SECTION (CINEMATIC LUXURY ENTERPRISE FRAME)
+   ========================================================================== */
+.srv-hero {
+  position: relative;
+  min-height: 80vh; /* Controlled hero viewport height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  isolation: isolate;
+  padding: 5rem 1.5rem;
+  background: #000;
+}
+
+.srv-hero-video {
+  position: absolute; 
+  inset: 0;
+  width: 100%; 
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.22;
+  filter: saturate(1.1) contrast(1.15);
+  transform: scale(1.02);
+}
+
+.srv-hero-bg {
+  position: absolute; 
+  inset: 0;
+  background: linear-gradient(180deg, 
+    rgba(5, 6, 11, 0.2) 0%, 
+    rgba(5, 6, 11, 0.8) 50%, 
+    var(--srv-bg-raw) 100%);
+  z-index: 1;
+}
+
+.srv-hero-dots {
+  position: absolute; 
+  inset: 0; 
+  z-index: 2;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 32px 32px;
+  opacity: 0.8;
+}
+
+.srv-hero-glow {
+  position: absolute; 
+  z-index: 2;
+  width: 600px; 
+  height: 600px;
+  background: radial-gradient(circle, rgba(33, 162, 167, 0.1) 0%, transparent 70%);
+  top: -200px; 
+  right: -100px;
+  pointer-events: none;
+  filter: blur(60px);
+}
+
+.srv-hero-glow2 {
+  position: absolute; 
+  z-index: 2;
+  width: 500px; 
+  height: 500px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.06) 0%, transparent 70%);
+  bottom: -150px; 
+  left: -100px;
+  pointer-events: none;
+  filter: blur(60px);
+}
+
+.srv-hero-inner {
+  position: relative; 
+  z-index: 3;
+  text-align: center;
+  max-width: 950px;
+  margin: 0 auto;
+}
+
+/* Premium Dynamic Pill Badge */
+.srv-hero-badge {
+  display: inline-flex; 
+  align-items: center; 
+  gap: 10px;
+  background: rgba(16, 185, 129, 0.04);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  backdrop-filter: blur(20px);
+  padding: 0.6rem 1.4rem;
+  border-radius: 100px;
+  font-size: 0.75rem; 
+  font-weight: 700;
+  font-family: 'Space Grotesk', sans-serif;
+  letter-spacing: 0.25em; 
+  text-transform: uppercase;
+  color: var(--srv-emerald-glow);
+  margin-bottom: 2.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.srv-hero-badge span {
+  width: 8px; 
+  height: 8px; 
+  border-radius: 50%;
+  background: var(--srv-emerald-glow); 
+  display: inline-block;
+  box-shadow: 0 0 12px var(--srv-emerald-glow);
+  animation: pulse-dot 2s infinite ease-in-out;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.3; transform: scale(1.3); }
+}
+
+/* Core Title Elements */
+.srv-hero h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(2.6rem, 5.5vw, 4.2rem);
+  font-weight: 700; 
+  color: var(--srv-text-pure);
+  line-height: 1.15; 
+  letter-spacing: -0.03em;
+  margin-bottom: 1.8rem;
+}
+
+.srv-hero h1 .srv-h1-accent {
+  background: linear-gradient(135deg, var(--srv-primary-glow) 0%, var(--srv-secondary-glow) 50%, var(--srv-pink-glow) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+}
+
+.srv-hero-sub {
+  font-size: clamp(1rem, 1.8vw, 1.2rem);
+  color: var(--srv-text-slate);
+  line-height: 1.7; 
+  max-width: 720px;
+  margin: 0 auto 3rem; 
+  font-weight: 400;
+}
+
+/* High-End UX Buttons Matrix */
+.srv-hero-btns {
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  gap: 1.2rem; 
+  flex-wrap: wrap;
+}
+
+.srv-btn-primary {
+  display: inline-flex; 
+  align-items: center; 
+  gap: 10px;
+  padding: 1.1rem 2.5rem;
+  background: linear-gradient(135deg, var(--srv-primary-glow), var(--srv-secondary-glow));
+  color: var(--srv-text-pure); 
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.85rem; 
+  font-weight: 700; 
+  letter-spacing: 0.08em;
+  text-transform: uppercase; 
+  text-decoration: none;
+  border-radius: var(--srv-radius-md);
+  box-shadow: 0 10px 35px rgba(33, 162, 167, 0.25);
+  transition: all 0.4s var(--srv-ease-lux);
+}
+
+.srv-btn-primary:hover { 
+  transform: translateY(-3px); 
+  box-shadow: 0 20px 45px rgba(139, 92, 246, 0.4); 
+  gap: 16px; 
+}
+
+.srv-btn-ghost {
+  display: inline-flex; 
+  align-items: center; 
+  gap: 10px;
+  padding: 1.1rem 2.5rem;
+  background: rgba(255, 255, 255, 0.02); 
+  color: var(--srv-text-pure);
+  border: 1px solid var(--srv-glass-border);
+  backdrop-filter: blur(16px);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.85rem; 
+  font-weight: 600; 
+  letter-spacing: 0.08em;
+  text-transform: uppercase; 
+  text-decoration: none;
+  border-radius: var(--srv-radius-md); 
+  transition: all 0.4s var(--srv-ease-lux);
+}
+
+.srv-btn-ghost:hover { 
+  border-color: var(--srv-primary-glow); 
+  background: rgba(33, 162, 167, 0.08);
+  transform: translateY(-3px); 
+}
+
+/* ==========================================================================
+   STATS STRIP (ENTERPRISE PROOF CONTEXT)
+   ========================================================================== */
+.srv-stats {
+  background: var(--srv-bg-deep);
+  display: flex; 
+  flex-wrap: wrap;
+  border-top: 1px solid var(--srv-glass-border);
+  border-bottom: 1px solid var(--srv-glass-border);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.01);
+}
+
+.srv-stat {
+  flex: 1; 
+  min-width: 200px;
+  display: flex; 
+  flex-direction: column; 
+  align-items: center;
+  padding: 2.5rem 1.5rem;
+  border-right: 1px solid var(--srv-glass-border);
+  transition: background 0.3s ease;
+}
+
+.srv-stat:last-child { border-right: none; }
+.srv-stat:hover { background: rgba(255, 255, 255, 0.015); }
+
+.srv-stat-num {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(2rem, 2.5vw, 2.5rem);
+  font-weight: 700; 
+  color: var(--srv-text-pure);
+  letter-spacing: -0.02em; 
+  line-height: 1;
+  background: linear-gradient(135deg, #ffffff 30%, var(--srv-text-slate) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.srv-stat-label {
+  font-size: 0.72rem; 
+  color: #64748b;
+  letter-spacing: 0.18em; 
+  text-transform: uppercase;
+  margin-top: 8px; 
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   SECTION WRAPPER & HEADERS
+   ========================================================================== */
+.srv-wrap {
+  max-width: 1240px; 
+  margin: 0 auto;
+  padding: clamp(3.5rem, 6vw, 5.5rem) clamp(1.5rem, 4vw, 3rem); /* Compressed sections vertical height */
+}
+
+.srv-section-top {
+  display: flex; 
+  align-items: flex-end;
+  justify-content: space-between; 
+  gap: 1.5rem;
+  margin-bottom: 3.5rem; /* Reduced margin to keep cards compact */
+  flex-wrap: wrap;
+}
+
+.srv-section-eyebrow {
+  font-size: 0.72rem; 
+  font-weight: 700;
+  letter-spacing: 0.25em; 
+  text-transform: uppercase;
+  color: var(--srv-primary-glow); 
+  margin-bottom: 0.6rem;
+  display: flex; 
+  align-items: center; 
+  gap: 12px;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.srv-section-eyebrow::before {
+  content: ''; 
+  display: inline-block;
+  width: 24px; 
+  height: 2px; 
+  background: var(--srv-primary-glow);
+}
+
+.srv-section-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 700; 
+  color: var(--srv-text-pure);
+  letter-spacing: -0.02em; 
+  line-height: 1.2;
+}
+
+.srv-section-title span {
+  background: linear-gradient(135deg, var(--srv-primary-glow), var(--srv-secondary-glow));
+  -webkit-background-clip: text;
+  background-clip: text; 
+  color: transparent;
+}
+
+.srv-count-badge {
+  background: rgba(255, 255, 255, 0.02); 
+  border: 1px solid var(--srv-glass-border);
+  padding: 0.5rem 1.4rem; 
+  border-radius: 100px;
+  font-size: 0.78rem; 
+  font-weight: 600; 
+  color: var(--srv-text-slate);
+  white-space: nowrap; 
+  align-self: flex-end;
+  font-family: 'Space Grotesk', sans-serif;
+  letter-spacing: 0.04em;
+}
+
+/* ==========================================================================
+   COMPACT & SLEEK SERVICE CARDS GRID MATRIX (FIXED HEIGHT & FADE INTERFACES)
+   ========================================================================== */
+.srv-grid {
+  display: flex; 
+  flex-direction: column; 
+  gap: 2rem; /* Tight spacing between rows */
+}
+
+.srv-card {
+  background: var(--srv-bg-card);
+  border-radius: var(--srv-radius-lg);
+  border: 1px solid var(--srv-glass-border);
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr); /* Perfect balance split */
+  min-height: 290px; /* Reduced systematically to prevent large sections */
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(20px);
+  transition: transform 0.4s var(--srv-ease-lux), 
+              border-color 0.4s var(--srv-ease-lux),
+              box-shadow 0.4s var(--srv-ease-lux);
+  position: relative;
+}
+
+.srv-card:hover {
+  border-color: rgba(33, 162, 167, 0.35);
+  box-shadow: var(--srv-shadow-premium), 
+              0 0 40px rgba(33, 162, 167, 0.05);
+  transform: translateY(-4px);
+}
+
+/* Dynamic Alternating Flips Architecture */
+.srv-card.srv-flip .srv-card-info  { order: 2; }
+.srv-card.srv-flip .srv-card-aside { order: 1; }
+
+/* ── LEFT INFO PANEL (COMPRESSED SPACING) ── */
+.srv-card-info {
+  padding: 2.2rem 2.6rem; /* Strategic reduction from 4rem */
+  display: flex; 
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.srv-card.srv-flip .srv-card-info {
+  border-right: none;
+  border-left: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.srv-card-top { 
+  display: flex; 
+  flex-direction: column;
+  gap: 0.4rem; 
+  margin-bottom: 1rem; 
+}
+
+.srv-card-num {
+  font-size: 0.7rem; 
+  font-weight: 700; 
+  letter-spacing: 0.2em;
+  text-transform: uppercase; 
+  color: var(--srv-primary-glow); 
+  font-family: 'Space Grotesk', sans-serif;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.srv-card-num::before {
+  content: '';
+  display: inline-block;
+  width: 28px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--srv-primary-glow), transparent);
+}
+
+.srv-card-title {
+  font-size: clamp(1.4rem, 2.2vw, 1.8rem); /* Sharp compact professional headers */
+  font-weight: 700; 
+  color: var(--srv-text-pure);
+  letter-spacing: -0.02em; 
+  line-height: 1.3;
+}
+
+.srv-card-title a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.srv-card-title a:hover {
+  color: var(--srv-primary-glow);
+}
+
+.srv-card-subtitle {
+  font-size: 0.78rem; 
+  font-weight: 600;
+  letter-spacing: 0.12em; 
+  text-transform: uppercase;
+  color: var(--srv-secondary-glow); 
+  margin-top: 0.4rem;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+/* PRODUCTION FIX: Smart auto-limiter so massive blocks wrap beautifully */
+.srv-card-desc {
+  font-size: 0.95rem; 
+  color: #94a3b8;
+  line-height: 1.6; 
+  font-weight: 400;
+  margin-bottom: 1.5rem;
+  max-width: 98%;
+  
+  /* Text Limit Logic: Only 3 lines show, excess contents get auto clipped with '...' */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.srv-card-footer {
+  display: flex; 
+  align-items: center;
+  justify-content: space-between; 
+  flex-wrap: wrap; 
+  gap: 1.2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  padding-top: 1.2rem;
+}
+
+.srv-price-tag {
+  display: inline-flex; 
+  align-items: center; 
+  gap: 6px;
+  padding: 0.5rem 1.2rem;
+  border-radius: 100px;
+  font-size: 0.78rem; 
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  background: rgba(16, 185, 129, 0.08) !important;
+  color: #34d399 !important;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.srv-cta-btn {
+  display: inline-flex; 
+  align-items: center; 
+  gap: 10px;
+  padding: 0.8rem 1.8rem;
+  border-radius: 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.78rem; 
+  font-weight: 700;
+  letter-spacing: 0.08em; 
+  text-transform: uppercase;
+  text-decoration: none; 
+  transition: all 0.4s var(--srv-ease-lux);
+  color: var(--srv-text-pure);
+  background: #121526 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.srv-card:hover .srv-cta-btn {
+  background: linear-gradient(135deg, var(--srv-primary-glow), var(--srv-secondary-glow)) !important;
+  border-color: transparent;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(33, 162, 167, 0.3) !important;
+}
+
+.srv-cta-btn svg { transition: transform 0.3s ease; }
+.srv-cta-btn:hover svg { transform: translateX(5px); }
+
+/* ── RIGHT ASIDE PANEL (MINIMAL SMART ROW) ── */
+.srv-card-aside {
+  padding: 2.2rem 2.6rem;
+  display: flex; 
+  flex-direction: column;
+  justify-content: center;
+  position: relative; 
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(33, 162, 167, 0.01) 0%, rgba(139, 92, 246, 0.01) 100%);
+  border-left: 1px solid rgba(33, 162, 167, 0.08);
+}
+
+.srv-card.srv-flip .srv-card-aside {
+  border-left: none;
+  border-right: 1px solid rgba(33, 162, 167, 0.08);
+}
+
+.srv-aside-bg {
+  position: absolute; 
+  inset: 0;
+  opacity: 0.1; 
+  pointer-events: none;
+  background-image: 
+    radial-gradient(circle at 80% 20%, var(--srv-primary-glow) 0%, transparent 60%),
+    radial-gradient(circle at 20% 80%, var(--srv-secondary-glow) 0%, transparent 60%);
+}
+
+.srv-aside-label {
+  font-size: 0.75rem; 
+  font-weight: 700;
+  letter-spacing: 0.18em; 
+  text-transform: uppercase;
+  color: var(--srv-primary-glow); 
+  margin-bottom: 1.4rem;
+  position: relative; 
+  z-index: 1;
+  font-family: 'Space Grotesk', sans-serif;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid rgba(33, 162, 167, 0.12);
+}
+
+.srv-features-list {
+  list-style: none; 
+  display: flex; 
+  flex-direction: column;
+  gap: 1rem; /* Compact features arrangement */
+  position: relative; 
+  z-index: 1;
+}
+
+.srv-features-list li {
+  display: flex; 
+  align-items: flex-start; 
+  gap: 12px;
+  font-size: 0.92rem; 
+  color: var(--srv-text-silver);
+  font-weight: 500; 
+  line-height: 1.5;
+  padding-left: 1rem;
+  position: relative;
+}
+
+.srv-features-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.5em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--srv-primary-glow);
+  box-shadow: 0 0 8px var(--srv-primary-glow);
+}
+
+/* ==========================================================================
+   PAGINATION (METALLIC LUXURY ENGINE)
+   ========================================================================== */
+.srv-pagination {
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  gap: 0.6rem; 
+  margin-top: 4rem; 
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--srv-glass-border);
+}
+
+.srv-pg-arrow, .srv-pg-num {
+  min-width: 44px; 
+  height: 44px; 
+  border-radius: 10px;
+  border: 1px solid var(--srv-glass-border); 
+  background: var(--srv-bg-deep);
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  cursor: pointer; 
+  color: var(--srv-text-slate);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.88rem; 
+  font-weight: 600;
+  transition: all 0.3s var(--srv-ease-lux);
+}
+
+.srv-pg-arrow:hover:not(:disabled), .srv-pg-num:hover { 
+  border-color: var(--srv-primary-glow); 
+  color: var(--srv-text-pure); 
+  transform: translateY(-2px);
+}
+
+.srv-pg-arrow:disabled { 
+  opacity: 0.15; 
+  cursor: not-allowed; 
+}
+
+.srv-pg-num.active {
+  background: linear-gradient(135deg, var(--srv-primary-glow), var(--srv-secondary-glow));
+  border-color: transparent; 
+  color: var(--srv-text-pure);
+  box-shadow: 0 10px 25px rgba(33, 162, 167, 0.3);
+}
+
+/* ==========================================================================
+   FAQ SECTION (ACCORDION GLOW MATRIX)
+   ========================================================================== */
+.srv-faq-section {
+  background: #08090f;
+  border-top: 1px solid var(--srv-glass-border);
+  padding: clamp(4rem, 8vw, 6rem) clamp(1.5rem, 4vw, 3rem);
+}
+
+.srv-faq-inner { 
+  max-width: 850px; 
+  margin: 0 auto; 
+}
+
+.srv-faq-eyebrow {
+  font-size: 0.72rem; 
+  font-weight: 700;
+  letter-spacing: 0.25em; 
+  text-transform: uppercase;
+  color: var(--srv-secondary-glow); 
+  margin-bottom: 0.8rem;
+  display: flex; 
+  align-items: center; 
+  gap: 12px;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.srv-faq-eyebrow::before { 
+  content: ''; 
+  display: inline-block; 
+  width: 24px; 
+  height: 2px; 
+  background: var(--srv-secondary-glow); 
+}
+
+.srv-faq-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(2rem, 3.5vw, 2.6rem);
+  font-weight: 700; 
+  color: var(--srv-text-pure);
+  letter-spacing: -0.02em; 
+  margin-bottom: 0.8rem;
+}
+
+.srv-faq-sub { 
+  font-size: 1rem; 
+  color: var(--srv-text-slate); 
+  margin-bottom: 3rem; 
+}
+
+.srv-faq-item { 
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04); 
+  padding: 0.2rem 0;
+}
+
+.srv-faq-btn {
+  width: 100%; 
+  background: none; 
+  border: none;
+  padding: 1.5rem 0;
+  display: flex; 
+  align-items: center; 
+  justify-content: space-between; 
+  gap: 1.5rem;
+  cursor: pointer;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.05rem; 
+  font-weight: 600; 
+  color: #cbd5e1;
+  text-align: left; 
+  line-height: 1.5; 
+  transition: color 0.3s ease;
+}
+
+.srv-faq-btn:hover { color: var(--srv-primary-glow); }
+
+.srv-faq-chevron { 
+  flex-shrink: 0; 
+  color: #475569; 
+  transition: transform 0.4s var(--srv-ease-lux); 
+}
+
+.srv-faq-chevron.open { 
+  transform: rotate(180deg); 
+  color: var(--srv-primary-glow); 
+}
+
+.srv-faq-body {
+  max-height: 0; 
+  overflow: hidden;
+  transition: max-height 0.4s var(--srv-ease-lux), padding 0.3s ease;
+  font-size: 0.98rem; 
+  color: var(--srv-text-slate); 
+  line-height: 1.7; 
+  padding: 0;
+}
+
+.srv-faq-body.open { 
+  max-height: 350px; 
+  padding-bottom: 1.8rem; 
+}
+
+/* ==========================================================================
+   RESPONSIVE BREAKPOINTS (STRICT LAYOUT FLUIDITY)
+   ========================================================================== */
+@media (max-width: 992px) {
+  .srv-card { 
+    grid-template-columns: 1fr; 
+    min-height: auto; 
+  }
+  .srv-card.srv-flip .srv-card-info  { order: 1; }
+  .srv-card.srv-flip .srv-card-aside { order: 2; }
+  
+  .srv-card-info { 
+    border-right: none !important; 
+    border-left: none !important; 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04); 
+    padding: 2.2rem 1.8rem;
+  }
+  .srv-card-aside { 
+    min-height: auto; 
+    padding: 2.2rem 1.8rem;
+    border-left: none !important;
+    border-right: none !important;
+  }
+  .srv-section-top { 
+    flex-direction: column; 
+    align-items: flex-start; 
+    gap: 0.8rem;
+  }
+  .srv-count-badge { 
+    align-self: flex-start; 
+  }
+}
+
+@media (max-width: 640px) {
+  .srv-stat { 
+    flex: 1 1 50%; 
+    padding: 1.8rem 1rem;
+  }
+  .srv-stat:nth-child(2) { border-right: none; }
+  .srv-hero-btns { 
+    flex-direction: column; 
+    align-items: stretch; 
+    max-width: 100%; 
+  }
+  .srv-btn-primary, .srv-btn-ghost { 
+    justify-content: center; 
+  }
+}
