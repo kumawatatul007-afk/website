@@ -2,76 +2,13 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { Link } from '@inertiajs/react';
 import SEO from '../../../components/SEO';
 
-const PROJECT_DATA = {
-  'kisan-gateway': {
-    tagline: 'Connecting 53,000+ Farmers to Digital Markets',
-    heroGradient: 'linear-gradient(135deg,#0a2e0a 0%,#1b5e20 50%,#2e7d32 100%)',
-    accent: '#2e7d32',
-    accentRgb: '46,125,50',
-    accentLight: '#e8f5e9',
-    accentBorder: '#a5d6a7',
-    category: 'Agriculture & Farming Platform',
-    client: 'Kisan Gateway',
-    year: '2026',
-    website: 'https://kisangateway.com',
-    tech: ['Laravel','PHP','React JS','MySQL','REST API','Bootstrap','Razorpay','Redis'],
-    stats:[
-      {value:53397,suffix:'+',label:'Farmers Registered'},
-      {value:7130,suffix:'+',label:'Dealers & Providers'},
-      {value:289,suffix:'+',label:'Coordinators'},
-      {value:99,suffix:'%',label:'Uptime'},
-    ],
-    overview:"Kisan Gateway is India's comprehensive digital marketplace for agriculture — a one-stop platform where farmers meet dealers, service providers, and market experts. From buying seeds to selling harvests, listing livestock to finding machinery — everything under one roof.",
-    challenge:"Farmers across rural India lacked access to transparent markets, reliable dealers, and expert guidance. Managing livestock sales, equipment purchases, and crop listings required visiting multiple places physically. There was no digital bridge between farmers and modern agrarian commerce.",
-    approach:"We built separate role-based portals for farmers, dealers, service providers, and coordinators. The platform features real-time listings for crops, livestock, property, equipment, plus a dedicated Offer Zone and Ad Zone. An intelligent dashboard gives every stakeholder type a customised workflow for better adoption.",
-    result:"Onboarded 53,000+ farmers and 7,000+ dealers within the first year. The platform now powers thousands of daily transactions, giving farmers direct market access, transparent pricing, and a measurable boost in income — without middlemen.",
-  },
-  'ckship': {
-    tagline: "India's Multi-Courier Shipping Aggregator",
-    heroGradient: 'linear-gradient(135deg,#3e0000 0%,#b71c1c 50%,#e53935 100%)',
-    accent: '#c62828',
-    accentRgb: '198,40,40',
-    accentLight: '#ffebee',
-    accentBorder: '#ef9a9a',
-    category: 'Shipping & Logistics Platform',
-    client: 'CKShip',
-    year: '2026',
-    website: 'https://ckship.in',
-    tech:['Laravel','PHP','React JS','MySQL','Delhivery API','DTDC API','Razorpay','Webhooks'],
-    stats:[
-      {value:27000,suffix:'+',label:'Active Users'},
-      {value:10,suffix:'+',label:'Courier Partners'},
-      {value:5000,suffix:'+',label:'Daily Shipments'},
-      {value:99.5,suffix:'%',label:'Delivery Success'},
-    ],
-    overview:"CKShip is a powerful multi-courier shipping aggregator built for Indian businesses. It unifies Delhivery, DTDC, Blue Dart, Ecom Express, and Xpress Bees into one seamless dashboard — compare rates, book shipments, generate labels, and track deliveries in real time.",
-    challenge:"E-commerce sellers juggled multiple courier portals — logging in separately, manually comparing rates, and wasting hours daily. No single platform offered real-time rate comparison, booking, and tracking across all major Indian couriers under one login.",
-    approach:"We integrated live APIs from all major courier partners into a unified platform. Role-based access for sellers, admins, and logistics managers. Automated webhook tracking delivers live delivery-status updates. A clean React dashboard lets businesses manage all shipments without switching tabs.",
-    result:"27,000+ users now process 5,000+ daily shipments with a 99.5% delivery success rate. Businesses report saving 3–5 hours per day. The platform scaled seamlessly to 10+ courier partners with zero downtime during peak sale seasons.",
-  },
-  'cloves-rinagar': {
-    tagline: 'Premium Kashmiri Dining Experience — Online',
-    heroGradient: 'linear-gradient(135deg,#1a0800 0%,#4e1c00 50%,#bf360c 100%)',
-    accent: '#bf360c',
-    accentRgb: '191,54,12',
-    accentLight: '#fbe9e7',
-    accentBorder: '#ffab91',
-    category: 'Restaurant & Food Platform',
-    client: 'Clove Srinagar',
-    year: '2026',
-    website: 'https://www.clovesrinagar.com',
-    tech:['Laravel','PHP','React JS','MySQL','Figma','WhatsApp API','CSS Animations','SEO'],
-    stats:[
-      {value:300,suffix:'%',label:'Orders Growth'},
-      {value:4.8,suffix:'★',label:'Customer Rating'},
-      {value:50,suffix:'+',label:'Menu Items Online'},
-      {value:2,suffix:'x',label:'Table Bookings'},
-    ],
-    overview:"Clove Srinagar is a premium restaurant from the heart of Kashmir, celebrated for its authentic cuisine and warm hospitality. We built a visually immersive website and online ordering platform that brings the magic of Kashmiri dining to the digital world.",
-    challenge:"Despite being a beloved local landmark, Cloves had zero digital presence — no website, no online ordering, and no way for customers outside Srinagar to discover the brand. A premium digital identity was needed to match the quality of its food and ambience.",
-    approach:"We designed an immersive website using rich food photography, smooth scroll animations, and a warm Kashmiri-inspired colour palette. The platform includes a categorised online menu, table reservation system, and WhatsApp-integrated ordering — fully optimised for mobile-first browsing.",
-    result:"300% increase in online orders within 3 months of launch. Table bookings doubled via the online reservation system. The site now ranks page-1 on Google for 'Kashmiri restaurant Srinagar' — driving consistent new customer discovery from across India.",
-  },
+// Default theme colors - can be overridden by database values
+const DEFAULT_THEME = {
+  heroGradient: 'linear-gradient(135deg,#0f172a,#1e3a8a)',
+  accent: '#0A3981',
+  accentRgb: '10,57,129',
+  accentLight: '#eff6ff',
+  accentBorder: '#bfdbfe',
 };
 
 function useCountUp(target, isVisible, duration = 1800) {
@@ -103,50 +40,51 @@ function StatItem({ stat, isVisible }) {
 }
 
 function ImageSlider({ imgSrc, websiteUrl }) {
-  const SLIDES = [
-    { position: 'center top',   label: 'Homepage' },
-    { position: 'center 33%',   label: 'Features' },
-    { position: 'center 67%',   label: 'Details'  },
-  ];
-  const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
-
-  useEffect(() => {
-    if (paused) return;
-    const t = setInterval(() => setActive(a => (a + 1) % SLIDES.length), 3500);
-    return () => clearInterval(t);
-  }, [paused]);
+  const STEPS = 4;
+  const [step, setStep] = useState(0);
 
   return (
-    <div className="pd3-slider-wrap" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
-      {/* Browser chrome */}
+    <div className="pd3-slider-wrap">
       <div className="pd3-browser-chrome">
         <div className="pd3-browser-dots">
-          <span style={{background:'#fc5753'}} /><span style={{background:'#fdbc40'}} /><span style={{background:'#33c748'}} />
+          <span style={{background:'#ff5f57'}} /><span style={{background:'#febc2e'}} /><span style={{background:'#28c840'}} />
         </div>
         <div className="pd3-browser-addr">{websiteUrl || 'https://example.com'}</div>
         <div style={{width:60}} />
       </div>
-      {/* Slides */}
       <div className="pd3-slide-track">
-        {SLIDES.map((s, i) => (
-          <div key={i} className={`pd3-slide${i === active ? ' pd3-slide-active' : ''}`}>
-            <img src={imgSrc} alt={s.label} className="pd3-slide-img" style={{ objectPosition: s.position }} loading={i === 0 ? 'eager' : 'lazy'} />
+        <img
+          src={imgSrc}
+          alt="preview"
+          className="pd3-slide-img"
+          style={{ transform: `translateY(${-step * 25}%)`, transition: 'transform 0.75s cubic-bezier(0.4,0,0.2,1)' }}
+          loading="eager"
+        />
+        <div className="pd3-slider-controls">
+          <button
+            className="pd3-slider-arr"
+            onClick={() => setStep(s => Math.max(0, s - 1))}
+            disabled={step === 0}
+            aria-label="Scroll up"
+          >↑</button>
+          <div className="pd3-slider-dots">
+            {Array.from({ length: STEPS }).map((_, i) => (
+              <button
+                key={i}
+                className={`pd3-dot${i === step ? ' pd3-dot-active' : ''}`}
+                onClick={() => setStep(i)}
+                aria-label={`Go to section ${i + 1}`}
+              />
+            ))}
           </div>
-        ))}
-      </div>
-      {/* Controls */}
-      <div className="pd3-slider-controls">
-        <button className="pd3-slider-arr" onClick={() => setActive(a => (a - 1 + SLIDES.length) % SLIDES.length)} aria-label="Prev">‹</button>
-        <div className="pd3-slider-dots">
-          {SLIDES.map((s, i) => (
-            <button key={i} className={`pd3-dot${i === active ? ' pd3-dot-active' : ''}`} onClick={() => setActive(i)} aria-label={s.label} />
-          ))}
+          <button
+            className="pd3-slider-arr"
+            onClick={() => setStep(s => Math.min(STEPS - 1, s + 1))}
+            disabled={step === STEPS - 1}
+            aria-label="Scroll down"
+          >↓</button>
         </div>
-        <button className="pd3-slider-arr" onClick={() => setActive(a => (a + 1) % SLIDES.length)} aria-label="Next">›</button>
       </div>
-      {/* Slide label */}
-      <div className="pd3-slide-label">{SLIDES[active].label}</div>
     </div>
   );
 }
@@ -162,12 +100,10 @@ function useVisible(ref) {
   return vis;
 }
 
-export default function ProjectDetailPage({ id, slug, item: dbItem }) {
+export default function ProjectDetailPage({ id, slug, item: dbItem, related }) {
   const pathSlug = (typeof slug !== 'undefined' && slug) ? slug : window.location.pathname.split('/').pop();
   const [project, setProject] = useState(dbItem || null);
-  const [prevItem, setPrevItem] = useState(null);
-  const [nextItem, setNextItem] = useState(null);
-  const [loading, setLoading] = useState(!dbItem);
+  const [loading, setLoading] = useState(false);
 
   const statsRef    = useRef(null); const statsVis    = useVisible(statsRef);
   const overRef     = useRef(null); const overVis     = useVisible(overRef);
@@ -178,13 +114,11 @@ export default function ProjectDetailPage({ id, slug, item: dbItem }) {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    if (!dbItem) {
-      setLoading(true);
-      fetch(`/api/portfolio/${pathSlug}`).then(r=>r.json()).then(d=>{ setProject(d.item||d); setPrevItem(d.prev_item||null); setNextItem(d.next_item||null); setLoading(false); }).catch(()=>setLoading(false));
-    } else {
-      fetch(`/api/portfolio/${pathSlug}`).then(r=>r.json()).then(d=>{ setPrevItem(d.prev_item||null); setNextItem(d.next_item||null); }).catch(()=>{});
+    // Always use data from Inertia props (server-side)
+    if (dbItem) {
+      setProject(dbItem);
     }
-  }, [pathSlug]);
+  }, [dbItem, pathSlug]);
 
   if (loading) return (
     <div style={{display:'flex',alignItems:'center',justifyContent:'center',minHeight:'70vh',flexDirection:'column',gap:'1.25rem',fontFamily:"'Space Grotesk',sans-serif"}}>
@@ -194,16 +128,42 @@ export default function ProjectDetailPage({ id, slug, item: dbItem }) {
   );
   if (!project) return <div style={{textAlign:'center',padding:'5rem',fontFamily:"'Space Grotesk',sans-serif"}}><p style={{color:'#9ca3af'}}>Project not found.</p><Link href="/portfolio" style={{color:'#0A3981',fontWeight:600}}>← Back to Portfolio</Link></div>;
 
-  const projectSlug = project.slug || '';
-  const ex          = PROJECT_DATA[projectSlug] || {};
-  const accent      = ex.accent      || '#0A3981';
-  const accentRgb   = ex.accentRgb   || '10,57,129';
-  const accentLight = ex.accentLight || '#eff6ff';
-  const accentBorder= ex.accentBorder|| '#bfdbfe';
-  const heroGrad    = ex.heroGradient|| 'linear-gradient(135deg,#0f172a,#1e3a8a)';
-  const stats       = ex.stats       || [];
-  const tech        = ex.tech        || [];
-  const imgSrc      = project.image ? (project.image.startsWith('http') ? project.image : `/images/portfolio/${project.image}`) : (project.image_url || '');
+  // Use database values with fallbacks to defaults
+  const accent       = DEFAULT_THEME.accent;
+  const accentRgb    = DEFAULT_THEME.accentRgb;
+  const accentLight  = DEFAULT_THEME.accentLight;
+  const accentBorder = DEFAULT_THEME.accentBorder;
+  const heroGrad     = DEFAULT_THEME.heroGradient;
+  
+  // Parse description as JSON if it contains structured data
+  let projectData = {
+    tagline: project.short_description || '',
+    category: project.category || 'Web Development',
+    client: project.clint_name || project.title,
+    year: project.date ? new Date(project.date).getFullYear().toString() : new Date().getFullYear().toString(),
+    website: project.website_link || '',
+    overview: '',
+    challenge: '',
+    approach: '',
+    result: '',
+    tech: [],
+    stats: []
+  };
+
+  // Try to parse description as JSON for structured data
+  if (project.description) {
+    try {
+      const parsed = JSON.parse(project.description);
+      projectData = { ...projectData, ...parsed };
+    } catch (e) {
+      // If not JSON, use description as overview
+      projectData.overview = project.description;
+    }
+  }
+
+  const stats  = projectData.stats || [];
+  const tech   = projectData.tech || [];
+  const imgSrc = project.image ? (project.image.startsWith('http') ? project.image : `/images/portfolio/${project.image}`) : (project.image_url || '');
 
   return (
     <>
@@ -249,29 +209,28 @@ export default function ProjectDetailPage({ id, slug, item: dbItem }) {
         @keyframes pd3-fade{from{opacity:0}to{opacity:1}}
 
         /* ══ SLIDER ══ */
-        .pd3-slider-section{background:#0f172a;padding:5rem 2rem}
+        .pd3-slider-section{background:#000;padding:5rem 2rem}
         .pd3-slider-container{max-width:1100px;margin:0 auto}
         .pd3-slider-header{text-align:center;margin-bottom:2.5rem}
         .pd3-slider-tag{font-size:0.72rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:${accent};margin-bottom:0.5rem}
         .pd3-slider-headline{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.8rem);color:#fff;font-weight:700}
 
-        .pd3-slider-wrap{position:relative;border-radius:20px;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,0.6);background:#1e293b}
-        .pd3-browser-chrome{background:#1e293b;padding:0.75rem 1rem;display:flex;align-items:center;gap:0.75rem;border-bottom:1px solid rgba(255,255,255,0.06)}
+        .pd3-slider-wrap{position:relative;border-radius:16px;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,0.08),0 40px 80px rgba(0,0,0,0.8);background:#111}
+        .pd3-browser-chrome{background:#111;padding:0.75rem 1rem;display:flex;align-items:center;gap:0.75rem;border-bottom:1px solid rgba(255,255,255,0.1)}
         .pd3-browser-dots{display:flex;gap:6px}
         .pd3-browser-dots span{width:12px;height:12px;border-radius:50%;display:block}
-        .pd3-browser-addr{flex:1;background:rgba(255,255,255,0.06);border-radius:6px;padding:0.3rem 0.75rem;font-size:0.7rem;color:rgba(255,255,255,0.35);font-family:'Space Grotesk',sans-serif;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
-        .pd3-slide-track{position:relative;height:520px;overflow:hidden}
+        .pd3-browser-addr{flex:1;background:rgba(255,255,255,0.08);border-radius:6px;padding:0.3rem 0.75rem;font-size:0.7rem;color:rgba(255,255,255,0.5);font-family:'Space Grotesk',sans-serif;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+        .pd3-slide-track{position:relative;height:520px;overflow:hidden;background:#000}
         @media(max-width:768px){.pd3-slide-track{height:320px}}
-        .pd3-slide{position:absolute;inset:0;opacity:0;transition:opacity 0.7s ease}
-        .pd3-slide-active{opacity:1}
-        .pd3-slide-img{width:100%;height:100%;object-fit:cover;display:block;transition:object-position 0.7s ease}
-        .pd3-slider-controls{position:absolute;bottom:1rem;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:1rem;z-index:10}
-        .pd3-slider-arr{background:black;border:1px solid rgba(255,255,255,0.2);color:#fff;width:36px;height:36px;border-radius:50%;font-size:1.25rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:background 0.2s;flex-shrink:0}
-        .pd3-slider-arr:hover{background:black(255,255,255,0.25)}
-        .pd3-slider-dots{display:flex;gap:6px}
-        .pd3-dot{width:8px;height:8px;border-radius:50%;background:black;border:none;cursor:pointer;transition:background 0.2s,transform 0.2s;padding:0}
-        .pd3-dot-active{background:black;transform:scale(1.3)}
-        .pd3-slide-label{position:absolute;top:1rem;right:1rem;background:rgba(0,0,0,0.5);backdrop-filter:blur(8px);color:#fff;font-size:0.7rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;padding:0.3rem 0.75rem;border-radius:100px;font-family:'Space Grotesk',sans-serif;z-index:10}
+        .pd3-slide-img{width:100%;height:auto;object-fit:unset;display:block}
+        .pd3-slider-controls{position:absolute;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:1.5rem;z-index:20;background:rgba(0,0,0,0.78);backdrop-filter:blur(12px);padding:0.9rem 1.5rem;border-top:1px solid rgba(255,255,255,0.1)}
+        .pd3-slider-arr{background:black;border:2px solid rgba(255,255,255,0.85);color:#fff;width:42px;height:42px;border-radius:50%;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:background 0.2s,transform 0.2s,opacity 0.2s;flex-shrink:0;font-weight:700}
+        .pd3-slider-arr:hover:not(:disabled){background:black;transform:scale(1.1)}
+        .pd3-slider-arr:disabled{opacity:0.25;cursor:not-allowed}
+        .pd3-slider-dots{display:flex;gap:10px;align-items:center}
+        .pd3-dot{width:9px;height:9px;border-radius:50%;background:black;border:none;cursor:pointer;transition:background 0.2s,transform 0.2s;padding:0}
+        .pd3-dot-active{background:black;transform:scale(1.4)}
+        .pd3-slide-label{position:absolute;top:1rem;right:1rem;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);color:#fff;font-size:0.7rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;padding:0.3rem 0.75rem;border-radius:100px;font-family:'Space Grotesk',sans-serif;z-index:10;border:1px solid rgba(255,255,255,0.15)}
 
         /* ══ MAIN ══ */
         .pd3-main{max-width:1200px;margin:0 auto;padding:5rem 2rem 6rem}
@@ -351,7 +310,10 @@ export default function ProjectDetailPage({ id, slug, item: dbItem }) {
         .pd3-nav-card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:1.5rem;text-decoration:none;color:inherit;transition:border-color 0.2s,box-shadow 0.2s,transform 0.2s;display:flex;flex-direction:column;gap:0.35rem;box-shadow:0 2px 12px rgba(0,0,0,0.04)}
         .pd3-nav-card:hover{border-color:${accent};box-shadow:0 6px 28px rgba(0,0,0,0.08);transform:translateY(-2px)}
         .pd3-nav-prev{align-items:flex-start}
-        .pd3-nav-next{align-items:flex-end}
+        .pd3-nav-next{align-items:flex-end;background:linear-gradient(135deg,#ec4899,#f43f5e);border:none;box-shadow:0 4px 20px rgba(236,72,153,0.35)}
+        .pd3-nav-next:hover{border-color:transparent;box-shadow:0 8px 32px rgba(236,72,153,0.5);transform:translateY(-2px)}
+        .pd3-nav-next .pd3-nav-label{color:rgba(255,255,255,0.85)}
+        .pd3-nav-next .pd3-nav-title{color:black}
         .pd3-nav-label{font-size:0.68rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:${accent}}
         .pd3-nav-title{font-size:0.92rem;font-weight:600;color:#1a1a2e;line-height:1.4}
         @media(max-width:560px){.pd3-nav{grid-template-columns:1fr}}
@@ -369,9 +331,9 @@ export default function ProjectDetailPage({ id, slug, item: dbItem }) {
 
       <div className="pd3-page">
         <SEO
-          title={`${project.title} — ${ex.category || 'Portfolio'} | Nikhil Sharma`}
-          description={ex.overview ? ex.overview.slice(0,155) : `${project.title} — built by Nikhil Sharma, Full Stack Developer Jaipur.`}
-          keywords={`${project.title},${ex.category||''},${(tech).slice(0,4).join(',')},Nikhil Sharma Jaipur`}
+          title={`${project.title} — ${projectData.category} | Nikhil Sharma`}
+          description={projectData.overview ? projectData.overview.slice(0,155) : `${project.title} — built by Nikhil Sharma, Full Stack Developer Jaipur.`}
+          keywords={`${project.title},${projectData.category},${(tech).slice(0,4).join(',')},Nikhil Sharma Jaipur`}
           ogType="article"
         />
 
@@ -385,10 +347,10 @@ export default function ProjectDetailPage({ id, slug, item: dbItem }) {
             <Link href="/portfolio" className="pd3-back-chip">← All Projects</Link>
             <div className="pd3-category-badge">
               <div className="pd3-badge-dot" />
-              <span className="pd3-badge-text">{ex.category || project.short_description || 'Web Development'}</span>
+              <span className="pd3-badge-text">{projectData.category}</span>
             </div>
-            <h1 className="pd3-hero-title">{ex.client || project.title}</h1>
-            {ex.tagline && <p className="pd3-hero-tagline">{ex.tagline}</p>}
+            <h1 className="pd3-hero-title">{projectData.client}</h1>
+            {projectData.tagline && <p className="pd3-hero-tagline">{projectData.tagline}</p>}
             <div className="pd3-hero-actions">
               {project.website_link && (
                 <a href={project.website_link} target="_blank" rel="noopener noreferrer" className="pd3-btn-primary">
@@ -428,15 +390,15 @@ export default function ProjectDetailPage({ id, slug, item: dbItem }) {
           <div className="pd3-meta-bar">
             <div className="pd3-meta-item">
               <span className="pd3-meta-label">Client</span>
-              <span className="pd3-meta-value">{ex.client || project.clint_name || project.title}</span>
+              <span className="pd3-meta-value">{projectData.client}</span>
             </div>
             <div className="pd3-meta-item">
               <span className="pd3-meta-label">Category</span>
-              <span className="pd3-meta-value">{ex.category || project.short_description || 'Web Development'}</span>
+              <span className="pd3-meta-value">{projectData.category}</span>
             </div>
             <div className="pd3-meta-item">
               <span className="pd3-meta-label">Year</span>
-              <span className="pd3-meta-value">{ex.year || '2023'}</span>
+              <span className="pd3-meta-value">{projectData.year}</span>
             </div>
             <div className="pd3-meta-item">
               <span className="pd3-meta-label">Live Website</span>
@@ -456,39 +418,39 @@ export default function ProjectDetailPage({ id, slug, item: dbItem }) {
           )}
 
           {/* Overview */}
-          {ex.overview && (
+          {projectData.overview && (
             <div className={`pd3-section${overVis ? ' pd3-vis' : ''}`} ref={overRef}>
               <div className="pd3-section-eyebrow"><div className="pd3-section-dot"/><span className="pd3-section-tag">Project Overview</span><div className="pd3-section-rule"/></div>
               <div className="pd3-overview-card">
                 <h2 className="pd3-section-title">About This Project</h2>
-                <p className="pd3-overview-text">{ex.overview}</p>
+                <p className="pd3-overview-text">{projectData.overview}</p>
               </div>
             </div>
           )}
 
           {/* Challenge & Approach */}
-          {(ex.challenge || ex.approach) && (
+          {(projectData.challenge || projectData.approach) && (
             <div>
               <div style={{marginBottom:'1.25rem'}} className={`pd3-section${twoVis ? ' pd3-vis' : ''}`} ref={twoRef}>
                 <div className="pd3-section-eyebrow"><div className="pd3-section-dot"/><span className="pd3-section-tag">Process</span><div className="pd3-section-rule"/></div>
               </div>
               <div className={`pd3-two-col${twoVis ? ' pd3-vis' : ''}`}>
-                {ex.challenge && (
+                {projectData.challenge && (
                   <div className="pd3-col-card">
                     <div className="pd3-col-icon-wrap">
                       <svg viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" width="24" height="24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                     </div>
                     <h3 className="pd3-col-title">The Challenge</h3>
-                    <p className="pd3-col-text">{ex.challenge}</p>
+                    <p className="pd3-col-text">{projectData.challenge}</p>
                   </div>
                 )}
-                {ex.approach && (
+                {projectData.approach && (
                   <div className="pd3-col-card">
                     <div className="pd3-col-icon-wrap">
                       <svg viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" width="24" height="24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
                     </div>
                     <h3 className="pd3-col-title">Our Approach</h3>
-                    <p className="pd3-col-text">{ex.approach}</p>
+                    <p className="pd3-col-text">{projectData.approach}</p>
                   </div>
                 )}
               </div>
@@ -510,14 +472,14 @@ export default function ProjectDetailPage({ id, slug, item: dbItem }) {
           )}
 
           {/* Result */}
-          {ex.result && (
+          {projectData.result && (
             <div className={`pd3-result-card${resultVis ? ' pd3-vis' : ''}`} ref={resultRef}>
               <div className="pd3-result-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" width="28" height="28"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
               </div>
               <div className="pd3-section-eyebrow"><div className="pd3-section-dot"/><span className="pd3-section-tag">Results & Impact</span><div className="pd3-section-rule"/></div>
               <h3 className="pd3-result-title">What We Achieved</h3>
-              <p className="pd3-result-text">{ex.result}</p>
+              <p className="pd3-result-text">{projectData.result}</p>
             </div>
           )}
 
@@ -536,10 +498,22 @@ export default function ProjectDetailPage({ id, slug, item: dbItem }) {
           )}
 
           {/* Prev / Next */}
-          <div className={`pd3-nav${navVis ? ' pd3-vis' : ''}`} ref={navRef}>
-            <div>{prevItem ? <Link href={`/portfolio/${prevItem.slug}`} className="pd3-nav-card pd3-nav-prev"><span className="pd3-nav-label">← Previous</span><span className="pd3-nav-title">{prevItem.title}</span></Link> : <div/>}</div>
-            <div>{nextItem ? <Link href={`/portfolio/${nextItem.slug}`} className="pd3-nav-card pd3-nav-next"><span className="pd3-nav-label">Next →</span><span className="pd3-nav-title">{nextItem.title}</span></Link> : <div/>}</div>
-          </div>
+          {related && related.length > 0 && (
+            <div className={`pd3-nav${navVis ? ' pd3-vis' : ''}`} ref={navRef}>
+              {related[0] && (
+                <Link href={`/portfolio/${related[0].slug}`} className="pd3-nav-card pd3-nav-prev">
+                  <span className="pd3-nav-label">← Previous</span>
+                  <span className="pd3-nav-title">{related[0].title}</span>
+                </Link>
+              )}
+              {related[1] && (
+                <Link href={`/portfolio/${related[1].slug}`} className="pd3-nav-card pd3-nav-next">
+                  <span className="pd3-nav-label">Next →</span>
+                  <span className="pd3-nav-title">{related[1].title}</span>
+                </Link>
+              )}
+            </div>
+          )}
 
           <Link href="/portfolio" className="pd3-back-link">← Back to All Projects</Link>
 

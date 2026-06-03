@@ -133,6 +133,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
         .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(parseInt(code, 10)))
         .replace(/&[a-z]+;/gi, '');
     }
+    decoded = decoded.replace(/ /g, ' ');
     const plain = decoded.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
     return plain.length > maxLen ? plain.slice(0, maxLen) + '...' : plain;
   }
@@ -148,9 +149,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
       id: p.id,
       slug: p.slug,
       title: p.title,
-      excerpt: p.meta_description
-        ? (p.meta_description.length > 130 ? p.meta_description.slice(0, 130) + '...' : p.meta_description)
-        : stripHtml(p.content),
+      excerpt: stripHtml(p.meta_description || p.content),
       image_url: getBlogImage(p.main_image),
       author: p.created_by || 'Nikhil Sharma',
       date: p.created_at ? new Date(p.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Recent',
@@ -1031,7 +1030,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
             <div className="edu-item" data-aos="fade-right" data-aos-delay="100" data-aos-duration="800">
               <div className="edu-item-left edu-item-logo-side">
                 <div className="edu-item-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 7H4c-1.1 0-2 .9-2 2v6c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zm-9 5H4v-1h7v1zm0-2H4V9h7v1zm9 4h-2v-1h2v1zm0-2h-6v-1h6v1zm0-2h-6V9h6v1z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
                 </div>
                 <h4 className="edu-item-company">American Express</h4>
                 <p className="edu-item-date">Sep 2023 – Present</p>
@@ -1052,7 +1051,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
               <div className="edu-item-dot"></div>
               <div className="edu-item-right edu-item-logo-side">
                 <div className="edu-item-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/><line x1="14" y1="4" x2="10" y2="20"/></svg>
                 </div>
                 <h4 className="edu-item-company">Keendroid Pvt. Ltd.</h4>
                 <p className="edu-item-date">Dec 2018 – Aug 2023</p>
@@ -1063,7 +1062,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
             <div className="edu-item" data-aos="fade-right" data-aos-delay="300" data-aos-duration="800">
               <div className="edu-item-left edu-item-logo-side">
                 <div className="edu-item-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
                 </div>
                 <h4 className="edu-item-company">Jaipur National University</h4>
                 <p className="edu-item-date">2020 – 2022</p>
@@ -1084,7 +1083,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
               <div className="edu-item-dot"></div>
               <div className="edu-item-right edu-item-logo-side">
                 <div className="edu-item-icon">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
                 </div>
                 <h4 className="edu-item-company">Jaipur National University</h4>
                 <p className="edu-item-date">2017 – 2020</p>
@@ -1307,22 +1306,14 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
                   data-aos-duration="800"
                 >
                   <div className="blog-img-wrap">
-                    <img src={
-                      post.main_image
-                        ? (post.main_image.startsWith('http') ? post.main_image : `/images/blogs/${post.main_image}`)
-                        : 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/blog-fi-1.jpg'
-                    } alt={post.title} className="blog-img" loading="lazy" decoding="async" width="400" height="240"
+                    <img src={post.image_url || 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/blog-fi-1.jpg'}
+                      alt={post.title} className="blog-img" loading="lazy" decoding="async" width="400" height="240"
                       onError={e => { e.target.src = 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/blog-fi-1.jpg'; }}
                     />
                   </div>
                   <div className="blog-card-body">
                     <h4 className="blog-card-title">{post.title}</h4>
-                    <p className="blog-card-excerpt">
-                      {post.meta_description
-                        ? (post.meta_description.length > 120 ? post.meta_description.slice(0, 120) + '...' : post.meta_description)
-                        : (post.content ? post.content.replace(/<[^>]*>/g, '').slice(0, 120) + '...' : '')
-                      }
-                    </p>
+                    <p className="blog-card-excerpt">{post.excerpt}</p>
                     <div className="blog-card-meta">
                       <div className="blog-card-author-wrap">
                         <div className="blog-card-avatar">
@@ -1333,9 +1324,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
                         </div>
                         <span className="blog-card-author">Nikhil Sharma</span>
                       </div>
-                      <span className="blog-card-date">
-                        {post.created_at ? new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : ''}
-                      </span>
+                      <span className="blog-card-date">{post.date}</span>
                     </div>
                   </div>
                 </div>

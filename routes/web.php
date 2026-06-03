@@ -40,8 +40,9 @@ Route::prefix('admin')->name('admin.')->middleware(\App\Http\Middleware\AdminMid
 
     // Users CRUD
     Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
+    Route::get('/users/create', [AdminUserController::class, 'create'])->name('users.create');
     Route::post('/users', [AdminUserController::class, 'store'])->name('users.store');
-    Route::get('/users/{user}/data', [AdminUserController::class, 'userData'])->name('users.data');
+    Route::get('/users/{user}/edit', [AdminUserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{user}', [AdminUserController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [AdminUserController::class, 'destroy'])->name('users.destroy');
 
@@ -61,8 +62,9 @@ Route::prefix('admin')->name('admin.')->middleware(\App\Http\Middleware\AdminMid
     Route::put('/blog/{blog}', [AdminBlogController::class, 'update'])->name('blog.update');
     Route::delete('/blog/{blog}', [AdminBlogController::class, 'destroy'])->name('blog.destroy');
 
-    // Categories
+    // Categories CRUD
     Route::get('/categories', [AdminCategoryController::class, 'index'])->name('categories.index');
+    Route::get('/categories/{category}/edit', [AdminCategoryController::class, 'edit'])->name('categories.edit');
     Route::put('/categories/{category}', [AdminCategoryController::class, 'update'])->name('categories.update');
     Route::delete('/categories/{category}', [AdminCategoryController::class, 'destroy'])->name('categories.destroy');
 
@@ -90,7 +92,6 @@ Route::prefix('admin')->name('admin.')->middleware(\App\Http\Middleware\AdminMid
     Route::post('/gallery', [AdminGalleryController::class, 'store'])->name('gallery.store');
     Route::delete('/gallery/{gallery}', [AdminGalleryController::class, 'destroy'])->name('gallery.destroy');
     Route::get('/comments', [AdminBlogCommentController::class, 'index'])->name('comments.index');
-    Route::put('/comments/{comment}', [AdminBlogCommentController::class, 'update'])->name('comments.update');
     Route::delete('/comments/{comment}', [AdminBlogCommentController::class, 'destroy'])->name('comments.destroy');
 
     // Messages

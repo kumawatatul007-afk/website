@@ -8,6 +8,24 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
+// Strips all HTML tags and decodes entities to produce clean plain text.
+// Applied on every store/update so the database never contains raw HTML.
+function cleanServiceContent(?string $html): string
+{
+    if (!$html || trim($html) === '' || trim($html) === '<p><br></p>') {
+        return '';
+    }
+    $text = preg_replace('/<br\s*\/?>/i', "\n", $html);
+    $text = preg_replace('/<\/(p|div|h[1-6]|li|tr|blockquote|section|article)>/i', "\n", $text);
+    $text = preg_replace('/<li[^>]*>/i', '• ', $text);
+    $text = strip_tags($text);
+    $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $text = preg_replace('/[ \t]+/', ' ', $text);
+    $text = preg_replace('/\n[ \t]+/', "\n", $text);
+    $text = preg_replace('/\n{3,}/', "\n\n", $text);
+    return trim($text);
+}
+
 class AdminServiceController extends Controller
 {
     // type=1 means service in blogs table
@@ -50,8 +68,9 @@ class AdminServiceController extends Controller
             $validated['slug'] = Str::slug($validated['title']);
         }
 
-        $validated['type']   = self::TYPE_SERVICE;
-        $validated['status'] = $validated['status'] ?? 1;
+        $validated['content'] = cleanServiceContent($validated['content'] ?? '');
+        $validated['type']    = self::TYPE_SERVICE;
+        $validated['status']  = $validated['status'] ?? 1;
 
         BlogPost::create($validated);
 
@@ -97,6 +116,8 @@ class AdminServiceController extends Controller
         if (empty($validated['slug'])) {
             $validated['slug'] = Str::slug($validated['title']);
         }
+
+        $validated['content'] = cleanServiceContent($validated['content'] ?? '');
 
         // Never change type
         unset($validated['type']);

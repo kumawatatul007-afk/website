@@ -41,22 +41,6 @@ class AdminBlogCommentController extends Controller
         ]);
     }
 
-    public function update(Request $request, BlogComment $comment)
-    {
-        $validated = $request->validate([
-            'name'        => 'required|string|max:255',
-            'email'       => 'nullable|email|max:255',
-            'website'     => 'nullable|string|max:255',
-            'description' => 'nullable|string',
-            'is_publish'  => 'nullable|integer',
-        ]);
-
-        $comment->update($validated);
-
-        return redirect()->route('admin.comments.index')
-            ->with('success', 'Comment updated successfully.');
-    }
-
     public function destroy(BlogComment $comment)
     {
         $comment->delete();

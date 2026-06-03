@@ -591,61 +591,13 @@ class PublicController extends Controller
      */
     public function keywordDetailNew($prefix, $service, $location = null)
     {
-        // ALWAYS check if this matches a Service first (regardless of location)
-        $slug = strtolower($prefix) . '-' . $service;
-        $blogPost = BlogPost::where('slug', $slug)->where('type', 1)->where('status', 1)->first();
-        if ($blogPost) {
-            // This is a Service, not a Keyword - render Service Detail page
-            $serviceObj = (object)[
-                'id'               => $blogPost->id,
-                'title'            => $blogPost->title,
-                'subtitle'         => $blogPost->meta_description,
-                'slug'             => $blogPost->slug,
-                'price_range'      => null,
-                'description'      => $blogPost->content,
-                'features'         => $blogPost->tags ? array_map('trim', explode(',', $blogPost->tags)) : [],
-                'cta_text'         => 'Get a Quote',
-                'meta_title'       => $blogPost->title,
-                'meta_description' => $blogPost->meta_description,
-                'meta_keyword'     => $blogPost->meta_keywords_plain,
-            ];
-
-            $related = BlogPost::where('type', 1)
-                ->where('status', 1)
-                ->where('id', '!=', $serviceObj->id)
-                ->latest()
-                ->take(3)
-                ->get(['id', 'title', 'slug', 'meta_description', 'content', 'tags'])
-                ->map(function ($post) {
-                    return [
-                        'id'          => $post->id,
-                        'title'       => $post->title,
-                        'subtitle'    => $post->meta_description,
-                        'slug'        => $post->slug,
-                        'price_range' => null,
-                        'description' => $post->content,
-                        'features'    => $post->tags ? array_map('trim', explode(',', $post->tags)) : [],
-                        'cta_text'    => 'Get a Quote',
-                    ];
-                });
-
-            $setting  = Setting::first();
-            $siteName = $setting?->website_title ?: 'Nikhil Sharma';
-            $descText = strip_tags($serviceObj->description ?? '');
-            $descShort = mb_substr($descText, 0, 160);
-
-            return Inertia::render('Services/Detail/index', [
-                'service' => $serviceObj,
-                'related' => $related,
-                'setting' => $setting,
-                'seo'     => [
-                    'title'       => $serviceObj->meta_title       ?: "{$serviceObj->title} — Jaipur | {$siteName}",
-                    'description' => $serviceObj->meta_description ?: ($serviceObj->subtitle ?: ($descShort ?: "Professional {$serviceObj->title} services in Jaipur by {$siteName}.")),
-                    'keywords'    => $serviceObj->meta_keyword     ?: "{$serviceObj->title} Jaipur, {$serviceObj->title} India, {$siteName} {$serviceObj->title}",
-                    'canonical'   => url()->current(),
-                    'robots'      => 'index, follow',
-                ],
-            ]);
+        if (!$location) {
+            // Check if this matches a Service (BlogPost type=1)
+            $slug = strtolower($prefix) . '-' . $service;
+            $blogPost = BlogPost::where('slug', $slug)->where('type', 1)->where('status', 1)->first();
+            if ($blogPost) {
+                return $this->serviceDetailNew($prefix, $service);
+            }
         }
 
         $setting     = Setting::first();

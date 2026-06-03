@@ -5,20 +5,14 @@ import { ShimmerPortfolioCard } from '../../components/ShimmerLoader';
 
 export default function PortfolioPage({ items: dbItems }) {
   const [portfolios, setPortfolios] = useState(dbItems || []);
-  const [loading, setLoading] = useState(!dbItems || dbItems.length === 0);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Sirf tab fetch karo jab Inertia se data nahi aaya
-    if (!dbItems || dbItems.length === 0) {
-      fetch('/api/portfolio')
-        .then(res => res.json())
-        .then(data => {
-          setPortfolios(data);
-          setLoading(false);
-        })
-        .catch(() => setLoading(false));
+    // Always use data from Inertia props (server-side)
+    if (dbItems && dbItems.length > 0) {
+      setPortfolios(dbItems);
     }
-  }, []);
+  }, [dbItems]);
   /* ── Intersection Observer for scroll-in animations ── */
   const headerRef = useRef(null);
   const gridRef   = useRef(null);

@@ -47,9 +47,10 @@ class AdminGalleryController extends Controller
             ->with('success', 'Image uploaded successfully.');
     }
 
-    public function destroy(Gallery $gallery)
+    public function destroy($id)
     {
-        // Delete file from storage if it exists
+        $gallery = Gallery::findOrFail($id);
+
         if ($gallery->image && Storage::disk('public')->exists('gallery/' . $gallery->image)) {
             Storage::disk('public')->delete('gallery/' . $gallery->image);
         }

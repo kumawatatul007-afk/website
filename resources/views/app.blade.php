@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     @php
-        // Page-specific seo (from controller) takes priority over shared seo (from middleware/SeoPage)
+        // .....Page-specific seo (from controller) takes priority over shared seo (from middleware/SeoPage)
         $rawSeo = $page['props']['seo'] ?? null;
 
         // Normalize: SeoPage model object → array, or plain array as-is

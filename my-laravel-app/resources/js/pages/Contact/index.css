@@ -1,0 +1,333 @@
+/* ============================================================
+   ContactPage — exact same styles as DashboardPage contact section
+   ============================================================ */
+
+.contact-page-wrapper {
+  background-color: #f8fafb;
+  min-height: 100vh;
+  padding: 5rem 0 6rem;
+}
+
+/* Two-column layout */
+.contact-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
+@media (min-width: 1024px) {
+  .contact-layout {
+    flex-direction: row;
+    gap: 6rem;
+    align-items: flex-start;
+  }
+  .contact-left  { flex: 0 0 42%; }
+  .contact-right { flex: 1; }
+}
+
+/* ── "LET'S GET IN TOUCH" — large bold stacked, same as Dashboard ── */
+.contact-title {
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  font-weight: 900;
+  color: #131313;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  font-family: 'Space Grotesk', sans-serif;
+  margin-bottom: 2.5rem;
+  text-transform: uppercase;
+}
+
+/* "GET" indented */
+.contact-title-indent {
+  display: inline-block;
+  padding-left: 2rem;
+}
+
+/* ── Contact items list ── */
+.contact-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Each contact item row */
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  cursor: pointer;
+}
+
+/* Slide-in from left animation */
+.contact-item-anim {
+  opacity: 0;
+  transform: translateX(-50px);
+  transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.contact-item-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Navy blue circle icon */
+.contact-icon-circle {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background-color: #1a3a6b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.contact-icon-circle svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: #ffffff;
+}
+
+.contact-item:hover .contact-icon-circle {
+  background-color: #0A3981;
+  transform: scale(1.1);
+}
+
+/* Label — uppercase bold small */
+.contact-item-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #131313;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-family: 'Space Grotesk', sans-serif;
+  margin-bottom: 0.15rem;
+}
+
+/* Value — gray */
+.contact-item-value {
+  font-size: 0.9rem;
+  color: #6b7280;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 400;
+  margin: 0;
+  transition: color 0.25s ease;
+}
+
+.contact-item:hover .contact-item-value {
+  color: #0A3981;
+}
+
+/* ── Quick-action CTAs (WhatsApp + Calendly) ── */
+.contact-quick-btns {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2.5rem;
+  justify-content: flex-start;
+}
+
+.contact-quick-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 1rem 1.75rem;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 0;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+  cursor: pointer;
+  font-family: 'Space Grotesk', sans-serif;
+  text-decoration: none;
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+/* WhatsApp button */
+.contact-quick-btn--whatsapp {
+  background-color: #075e54;
+  color: #ffffff;
+  box-shadow: 5px 5px 0px 0px #043d36;
+}
+
+.contact-quick-btn--whatsapp:hover {
+  background-color: #054a44;
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0px 0px #043d36;
+}
+
+.contact-quick-btn--whatsapp:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px 0px #043d36;
+}
+
+/* Calendly / Book a call button */
+.contact-quick-btn--calendly {
+  background-color: #1a3a6b;
+  color: #ffffff;
+  box-shadow: 5px 5px 0px 0px #0a2244;
+}
+
+.contact-quick-btn--calendly:hover {
+  background-color: #0f2d52;
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0px 0px #0a2244;
+}
+
+.contact-quick-btn--calendly:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px 0px #0a2244;
+}
+
+/* SVG icons inside buttons */
+.contact-quick-btn svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.contact-quick-btn--whatsapp svg {
+  fill: #ffffff;
+}
+
+.contact-quick-btn--calendly svg {
+  stroke: #ffffff;
+  fill: none;
+}
+
+/* ── Form ── */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Each field */
+.contact-field {
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+/* Label */
+.contact-field-label {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #131313;
+  font-family: 'Space Grotesk', sans-serif;
+  margin-bottom: 0.75rem;
+}
+
+/* Input — underline only, no box */
+.contact-input {
+  width: 100%;
+  border: none;
+  border-bottom: 1.5px solid #d1d5db;
+  background: transparent;
+  padding: 0.5rem 0;
+  font-size: 0.95rem;
+  color: #131313;
+  font-family: 'Space Grotesk', sans-serif;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.contact-input:focus {
+  border-bottom-color: #131313;
+}
+
+.contact-input-error {
+  border-bottom-color: #e53935 !important;
+}
+
+/* Textarea — underline only */
+.contact-textarea {
+  width: 100%;
+  border: none;
+  border-bottom: 1.5px solid #d1d5db;
+  background: transparent;
+  padding: 0.5rem 0;
+  font-size: 0.95rem;
+  color: #131313;
+  font-family: 'Space Grotesk', sans-serif;
+  outline: none;
+  resize: none;
+  transition: border-color 0.3s ease;
+  min-height: 120px;
+}
+
+.contact-textarea:focus {
+  border-bottom-color: #131313;
+}
+
+/* Error message */
+.contact-error-msg {
+  font-size: 0.78rem;
+  color: #e53935;
+  margin-top: 0.3rem;
+  display: block;
+}
+
+/* Success banner */
+.contact-success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  padding: 0.75rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+/* SEND MESSAGE button */
+.contact-submit-btn {
+  display: inline-block;
+  background-color: #1a3a6b;
+  color: #ffffff;
+  padding: 0.9rem 2.25rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  font-family: 'Space Grotesk', sans-serif;
+  margin-top: 0.5rem;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.contact-submit-btn:hover {
+  background-color: #0A3981;
+  transform: translateY(-2px);
+  box-shadow: 6px 6px 0 0 rgba(10, 57, 129, 0.2);
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .contact-page-wrapper {
+    padding: 3rem 0 4rem;
+  }
+
+  .contact-title {
+    font-size: clamp(2rem, 12vw, 3rem);
+  }
+
+  .contact-quick-btns {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .contact-quick-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 1rem 1.5rem;
+  }
+}

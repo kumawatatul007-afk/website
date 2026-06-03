@@ -65,11 +65,6 @@ class AdminUserController extends Controller
         ]);
     }
 
-    public function userData(User $user)
-    {
-        return response()->json($user->only(['id', 'name', 'email', 'phone', 'role']));
-    }
-
     public function update(Request $request, User $user)
     {
         $validated = $request->validate([

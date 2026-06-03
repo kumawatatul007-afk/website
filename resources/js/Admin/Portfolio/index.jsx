@@ -10,15 +10,12 @@ export default function AdminPortfolioIndex({ items, filters, hasSearched, categ
     const [shimmer, setShimmer]       = useState(true);
 
     useEffect(() => {
-        console.log('Portfolio Items Data:', items);
-        console.log('Items Data Array:', items?.data);
-        console.log('Has Searched:', hasSearched);
         const t = setTimeout(() => setShimmer(false), 650);
         return () => clearTimeout(t);
-    }, [items]);
+    }, []);
 
     const applyFilters = () => {
-        router.get('/admin/portfolio', { search, status: statusFilter }, { preserveState: true, replace: true });
+        router.get('/admin/portfolio', { search, status: statusFilter, searched: 1 }, { preserveState: true, replace: true });
     };
 
     const handleDelete = (id) => {
@@ -108,7 +105,17 @@ export default function AdminPortfolioIndex({ items, filters, hasSearched, categ
             </div>
 
             <div className="card">
-                <table className="table">
+                {!hasSearched ? (
+                    <div className="empty" style={{ padding:'4rem' }}>
+                        <div style={{ fontWeight:600, fontSize:'0.95rem', color:'#64748b', marginBottom:'0.35rem' }}>
+                            Use the search bar to find portfolio items
+                        </div>
+                        <div style={{ fontSize:'0.82rem' }}>
+                            Filter by title or status and click <strong>Search</strong>
+                        </div>
+                    </div>
+                ) : (
+                    <table className="table">
                         <thead>
                             <tr>
                                 <th style={{ width:'60px' }}>Img</th>
@@ -171,7 +178,8 @@ export default function AdminPortfolioIndex({ items, filters, hasSearched, categ
                             )}
                         </tbody>
                     </table>
-                {items?.links && (
+                )}
+                {hasSearched && items?.links && (
                     <div className="pagination-wrap">
                         <Pagination links={items.links} />
                     </div>

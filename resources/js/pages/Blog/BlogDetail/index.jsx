@@ -130,34 +130,53 @@ export default function BlogDetailPage({ post, recentPosts = [], seo }) {
         <div className="bd-hero-content">
           <div className="bd-hero-tags">
             {tags.slice(0, 3).map((tag, i) => (
-              <span key={i} className="bd-hero-tag">{tag}</span>
+              <span key={i} className="bd-hero-tag">#{tag}</span>
             ))}
           </div>
           <h1 className="bd-hero-title">{post.title}</h1>
-          <p className="bd-hero-subtitle">{post.meta_description || 'Discover a premium eCommerce proposal page crafted to impress clients with clean design, focused strategy, and elegant execution.'}</p>
           <div className="bd-hero-meta">
             <div className="bd-hero-meta-item">
-              <strong>{formatDate(post.created_at)}</strong>
+              <span className="hero-meta-icon"></span>
+              <span>{formatDate(post.created_at)}</span>
             </div>
             <div className="bd-hero-meta-item">
-              <strong>Nikhil Sharma</strong>
+              <span className="hero-meta-icon"></span>
+              <span>Nikhil Sharma</span>
             </div>
             <div className="bd-hero-meta-item">
-              <strong>{comments.length} Comments</strong>
+              <span className="hero-meta-icon"></span>
+              <span>{comments.length} Comments</span>
             </div>
           </div>
-          <div className="bd-hero-cta">
-            <Link href="/contact" className="bd-hero-button bd-hero-button-primary">Get a Custom Quote</Link>
-            <Link href="/services" className="bd-hero-button bd-hero-button-secondary">Explore Services</Link>
-          </div>
-          <div className="bd-proposal-banner">
-            <div className="bd-proposal-intro">Premium eCommerce proposal</div>
-            <h2>Launch a store that looks premium, converts fast, and feels built for your brand.</h2>
-            <div className="bd-proposal-grid">
-              <div className="bd-proposal-card">Brand-focused design with polished typography and luxurious spacing.</div>
-              <div className="bd-proposal-card">Conversion-first layout built for high-value products and fast checkout.</div>
-              <div className="bd-proposal-card">Clear milestone roadmap for a confident, professional delivery.</div>
-            </div>
+          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginTop: '1.5rem', justifyContent: 'center' }}>
+            <Link
+              href="/contact"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '8px',
+                padding: '0.75rem 1.8rem', borderRadius: '8px', textDecoration: 'none',
+                background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: '#fff',
+                fontSize: '0.82rem', fontWeight: 700, letterSpacing: '0.06em',
+                textTransform: 'uppercase', boxShadow: '0 8px 24px rgba(99,102,241,0.4)',
+                transition: 'all 0.25s ease',
+              }}
+            >
+              Get a Quote
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+            </Link>
+            <Link
+              href="/services"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '8px',
+                padding: '0.75rem 1.6rem', borderRadius: '8px', textDecoration: 'none',
+                background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.85)',
+                border: '1.5px solid rgba(255,255,255,0.3)',
+                fontSize: '0.82rem', fontWeight: 600, letterSpacing: '0.06em',
+                textTransform: 'uppercase', backdropFilter: 'blur(4px)',
+                transition: 'all 0.25s ease',
+              }}
+            >
+              All Services
+            </Link>
           </div>
         </div>
       </header>
@@ -304,7 +323,7 @@ export default function BlogDetailPage({ post, recentPosts = [], seo }) {
                       {errors.name && <span className="error-message">{errors.name}</span>}
                     </div>
                     <div className="bd-form-group">
-                      <label htmlFor="email">Email Address<span className="required">*</span></label>
+                      <label htmlFor="email">Email Address <span className="required">*</span></label>
                       <input
                         id="email"
                         type="email"
