@@ -40,8 +40,20 @@ function StatItem({ stat, isVisible }) {
 }
 
 function ImageSlider({ imgSrc, websiteUrl }) {
-  const STEPS = 4;
-  const [step, setStep] = useState(0);
+  const SECTIONS = 4; // Number of scroll sections
+  const [currentSection, setCurrentSection] = useState(0);
+
+  const goToPrevious = () => {
+    setCurrentSection((prev) => (prev === 0 ? SECTIONS - 1 : prev - 1));
+  };
+
+  const goToNext = () => {
+    setCurrentSection((prev) => (prev === SECTIONS - 1 ? 0 : prev + 1));
+  };
+
+  const goToSection = (index) => {
+    setCurrentSection(index);
+  };
 
   return (
     <div className="pd3-slider-wrap">
@@ -53,36 +65,48 @@ function ImageSlider({ imgSrc, websiteUrl }) {
         <div style={{width:60}} />
       </div>
       <div className="pd3-slide-track">
-        <img
-          src={imgSrc}
-          alt="preview"
-          className="pd3-slide-img"
-          style={{ transform: `translateY(${-step * 25}%)`, transition: 'transform 0.75s cubic-bezier(0.4,0,0.2,1)' }}
-          loading="eager"
-        />
+        <div className="pd3-scroll-container">
+          <img
+            src={imgSrc}
+            alt="Website preview"
+            className="pd3-slide-img"
+            style={{ 
+              transform: `translateY(-${currentSection * 25}%)`,
+              transition: 'transform 0.7s cubic-bezier(0.4, 0, 0.2, 1)'
+            }}
+            loading="eager"
+          />
+        </div>
+        
         <div className="pd3-slider-controls">
           <button
             className="pd3-slider-arr"
-            onClick={() => setStep(s => Math.max(0, s - 1))}
-            disabled={step === 0}
-            aria-label="Scroll up"
-          >↑</button>
+            onClick={goToPrevious}
+            aria-label="Previous section"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" width="18" height="18">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
           <div className="pd3-slider-dots">
-            {Array.from({ length: STEPS }).map((_, i) => (
+            {Array.from({ length: SECTIONS }).map((_, index) => (
               <button
-                key={i}
-                className={`pd3-dot${i === step ? ' pd3-dot-active' : ''}`}
-                onClick={() => setStep(i)}
-                aria-label={`Go to section ${i + 1}`}
+                key={index}
+                className={`pd3-dot${index === currentSection ? ' pd3-dot-active' : ''}`}
+                onClick={() => goToSection(index)}
+                aria-label={`Go to section ${index + 1}`}
               />
             ))}
           </div>
           <button
             className="pd3-slider-arr"
-            onClick={() => setStep(s => Math.min(STEPS - 1, s + 1))}
-            disabled={step === STEPS - 1}
-            aria-label="Scroll down"
-          >↓</button>
+            onClick={goToNext}
+            aria-label="Next section"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" width="18" height="18">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
         </div>
       </div>
     </div>
@@ -222,15 +246,20 @@ export default function ProjectDetailPage({ id, slug, item: dbItem, related }) {
         .pd3-browser-addr{flex:1;background:rgba(255,255,255,0.08);border-radius:6px;padding:0.3rem 0.75rem;font-size:0.7rem;color:rgba(255,255,255,0.5);font-family:'Space Grotesk',sans-serif;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
         .pd3-slide-track{position:relative;height:520px;overflow:hidden;background:#000}
         @media(max-width:768px){.pd3-slide-track{height:320px}}
-        .pd3-slide-img{width:100%;height:auto;object-fit:unset;display:block}
+        
+        /* Scroll Container for Full Page Preview */
+        .pd3-scroll-container{width:100%;height:100%;overflow:hidden;position:relative}
+        .pd3-slide-img{width:100%;height:auto;display:block;min-height:200%}
+        
+        /* Controls */
         .pd3-slider-controls{position:absolute;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:1.5rem;z-index:20;background:rgba(0,0,0,0.78);backdrop-filter:blur(12px);padding:0.9rem 1.5rem;border-top:1px solid rgba(255,255,255,0.1)}
-        .pd3-slider-arr{background:black;border:2px solid rgba(255,255,255,0.85);color:#fff;width:42px;height:42px;border-radius:50%;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:background 0.2s,transform 0.2s,opacity 0.2s;flex-shrink:0;font-weight:700}
-        .pd3-slider-arr:hover:not(:disabled){background:black;transform:scale(1.1)}
-        .pd3-slider-arr:disabled{opacity:0.25;cursor:not-allowed}
+        .pd3-slider-arr{background:rgba(0,0,0,0.85);border:2px solid rgba(255,255,255,0.85);color:#fff;width:42px;height:42px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:all 0.3s ease;flex-shrink:0;box-shadow:0 2px 12px rgba(0,0,0,0.4)}
+        .pd3-slider-arr:hover{background:rgba(255,255,255,0.95);border-color:#fff;transform:scale(1.15);box-shadow:0 4px 20px rgba(255,255,255,0.3)}
+        .pd3-slider-arr:hover svg{stroke:#000}
         .pd3-slider-dots{display:flex;gap:10px;align-items:center}
-        .pd3-dot{width:9px;height:9px;border-radius:50%;background:black;border:none;cursor:pointer;transition:background 0.2s,transform 0.2s;padding:0}
-        .pd3-dot-active{background:black;transform:scale(1.4)}
-        .pd3-slide-label{position:absolute;top:1rem;right:1rem;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);color:#fff;font-size:0.7rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;padding:0.3rem 0.75rem;border-radius:100px;font-family:'Space Grotesk',sans-serif;z-index:10;border:1px solid rgba(255,255,255,0.15)}
+        .pd3-dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,0.3);border:none;cursor:pointer;transition:all 0.3s ease;padding:0}
+        .pd3-dot:hover{background:rgba(255,255,255,0.6);transform:scale(1.2)}
+        .pd3-dot-active{background:rgba(255,255,255,0.95);transform:scale(1.35);box-shadow:0 0 8px rgba(255,255,255,0.5)}
 
         /* ══ MAIN ══ */
         .pd3-main{max-width:1200px;margin:0 auto;padding:5rem 2rem 6rem}

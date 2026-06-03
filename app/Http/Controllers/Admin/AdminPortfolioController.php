@@ -86,10 +86,17 @@ class AdminPortfolioController extends Controller
 
     public function update(Request $request, PortfolioItem $portfolio)
     {
+        // Debug incoming request
+        \Log::info('Portfolio Update Request', [
+            'all_data' => $request->all(),
+            'title' => $request->input('title'),
+            'has_file' => $request->hasFile('image')
+        ]);
+
         $validated = $request->validate([
             'title'             => 'required|string|max:255',
             'category_id'       => 'nullable|integer',
-            'image'             => 'nullable|string|max:500',
+            'image'             => 'nullable|file|image|max:5120', // Changed to handle file upload
             'clint_name'        => 'nullable|string|max:255',
             'status'            => 'nullable|string|max:50',
             'date'              => 'nullable|date',
@@ -100,6 +107,22 @@ class AdminPortfolioController extends Controller
             'meta_description'  => 'nullable|string|max:255',
             'is_publish'        => 'nullable|integer',
         ]);
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '_' . $image->getClientOriginalName();
+            $image->move(public_path('uploads/portfolio'), $imageName);
+            $validated['image'] = $imageName;
+
+            // Delete old image if exists
+            if ($portfolio->image && file_exists(public_path('uploads/portfolio/' . $portfolio->image))) {
+                unlink(public_path('uploads/portfolio/' . $portfolio->image));
+            }
+        } else {
+            // Keep existing image
+            unset($validated['image']);
+        }
 
         // Backfill slug if the item doesn't have one yet
         if (empty($portfolio->slug)) {

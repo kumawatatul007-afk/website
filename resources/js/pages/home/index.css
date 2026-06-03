@@ -950,17 +950,98 @@ body {
 }
 
 .edu-item-icon {
-  width: 2.25rem;
-  height: 2.25rem;
-  margin-bottom: 0.6rem;
-  display: inline-block;
+  width: 4rem;
+  height: 4rem;
+  margin-bottom: 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.25);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.edu-item-icon::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.edu-item-icon::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.1));
+  border-radius: 16px;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.edu-item-icon:hover {
+  transform: translateY(-6px) scale(1.08) rotate(3deg);
+  box-shadow: 0 16px 40px rgba(102, 126, 234, 0.45);
+}
+
+.edu-item-icon:hover::before {
+  opacity: 1;
+}
+
+.edu-item-icon:hover::after {
+  opacity: 0.6;
 }
 
 .edu-item-icon svg {
-  width: 100%;
-  height: 100%;
-  fill: none;
-  stroke: #131313;
+  width: 2rem;
+  height: 2rem;
+  color: #ffffff;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Different gradient colors for each item type */
+.edu-item:nth-child(1) .edu-item-icon {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.25);
+}
+
+.edu-item:nth-child(1) .edu-item-icon:hover {
+  box-shadow: 0 12px 32px rgba(102, 126, 234, 0.4);
+}
+
+.edu-item:nth-child(2) .edu-item-icon {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  box-shadow: 0 8px 24px rgba(240, 147, 251, 0.25);
+}
+
+.edu-item:nth-child(2) .edu-item-icon:hover {
+  box-shadow: 0 12px 32px rgba(240, 147, 251, 0.4);
+}
+
+.edu-item:nth-child(3) .edu-item-icon {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  box-shadow: 0 8px 24px rgba(79, 172, 254, 0.25);
+}
+
+.edu-item:nth-child(3) .edu-item-icon:hover {
+  box-shadow: 0 12px 32px rgba(79, 172, 254, 0.4);
+}
+
+.edu-item:nth-child(4) .edu-item-icon {
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  box-shadow: 0 8px 24px rgba(67, 233, 123, 0.25);
+}
+
+.edu-item:nth-child(4) .edu-item-icon:hover {
+  box-shadow: 0 12px 32px rgba(67, 233, 123, 0.4);
 }
 
 .edu-item-company {
