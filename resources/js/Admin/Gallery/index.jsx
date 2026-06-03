@@ -1,5 +1,5 @@
 import AdminLayout from '../layouts/AdminLayout';
-import { router } from '@inertiajs/react';
+import { router, useForm } from '@inertiajs/react';
 import Pagination from '../../components/admin/Pagination';
 import { useState, useRef, useEffect } from 'react';
 import { ShimmerPortfolioCard } from '../../components/ShimmerLoader';
@@ -19,7 +19,7 @@ export default function AdminGalleryIndex({ items, filters }) {
     // Delete modal
     const [deleteModal, setDeleteModal] = useState(false);
     const [deleteItem, setDeleteItem] = useState(null);
-    const [deleteLoading, setDeleteLoading] = useState(false);
+    const deleteForm = useForm({});
 
     // Lightbox
     const [lightbox, setLightbox] = useState(null);
@@ -54,11 +54,17 @@ export default function AdminGalleryIndex({ items, filters }) {
     };
 
     const confirmDelete = () => {
-        setDeleteLoading(true);
-        router.delete(`/admin/gallery/${deleteItem.id}`, {
+        if (!deleteItem?.id) return;
+        deleteForm.delete(`/admin/gallery/${deleteItem.id}`, {
             preserveScroll: true,
-            onSuccess: () => { setDeleteModal(false); setDeleteLoading(false); },
-            onFinish: () => setDeleteLoading(false),
+            onSuccess: () => {
+                setDeleteModal(false);
+                setDeleteItem(null);
+            },
+            onError: () => {
+                setDeleteModal(false);
+                router.reload({ only: ['items'] });
+            },
         });
     };
 
@@ -385,8 +391,8 @@ export default function AdminGalleryIndex({ items, filters }) {
                         </div>
                         <div className="modal-footer">
                             <button className="btn-cancel" onClick={() => setDeleteModal(false)}>Cancel</button>
-                            <button className="btn-danger" onClick={confirmDelete} disabled={deleteLoading}>
-                                {deleteLoading ? 'Deleting...' : 'Yes, Delete'}
+                            <button className="btn-danger" onClick={confirmDelete} disabled={deleteForm.processing}>
+                                {deleteForm.processing ? 'Deleting...' : 'Yes, Delete'}
                             </button>
                         </div>
                     </div>

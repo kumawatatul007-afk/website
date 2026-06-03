@@ -412,7 +412,6 @@ body {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
-  align-items: start;
 }
 
 .svc-card {
@@ -465,6 +464,7 @@ body {
   font-size: 0.85rem;
   color: #6b7280;
   line-height: 1.7;
+  flex: 1;
   overflow-wrap: break-word;
   word-break: break-word;
   overflow: hidden;
@@ -959,7 +959,8 @@ body {
 .edu-item-icon svg {
   width: 100%;
   height: 100%;
-  fill: #131313;
+  fill: none;
+  stroke: #131313;
 }
 
 .edu-item-company {
@@ -1647,6 +1648,8 @@ body {
   color: #6b7280;
   line-height: 1.7;
   margin-bottom: 1rem;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .blog-card-meta {

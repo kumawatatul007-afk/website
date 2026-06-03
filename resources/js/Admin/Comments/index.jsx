@@ -8,8 +8,6 @@ import { createPortal } from 'react-dom';
 /* ── SVG Icons ──────────────────────────────────────────────────────────── */
 const IconSearch  = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>;
 const IconTrash   = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>;
-const IconEdit    = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>;
-const IconClose   = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
 const IconLink    = () => <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>;
 const IconAlert   = () => <svg width="28" height="28" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>;
 const IconComment = () => <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>;
@@ -106,141 +104,6 @@ function DeleteModal({ comment, onClose, onConfirm, loading }) {
     );
 }
 
-/* ── Edit Modal ─────────────────────────────────────────────────────────── */
-function EditModal({ comment, onClose }) {
-    const [form, setForm]     = useState({
-        name:        comment.name        ?? '',
-        email:       comment.email       ?? '',
-        website:     comment.website     ?? '',
-        description: comment.description ?? '',
-        is_publish:  comment.is_publish  ?? 1,
-    });
-    const [errors,  setErrors]  = useState({});
-    const [loading, setLoading] = useState(false);
-
-    useEffect(() => {
-        const h = (e) => e.key === 'Escape' && !loading && onClose();
-        window.addEventListener('keydown', h);
-        return () => window.removeEventListener('keydown', h);
-    }, [loading, onClose]);
-
-    const inpStyle = (field) => ({
-        width:'100%', padding:'.6rem .8rem', fontFamily:'inherit',
-        border:`1.5px solid ${errors[field] ? '#ef4444' : '#e2e8f0'}`,
-        borderRadius:'10px', fontSize:'.875rem', color:'#0f172a',
-        background:'#fff', outline:'none', boxSizing:'border-box',
-        transition:'border-color .15s,box-shadow .15s',
-    });
-    const lbl = { display:'block', fontSize:'.68rem', fontWeight:700, color:'#374151', textTransform:'uppercase', letterSpacing:'.07em', marginBottom:'.3rem' };
-    const errTxt = { display:'block', fontSize:'.75rem', color:'#ef4444', marginTop:'.2rem' };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        setLoading(true);
-        router.put(`/admin/comments/${comment.id}`, form, {
-            preserveScroll: true,
-            onSuccess: () => { setLoading(false); onClose(); },
-            onError:   (errs) => { setErrors(errs); setLoading(false); },
-            onFinish:  () => setLoading(false),
-        });
-    };
-
-    return createPortal(
-        <div
-            style={{ position:'fixed', inset:0, zIndex:9999, display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(15,23,42,0.6)', backdropFilter:'blur(12px)', WebkitBackdropFilter:'blur(12px)', animation:'cmOverlayIn .2s ease both', padding:'1rem' }}
-            onClick={(e) => e.target === e.currentTarget && !loading && onClose()}
-        >
-            <div style={{ background:'linear-gradient(145deg,#ffffff,#f8faff)', borderRadius:'20px', padding:'1.5rem', width:'100%', maxWidth:'480px', boxShadow:'0 24px 60px rgba(15,23,42,0.22), 0 0 0 1px rgba(99,102,241,0.08)', animation:'cmPanelIn .3s cubic-bezier(.22,1,.36,1) both' }}>
-
-                {/* Header */}
-                <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'1.1rem', paddingBottom:'1rem', borderBottom:'1.5px solid #f1f5f9' }}>
-                    <div style={{ display:'flex', alignItems:'center', gap:'.6rem' }}>
-                        <div style={{ width:34, height:34, borderRadius:'10px', background:'linear-gradient(135deg,#6366f1,#4f46e5)', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                        </div>
-                        <div>
-                            <h3 style={{ margin:0, fontSize:'1rem', fontWeight:800, color:'#0f172a', lineHeight:1.2 }}>Edit Comment</h3>
-                            <span style={{ fontSize:'.68rem', background:'#ede9fe', color:'#6366f1', padding:'.1rem .45rem', borderRadius:'5px', fontWeight:700 }}>ID: {comment.id}</span>
-                        </div>
-                    </div>
-                    <button onClick={() => !loading && onClose()} style={{ width:30, height:30, borderRadius:'9px', border:'1.5px solid #e2e8f0', background:'#fff', color:'#94a3b8', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', flexShrink:0, transition:'all .15s' }}>
-                        <IconClose />
-                    </button>
-                </div>
-
-                <form onSubmit={handleSubmit}>
-                    {/* Name + Email */}
-                    <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'.65rem', marginBottom:'.65rem' }}>
-                        <div>
-                            <label style={lbl}>Name *</label>
-                            <input style={inpStyle('name')} value={form.name} onChange={e => setForm(f => ({...f, name: e.target.value}))} placeholder="Commenter name" disabled={loading} />
-                            {errors.name && <span style={errTxt}>{errors.name}</span>}
-                        </div>
-                        <div>
-                            <label style={lbl}>Email</label>
-                            <input type="email" style={inpStyle('email')} value={form.email} onChange={e => setForm(f => ({...f, email: e.target.value}))} placeholder="email@example.com" disabled={loading} />
-                            {errors.email && <span style={errTxt}>{errors.email}</span>}
-                        </div>
-                    </div>
-
-                    {/* Website */}
-                    <div style={{ marginBottom:'.65rem' }}>
-                        <label style={lbl}>Website</label>
-                        <input style={inpStyle('website')} value={form.website} onChange={e => setForm(f => ({...f, website: e.target.value}))} placeholder="https://example.com" disabled={loading} />
-                    </div>
-
-                    {/* Comment text */}
-                    <div style={{ marginBottom:'.65rem' }}>
-                        <label style={lbl}>Comment *</label>
-                        <textarea
-                            style={{ ...inpStyle('description'), resize:'none', minHeight:90, lineHeight:1.6 }}
-                            value={form.description}
-                            onChange={e => setForm(f => ({...f, description: e.target.value}))}
-                            placeholder="Comment text…"
-                            disabled={loading}
-                        />
-                        {errors.description && <span style={errTxt}>{errors.description}</span>}
-                    </div>
-
-                    {/* Publish toggle */}
-                    <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'.65rem .875rem', borderRadius:'12px', border:'1.5px solid', borderColor: form.is_publish ? 'rgba(34,197,94,.3)' : '#e2e8f0', background: form.is_publish ? 'linear-gradient(135deg,#f0fdf4,#dcfce7)' : '#f8fafc', marginBottom:'.875rem', transition:'all .2s' }}>
-                        <div style={{ display:'flex', alignItems:'center', gap:'.5rem' }}>
-                            <span style={{ fontSize:'1rem' }}>{form.is_publish ? '✅' : '🔒'}</span>
-                            <div>
-                                <div style={{ fontSize:'.82rem', fontWeight:700, color: form.is_publish ? '#15803d' : '#374151', lineHeight:1.2 }}>{form.is_publish ? 'Published' : 'Hidden'}</div>
-                                <div style={{ fontSize:'.68rem', color:'#94a3b8' }}>{form.is_publish ? 'Visible on blog post' : 'Not shown publicly'}</div>
-                            </div>
-                        </div>
-                        <label style={{ position:'relative', width:44, height:24, flexShrink:0, cursor:'pointer' }}>
-                            <input type="checkbox" checked={!!form.is_publish} onChange={e => setForm(f => ({...f, is_publish: e.target.checked ? 1 : 0}))} style={{ opacity:0, width:0, height:0 }} />
-                            <span style={{ position:'absolute', cursor:'pointer', inset:0, background: form.is_publish ? '#22c55e' : '#cbd5e1', borderRadius:24, transition:'background .25s' }}>
-                                <span style={{ position:'absolute', height:18, width:18, left:3, bottom:3, background:'#fff', borderRadius:'50%', transition:'transform .25s', transform: form.is_publish ? 'translateX(20px)' : 'none', boxShadow:'0 1px 4px rgba(0,0,0,.2)' }} />
-                            </span>
-                        </label>
-                    </div>
-
-                    {/* Buttons */}
-                    <div style={{ display:'flex', gap:'.6rem' }}>
-                        <button type="button" onClick={() => !loading && onClose()} disabled={loading}
-                            style={{ flex:1, padding:'.75rem', borderRadius:'12px', border:'1.5px solid #e2e8f0', background:'#fff', color:'#475569', fontSize:'.875rem', fontWeight:600, cursor:loading?'not-allowed':'pointer', fontFamily:'inherit', opacity:loading?.5:1, transition:'all .15s' }}>
-                            Cancel
-                        </button>
-                        <button type="submit" disabled={loading}
-                            style={{ flex:2, padding:'.75rem', borderRadius:'12px', border:'none', background:loading?'#a5b4fc':'linear-gradient(135deg,#6366f1,#4f46e5)', color:'#fff', fontSize:'.875rem', fontWeight:700, cursor:loading?'not-allowed':'pointer', fontFamily:'inherit', display:'flex', alignItems:'center', justifyContent:'center', gap:'.5rem', boxShadow:loading?'none':'0 4px 14px rgba(99,102,241,.35)', transition:'all .15s' }}>
-                            {loading ? (
-                                <><span style={{ width:13, height:13, border:'2px solid rgba(255,255,255,.35)', borderTopColor:'#fff', borderRadius:'50%', animation:'cmSpin .65s linear infinite', display:'inline-block' }} />Saving…</>
-                            ) : (
-                                <><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Save Changes</>
-                            )}
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>,
-        document.body
-    );
-}
-
 /* ── Main Page ──────────────────────────────────────────────────────────── */
 export default function AdminCommentsIndex({ comments, blogs, filters }) {
     const [search,        setSearch]        = useState(filters?.search   ?? '');
@@ -248,8 +111,6 @@ export default function AdminCommentsIndex({ comments, blogs, filters }) {
     const [perPage,       setPerPage]       = useState(filters?.per_page ? Number(filters.per_page) : 15);
     const [shimmer,       setShimmer]       = useState(true);
     const [searchFocused, setSearchFocused] = useState(false);
-    const [editModal,     setEditModal]     = useState(false);
-    const [editComment,   setEditComment]   = useState(null);
     const [deleteModal,   setDeleteModal]   = useState(false);
     const [deleteComment, setDeleteComment] = useState(null);
     const [deleteLoading, setDeleteLoading] = useState(false);
@@ -360,10 +221,8 @@ export default function AdminCommentsIndex({ comments, blogs, filters }) {
                 .cm-desc       { display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; font-size:0.8rem; color:#64748b; line-height:1.6; max-width:260px; }
 
                 /* Action */
-                .cm-actions   { display:flex; align-items:center; justify-content:center; gap:0.375rem; flex-wrap:nowrap; }
-                .btn-icon-edit { width:32px; height:32px; min-width:32px; border-radius:9px; border:1.5px solid #e8ecf2; background:#fff; color:#64748b; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:all 0.15s; flex-shrink:0; }
-                .btn-icon-edit:hover { background:#f1f5f9; border-color:#cbd5e1; color:#0f172a; transform:translateY(-1px); box-shadow:0 4px 10px rgba(15,23,42,0.1); }
-                .btn-icon-del { width:32px; height:32px; min-width:32px; border-radius:9px; border:1.5px solid #fee2e2; background:#fff5f5; color:#f87171; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:all 0.15s; flex-shrink:0; }
+                .cm-actions   { display:flex; align-items:center; justify-content:center; gap:0.375rem; }
+                .btn-icon-del { width:32px; height:32px; border-radius:9px; border:1.5px solid #fee2e2; background:#fff5f5; color:#f87171; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:all 0.15s; flex-shrink:0; }
                 .btn-icon-del:hover { background:#fef2f2; border-color:#fca5a5; color:#ef4444; transform:translateY(-1px); box-shadow:0 4px 12px rgba(239,68,68,0.18); }
 
                 /* Empty */
@@ -478,7 +337,7 @@ export default function AdminCommentsIndex({ comments, blogs, filters }) {
                                     <th style={{ width: '12%' }} className="col-phone">Mobile</th>
                                     <th style={{ width: '15%' }} className="col-website">Website</th>
                                     <th>Comment</th>
-                                    <th style={{ width: '100px', textAlign: 'center' }}>Actions</th>
+                                    <th style={{ width: '70px', textAlign: 'center' }}>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -531,11 +390,8 @@ export default function AdminCommentsIndex({ comments, blogs, filters }) {
                                                         ? <div className="cm-desc">{c.description}</div>
                                                         : <span style={{ color: '#dce3ed', fontSize: '0.8rem' }}>—</span>}
                                                 </td>
-                                                <td style={{ padding:'0.75rem 0.5rem' }}>
+                                                <td>
                                                     <div className="cm-actions">
-                                                        <button className="btn-icon-edit" title="Edit" onClick={() => { setEditComment(c); setEditModal(true); }}>
-                                                            <IconEdit />
-                                                        </button>
                                                         <button className="btn-icon-del" title="Delete" onClick={() => openDelete(c)}>
                                                             <IconTrash />
                                                         </button>
@@ -575,13 +431,6 @@ export default function AdminCommentsIndex({ comments, blogs, filters }) {
                     )}
                 </div>
             </div>
-
-            {editModal && editComment && (
-                <EditModal
-                    comment={editComment}
-                    onClose={() => { setEditModal(false); setEditComment(null); }}
-                />
-            )}
 
             {deleteModal && (
                 <DeleteModal

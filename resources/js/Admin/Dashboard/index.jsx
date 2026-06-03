@@ -63,36 +63,6 @@ export default function AdminDashboard({
     recent_blogs = [],
     chart = {},
 }) {
-    // Debug: Check if data is being received
-    // useEffect(() => {
-    //     console.log('Dashboard Props:', { stats, recent_users, recent_messages, recent_blogs, chart });
-    // }, []);
-
-    // TEMPORARY: Show raw data if component is rendering
-    const isDataEmpty = Object.keys(stats).length === 0;
-    
-    if (isDataEmpty) {
-        return (
-            <AdminLayout title="Dashboard" hideSidebar={true}>
-                <div style={{ padding: '2rem', textAlign: 'center' }}>
-                    <h1 style={{ color: '#ef4444', fontSize: '2rem', marginBottom: '1rem' }}>⚠️ No Data Found</h1>
-                    <p style={{ color: '#64748b', fontSize: '1.1rem', marginBottom: '2rem' }}>
-                        Dashboard data is empty. This might be a database or controller issue.
-                    </p>
-                    <div style={{ background: '#f1f5f9', padding: '1.5rem', borderRadius: '8px', textAlign: 'left', maxWidth: '600px', margin: '0 auto' }}>
-                        <h3 style={{ marginBottom: '1rem' }}>Debug Info:</h3>
-                        <pre style={{ fontSize: '0.85rem', overflow: 'auto' }}>
-                            {JSON.stringify({ stats, recent_users, recent_messages, recent_blogs, chart }, null, 2)}
-                        </pre>
-                    </div>
-                    <p style={{ marginTop: '2rem', color: '#94a3b8' }}>
-                        Check your Laravel logs and database to ensure data exists.
-                    </p>
-                </div>
-            </AdminLayout>
-        );
-    }
-
     const [now, setNow] = useState(new Date());
     const donutRef = useRef(null);
     const lineRef  = useRef(null);

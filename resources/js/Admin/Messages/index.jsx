@@ -117,9 +117,9 @@ function MessageModal({ message, onClose, onDelete }) {
 
 /* ── Main Page ──────────────────────────────────────────────────────────── */
 export default function AdminMessagesIndex({ messages, filters }) {
-    const [search,      setSearch]     = useState(filters?.search ?? '');
-    const [status,      setStatus]     = useState(filters?.status ?? '');
-    const [selectedMsg, setSelectedMsg] = useState(null);
+    const [search,         setSearch]        = useState(filters?.search ?? '');
+    const [status,         setStatus]        = useState(filters?.status ?? '');
+    const [selectedMsg,    setSelectedMsg]   = useState(null);
 
     const applyFilters = () => {
         router.get('/admin/messages', { search, status }, { preserveState: true, replace: true });
