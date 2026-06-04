@@ -24,12 +24,6 @@ export default function AdminPortfolioIndex({ items, filters, hasSearched, categ
         }
     };
 
-    const getImageUrl = (img) => {
-        if (!img) return null;
-        if (img.startsWith('http')) return img;
-        return `/images/portfolio/${img}`;
-    };
-
     const catName = (id) => {
         const c = categories.find(c => c.id === id);
         return c ? c.name : (id ? `Cat #${id}` : '—');
@@ -136,10 +130,17 @@ export default function AdminPortfolioIndex({ items, filters, hasSearched, categ
                                     <td>
                                         {item.image ? (
                                             <img
-                                                src={getImageUrl(item.image)}
+                                                src={item.image.startsWith('http') ? item.image : `/uploads/portfolio/${item.image}`}
                                                 alt={item.title}
                                                 className="thumb"
-                                                onError={e => { e.target.style.display = 'none'; }}
+                                                onError={e => { 
+                                                    // Try old images folder as fallback
+                                                    if (!e.target.src.includes('/images/portfolio/')) {
+                                                        e.target.src = `/images/portfolio/${item.image}`;
+                                                    } else {
+                                                        e.target.style.display = 'none';
+                                                    }
+                                                }}
                                             />
                                         ) : (
                                             <div className="thumb" style={{ display:'flex', alignItems:'center', justifyContent:'center', color:'#cbd5e1', fontSize:'0.65rem' }}>No img</div>

@@ -238,13 +238,20 @@ export default function PortfolioListPage({ items: dbItems }) {
                     <img
                       src={
                         project.image
-                          ? (project.image.startsWith('http') ? project.image : `/images/portfolio/${project.image}`)
+                          ? (project.image.startsWith('http') ? project.image : `/uploads/portfolio/${project.image}`)
                           : (project.image_url || 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/project-5.jpg')
                       }
                       alt={project.title}
                       className="pl-img"
                       loading="lazy"
-                      onError={e => { e.target.src = 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/project-5.jpg'; }}
+                      onError={e => { 
+                        // Try images folder as fallback
+                        if (!e.target.src.includes('/images/portfolio/')) {
+                          e.target.src = `/images/portfolio/${project.image}`;
+                        } else {
+                          e.target.src = 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/project-5.jpg';
+                        }
+                      }}
                     />
                     <div className="pl-overlay">
                       <div className="pl-overlay-content">

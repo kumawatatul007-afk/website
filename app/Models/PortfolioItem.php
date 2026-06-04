@@ -45,6 +45,13 @@ class PortfolioItem extends Model
     {
         if (!$this->image) return '';
         if (str_starts_with($this->image, 'http')) return $this->image;
+        
+        // Check uploads folder first (for new uploads)
+        if (file_exists(public_path('uploads/portfolio/' . $this->image))) {
+            return '/uploads/portfolio/' . $this->image;
+        }
+        
+        // Fallback to images folder (for old images)
         return '/images/portfolio/' . $this->image;
     }
 
