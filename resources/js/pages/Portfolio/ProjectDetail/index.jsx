@@ -164,14 +164,25 @@ export default function ProjectDetailPage({ id, slug, item: dbItem, related }) {
     tagline: project.short_description || '',
     category: project.category || 'Web Development',
     client: project.clint_name || project.title,
-    year: project.date ? new Date(project.date).getFullYear().toString() : new Date().getFullYear().toString(),
+    year: project.date && project.date !== '0000-00-00' && project.date !== '1970-01-01' 
+      ? new Date(project.date).getFullYear().toString() 
+      : '2026',
     website: project.website_link || '',
     overview: '',
     challenge: '',
     approach: '',
+    solution: '',
     result: '',
     tech: [],
-    stats: []
+    stats: [],
+    duration: '3-6 Months',
+    team: '4 Members',
+    industry: 'Technology',
+    services: [],
+    testimonial: null,
+    gallery: [],
+    features: [],
+    metrics: []
   };
 
   // Try to parse description as JSON for structured data
@@ -187,6 +198,10 @@ export default function ProjectDetailPage({ id, slug, item: dbItem, related }) {
 
   const stats  = projectData.stats || [];
   const tech   = projectData.tech || [];
+  const services = projectData.services || [];
+  const features = projectData.features || [];
+  const metrics = projectData.metrics || [];
+  const gallery = projectData.gallery || [];
   const imgSrc = project.image ? (project.image.startsWith('http') ? project.image : `/images/portfolio/${project.image}`) : (project.image_url || '');
 
   return (
@@ -273,6 +288,73 @@ export default function ProjectDetailPage({ id, slug, item: dbItem, related }) {
         .pd3-meta-value a{color:${accent};text-decoration:none;font-weight:700}
         .pd3-meta-value a:hover{text-decoration:underline}
         @media(max-width:768px){.pd3-meta-bar{grid-template-columns:1fr 1fr}.pd3-meta-item{border-right:none;border-bottom:1px solid #e5e7eb}.pd3-meta-item:nth-child(odd){border-right:1px solid #e5e7eb}.pd3-meta-item:last-child,.pd3-meta-item:nth-last-child(2):nth-child(odd){border-bottom:none}}
+
+        /* INFO CARDS */
+        .pd3-info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-bottom:4rem;opacity:0;transform:translateY(28px);transition:opacity 0.7s,transform 0.7s}
+        .pd3-info-grid.pd3-vis{opacity:1;transform:translateY(0)}
+        .pd3-info-card{background:linear-gradient(135deg,#fff 0%,#f9fafb 100%);border:2px solid #e5e7eb;border-radius:20px;padding:2rem;display:flex;align-items:center;gap:1.25rem;transition:all 0.3s ease;position:relative;overflow:hidden}
+        .pd3-info-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:${accent};transform:scaleY(0);transition:transform 0.3s ease;transform-origin:bottom}
+        .pd3-info-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(${accentRgb},0.15);border-color:${accent}}
+        .pd3-info-card:hover::before{transform:scaleY(1);transform-origin:top}
+        .pd3-info-icon{width:56px;height:56px;border-radius:14px;background:${accentLight};border:2px solid ${accentBorder};display:flex;align-items:center;justify-content:center;flex-shrink:0}
+        .pd3-info-icon svg{stroke:${accent}}
+        .pd3-info-content{display:flex;flex-direction:column;gap:0.35rem}
+        .pd3-info-label{font-size:0.7rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#9ca3af}
+        .pd3-info-value{font-size:1.1rem;font-weight:700;color:#1a1a2e;font-family:'Space Grotesk',sans-serif}
+        @media(max-width:900px){.pd3-info-grid{grid-template-columns:1fr}}
+
+        /* SERVICES GRID */
+        .pd3-services-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;background:#fff;border:1px solid #e5e7eb;border-radius:20px;padding:2rem;box-shadow:0 4px 24px rgba(0,0,0,0.04)}
+        .pd3-service-item{display:flex;align-items:center;gap:1rem;padding:1rem;border-radius:12px;background:#f9fafb;transition:all 0.2s ease}
+        .pd3-service-item:hover{background:${accentLight};transform:translateX(4px)}
+        .pd3-service-icon{width:32px;height:32px;border-radius:8px;background:${accent};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1rem;flex-shrink:0}
+        .pd3-service-name{font-size:0.9rem;font-weight:600;color:#1a1a2e}
+        @media(max-width:640px){.pd3-services-grid{grid-template-columns:1fr}}
+
+        /* FEATURES SECTION */
+        .pd3-features-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem;margin-top:2rem}
+        .pd3-feature-card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:1.75rem;display:flex;gap:1rem;transition:all 0.3s ease;position:relative;overflow:hidden}
+        .pd3-feature-card::after{content:'';position:absolute;top:0;right:0;width:100px;height:100px;background:radial-gradient(circle,rgba(${accentRgb},0.08) 0%,transparent 70%);transform:translate(50%,-50%)}
+        .pd3-feature-card:hover{border-color:${accent};box-shadow:0 8px 32px rgba(${accentRgb},0.12);transform:translateY(-2px)}
+        .pd3-feature-icon{width:48px;height:48px;border-radius:12px;background:${accentLight};border:1px solid ${accentBorder};display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
+        .pd3-feature-content{flex:1}
+        .pd3-feature-title{font-size:0.95rem;font-weight:700;color:#1a1a2e;margin-bottom:0.4rem}
+        .pd3-feature-desc{font-size:0.82rem;color:#6b7280;line-height:1.6}
+        @media(max-width:768px){.pd3-features-grid{grid-template-columns:1fr}}
+
+        /* METRICS SECTION */
+        .pd3-metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-top:2rem}
+        .pd3-metric-card{background:linear-gradient(135deg,${accentLight} 0%,#fff 100%);border:2px solid ${accentBorder};border-radius:16px;padding:2rem 1.5rem;text-align:center;position:relative;overflow:hidden}
+        .pd3-metric-card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(90deg,${accent} 0%,rgba(${accentRgb},0.5) 100%)}
+        .pd3-metric-value{font-size:2.5rem;font-weight:800;color:${accent};font-family:'Space Grotesk',sans-serif;line-height:1;margin-bottom:0.5rem}
+        .pd3-metric-label{font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#6b7280}
+        @media(max-width:900px){.pd3-metrics-grid{grid-template-columns:repeat(2,1fr)}}
+
+        /* SOLUTION SECTION */
+        .pd3-solution-card{background:linear-gradient(135deg,#fff 0%,${accentLight} 100%);border:2px solid ${accentBorder};border-radius:24px;padding:2.75rem;margin-bottom:3rem;position:relative;overflow:hidden;box-shadow:0 4px 24px rgba(${accentRgb},0.08)}
+        .pd3-solution-card::before{content:'';position:absolute;top:-50px;right:-50px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(${accentRgb},0.15) 0%,transparent 70%)}
+        .pd3-solution-icon{width:64px;height:64px;border-radius:16px;background:${accent};display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;box-shadow:0 8px 24px rgba(${accentRgb},0.35);position:relative;z-index:1}
+        .pd3-solution-title{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:700;color:#131313;margin-bottom:1rem;position:relative;z-index:1}
+        .pd3-solution-text{font-size:1rem;color:#374151;line-height:1.9;position:relative;z-index:1}
+
+        /* TESTIMONIAL */
+        .pd3-testimonial{background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);border-radius:24px;padding:3rem;margin-bottom:3rem;position:relative;overflow:hidden}
+        .pd3-testimonial::before{content:'"';position:absolute;top:1rem;left:2rem;font-size:8rem;font-family:'Playfair Display',serif;color:rgba(255,255,255,0.08);line-height:1}
+        .pd3-testimonial-text{font-size:1.15rem;color:rgba(255,255,255,0.9);line-height:1.8;font-style:italic;margin-bottom:2rem;position:relative;z-index:1}
+        .pd3-testimonial-author{display:flex;align-items:center;gap:1rem;position:relative;z-index:1}
+        .pd3-testimonial-avatar{width:56px;height:56px;border-radius:50%;background:${accent};border:3px solid rgba(255,255,255,0.2)}
+        .pd3-testimonial-info{display:flex;flex-direction:column;gap:0.25rem}
+        .pd3-testimonial-name{font-size:1rem;font-weight:700;color:#fff}
+        .pd3-testimonial-role{font-size:0.85rem;color:rgba(255,255,255,0.6)}
+
+        /* GALLERY SECTION */
+        .pd3-gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2rem}
+        .pd3-gallery-item{position:relative;aspect-ratio:16/10;border-radius:16px;overflow:hidden;cursor:pointer;transition:transform 0.3s ease,box-shadow 0.3s ease}
+        .pd3-gallery-item:hover{transform:scale(1.03);box-shadow:0 12px 40px rgba(0,0,0,0.2)}
+        .pd3-gallery-img{width:100%;height:100%;object-fit:cover;transition:transform 0.5s ease}
+        .pd3-gallery-item:hover .pd3-gallery-img{transform:scale(1.1)}
+        @media(max-width:768px){.pd3-gallery-grid{grid-template-columns:repeat(2,1fr)}}
+        @media(max-width:480px){.pd3-gallery-grid{grid-template-columns:1fr}}
 
         /* STATS */
         .pd3-stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:4rem;opacity:0;transform:translateY(28px);transition:opacity 0.7s,transform 0.7s}
@@ -457,6 +539,70 @@ export default function ProjectDetailPage({ id, slug, item: dbItem, related }) {
             </div>
           )}
 
+          {/* Project Info Cards */}
+          <div className={`pd3-info-grid${overVis ? ' pd3-vis' : ''}`}>
+            <div className="pd3-info-card">
+              <div className="pd3-info-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="16" y1="2" x2="16" y2="6"/>
+                  <line x1="8" y1="2" x2="8" y2="6"/>
+                  <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+              </div>
+              <div className="pd3-info-content">
+                <div className="pd3-info-label">Duration</div>
+                <div className="pd3-info-value">{projectData.duration}</div>
+              </div>
+            </div>
+            <div className="pd3-info-card">
+              <div className="pd3-info-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24">
+                  <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M23 21v-2a4 4 0 00-3-3.87"/>
+                  <path d="M16 3.13a4 4 0 010 7.75"/>
+                </svg>
+              </div>
+              <div className="pd3-info-content">
+                <div className="pd3-info-label">Team Size</div>
+                <div className="pd3-info-value">{projectData.team}</div>
+              </div>
+            </div>
+            <div className="pd3-info-card">
+              <div className="pd3-info-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24">
+                  <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+                  <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                  <line x1="12" y1="22.08" x2="12" y2="12"/>
+                </svg>
+              </div>
+              <div className="pd3-info-content">
+                <div className="pd3-info-label">Industry</div>
+                <div className="pd3-info-value">{projectData.industry}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Services Provided */}
+          {services.length > 0 && (
+            <div className={`pd3-section${overVis ? ' pd3-vis' : ''}`}>
+              <div className="pd3-section-eyebrow">
+                <div className="pd3-section-dot"/>
+                <span className="pd3-section-tag">Services Provided</span>
+                <div className="pd3-section-rule"/>
+              </div>
+              <div className="pd3-services-grid">
+                {services.map((service, i) => (
+                  <div key={i} className="pd3-service-item">
+                    <div className="pd3-service-icon">✓</div>
+                    <div className="pd3-service-name">{service}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Challenge & Approach */}
           {(projectData.challenge || projectData.approach) && (
             <div>
@@ -509,6 +655,118 @@ export default function ProjectDetailPage({ id, slug, item: dbItem, related }) {
               <div className="pd3-section-eyebrow"><div className="pd3-section-dot"/><span className="pd3-section-tag">Results & Impact</span><div className="pd3-section-rule"/></div>
               <h3 className="pd3-result-title">What We Achieved</h3>
               <p className="pd3-result-text">{projectData.result}</p>
+            </div>
+          )}
+
+          {/* Solution Section */}
+          {projectData.solution && (
+            <div className={`pd3-section${resultVis ? ' pd3-vis' : ''}`}>
+              <div className="pd3-section-eyebrow">
+                <div className="pd3-section-dot"/>
+                <span className="pd3-section-tag">Solution</span>
+                <div className="pd3-section-rule"/>
+              </div>
+              <div className="pd3-solution-card">
+                <div className="pd3-solution-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" width="28" height="28">
+                    <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                    <polyline points="22 4 12 14.01 9 11.01"/>
+                  </svg>
+                </div>
+                <h3 className="pd3-solution-title">Our Solution</h3>
+                <p className="pd3-solution-text">{projectData.solution}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Key Features */}
+          {features.length > 0 && (
+            <div className={`pd3-section${techVis ? ' pd3-vis' : ''}`}>
+              <div className="pd3-section-eyebrow">
+                <div className="pd3-section-dot"/>
+                <span className="pd3-section-tag">Key Features</span>
+                <div className="pd3-section-rule"/>
+              </div>
+              <h2 className="pd3-section-title">What Makes This Project Special</h2>
+              <div className="pd3-features-grid">
+                {features.map((feature, i) => (
+                  <div key={i} className="pd3-feature-card">
+                    <div className="pd3-feature-icon">{feature.icon || '⚡'}</div>
+                    <div className="pd3-feature-content">
+                      <div className="pd3-feature-title">{feature.title}</div>
+                      <div className="pd3-feature-desc">{feature.description}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Performance Metrics */}
+          {metrics.length > 0 && (
+            <div className={`pd3-section${resultVis ? ' pd3-vis' : ''}`}>
+              <div className="pd3-section-eyebrow">
+                <div className="pd3-section-dot"/>
+                <span className="pd3-section-tag">Performance Metrics</span>
+                <div className="pd3-section-rule"/>
+              </div>
+              <h2 className="pd3-section-title">Measurable Impact</h2>
+              <div className="pd3-metrics-grid">
+                {metrics.map((metric, i) => (
+                  <div key={i} className="pd3-metric-card">
+                    <div className="pd3-metric-value">{metric.value}{metric.suffix || ''}</div>
+                    <div className="pd3-metric-label">{metric.label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Client Testimonial */}
+          {projectData.testimonial && (
+            <div className={`pd3-section${resultVis ? ' pd3-vis' : ''}`}>
+              <div className="pd3-section-eyebrow">
+                <div className="pd3-section-dot"/>
+                <span className="pd3-section-tag">Client Feedback</span>
+                <div className="pd3-section-rule"/>
+              </div>
+              <div className="pd3-testimonial">
+                <p className="pd3-testimonial-text">{projectData.testimonial.text}</p>
+                <div className="pd3-testimonial-author">
+                  <div className="pd3-testimonial-avatar">
+                    {projectData.testimonial.avatar ? (
+                      <img src={projectData.testimonial.avatar} alt={projectData.testimonial.name} style={{width:'100%',height:'100%',objectFit:'cover',borderRadius:'50%'}} />
+                    ) : (
+                      <div style={{width:'100%',height:'100%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'1.5rem',fontWeight:700,color:'#fff'}}>
+                        {projectData.testimonial.name?.charAt(0) || 'C'}
+                      </div>
+                    )}
+                  </div>
+                  <div className="pd3-testimonial-info">
+                    <div className="pd3-testimonial-name">{projectData.testimonial.name}</div>
+                    <div className="pd3-testimonial-role">{projectData.testimonial.role}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Project Gallery */}
+          {gallery.length > 0 && (
+            <div className={`pd3-section${techVis ? ' pd3-vis' : ''}`}>
+              <div className="pd3-section-eyebrow">
+                <div className="pd3-section-dot"/>
+                <span className="pd3-section-tag">Project Gallery</span>
+                <div className="pd3-section-rule"/>
+              </div>
+              <h2 className="pd3-section-title">More Screenshots & Highlights</h2>
+              <div className="pd3-gallery-grid">
+                {gallery.map((img, i) => (
+                  <div key={i} className="pd3-gallery-item">
+                    <img src={img} alt={`${project.title} screenshot ${i + 1}`} className="pd3-gallery-img" />
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
