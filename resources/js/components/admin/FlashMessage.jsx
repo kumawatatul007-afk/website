@@ -1,5 +1,6 @@
 import { usePage } from '@inertiajs/react'
 import { useEffect, useState } from 'react'
+import './FlashMessage.css'
 
 export default function FlashMessage() {
   const { flash } = usePage().props
@@ -8,7 +9,7 @@ export default function FlashMessage() {
   useEffect(() => {
     if (flash?.success || flash?.error) {
       setVisible(true)
-      const t = setTimeout(() => setVisible(false), 4000)
+      const t = setTimeout(() => setVisible(false), 5000)
       return () => clearTimeout(t)
     }
   }, [flash])
@@ -16,22 +17,36 @@ export default function FlashMessage() {
   if (!visible || (!flash?.success && !flash?.error)) return null
 
   const isSuccess = !!flash.success
+  
   return (
-    <div style={{
-      position: 'fixed', top: '1.5rem', right: '1.5rem', zIndex: 9999,
-      padding: '0.875rem 1.25rem', borderRadius: '10px', maxWidth: '360px',
-      background: isSuccess ? '#f0fdf4' : '#fef2f2',
-      border: `1px solid ${isSuccess ? '#bbf7d0' : '#fecaca'}`,
-      color: isSuccess ? '#15803d' : '#dc2626',
-      fontSize: '0.875rem', fontWeight: 500,
-      boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
-      display: 'flex', alignItems: 'center', gap: '0.75rem',
-      animation: 'slideIn 0.2s ease',
-    }}>
-      <span style={{ fontSize: '1.1rem' }}>{isSuccess ? '✅' : '❌'}</span>
-      {flash.success || flash.error}
-      <button onClick={() => setVisible(false)} style={{ marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', fontSize: '1rem', lineHeight: 1 }}>×</button>
-      <style>{`@keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }`}</style>
+    <div className={`flash-message ${isSuccess ? 'flash-success' : 'flash-error'}`}>
+      <div className="flash-icon">
+        {isSuccess ? (
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        ) : (
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="15" y1="9" x2="9" y2="15" />
+            <line x1="9" y1="9" x2="15" y2="15" />
+          </svg>
+        )}
+      </div>
+      <div className="flash-content">
+        <div className="flash-title">{isSuccess ? 'Success' : 'Error'}</div>
+        <div className="flash-text">{flash.success || flash.error}</div>
+      </div>
+      <button 
+        onClick={() => setVisible(false)} 
+        className="flash-close"
+        aria-label="Close"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
     </div>
   )
 }

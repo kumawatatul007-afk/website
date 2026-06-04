@@ -282,16 +282,7 @@ export default function AdminBlogCreate({ categories = [] }) {
                         </div>
                     </div>
 
-                    {/* Add Media button */}
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1.5rem' }}>
-                        <button
-                            type="button"
-                            onClick={() => fileRef.current?.click()}
-                            style={{ background: '#00a0d2', color: '#fff', border: 'none', borderRadius: '3px', padding: '0.45rem 1.1rem', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', letterSpacing: '0.02em' }}
-                        >
-                            Add Media
-                        </button>
-                    </div>
+
 
                     {/* Blog Description */}
                     <div style={{ marginBottom: '1.75rem' }}>
