@@ -181,15 +181,13 @@ export default function AdminBlogCreate({ categories = [] }) {
                         {' / New Post'}
                     </div>
                 </div>
-                <button
-                    type="button"
-                    onClick={handleSubmit}
-                    disabled={processing}
-                    title="Submit"
-                    style={{ width: '38px', height: '38px', background: '#2271b1', border: 'none', borderRadius: '50%', color: '#fff', fontSize: '1.2rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+                <Link
+                    href="/admin/blog"
+                    title="Back to Blog List"
+                    style={{ width: '38px', height: '38px', background: '#646970', border: 'none', borderRadius: '50%', color: '#fff', fontSize: '1.2rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, textDecoration: 'none' }}
                 >
-                    →
-                </button>
+                    ←
+                </Link>
             </div>
 
             {/* ── Form Card ── */}
@@ -286,24 +284,7 @@ export default function AdminBlogCreate({ categories = [] }) {
 
                     {/* Blog Description */}
                     <div style={{ marginBottom: '1.75rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', marginBottom: '0.6rem' }}>
-                            <label style={{ ...s.label, fontSize: '0.85rem', margin: 0, flex: 1 }}>Blog Description</label>
-                            {/* Featured Image Preview */}
-                            <div
-                                className="feat-img-box"
-                                onClick={() => fileRef.current?.click()}
-                                title="Click to change image"
-                            >
-                                {previewUrl ? (
-                                    <img src={previewUrl} alt="featured" onError={e => { e.target.style.display='none'; }} />
-                                ) : (
-                                    <div className="feat-img-placeholder">
-                                        <span style={{ fontSize: '1.8rem' }}>🖼</span>
-                                        <span>Featured Image</span>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
+                        <label style={{ ...s.label, fontSize: '0.85rem', marginBottom: '0.6rem' }}>Blog Description</label>
                         <BlogToolbar id="create-blog-toolbar" />
                         <ReactQuill
                             theme="snow"
