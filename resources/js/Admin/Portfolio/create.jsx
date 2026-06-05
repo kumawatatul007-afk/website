@@ -1,5 +1,6 @@
 import AdminLayout from '../layouts/AdminLayout';
 import { useForm, Link } from '@inertiajs/react';
+import { useState, useEffect } from 'react';
 
 export default function AdminPortfolioCreate({ categories = [] }) {
     const [imagePreview, setImagePreview] = useState(null);
@@ -32,6 +33,12 @@ export default function AdminPortfolioCreate({ categories = [] }) {
 
     const showNotification = (message, type = 'success') => {
         setNotification({ message, type });
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        // Add your form submission logic here
+        // For example: post(route('admin.portfolio.store'))
     };
 
     return (
@@ -128,6 +135,7 @@ export default function AdminPortfolioCreate({ categories = [] }) {
                                 <option value={0}>No</option>
                             </select>
                         </div>
+                    </div>
 
                     <div className="section-label">SEO / Meta</div>
 

@@ -28,22 +28,6 @@ function cleanServiceContent(?string $html): string
 
 class AdminServiceController extends Controller
 {
-    if (!$html || trim($html) === '' || trim($html) === '<p><br></p>') {
-        return '';
-    }
-    $text = preg_replace('/<br\s*\/?>/i', "\n", $html);
-    $text = preg_replace('/<\/(p|div|h[1-6]|li|tr|blockquote|section|article)>/i', "\n", $text);
-    $text = preg_replace('/<li[^>]*>/i', '• ', $text);
-    $text = strip_tags($text);
-    $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-    $text = preg_replace('/[ \t]+/', ' ', $text);
-    $text = preg_replace('/\n[ \t]+/', "\n", $text);
-    $text = preg_replace('/\n{3,}/', "\n\n", $text);
-    return trim($text);
-}
-
-class AdminServiceController extends Controller
-{
     public function index()
     {
         $services = Service::where('is_active', 1)
