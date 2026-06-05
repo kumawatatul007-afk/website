@@ -95,43 +95,54 @@ const quillModules = {
 };
 
 export default function AdminBlogEdit({ post, categories = [] }) {
-    const { data, setData, put, processing, errors } = useForm({
-        title:            post.title            ?? '',
-        content:          post.content          ?? '',
-        main_image:       post.main_image        ?? '',
-        category_id:      post.category_id      ?? '',
-        meta_title:       post.meta_title        ?? '',
-        meta_keyword:     post.meta_keyword      ?? '',
-        meta_keywords:    post.meta_keywords     ?? '',
-        meta_description: post.meta_description  ?? '',
-        og_title:         post.og_title          ?? '',
-        og_description:   post.og_description    ?? '',
-        image_alt:        post.image_alt          ?? '',
-        tags:             post.tags              ?? '',
-        type:             post.type              ?? 1,
-        status:           post.status            ?? 1,
-        serial_number:    post.serial_number     ?? '',
+    const { data, setData, post: postMethod, put, processing, errors } = useForm({
+        title:            post?.title            || '',
+        content:          post?.content          || '',
+        main_image:       null,
+        category_id:      post?.category_id      || '',
+        meta_title:       post?.meta_title       || '',
+        meta_keyword:     post?.meta_keyword     || '',
+        meta_keywords:    post?.meta_keywords    || '',
+        meta_description: post?.meta_description || '',
+        og_title:         post?.og_title         || '',
+        og_description:   post?.og_description   || '',
+        image_alt:        post?.image_alt        || '',
+        tags:             post?.tags             || '',
+        type:             post?.type             ?? 1,
+        status:           post?.status           ?? 1,
+        serial_number:    post?.serial_number    ?? 0,
+        _method:          'PUT',
     });
 
     const [imgPreview, setImgPreview] = useState('');
+    const [currentImage, setCurrentImage] = useState(post?.main_image || '');
     const fileRef = useRef();
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (!file) return;
-        setImgPreview(URL.createObjectURL(file));
-        setData('main_image', file.name);
+        
+        const previewUrl = URL.createObjectURL(file);
+        setImgPreview(previewUrl);
+        setData('main_image', file);
     };
 
     const getPreviewUrl = () => {
         if (imgPreview) return imgPreview;
-        if (!data.main_image) return null;
-        return data.main_image.startsWith('http') ? data.main_image : `/images/blogs/${data.main_image}`;
+        if (currentImage) {
+            return currentImage.startsWith('http') ? currentImage : `/images/blogs/${currentImage}`;
+        }
+        return null;
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        put(`/admin/blog/${post.id}`);
+        
+        // Always use post with _method for file uploads
+        postMethod(`/admin/blog/${post.id}`, {
+            forceFormData: true,
+            preserveScroll: true,
+        });
     };
 
     const previewUrl = getPreviewUrl();
@@ -181,15 +192,30 @@ export default function AdminBlogEdit({ post, categories = [] }) {
                         {' / Edit Post'}
                     </div>
                 </div>
-                <button
-                    type="button"
-                    onClick={handleSubmit}
-                    disabled={processing}
-                    title="Submit"
-                    style={{ width: '38px', height: '38px', background: '#2271b1', border: 'none', borderRadius: '50%', color: '#fff', fontSize: '1.2rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+                <Link
+                    href="/admin/blog"
+                    title="Back to Blog List"
+                    style={{ 
+                        width: '38px', 
+                        height: '38px', 
+                        background: '#646970', 
+                        border: 'none', 
+                        borderRadius: '50%', 
+                        color: '#fff', 
+                        fontSize: '1.2rem', 
+                        cursor: 'pointer', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        flexShrink: 0,
+                        textDecoration: 'none',
+                        transition: 'background 0.2s'
+                    }}
+                    onMouseEnter={(e) => e.target.style.background = '#2271b1'}
+                    onMouseLeave={(e) => e.target.style.background = '#646970'}
                 >
-                    →
-                </button>
+                    ←
+                </Link>
             </div>
 
             {/* ── Form Card ── */}
@@ -282,14 +308,14 @@ export default function AdminBlogEdit({ post, categories = [] }) {
                         </div>
                     </div>
 
-                    {/* Add Media button */}
+                    {/* Add Media / Edit Media button */}
                     <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1.5rem' }}>
                         <button
                             type="button"
                             onClick={() => fileRef.current?.click()}
                             style={{ background: '#00a0d2', color: '#fff', border: 'none', borderRadius: '3px', padding: '0.45rem 1.1rem', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', letterSpacing: '0.02em' }}
                         >
-                            Add Media
+                            {previewUrl ? 'Edit Media' : 'Add Media'}
                         </button>
                     </div>
 

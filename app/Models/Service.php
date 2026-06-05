@@ -16,7 +16,6 @@ class Service extends Model
         'cta_text',
         'sort_order',
         'is_active',
-        // legacy columns (kept for compatibility)
         'category_id',
         'tags',
         'image',

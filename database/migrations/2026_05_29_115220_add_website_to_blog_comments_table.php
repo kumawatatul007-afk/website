@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('blog_comments', function (Blueprint $table) {
-            $table->string('website')->nullable()->after('email');
+            if (!Schema::hasColumn('blog_comments', 'website')) {
+                $table->string('website')->nullable()->after('email');
+            }
         });
     }
 

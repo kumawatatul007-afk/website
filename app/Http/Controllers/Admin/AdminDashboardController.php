@@ -20,7 +20,7 @@ class AdminDashboardController extends Controller
             'total_portfolio'   => PortfolioItem::count(),
             'total_blogs'       => BlogPost::count(),
             'total_categories'  => Category::count(),
-            'unread_messages'   => ContactMessage::where('is_read', false)->count(),
+            'unread_messages'   => ContactMessage::where('is_check', 0)->count(),
             'total_messages'    => ContactMessage::count(),
             'featured_projects' => PortfolioItem::where('is_publish', 1)->count(),
         ];
@@ -36,7 +36,7 @@ class AdminDashboardController extends Controller
 
         $recent_messages = ContactMessage::latest()
             ->take(5)
-            ->get(['id', 'name', 'email', 'subject', 'is_read', 'created_at']);
+            ->get(['id', 'name', 'email', 'subject', 'is_check as is_read', 'created_at']);
 
         $recent_blogs = BlogPost::latest()
             ->take(5)

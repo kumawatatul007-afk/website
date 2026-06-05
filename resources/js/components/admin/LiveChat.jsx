@@ -7,11 +7,8 @@ export default function LiveChat() {
     const [messages,  setMessages]  = useState([]);
     const [unread,    setUnread]    = useState(0);
     const [loading,   setLoading]   = useState(false);
-    const [reply,     setReply]     = useState('');
-    const [sending,   setSending]   = useState(false);
     const [mounted,   setMounted]   = useState(false);
     const bodyRef  = useRef(null);
-    const inputRef = useRef(null);
 
     /* Initial mount animation */
     useEffect(() => { setTimeout(() => setMounted(true), 600); }, []);
@@ -40,17 +37,7 @@ export default function LiveChat() {
         if (open && bodyRef.current) {
             bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
         }
-        if (open) { setTimeout(() => inputRef.current?.focus(), 100); }
     }, [open, messages]);
-
-    const handleSend = () => {
-        if (!reply.trim()) return;
-        setSending(true);
-        setTimeout(() => {
-            setReply('');
-            setSending(false);
-        }, 900);
-    };
 
     const fmtTime = (d) => {
         if (!d) return '';
@@ -259,37 +246,9 @@ export default function LiveChat() {
                 }
                 .lc-tab.active { color: #6366f1; border-bottom-color: #6366f1; }
 
-                .lc-footer {
-                    padding: 0.875rem 1rem;
-                    border-top: 1px solid #f1f5f9;
-                    display: flex; gap: 0.5rem; align-items: center;
-                    background: #fff; flex-shrink: 0;
-                }
-                .lc-input {
-                    flex: 1; padding: 0.65rem 0.875rem;
-                    border: 1.5px solid #e8ecf2; border-radius: 12px;
-                    font-size: 0.82rem; font-family: inherit;
-                    color: #0f172a; background: #fafbff;
-                    outline: none;
-                    transition: border-color 0.18s, box-shadow 0.18s;
-                }
-                .lc-input::placeholder { color: #c8d1dc; }
-                .lc-input:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.12); }
-                .lc-send-btn {
-                    width: 38px; height: 38px; border-radius: 12px;
-                    background: linear-gradient(135deg, #6366f1, #4f46e5);
-                    border: none; cursor: pointer;
-                    display: flex; align-items: center; justify-content: center;
-                    color: #fff; flex-shrink: 0;
-                    box-shadow: 0 4px 12px rgba(99,102,241,0.35);
-                    transition: all 0.15s;
-                }
-                .lc-send-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(99,102,241,0.5); }
-                .lc-send-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
                 .lc-view-all {
                     display: flex; align-items: center; justify-content: center;
-                    padding: 0.65rem; border-top: 1px solid #f1f5f9;
+                    padding: 0.85rem; border-top: 1px solid #f1f5f9;
                     background: linear-gradient(180deg, transparent 0%, #fafbff 100%);
                     flex-shrink: 0;
                 }
@@ -407,32 +366,6 @@ export default function LiveChat() {
                                 <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
                             </svg>
                         </Link>
-                    </div>
-
-                    {/* Quick reply */}
-                    <div className="lc-footer">
-                        <input
-                            ref={inputRef}
-                            className="lc-input"
-                            placeholder="Quick reply…"
-                            value={reply}
-                            onChange={e => setReply(e.target.value)}
-                            onKeyDown={e => e.key === 'Enter' && handleSend()}
-                        />
-                        <button
-                            className="lc-send-btn"
-                            onClick={handleSend}
-                            disabled={sending || !reply.trim()}
-                            title="Send"
-                        >
-                            {sending ? (
-                                <div style={{ width: 14, height: 14, border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'lcSpin 0.65s linear infinite' }} />
-                            ) : (
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                    <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
-                                </svg>
-                            )}
-                        </button>
                     </div>
                 </div>
             )}

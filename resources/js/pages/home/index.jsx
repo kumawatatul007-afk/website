@@ -5,6 +5,7 @@ import './index.css';
 import SEO from '../../components/SEO';
 import OptimizedImage from '../../components/OptimizedImage';
 import { ShimmerBlogCard, ShimmerPortfolioCard } from '../../components/ShimmerLoader';
+import { HiOutlineBriefcase, HiOutlineCommandLine, HiOutlineAcademicCap, HiOutlineBookOpen } from 'react-icons/hi2';
 
 function ContactForm() {
   const [status, setStatus] = useState(null); // null | 'sending' | 'success' | 'error'

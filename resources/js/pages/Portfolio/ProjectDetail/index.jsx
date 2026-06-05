@@ -27,6 +27,30 @@ function useCountUp(target, isVisible, duration = 1800) {
   return count;
 }
 
+// Luxury stat card component
+function LuxuryStatCard({ stat, isVisible, index, accent }) {
+  const count = useCountUp(stat.value, isVisible, 2000);
+  const icons = {
+    experience: '',
+    projects: '',
+    countries: '',
+    satisfaction: ''
+  };
+  
+  return (
+    <div className={`pd3-stat-card${isVisible ? ' pd3-vis' : ''}${index === 3 ? ' gold-accent' : ''}`}>
+      <div className="pd3-stat-icon">
+        {icons[stat.type] || '✨'}
+      </div>
+      <div className="pd3-stat-value">
+        {stat.value % 1 === 0 ? Math.floor(count) : count.toFixed(1)}{stat.suffix}
+      </div>
+      <div className="pd3-stat-label">{stat.label}</div>
+      <div className="pd3-stat-decoration"></div>
+    </div>
+  );
+}
+
 function StatItem({ stat, isVisible }) {
   const count = useCountUp(stat.value, isVisible);
   return (
@@ -245,16 +269,273 @@ export default function ProjectDetailPage({ id, slug, item: dbItem, related }) {
         .pd3-meta-value a:hover{text-decoration:underline}
         @media(max-width:768px){.pd3-meta-bar{grid-template-columns:1fr 1fr}.pd3-meta-item{border-right:none;border-bottom:1px solid #e5e7eb}.pd3-meta-item:nth-child(odd){border-right:1px solid #e5e7eb}.pd3-meta-item:last-child,.pd3-meta-item:nth-last-child(2):nth-child(odd){border-bottom:none}}
 
-        /* STATS */
-        .pd3-stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:4rem;opacity:0;transform:translateY(28px);transition:opacity 0.7s,transform 0.7s}
-        .pd3-stats-grid.pd3-vis{opacity:1;transform:translateY(0)}
-        .pd3-stat-item{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:2rem 1.5rem;text-align:center;position:relative;overflow:hidden;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 2px 12px rgba(0,0,0,0.04)}
-        .pd3-stat-item::before{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:${accent}}
-        .pd3-stat-item:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.1)}
-        .pd3-stat-value{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;color:${accent};font-family:'Space Grotesk',sans-serif;line-height:1;margin-bottom:0.5rem}
-        .pd3-stat-label{font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#6b7280}
-        @media(max-width:900px){.pd3-stats-grid{grid-template-columns:repeat(2,1fr)}}
-        @media(max-width:480px){.pd3-stats-grid{grid-template-columns:repeat(2,1fr)}}
+        /* INFO CARDS */
+        .pd3-info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-bottom:4rem;opacity:0;transform:translateY(28px);transition:opacity 0.7s,transform 0.7s}
+        .pd3-info-grid.pd3-vis{opacity:1;transform:translateY(0)}
+        .pd3-info-card{background:linear-gradient(135deg,#fff 0%,#f9fafb 100%);border:2px solid #e5e7eb;border-radius:20px;padding:2rem;display:flex;align-items:center;gap:1.25rem;transition:all 0.3s ease;position:relative;overflow:hidden}
+        .pd3-info-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:${accent};transform:scaleY(0);transition:transform 0.3s ease;transform-origin:bottom}
+        .pd3-info-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(${accentRgb},0.15);border-color:${accent}}
+        .pd3-info-card:hover::before{transform:scaleY(1);transform-origin:top}
+        .pd3-info-icon{width:56px;height:56px;border-radius:14px;background:${accentLight};border:2px solid ${accentBorder};display:flex;align-items:center;justify-content:center;flex-shrink:0}
+        .pd3-info-icon svg{stroke:${accent}}
+        .pd3-info-content{display:flex;flex-direction:column;gap:0.35rem}
+        .pd3-info-label{font-size:0.7rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#9ca3af}
+        .pd3-info-value{font-size:1.1rem;font-weight:700;color:#1a1a2e;font-family:'Space Grotesk',sans-serif}
+        @media(max-width:900px){.pd3-info-grid{grid-template-columns:1fr}}
+
+        /* SERVICES GRID */
+        .pd3-services-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;background:#fff;border:1px solid #e5e7eb;border-radius:20px;padding:2rem;box-shadow:0 4px 24px rgba(0,0,0,0.04)}
+        .pd3-service-item{display:flex;align-items:center;gap:1rem;padding:1rem;border-radius:12px;background:#f9fafb;transition:all 0.2s ease}
+        .pd3-service-item:hover{background:${accentLight};transform:translateX(4px)}
+        .pd3-service-icon{width:32px;height:32px;border-radius:8px;background:${accent};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1rem;flex-shrink:0}
+        .pd3-service-name{font-size:0.9rem;font-weight:600;color:#1a1a2e}
+        @media(max-width:640px){.pd3-services-grid{grid-template-columns:1fr}}
+
+        /* FEATURES SECTION */
+        .pd3-features-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem;margin-top:2rem}
+        .pd3-feature-card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:1.75rem;display:flex;gap:1rem;transition:all 0.3s ease;position:relative;overflow:hidden}
+        .pd3-feature-card::after{content:'';position:absolute;top:0;right:0;width:100px;height:100px;background:radial-gradient(circle,rgba(${accentRgb},0.08) 0%,transparent 70%);transform:translate(50%,-50%)}
+        .pd3-feature-card:hover{border-color:${accent};box-shadow:0 8px 32px rgba(${accentRgb},0.12);transform:translateY(-2px)}
+        .pd3-feature-icon{width:48px;height:48px;border-radius:12px;background:${accentLight};border:1px solid ${accentBorder};display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
+        .pd3-feature-content{flex:1}
+        .pd3-feature-title{font-size:0.95rem;font-weight:700;color:#1a1a2e;margin-bottom:0.4rem}
+        .pd3-feature-desc{font-size:0.82rem;color:#6b7280;line-height:1.6}
+        @media(max-width:768px){.pd3-features-grid{grid-template-columns:1fr}}
+
+        /* METRICS SECTION */
+        .pd3-metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-top:2rem}
+        .pd3-metric-card{background:linear-gradient(135deg,${accentLight} 0%,#fff 100%);border:2px solid ${accentBorder};border-radius:16px;padding:2rem 1.5rem;text-align:center;position:relative;overflow:hidden}
+        .pd3-metric-card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(90deg,${accent} 0%,rgba(${accentRgb},0.5) 100%)}
+        .pd3-metric-value{font-size:2.5rem;font-weight:800;color:${accent};font-family:'Space Grotesk',sans-serif;line-height:1;margin-bottom:0.5rem}
+        .pd3-metric-label{font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#6b7280}
+        @media(max-width:900px){.pd3-metrics-grid{grid-template-columns:repeat(2,1fr)}}
+
+        /* SOLUTION SECTION */
+        .pd3-solution-card{background:linear-gradient(135deg,#fff 0%,${accentLight} 100%);border:2px solid ${accentBorder};border-radius:24px;padding:2.75rem;margin-bottom:3rem;position:relative;overflow:hidden;box-shadow:0 4px 24px rgba(${accentRgb},0.08)}
+        .pd3-solution-card::before{content:'';position:absolute;top:-50px;right:-50px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(${accentRgb},0.15) 0%,transparent 70%)}
+        .pd3-solution-icon{width:64px;height:64px;border-radius:16px;background:${accent};display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;box-shadow:0 8px 24px rgba(${accentRgb},0.35);position:relative;z-index:1}
+        .pd3-solution-title{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:700;color:#131313;margin-bottom:1rem;position:relative;z-index:1}
+        .pd3-solution-text{font-size:1rem;color:#374151;line-height:1.9;position:relative;z-index:1}
+
+        /* TESTIMONIAL */
+        .pd3-testimonial{background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);border-radius:24px;padding:3rem;margin-bottom:3rem;position:relative;overflow:hidden}
+        .pd3-testimonial::before{content:'"';position:absolute;top:1rem;left:2rem;font-size:8rem;font-family:'Playfair Display',serif;color:rgba(255,255,255,0.08);line-height:1}
+        .pd3-testimonial-text{font-size:1.15rem;color:rgba(255,255,255,0.9);line-height:1.8;font-style:italic;margin-bottom:2rem;position:relative;z-index:1}
+        .pd3-testimonial-author{display:flex;align-items:center;gap:1rem;position:relative;z-index:1}
+        .pd3-testimonial-avatar{width:56px;height:56px;border-radius:50%;background:${accent};border:3px solid rgba(255,255,255,0.2)}
+        .pd3-testimonial-info{display:flex;flex-direction:column;gap:0.25rem}
+        .pd3-testimonial-name{font-size:1rem;font-weight:700;color:#fff}
+        .pd3-testimonial-role{font-size:0.85rem;color:rgba(255,255,255,0.6)}
+
+        /* GALLERY SECTION */
+        .pd3-gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:2rem}
+        .pd3-gallery-item{position:relative;aspect-ratio:16/10;border-radius:16px;overflow:hidden;cursor:pointer;transition:transform 0.3s ease,box-shadow 0.3s ease}
+        .pd3-gallery-item:hover{transform:scale(1.03);box-shadow:0 12px 40px rgba(0,0,0,0.2)}
+        .pd3-gallery-img{width:100%;height:100%;object-fit:cover;transition:transform 0.5s ease}
+        .pd3-gallery-item:hover .pd3-gallery-img{transform:scale(1.1)}
+        @media(max-width:768px){.pd3-gallery-grid{grid-template-columns:repeat(2,1fr)}}
+        @media(max-width:480px){.pd3-gallery-grid{grid-template-columns:1fr}}
+
+        /* ══════════════════════════════════════════════════════════
+           ULTRA-MINIMAL LUXURY STATS SECTION - CLEAN DESIGN
+           ══════════════════════════════════════════════════════════ */
+        
+        .pd3-stats-section {
+          position: relative;
+          background: transparent;
+          padding: 3rem 0;
+          margin: 3rem 0;
+          overflow: hidden;
+        }
+        
+        .pd3-stats-container {
+          position: relative;
+          z-index: 2;
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 0 2rem;
+        }
+        
+        /* Minimal section header */
+        .pd3-stats-header {
+          text-align: center;
+          margin-bottom: 3rem;
+          opacity: 0;
+          transform: translateY(20px);
+          transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .pd3-stats-header.pd3-vis {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        
+        .pd3-stats-pretitle {
+          display: none;
+        }
+        
+        .pd3-stats-title {
+          display: none;
+        }
+        
+        .pd3-stats-subtitle {
+          display: none;
+        }
+        
+        /* Clean stats grid - horizontal layout */
+        .pd3-stats-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 0;
+          position: relative;
+          z-index: 2;
+          background: #ffffff;
+          border-top: 1px solid #e5e7eb;
+          border-bottom: 1px solid #e5e7eb;
+        }
+        
+        @media (max-width: 1024px) {
+          .pd3-stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+        
+        @media (max-width: 640px) {
+          .pd3-stats-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+        
+        /* Minimal stat card - no borders, no backgrounds */
+        .pd3-stat-card {
+          position: relative;
+          background: transparent;
+          backdrop-filter: none;
+          border: none;
+          border-right: 1px solid #e5e7eb;
+          border-radius: 0;
+          padding: 2.5rem 2rem;
+          text-align: center;
+          overflow: visible;
+          opacity: 0;
+          transform: translateY(20px);
+          transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .pd3-stat-card:last-child {
+          border-right: none;
+        }
+        
+        .pd3-stat-card.pd3-vis {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        
+        /* Staggered animation */
+        .pd3-stat-card:nth-child(1) { transition-delay: 0.1s; }
+        .pd3-stat-card:nth-child(2) { transition-delay: 0.15s; }
+        .pd3-stat-card:nth-child(3) { transition-delay: 0.2s; }
+        .pd3-stat-card:nth-child(4) { transition-delay: 0.25s; }
+        
+        /* Remove all decorative elements */
+        .pd3-stat-card::before,
+        .pd3-stat-card::after {
+          display: none;
+        }
+        
+        /* Subtle hover effect */
+        .pd3-stat-card:hover {
+          background: #fafbfc;
+          transform: translateY(0);
+          box-shadow: none;
+          border-color: #e5e7eb;
+        }
+        
+        /* Hide icon container */
+        .pd3-stat-icon {
+          display: none;
+        }
+        
+        /* Clean number styling */
+        .pd3-stat-value {
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: clamp(2.5rem, 4vw, 3.5rem);
+          font-weight: 300;
+          line-height: 1;
+          margin-bottom: 0.75rem;
+          background: none;
+          -webkit-background-clip: unset;
+          -webkit-text-fill-color: unset;
+          background-clip: unset;
+          color: #1a1a2e;
+          position: relative;
+          z-index: 1;
+          transition: color 0.3s ease;
+        }
+        
+        .pd3-stat-card:hover .pd3-stat-value {
+          background: none;
+          -webkit-background-clip: unset;
+          -webkit-text-fill-color: unset;
+          background-clip: unset;
+          color: ${accent};
+          transform: none;
+        }
+        
+        /* Clean label styling */
+        .pd3-stat-label {
+          font-size: 0.7rem;
+          font-weight: 600;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: #9ca3af;
+          line-height: 1.4;
+          position: relative;
+          z-index: 1;
+          transition: color 0.3s ease;
+        }
+        
+        .pd3-stat-card:hover .pd3-stat-label {
+          color: #6b7280;
+        }
+        
+        /* Remove decoration */
+        .pd3-stat-decoration {
+          display: none;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 1024px) {
+          .pd3-stat-card {
+            border-right: none;
+            border-bottom: 1px solid #e5e7eb;
+          }
+          
+          .pd3-stat-card:nth-child(odd) {
+            border-right: 1px solid #e5e7eb;
+          }
+          
+          .pd3-stat-card:last-child,
+          .pd3-stat-card:nth-last-child(2) {
+            border-bottom: none;
+          }
+        }
+        
+        @media (max-width: 640px) {
+          .pd3-stat-card {
+            border-right: none !important;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 2rem 1.5rem;
+          }
+          
+          .pd3-stat-card:last-child {
+            border-bottom: none;
+          }
+          
+          .pd3-stat-value {
+            font-size: 2.5rem;
+          }
+        }
 
         /* SECTION SHARED */
         .pd3-section{opacity:0;transform:translateY(28px);transition:opacity 0.65s ease,transform 0.65s ease;margin-bottom:3rem}
@@ -410,12 +691,22 @@ export default function ProjectDetailPage({ id, slug, item: dbItem, related }) {
             </div>
           </div>
 
-          {/* Stats */}
-          {stats.length > 0 && (
-            <div className={`pd3-stats-grid${statsVis ? ' pd3-vis' : ''}`} ref={statsRef}>
-              {stats.map((s, i) => <StatItem key={i} stat={s} isVisible={statsVis} />)}
+          {/* Ultra-Minimal Luxury Stats Section - Clean Design */}
+          <div className="pd3-stats-section" ref={statsRef}>
+            <div className="pd3-stats-container">
+              <div className="pd3-stats-grid">
+                {displayStats.map((stat, i) => (
+                  <LuxuryStatCard 
+                    key={i} 
+                    stat={stat} 
+                    isVisible={statsVis} 
+                    index={i}
+                    accent={accent}
+                  />
+                ))}
+              </div>
             </div>
-          )}
+          </div>
 
           {/* Overview */}
           {projectData.overview && (

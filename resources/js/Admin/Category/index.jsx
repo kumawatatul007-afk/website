@@ -187,6 +187,12 @@ export default function AdminCategoryIndex({ categories, filters }) {
         });
     };
 
+    const openCreate  = () => setCreateModal(true);
+    const closeCreate = () => setCreateModal(false);
+    const onCreateSuccess = () => {
+        router.reload({ only: ['categories'] });
+    };
+
     const totalCount = categories?.total ?? categories?.data?.length ?? 0;
 
     return (
@@ -550,6 +556,10 @@ export default function AdminCategoryIndex({ categories, filters }) {
                         </h2>
                         <p className="cat-subtitle">Browse and manage your content taxonomy</p>
                     </div>
+                    <button onClick={openCreate} className="btn-add-category">
+                        <IconPlus />
+                        Add Category
+                    </button>
                 </div>
 
                 {/* ═══════════ Toolbar ═══════════ */}
@@ -752,6 +762,13 @@ export default function AdminCategoryIndex({ categories, filters }) {
                     onClose={closeDelete}
                     onConfirm={confirmDelete}
                     loading={deleteLoading}
+                />
+            )}
+
+            {createModal && (
+                <CreateModal
+                    onClose={closeCreate}
+                    onSuccess={onCreateSuccess}
                 />
             )}
         </AdminLayout>

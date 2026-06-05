@@ -611,6 +611,19 @@ body {
   margin-bottom: 12px;
 }
 
+.bd-widget:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.about-widget {
+  text-align: center;
+}
+
+.widget-avatar {
+  font-size: 3rem;
+  margin-bottom: 12px;
+}
+
 .bd-widget-title {
   font-size: 1.3rem;
   font-weight: 700;

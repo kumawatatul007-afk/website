@@ -2,24 +2,36 @@ import AdminLayout from '../layouts/AdminLayout';
 import { useForm, Link } from '@inertiajs/react';
 
 export default function AdminPortfolioCreate({ categories = [] }) {
-    const { data, setData, post, processing, errors } = useForm({
-        title:             '',
-        category_id:       '',
-        image:             '',
-        clint_name:        '',
-        status:            'Active',
-        date:              '',
-        website_link:      '',
+    const [imagePreview, setImagePreview] = useState(null);
+    const [notification, setNotification] = useState(null);
+
+    const { data, setData, processing, errors } = useForm({
+        title: '',
+        slug: '',
+        category_id: '',
+        image: null,
+        clint_name: '',
+        status: 'Active',
+        date: '',
+        website_link: '',
         short_description: '',
-        description:       '',
-        meta_keyword:      '',
-        meta_description:  '',
-        is_publish:        1,
+        description: '',
+        meta_keyword: '',
+        meta_description: '',
+        is_publish: 1,
     });
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        post('/admin/portfolio');
+    useEffect(() => {
+        if (notification) {
+            const timer = setTimeout(() => {
+                setNotification(null);
+            }, 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [notification]);
+
+    const showNotification = (message, type = 'success') => {
+        setNotification({ message, type });
     };
 
     return (
@@ -116,7 +128,6 @@ export default function AdminPortfolioCreate({ categories = [] }) {
                                 <option value={0}>No</option>
                             </select>
                         </div>
-                    </div>
 
                     <div className="section-label">SEO / Meta</div>
 

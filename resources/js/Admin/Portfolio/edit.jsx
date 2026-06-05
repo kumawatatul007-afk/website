@@ -1,26 +1,98 @@
 import AdminLayout from '../layouts/AdminLayout';
-import { useForm, Link } from '@inertiajs/react';
+import { useForm, Link, router } from '@inertiajs/react';
+import { useState, useEffect } from 'react';
 
 export default function AdminPortfolioEdit({ item, categories = [] }) {
-    const { data, setData, put, processing, errors } = useForm({
-        title:             item.title             ?? '',
-        category_id:       item.category_id       ?? '',
-        image:             item.image             ?? '',
-        clint_name:        item.clint_name         ?? '',
-        status:            item.status            ?? 'Active',
-        date:              item.date              ?? '',
-        website_link:      item.website_link       ?? '',
-        short_description: item.short_description  ?? '',
-        description:       item.description       ?? '',
-        meta_keyword:      item.meta_keyword       ?? '',
-        meta_description:  item.meta_description   ?? '',
-        is_publish:        item.is_publish         ?? 1,
-    });
+const [imagePreview, setImagePreview] = useState(
+    item?.image ? `/storage/uploads/portfolio/${item.image}` : null
+);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        put(`/admin/portfolio/${item.id}`);
-    };
+const [notification, setNotification] = useState(null);
+
+const { data, setData, processing, errors, reset } = useForm({
+    title: item?.title || '',
+    category_id: item?.category_id || '',
+    image: null,
+    clint_name: item?.clint_name || '',
+    status: item?.status || 'Active',
+    date: item?.date ? item.date.split('T')[0] : '',
+    website_link: item?.website_link || '',
+    short_description: item?.short_description || '',
+    description: item?.description || '',
+    meta_keyword: item?.meta_keyword || '',
+    meta_description: item?.meta_description || '',
+    is_publish: item?.is_publish ?? 1,
+});
+
+useEffect(() => {
+    if (notification) {
+        const timer = setTimeout(() => {
+            setNotification(null);
+        }, 5000);
+        return () => clearTimeout(timer);
+    }
+}, [notification]);
+
+const showNotification = (message, type = 'success') => {
+    setNotification({ message, type });
+};
+
+const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        // Check file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            showNotification('Image size must be less than 5MB', 'error');
+            return;
+        }
+        
+        // Check file type
+        if (!file.type.startsWith('image/')) {
+            showNotification('Please select a valid image file', 'error');
+            return;
+        }
+        
+        setData('image', file);
+        
+        // Create preview
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setImagePreview(reader.result);
+        };
+        reader.readAsDataURL(file);
+        showNotification('Image selected successfully', 'success');
+    }
+};
+
+const handleSubmit = (e) => {
+    e.preventDefault();
+
+    router.post(`/admin/portfolio/${item.id}`, {
+        _method: 'PUT',
+        title: data.title,
+        category_id: data.category_id || null,
+        image: data.image,
+        clint_name: data.clint_name || null,
+        status: data.status,
+        date: data.date || null,
+        website_link: data.website_link || null,
+        short_description: data.short_description || null,
+        description: data.description || null,
+        meta_keyword: data.meta_keyword || null,
+        meta_description: data.meta_description || null,
+        is_publish: data.is_publish,
+    }, {
+        forceFormData: true,
+        preserveScroll: true,
+        onSuccess: () => {
+            showNotification('Portfolio updated successfully!', 'success');
+        },
+        onError: (errors) => {
+            console.error('Validation errors:', errors);
+            showNotification('Failed to update portfolio. Please check the form.', 'error');
+        },
+    });
+};
 
     return (
         <AdminLayout title="Edit Portfolio Item">
@@ -43,97 +115,289 @@ export default function AdminPortfolioEdit({ item, categories = [] }) {
                 @media (max-width:600px) { .form-row { grid-template-columns:1fr; } }
             `}</style>
 
-            <div className="page-header">
-                <Link href="/admin/portfolio" className="btn-cancel">← Back</Link>
-                <h2 style={{ fontSize:'1.1rem', fontWeight:700, color:'#0f172a' }}>Edit Portfolio Item</h2>
-            </div>
+            <div className="admin-container">
+                <div className="page-header">
+                    <h1 className="page-title">
+                        Edit Portfolio Item
+                    </h1>
 
-            <div className="form-card">
-                <form onSubmit={handleSubmit}>
+                    <Link href="/admin/portfolio" className="btn-cancel">
+                        ← Back to List
+                    </Link>
+                </div>
 
-                    <div className="form-group">
-                        <label className="form-label">Title *</label>
-                        <input className={`form-input${errors.title ? ' err' : ''}`} value={data.title} onChange={e => setData('title', e.target.value)} />
-                        {errors.title && <p className="form-error">{errors.title}</p>}
-                    </div>
+                <div className="form-card">
+                    <form onSubmit={handleSubmit}>
 
-                    <div className="form-row">
+                        {/* Basic Information Section */}
                         <div className="form-group">
-                            <label className="form-label">Category</label>
-                            <select className="form-input" value={data.category_id} onChange={e => setData('category_id', e.target.value)}>
-                                <option value="">— Select Category —</option>
-                                {categories.map(c => (
-                                    <option key={c.id} value={c.id}>{c.name}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="form-group">
-                            <label className="form-label">Status</label>
-                            <select className="form-input" value={data.status} onChange={e => setData('status', e.target.value)}>
-                                <option value="Active">Active</option>
-                                <option value="Inactive">Inactive</option>
-                            </select>
-                        </div>
-                    </div>
+                            <label className="form-label">
+                                Portfolio Title <span className="required-asterisk">*</span>
+                            </label>
 
-                    <div className="form-row">
-                        <div className="form-group">
-                            <label className="form-label">Image (filename or URL)</label>
-                            <input className="form-input" value={data.image} onChange={e => setData('image', e.target.value)} placeholder="e.g. 1696336352.jpg" />
-                        </div>
-                        <div className="form-group">
-                            <label className="form-label">Client Name</label>
-                            <input className="form-input" value={data.clint_name} onChange={e => setData('clint_name', e.target.value)} />
-                        </div>
-                    </div>
+                            <input
+                                type="text"
+                                name="title"
+                                required
+                                className={`form-input ${errors.title ? 'err' : ''}`}
+                                value={data.title}
+                                onChange={(e) => setData('title', e.target.value)}
+                                placeholder="Enter portfolio title"
+                            />
 
-                    <div className="form-row">
+                            {errors.title && (
+                                <p className="form-error">{errors.title}</p>
+                            )}
+                        </div>
+
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label className="form-label">Category</label>
+
+                                <select
+                                    name="category_id"
+                                    className={`form-input ${errors.category_id ? 'err' : ''}`}
+                                    value={data.category_id}
+                                    onChange={(e) => setData('category_id', e.target.value)}
+                                >
+                                    <option value="">— Select Category —</option>
+                                    {categories.map(category => (
+                                        <option key={category.id} value={category.id}>
+                                            {category.name}
+                                        </option>
+                                    ))}
+                                </select>
+
+                                {errors.category_id && (
+                                    <p className="form-error">{errors.category_id}</p>
+                                )}
+                            </div>
+
+                            <div className="form-group">
+                                <label className="form-label">Status</label>
+
+                                <select
+                                    name="status"
+                                    className={`form-input ${errors.status ? 'err' : ''}`}
+                                    value={data.status}
+                                    onChange={(e) => setData('status', e.target.value)}
+                                >
+                                    <option value="Active">Active</option>
+                                    <option value="Inactive">Inactive</option>
+                                </select>
+
+                                {errors.status && (
+                                    <p className="form-error">{errors.status}</p>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Image Upload Section */}
+                        <div className="section-label">Portfolio Image</div>
+
+                        <div className="form-group">
+                            <div className="image-upload-area">
+                                {imagePreview && (
+                                    <div className="image-preview-container">
+                                        <img
+                                            src={imagePreview}
+                                            alt="Portfolio preview"
+                                            className="image-preview"
+                                            onError={(e) => {
+                                                e.target.onerror = null;
+                                                e.target.src = `/uploads/portfolio/${item.image}`;
+                                            }}
+                                        />
+                                        <span className="image-label">Current Image</span>
+                                    </div>
+                                )}
+
+                                <input
+                                    type="file"
+                                    name="image"
+                                    accept="image/*"
+                                    className={`form-input ${errors.image ? 'err' : ''}`}
+                                    onChange={handleImageChange}
+                                />
+
+                                <p className="help-text">
+                                    Upload a new image to replace the current one (Max 5MB, JPG/PNG)
+                                </p>
+                            </div>
+
+                            {errors.image && (
+                                <p className="form-error">{errors.image}</p>
+                            )}
+                        </div>
+
+                        {/* Project Details Section */}
+                        <div className="section-label">Project Details</div>
+
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label className="form-label">Client Name</label>
+
+                                <input
+                                    type="text"
+                                    name="clint_name"
+                                    className={`form-input ${errors.clint_name ? 'err' : ''}`}
+                                    value={data.clint_name}
+                                    onChange={(e) => setData('clint_name', e.target.value)}
+                                    placeholder="Enter client name"
+                                />
+
+                                {errors.clint_name && (
+                                    <p className="form-error">{errors.clint_name}</p>
+                                )}
+                            </div>
+
+                            <div className="form-group">
+                                <label className="form-label">Project Date</label>
+
+                                <input
+                                    type="date"
+                                    name="date"
+                                    className={`form-input ${errors.date ? 'err' : ''}`}
+                                    value={data.date || ''}
+                                    onChange={(e) => setData('date', e.target.value)}
+                                />
+
+                                {errors.date && (
+                                    <p className="form-error">{errors.date}</p>
+                                )}
+                            </div>
+                        </div>
+
                         <div className="form-group">
                             <label className="form-label">Website Link</label>
-                            <input className="form-input" value={data.website_link} onChange={e => setData('website_link', e.target.value)} placeholder="https://..." />
+
+                            <input
+                                type="url"
+                                name="website_link"
+                                className={`form-input ${errors.website_link ? 'err' : ''}`}
+                                placeholder="https://example.com"
+                                value={data.website_link}
+                                onChange={(e) => setData('website_link', e.target.value)}
+                            />
+
+                            {errors.website_link && (
+                                <p className="form-error">{errors.website_link}</p>
+                            )}
+                            <p className="help-text">Full URL including https://</p>
                         </div>
+
                         <div className="form-group">
-                            <label className="form-label">Date</label>
-                            <input type="date" className="form-input" value={data.date ? data.date.split('T')[0] : ''} onChange={e => setData('date', e.target.value)} />
+                            <label className="form-label">Short Description</label>
+
+                            <input
+                                type="text"
+                                name="short_description"
+                                className={`form-input ${errors.short_description ? 'err' : ''}`}
+                                value={data.short_description}
+                                onChange={(e) => setData('short_description', e.target.value)}
+                                placeholder="Brief summary for listings and previews"
+                            />
+
+                            {errors.short_description && (
+                                <p className="form-error">{errors.short_description}</p>
+                            )}
                         </div>
-                    </div>
 
-                    <div className="form-group">
-                        <label className="form-label">Short Description</label>
-                        <input className="form-input" value={data.short_description} onChange={e => setData('short_description', e.target.value)} />
-                    </div>
-
-                    <div className="form-group">
-                        <label className="form-label">Full Description</label>
-                        <textarea className="form-input" rows={4} value={data.description} onChange={e => setData('description', e.target.value)} style={{ resize:'vertical' }} />
-                    </div>
-
-                    <div className="form-row">
                         <div className="form-group">
-                            <label className="form-label">Published</label>
-                            <select className="form-input" value={data.is_publish} onChange={e => setData('is_publish', parseInt(e.target.value))}>
-                                <option value={1}>Yes</option>
-                                <option value={0}>No</option>
+                            <label className="form-label">Full Description</label>
+
+                            <textarea
+                                name="description"
+                                rows="6"
+                                className={`form-input ${errors.description ? 'err' : ''}`}
+                                value={data.description}
+                                onChange={(e) => setData('description', e.target.value)}
+                                placeholder="Detailed project description, features, and outcomes"
+                            />
+
+                            {errors.description && (
+                                <p className="form-error">{errors.description}</p>
+                            )}
+                        </div>
+
+                        <div className="form-group">
+                            <label className="form-label">Publish Status</label>
+
+                            <select
+                                name="is_publish"
+                                className={`form-input ${errors.is_publish ? 'err' : ''}`}
+                                value={data.is_publish}
+                                onChange={(e) => setData('is_publish', Number(e.target.value))}
+                            >
+                                <option value={1}>Published (Visible to public)</option>
+                                <option value={0}>Draft (Hidden from public)</option>
                             </select>
+
+                            {errors.is_publish && (
+                                <p className="form-error">{errors.is_publish}</p>
+                            )}
                         </div>
-                    </div>
 
-                    <div className="section-label">SEO / Meta</div>
+                        {/* SEO Section */}
+                        <div className="section-label">SEO & Meta Information</div>
 
-                    <div className="form-group">
-                        <label className="form-label">Meta Description</label>
-                        <input className="form-input" value={data.meta_description} onChange={e => setData('meta_description', e.target.value)} />
-                    </div>
-                    <div className="form-group">
-                        <label className="form-label">Meta Keywords</label>
-                        <input className="form-input" value={data.meta_keyword} onChange={e => setData('meta_keyword', e.target.value)} />
-                    </div>
+                        <div className="form-group">
+                            <label className="form-label">Meta Description</label>
 
-                    <div style={{ display:'flex', gap:'0.75rem', marginTop:'0.5rem', paddingTop:'1rem', borderTop:'1px solid #f1f5f9' }}>
-                        <button type="submit" className="btn-primary" disabled={processing}>{processing ? 'Saving...' : 'Update Item'}</button>
-                        <Link href="/admin/portfolio" className="btn-cancel">Cancel</Link>
-                    </div>
-                </form>
+                            <textarea
+                                name="meta_description"
+                                rows="3"
+                                className={`form-input ${errors.meta_description ? 'err' : ''}`}
+                                value={data.meta_description}
+                                onChange={(e) => setData('meta_description', e.target.value)}
+                                placeholder="Brief description for search engines (150-160 characters)"
+                                maxLength="160"
+                            />
+
+                            {errors.meta_description && (
+                                <p className="form-error">{errors.meta_description}</p>
+                            )}
+                            <p className="help-text">
+                                {data.meta_description.length}/160 characters
+                            </p>
+                        </div>
+
+                        <div className="form-group">
+                            <label className="form-label">Meta Keywords</label>
+
+                            <input
+                                type="text"
+                                name="meta_keyword"
+                                className={`form-input ${errors.meta_keyword ? 'err' : ''}`}
+                                value={data.meta_keyword}
+                                onChange={(e) => setData('meta_keyword', e.target.value)}
+                                placeholder="keyword1, keyword2, keyword3"
+                            />
+
+                            {errors.meta_keyword && (
+                                <p className="form-error">{errors.meta_keyword}</p>
+                            )}
+                            <p className="help-text">Separate keywords with commas</p>
+                        </div>
+
+                        {/* Form Actions */}
+                        <div className="form-actions">
+                            <button
+                                type="submit"
+                                className="btn-primary"
+                                disabled={processing}
+                            >
+                                {processing ? 'Updating...' : 'Update Portfolio'}
+                            </button>
+
+                            <Link href="/admin/portfolio" className="btn-cancel">
+                               
+                                Cancel
+                            </Link>
+                        </div>
+
+                    </form>
+                </div>
             </div>
         </AdminLayout>
     );

@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('blog_comments', function (Blueprint $table) {
-            $table->renameColumn('comment', 'description');
-        });
+        if (Schema::hasColumn('blog_comments', 'comment') && !Schema::hasColumn('blog_comments', 'description')) {
+            Schema::table('blog_comments', function (Blueprint $table) {
+                $table->renameColumn('comment', 'description');
+            });
+        }
     }
 
     public function down(): void

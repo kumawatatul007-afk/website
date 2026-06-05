@@ -31,6 +31,24 @@ class AdminCategoryController extends Controller
         ]);
     }
 
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name'     => 'required|string|max:255',
+            'text_for' => 'nullable|string|max:100',
+            'slug'     => 'nullable|string|max:255|unique:categories,slug',
+        ]);
+
+        if (empty($validated['slug'])) {
+            $validated['slug'] = Str::slug($validated['name']);
+        }
+
+        Category::create($validated);
+
+        return redirect()->route('admin.categories.index')
+            ->with('success', 'Category created successfully.');
+    }
+
     public function edit(Category $category)
     {
         return Inertia::render('Admin/Category/edit', [

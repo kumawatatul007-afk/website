@@ -1,0 +1,287 @@
+/* ============================================
+   Admin Login Page Styles
+   ============================================ */
+
+/* Google Fonts Import */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ============================================
+   Global Reset
+   ============================================ */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* ============================================
+   Root Container
+   ============================================ */
+.sl-root {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+    background: #f5f6fa;
+    padding: 1rem;
+}
+
+/* ============================================
+   Two-Column Layout
+   ============================================ */
+.sl-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+    width: 100%;
+    max-width: 960px;
+}
+
+/* ============================================
+   Login Card (Left Side)
+   ============================================ */
+.sl-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 2.5rem 2.2rem 2rem 2.2rem;
+    width: 100%;
+    max-width: 340px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+    flex-shrink: 0;
+}
+
+/* ============================================
+   Logo Area
+   ============================================ */
+.sl-logo {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.4rem;
+}
+
+.sl-logo img {
+    width: 150px;
+    height: auto;
+    object-fit: contain;
+    filter: brightness(0);
+}
+
+/* ============================================
+   Heading
+   ============================================ */
+.sl-heading {
+    font-size: 1.45rem;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin-bottom: 1.6rem;
+}
+
+/* ============================================
+   Form Fields
+   ============================================ */
+.sl-field {
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+/* Input Styles */
+.sl-input {
+    width: 100%;
+    padding: 0.7rem 2.6rem 0.7rem 0.9rem;
+    border: 1.5px solid #e8eaf0;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-family: 'Inter', sans-serif;
+    color: #1a1a2e;
+    background: #fff;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.sl-input::placeholder {
+    color: #b0b4c0;
+}
+
+.sl-input:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+.sl-input.has-error {
+    border-color: #e74c3c;
+}
+
+/* ============================================
+   Input Icons
+   ============================================ */
+.sl-input-icon-right {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #b0b4c0;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.sl-input-icon-right svg {
+    width: 17px;
+    height: 17px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* ============================================
+   Error Messages
+   ============================================ */
+.sl-error {
+    color: #e74c3c;
+    font-size: 0.72rem;
+    margin-top: 0.3rem;
+    font-weight: 500;
+}
+
+/* ============================================
+   Meta Row (Password Label & Forgot Link)
+   ============================================ */
+.sl-meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0.3rem 0 1.4rem 0;
+}
+
+.sl-meta-label {
+    font-size: 0.82rem;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.sl-forgot {
+    font-size: 0.82rem;
+    color: #4a90e2;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+.sl-forgot:hover {
+    text-decoration: underline;
+}
+
+/* ============================================
+   Login Button
+   ============================================ */
+.sl-btn {
+    width: 100%;
+    padding: 0.72rem;
+    background: #4a90e2;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    letter-spacing: 0.01em;
+}
+
+.sl-btn:hover:not(:disabled) {
+    background: #357abd;
+    transform: translateY(-1px);
+}
+
+.sl-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+.sl-btn-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* ============================================
+   Loading Spinner
+   ============================================ */
+.sl-spinner {
+    width: 15px;
+    height: 15px;
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: sl-spin 0.7s linear infinite;
+}
+
+@keyframes sl-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ============================================
+   Footer
+   ============================================ */
+.sl-footer {
+    text-align: center;
+    margin-top: 1.6rem;
+    font-size: 0.72rem;
+    color: #9ca3af;
+}
+
+.sl-footer a {
+    color: #4a90e2;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* ============================================
+   Illustration (Right Side)
+   ============================================ */
+.sl-illustration {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+}
+
+.sl-illustration img {
+    width: 100%;
+    max-width: 480px;
+    height: auto;
+    display: block;
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+@media (max-width: 720px) {
+    .sl-illustration {
+        display: none;
+    }
+    
+    .sl-wrapper {
+        justify-content: center;
+    }
+    
+    .sl-card {
+        max-width: 100%;
+    }
+}

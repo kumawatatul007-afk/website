@@ -10,26 +10,33 @@ use App\Models\BlogComment;
 
 // Get all blog posts (for public listing)
 Route::get('/blog', function () {
-    $posts = BlogPost::where('status', 1)
+    $posts = BlogPost::where('status', '!=', 'draft')
+        ->where('status', '!=', 0)
         ->latest()
-        ->get(['id', 'title', 'slug', 'content', 'main_image', 'meta_description', 'category_id', 'tags', 'created_at']);
+        ->get();
 
     $posts = $posts->map(function ($p) {
         $imgUrl = $p->main_image
             ? (str_starts_with($p->main_image, 'http') ? $p->main_image : '/images/blogs/' . $p->main_image)
             : null;
         return [
-            'id'           => $p->id,
-            'title'        => $p->title,
-            'slug'         => $p->slug,
-            'excerpt'      => $p->meta_description ?: ($p->content ? \Illuminate\Support\Str::limit(strip_tags($p->content), 160) : null),
-            'image_url'    => $imgUrl,
-            'main_image'   => $p->main_image,
-            'author'       => 'Nikhil Sharma',
-            'category_id'  => $p->category_id,
-            'tags'         => $p->tags,
-            'published_at' => $p->created_at,
-            'created_at'   => $p->created_at,
+            'id'               => $p->id,
+            'title'            => $p->title ?? '',
+            'slug'             => $p->slug ?? '',
+            'content'          => $p->content ?? '',
+            'description'      => $p->description ?? $p->content ?? '',
+            'excerpt'          => $p->meta_description ?: ($p->content ? \Illuminate\Support\Str::limit(strip_tags($p->content), 160) : ''),
+            'image_url'        => $imgUrl,
+            'main_image'       => $p->main_image ?? '',
+            'meta_description' => $p->meta_description ?? '',
+            'meta_title'       => $p->meta_title ?? '',
+            'meta_keyword'     => $p->meta_keyword ?? '',
+            'author'           => 'Nikhil Sharma',
+            'category_id'      => $p->category_id,
+            'tags'             => $p->tags ?? '',
+            'published_at'     => $p->created_at,
+            'created_at'       => $p->created_at,
+            'updated_at'       => $p->updated_at,
         ];
     });
 
@@ -45,8 +52,17 @@ Route::get('/blog/{slug}', function ($slug) {
         ->orderBy('created_at', 'asc')
         ->get(['id', 'name', 'email', 'description as comment', 'created_at']);
 
-    $prev = BlogPost::where('id', '<', $post->id)->orderBy('id', 'desc')->first(['id', 'title', 'slug', 'main_image']);
-    $next = BlogPost::where('id', '>', $post->id)->orderBy('id', 'asc')->first(['id', 'title', 'slug', 'main_image']);
+    $prev = BlogPost::where('status', '!=', 'draft')
+        ->where('status', '!=', 0)
+        ->where('id', '<', $post->id)
+        ->orderBy('id', 'desc')
+        ->first(['id', 'title', 'slug', 'main_image']);
+        
+    $next = BlogPost::where('status', '!=', 'draft')
+        ->where('status', '!=', 0)
+        ->where('id', '>', $post->id)
+        ->orderBy('id', 'asc')
+        ->first(['id', 'title', 'slug', 'main_image']);
 
     $imgUrl = $post->main_image
         ? (str_starts_with($post->main_image, 'http') ? $post->main_image : '/images/blogs/' . $post->main_image)
@@ -61,21 +77,26 @@ Route::get('/blog/{slug}', function ($slug) {
         : null;
 
     return response()->json([
-        'id'           => $post->id,
-        'title'        => $post->title,
-        'slug'         => $post->slug,
-        'excerpt'      => $post->meta_description,
-        'content'      => $post->content,
-        'image_url'    => $imgUrl,
-        'main_image'   => $post->main_image,
-        'author'       => 'Nikhil Sharma',
-        'category_id'  => $post->category_id,
-        'tags'         => $post->tags,
-        'published_at' => $post->created_at,
-        'created_at'   => $post->created_at,
-        'comments'     => $comments,
-        'prev_post'    => $prev ? ['id' => $prev->id, 'slug' => $prev->slug, 'title' => $prev->title, 'image_url' => $prevImgUrl, 'main_image' => $prev->main_image] : null,
-        'next_post'    => $next ? ['id' => $next->id, 'slug' => $next->slug, 'title' => $next->title, 'image_url' => $nextImgUrl, 'main_image' => $next->main_image] : null,
+        'id'               => $post->id,
+        'title'            => $post->title ?? '',
+        'slug'             => $post->slug ?? '',
+        'excerpt'          => $post->meta_description ?? '',
+        'content'          => $post->content ?? '',
+        'description'      => $post->description ?? $post->content ?? '',
+        'image_url'        => $imgUrl,
+        'main_image'       => $post->main_image ?? '',
+        'meta_description' => $post->meta_description ?? '',
+        'meta_title'       => $post->meta_title ?? '',
+        'meta_keyword'     => $post->meta_keyword ?? '',
+        'author'           => 'Nikhil Sharma',
+        'category_id'      => $post->category_id,
+        'tags'             => $post->tags ?? '',
+        'published_at'     => $post->created_at,
+        'created_at'       => $post->created_at,
+        'updated_at'       => $post->updated_at,
+        'comments'         => $comments,
+        'prev_post'        => $prev ? ['id' => $prev->id, 'slug' => $prev->slug, 'title' => $prev->title, 'image_url' => $prevImgUrl, 'main_image' => $prev->main_image] : null,
+        'next_post'        => $next ? ['id' => $next->id, 'slug' => $next->slug, 'title' => $next->title, 'image_url' => $nextImgUrl, 'main_image' => $next->main_image] : null,
     ]);
 });
 

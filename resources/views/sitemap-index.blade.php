@@ -1,42 +1,24 @@
 <?php echo '<?xml version="1.0" encoding="UTF-8"?>'; ?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-
-    {{-- Static Pages --}}
+    
+    {{-- Main sitemap with static pages, blog, portfolio, services --}}
     <sitemap>
-        <loc>{{ url('/sitemap-pages.xml') }}</loc>
+        <loc>{{ url('sitemap-main.xml') }}</loc>
         <lastmod>{{ now()->toAtomString() }}</lastmod>
     </sitemap>
 
-    {{-- Blog Posts --}}
+    {{-- Paginated tag sitemaps --}}
+    @for ($page = 1; $page <= $totalTagPages; $page++)
     <sitemap>
-        <loc>{{ url('/sitemap-blog.xml') }}</loc>
-        <lastmod>{{ now()->toAtomString() }}</lastmod>
-    </sitemap>
-
-    {{-- Portfolio --}}
-    <sitemap>
-        <loc>{{ url('/sitemap-portfolio.xml') }}</loc>
-        <lastmod>{{ now()->toAtomString() }}</lastmod>
-    </sitemap>
-
-    {{-- Services --}}
-    <sitemap>
-        <loc>{{ url('/sitemap-services.xml') }}</loc>
-        <lastmod>{{ now()->toAtomString() }}</lastmod>
-    </sitemap>
-
-    {{-- Keywords (paginated) --}}
-    @for ($i = 1; $i <= $keywordsPageCount; $i++)
-    <sitemap>
-        <loc>{{ url('/keywords-' . $i . '.xml') }}</loc>
+        <loc>{{ url("sitemap-tags-{$page}.xml") }}</loc>
         <lastmod>{{ now()->toAtomString() }}</lastmod>
     </sitemap>
     @endfor
 
-    {{-- Tags / Location combinations (paginated) --}}
-    @for ($i = 1; $i <= $tagsPageCount; $i++)
+    {{-- Paginated keyword sitemaps --}}
+    @for ($page = 1; $page <= $totalKeywordPages; $page++)
     <sitemap>
-        <loc>{{ url('/tags-' . $i . '.xml') }}</loc>
+        <loc>{{ url("sitemap-keywords-{$page}.xml") }}</loc>
         <lastmod>{{ now()->toAtomString() }}</lastmod>
     </sitemap>
     @endfor

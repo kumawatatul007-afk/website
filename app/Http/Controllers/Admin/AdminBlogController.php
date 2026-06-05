@@ -92,8 +92,29 @@ class AdminBlogController extends Controller
     public function edit(BlogPost $blog)
     {
         $categories = Category::orderBy('name')->get(['id', 'name']);
+        
+        // Ensure all fields are present in the response
+        $blogData = [
+            'id'               => $blog->id,
+            'title'            => $blog->title ?? '',
+            'content'          => $blog->content ?? '',
+            'main_image'       => $blog->main_image ?? '',
+            'category_id'      => $blog->category_id ?? '',
+            'meta_title'       => $blog->meta_title ?? '',
+            'meta_keyword'     => $blog->meta_keyword ?? '',
+            'meta_keywords'    => $blog->meta_keywords ?? '',
+            'meta_description' => $blog->meta_description ?? '',
+            'og_title'         => $blog->og_title ?? '',
+            'og_description'   => $blog->og_description ?? '',
+            'image_alt'        => $blog->image_alt ?? '',
+            'tags'             => $blog->tags ?? '',
+            'type'             => $blog->type ?? 1,
+            'status'           => $blog->status ?? 1,
+            'serial_number'    => $blog->serial_number ?? 0,
+        ];
+        
         return Inertia::render('Admin/Blog/edit', [
-            'post'       => $blog,
+            'post'       => $blogData,
             'categories' => $categories,
         ]);
     }
@@ -103,7 +124,7 @@ class AdminBlogController extends Controller
         $validated = $request->validate([
             'title'            => 'required|string|max:255',
             'content'          => 'nullable|string',
-            'main_image'       => 'nullable|string|max:500',
+            'main_image'       => 'nullable|file|image|max:5120', // 5MB max
             'category_id'      => 'nullable|integer',
             'serial_number'    => 'nullable|integer',
             'meta_title'       => 'nullable|string|max:255',
@@ -118,9 +139,27 @@ class AdminBlogController extends Controller
             'status'           => 'nullable|integer',
         ]);
 
+        // Handle file upload
+        if ($request->hasFile('main_image')) {
+            $file = $request->file('main_image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('images/blogs'), $filename);
+            $validated['main_image'] = $filename;
+        } else {
+            // Keep existing image if no new file uploaded
+            unset($validated['main_image']);
+        }
+
+        // Set default values for fields that cannot be null in database
+        $validated['serial_number'] = $validated['serial_number'] ?? 0;
+        $validated['status']        = $validated['status'] ?? 1;
+        $validated['type']          = $validated['type'] ?? 0;
+        $validated['category_id']   = $validated['category_id'] ?: null;
+
         $blog->update($validated);
 
-        return redirect()->route('admin.blog.index')
+        // Stay on edit page after update with success message
+        return redirect()->back()
             ->with('success', 'Blog post updated successfully.');
     }
 

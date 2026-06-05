@@ -16,32 +16,57 @@ class PublicController extends Controller
      */
     public function home()
     {
-        $blogPosts = BlogPost::where('status', 1)
+        $blogPosts = BlogPost::where('status', '!=', 'draft')
+            ->where('status', '!=', 0)
             ->latest()
             ->take(3)
-            ->get(['id', 'title', 'slug', 'content', 'main_image', 'meta_description', 'created_at']);
-
-        $portfolios = PortfolioItem::where('is_publish', 1)
-            ->latest()
-            ->take(6)
-            ->get(['id', 'title', 'image', 'website_link', 'short_description', 'slug'])
-            ->map(function ($item) {
-                return array_merge($item->toArray(), ['image_url' => $item->image_url]);
-            });
-
-        $services = BlogPost::where('type', 1)
-            ->where('status', 1)
-            ->latest()
-            ->get(['id', 'title', 'slug', 'meta_description', 'content', 'tags'])
+            ->get()
             ->map(function ($post) {
                 return [
-                    'id'          => $post->id,
-                    'title'       => $post->title,
-                    'subtitle'    => $post->meta_description,
-                    'slug'        => $post->slug,
-                    'description' => $post->content,
-                    'features'    => $post->tags ? array_map('trim', explode(',', $post->tags)) : [],
-                    'cta_text'    => 'Get a Quote',
+                    'id'               => $post->id,
+                    'title'            => $post->title ?? '',
+                    'slug'             => $post->slug ?? '',
+                    'content'          => $post->content ?? '',
+                    'description'      => $post->description ?? $post->content ?? '',
+                    'main_image'       => $post->main_image ?? $post->image_url ?? '',
+                    'image_url'        => $post->image_url ?? $post->main_image ?? '',
+                    'meta_description' => $post->meta_description ?? '',
+                    'created_at'       => $post->created_at?->toISOString() ?? '',
+                ];
+            });
+
+        $portfolios = PortfolioItem::where('is_publish', 1)
+            ->where('status', 'Active')
+            ->latest()
+            ->take(6)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'title' => $item->title ?? '',
+                    'slug' => $item->slug ?? '',
+                    'image' => $item->image ?? '',
+                    'image_url' => $item->image_url ?? '',
+                    'website_link' => $item->website_link ?? '',
+                    'short_description' => $item->short_description ?? '',
+                    'clint_name' => $item->clint_name ?? '',
+                    'date' => $item->date ? $item->date->format('Y-m-d') : '',
+                ];
+            });
+
+        $services = \App\Models\Service::where('is_active', true)
+            ->orderBy('sort_order', 'asc')
+            ->latest()
+            ->take(6)
+            ->get()
+            ->map(function ($service) {
+                return [
+                    'id'          => $service->id,
+                    'title'       => $service->title,
+                    'subtitle'    => $service->subtitle,
+                    'slug'        => $service->slug,
+                    'description' => $service->description,
+                    'features'    => $service->features ?? [],
                 ];
             });
 
@@ -68,9 +93,29 @@ class PublicController extends Controller
      */
     public function blog()
     {
-        $posts = BlogPost::where('status', 1)
+        // Fetch all published blogs with all necessary fields
+        $posts = BlogPost::where('status', '!=', 'draft')
+            ->where('status', '!=', 0)
             ->latest()
-            ->get(['id', 'title', 'slug', 'content', 'main_image', 'meta_description', 'category_id', 'tags', 'created_at']);
+            ->get()
+            ->map(function ($post) {
+                return [
+                    'id'               => $post->id,
+                    'title'            => $post->title ?? '',
+                    'slug'             => $post->slug ?? '',
+                    'content'          => $post->content ?? '',
+                    'description'      => $post->description ?? $post->content ?? '',
+                    'main_image'       => $post->main_image ?? $post->image_url ?? '',
+                    'image_url'        => $post->image_url ?? $post->main_image ?? '',
+                    'meta_description' => $post->meta_description ?? '',
+                    'meta_title'       => $post->meta_title ?? '',
+                    'meta_keyword'     => $post->meta_keyword ?? '',
+                    'category_id'      => $post->category_id,
+                    'tags'             => $post->tags ?? '',
+                    'created_at'       => $post->created_at?->toISOString() ?? '',
+                    'updated_at'       => $post->updated_at?->toISOString() ?? '',
+                ];
+            });
 
         $setting  = Setting::first();
         $siteName = $setting?->website_title ?: 'Nikhil Sharma';
@@ -93,43 +138,74 @@ class PublicController extends Controller
     public function blogDetail($slug)
     {
         $post = BlogPost::where('slug', $slug)->firstOrFail();
+        
+        $postArray = [
+            'id'               => $post->id,
+            'title'            => $post->title ?? '',
+            'slug'             => $post->slug ?? '',
+            'content'          => $post->content ?? '',
+            'description'      => $post->description ?? $post->content ?? '',
+            'main_image'       => $post->main_image ?? $post->image_url ?? '',
+            'image_url'        => $post->image_url ?? $post->main_image ?? '',
+            'meta_description' => $post->meta_description ?? '',
+            'meta_title'       => $post->meta_title ?? '',
+            'meta_keyword'     => $post->meta_keyword ?? '',
+            'og_title'         => $post->og_title ?? '',
+            'og_description'   => $post->og_description ?? '',
+            'category_id'      => $post->category_id,
+            'tags'             => $post->tags ?? '',
+            'created_at'       => $post->created_at?->toISOString() ?? '',
+            'updated_at'       => $post->updated_at?->toISOString() ?? '',
+        ];
 
         // Previous post (older)
-        $prevPost = BlogPost::where('status', 1)
+        $prevPost = BlogPost::where('status', '!=', 'draft')
+            ->where('status', '!=', 0)
             ->where('id', '<', $post->id)
             ->orderBy('id', 'desc')
             ->select('id', 'title', 'slug')
             ->first();
 
         // Next post (newer)
-        $nextPost = BlogPost::where('status', 1)
+        $nextPost = BlogPost::where('status', '!=', 'draft')
+            ->where('status', '!=', 0)
             ->where('id', '>', $post->id)
             ->orderBy('id', 'asc')
             ->select('id', 'title', 'slug')
             ->first();
 
         // Recent posts for sidebar
-        $recentPosts = BlogPost::where('status', 1)
+        $recentPosts = BlogPost::where('status', '!=', 'draft')
+            ->where('status', '!=', 0)
             ->where('id', '!=', $post->id)
             ->latest()
             ->take(5)
-            ->get(['id', 'title', 'slug', 'main_image', 'created_at']);
+            ->get()
+            ->map(function ($p) {
+                return [
+                    'id'         => $p->id,
+                    'title'      => $p->title ?? '',
+                    'slug'       => $p->slug ?? '',
+                    'main_image' => $p->main_image ?? $p->image_url ?? '',
+                    'image_url'  => $p->image_url ?? $p->main_image ?? '',
+                    'created_at' => $p->created_at?->toISOString() ?? '',
+                ];
+            });
 
         $setting   = Setting::first();
         $siteName  = $setting?->website_title ?: 'Nikhil Sharma';
-        $descText  = strip_tags($post->content ?? '');
+        $descText  = strip_tags($postArray['description'] ?? '');
         $descShort = mb_substr($descText, 0, 160);
 
         // Parse meta_keywords JSON to plain string
         $metaKw = $post->meta_keywords_plain ?: "{$post->title}, {$siteName}, Web Development Blog";
 
         // Append prev/next to the post object
-        $postData              = $post->toArray();
-        $postData['prev_post'] = $prevPost;
-        $postData['next_post'] = $nextPost;
+        $postArray['prev_post'] = $prevPost;
+        $postArray['next_post'] = $nextPost;
 
         return Inertia::render('Blog/BlogDetail/index', [
-            'post'        => $postData,
+            'post'        => $postArray,
             'recentPosts' => $recentPosts,
             'seo'         => [
                 'title'       => $post->title . " | {$siteName}",
@@ -155,22 +231,52 @@ class PublicController extends Controller
     public function blogDetailSidebar($slug)
     {
         $post = BlogPost::where('slug', $slug)->firstOrFail();
+        
+        $postArray = [
+            'id'               => $post->id,
+            'title'            => $post->title ?? '',
+            'slug'             => $post->slug ?? '',
+            'content'          => $post->content ?? '',
+            'description'      => $post->description ?? $post->content ?? '',
+            'main_image'       => $post->main_image ?? $post->image_url ?? '',
+            'image_url'        => $post->image_url ?? $post->main_image ?? '',
+            'meta_description' => $post->meta_description ?? '',
+            'meta_title'       => $post->meta_title ?? '',
+            'meta_keyword'     => $post->meta_keyword ?? '',
+            'og_title'         => $post->og_title ?? '',
+            'og_description'   => $post->og_description ?? '',
+            'category_id'      => $post->category_id,
+            'tags'             => $post->tags ?? '',
+            'created_at'       => $post->created_at?->toISOString() ?? '',
+            'updated_at'       => $post->updated_at?->toISOString() ?? '',
+        ];
 
-        $recentPosts = BlogPost::where('status', 1)
+        $recentPosts = BlogPost::where('status', '!=', 'draft')
+            ->where('status', '!=', 0)
             ->latest()
             ->where('id', '!=', $post->id)
             ->take(5)
-            ->get(['id', 'title', 'slug', 'main_image', 'created_at']);
+            ->get()
+            ->map(function ($p) {
+                return [
+                    'id'         => $p->id,
+                    'title'      => $p->title ?? '',
+                    'slug'       => $p->slug ?? '',
+                    'main_image' => $p->main_image ?? $p->image_url ?? '',
+                    'image_url'  => $p->image_url ?? $p->main_image ?? '',
+                    'created_at' => $p->created_at?->toISOString() ?? '',
+                ];
+            });
 
         $setting   = Setting::first();
         $siteName  = $setting?->website_title ?: 'Nikhil Sharma';
-        $descText  = strip_tags($post->content ?? '');
+        $descText  = strip_tags($postArray['description'] ?? '');
         $descShort = mb_substr($descText, 0, 160);
 
         $metaKw = $post->meta_keywords_plain ?: "{$post->title}, {$siteName}, Web Development Blog";
 
         return Inertia::render('Blog/BlogDetailSidebar/index', [
-            'post'        => $post,
+            'post'        => $postArray,
             'recentPosts' => $recentPosts,
             'seo'         => [
                 'title'       => $post->title . " | {$siteName}",
@@ -196,12 +302,23 @@ class PublicController extends Controller
     public function portfolio()
     {
         $items = PortfolioItem::where('is_publish', 1)
+            ->where('status', 'Active')
             ->latest()
-            ->get(['id', 'title', 'image', 'website_link', 'short_description', 'description', 'slug', 'category_id', 'clint_name', 'date'])
+            ->get()
             ->map(function ($item) {
-                return array_merge($item->toArray(), [
-                    'image_url' => $item->image_url,
-                ]);
+                return [
+                    'id' => $item->id,
+                    'title' => $item->title ?? '',
+                    'slug' => $item->slug ?? '',
+                    'image' => $item->image ?? '',
+                    'image_url' => $item->image_url ?? '',
+                    'website_link' => $item->website_link ?? '',
+                    'short_description' => $item->short_description ?? '',
+                    'description' => $item->description ?? '',
+                    'category_id' => $item->category_id,
+                    'clint_name' => $item->clint_name ?? '',
+                    'date' => $item->date ? $item->date->format('Y-m-d') : '',
+                ];
             });
 
         $setting  = Setting::first();
@@ -225,12 +342,23 @@ class PublicController extends Controller
     public function portfolioList()
     {
         $items = PortfolioItem::where('is_publish', 1)
+            ->where('status', 'Active')
             ->latest()
-            ->get(['id', 'title', 'image', 'website_link', 'short_description', 'description', 'slug', 'category_id', 'clint_name', 'date'])
+            ->get()
             ->map(function ($item) {
-                return array_merge($item->toArray(), [
-                    'image_url' => $item->image_url,
-                ]);
+                return [
+                    'id' => $item->id,
+                    'title' => $item->title ?? '',
+                    'slug' => $item->slug ?? '',
+                    'image' => $item->image ?? '',
+                    'image_url' => $item->image_url ?? '',
+                    'website_link' => $item->website_link ?? '',
+                    'short_description' => $item->short_description ?? '',
+                    'description' => $item->description ?? '',
+                    'category_id' => $item->category_id,
+                    'clint_name' => $item->clint_name ?? '',
+                    'date' => $item->date ? $item->date->format('Y-m-d') : '',
+                ];
             });
 
         $setting  = Setting::first();
@@ -254,16 +382,23 @@ class PublicController extends Controller
     public function portfolioDetail($slug)
     {
         $item = is_numeric($slug)
-            ? PortfolioItem::findOrFail($slug)
-            : PortfolioItem::where('slug', $slug)->firstOrFail();
+            ? PortfolioItem::where('is_publish', 1)->where('status', 'Active')->findOrFail($slug)
+            : PortfolioItem::where('slug', $slug)->where('is_publish', 1)->where('status', 'Active')->firstOrFail();
 
         $related = PortfolioItem::where('is_publish', 1)
+            ->where('status', 'Active')
             ->where('id', '!=', $item->id)
             ->where('category_id', $item->category_id)
             ->take(3)
-            ->get(['id', 'title', 'image', 'slug'])
+            ->get()
             ->map(function ($r) {
-                return array_merge($r->toArray(), ['image_url' => $r->image_url]);
+                return [
+                    'id' => $r->id,
+                    'title' => $r->title ?? '',
+                    'slug' => $r->slug ?? '',
+                    'image' => $r->image ?? '',
+                    'image_url' => $r->image_url ?? '',
+                ];
             });
 
         $setting   = Setting::first();
@@ -271,10 +406,23 @@ class PublicController extends Controller
         $descText  = strip_tags($item->description ?? $item->short_description ?? '');
         $descShort = mb_substr($descText, 0, 160);
 
-        $itemData = array_merge($item->toArray(), [
-            'image_url' => $item->image_url,
-            'category'  => optional(Category::find($item->category_id))->name ?? $item->short_description ?? '',
-        ]);
+        $itemData = [
+            'id' => $item->id,
+            'title' => $item->title ?? '',
+            'slug' => $item->slug ?? '',
+            'image' => $item->image ?? '',
+            'image_url' => $item->image_url ?? '',
+            'website_link' => $item->website_link ?? '',
+            'short_description' => $item->short_description ?? '',
+            'description' => $item->description ?? '',
+            'clint_name' => $item->clint_name ?? '',
+            'date' => $item->date ? $item->date->format('Y-m-d') : '',
+            'category_id' => $item->category_id,
+            'category' => optional(Category::find($item->category_id))->name ?? '',
+            'meta_title' => $item->meta_title ?? '',
+            'meta_keyword' => $item->meta_keyword ?? '',
+            'meta_description' => $item->meta_description ?? '',
+        ];
 
         return Inertia::render('Portfolio/ProjectDetail/index', [
             'item'    => $itemData,
@@ -295,20 +443,20 @@ class PublicController extends Controller
      */
     public function services()
     {
-        $services = BlogPost::where('type', 1)
-            ->where('status', 1)
+        $services = \App\Models\Service::where('is_active', true)
+            ->orderBy('sort_order', 'asc')
             ->latest()
-            ->get(['id', 'title', 'slug', 'meta_description', 'content', 'tags'])
-            ->map(function ($post) {
+            ->get()
+            ->map(function ($service) {
                 return [
-                    'id'          => $post->id,
-                    'title'       => $post->title,
-                    'subtitle'    => $post->meta_description,
-                    'slug'        => $post->slug,
-                    'price_range' => null,
-                    'description' => $post->content,
-                    'features'    => $post->tags ? array_map('trim', explode(',', $post->tags)) : [],
-                    'cta_text'    => 'Get a Quote',
+                    'id'          => $service->id,
+                    'title'       => $service->title,
+                    'subtitle'    => $service->subtitle,
+                    'slug'        => $service->slug,
+                    'price_range' => $service->price_range,
+                    'description' => $service->description,
+                    'features'    => $service->features ?? [],
+                    'cta_text'    => $service->cta_text,
                 ];
             });
 
@@ -443,7 +591,7 @@ class PublicController extends Controller
      */
     public function serviceDetail($slug)
     {
-        $service = Service::where('slug', $slug)
+        $service = \App\Models\Service::where('slug', $slug)
             ->where('is_active', true)
             ->first();
 
@@ -463,57 +611,55 @@ class PublicController extends Controller
         // Reconstruct slug: "Web" + "development" → "web-development"
         $slug = strtolower($prefix) . '-' . $rest;
 
-        $blogPost = BlogPost::where('slug', $slug)
-            ->where('type', 1)
-            ->where('status', 1)
+        $service = \App\Models\Service::where('slug', $slug)
+            ->where('is_active', true)
             ->firstOrFail();
 
-        $service = (object)[
-            'id'               => $blogPost->id,
-            'title'            => $blogPost->title,
-            'subtitle'         => $blogPost->meta_description,
-            'slug'             => $blogPost->slug,
-            'price_range'      => null,
-            'description'      => $blogPost->content,
-            'features'         => $blogPost->tags ? array_map('trim', explode(',', $blogPost->tags)) : [],
-            'cta_text'         => 'Get a Quote',
-            'meta_title'       => $blogPost->title,
-            'meta_description' => $blogPost->meta_description,
-            'meta_keyword'     => $blogPost->meta_keywords_plain,
+        $serviceData = [
+            'id'               => $service->id,
+            'title'            => $service->title,
+            'subtitle'         => $service->subtitle,
+            'slug'             => $service->slug,
+            'price_range'      => $service->price_range,
+            'description'      => $service->description,
+            'features'         => $service->features ?? [],
+            'cta_text'         => $service->cta_text,
+            'meta_title'       => $service->meta_title,
+            'meta_description' => $service->meta_description,
+            'meta_keyword'     => $service->meta_keyword,
         ];
 
-        $related = BlogPost::where('type', 1)
-            ->where('status', 1)
+        $related = \App\Models\Service::where('is_active', true)
             ->where('id', '!=', $service->id)
             ->latest()
             ->take(3)
-            ->get(['id', 'title', 'slug', 'meta_description', 'content', 'tags'])
-            ->map(function ($post) {
+            ->get()
+            ->map(function ($s) {
                 return [
-                    'id'          => $post->id,
-                    'title'       => $post->title,
-                    'subtitle'    => $post->meta_description,
-                    'slug'        => $post->slug,
-                    'price_range' => null,
-                    'description' => $post->content,
-                    'features'    => $post->tags ? array_map('trim', explode(',', $post->tags)) : [],
-                    'cta_text'    => 'Get a Quote',
+                    'id'          => $s->id,
+                    'title'       => $s->title,
+                    'subtitle'    => $s->subtitle,
+                    'slug'        => $s->slug,
+                    'price_range' => $s->price_range,
+                    'description' => $s->description,
+                    'features'    => $s->features ?? [],
+                    'cta_text'    => $s->cta_text,
                 ];
             });
 
         $setting  = Setting::first();
         $siteName = $setting?->website_title ?: 'Nikhil Sharma';
-        $descText = strip_tags($service->description ?? '');
+        $descText = strip_tags($serviceData['description'] ?? '');
         $descShort = mb_substr($descText, 0, 160);
 
         return Inertia::render('Services/Detail/index', [
-            'service' => $service,
+            'service' => $serviceData,
             'related' => $related,
             'setting' => $setting,
             'seo'     => [
-                'title'       => $service->meta_title       ?: "{$service->title} — Jaipur | {$siteName}",
-                'description' => $service->meta_description ?: ($service->subtitle ?: ($descShort ?: "Professional {$service->title} services in Jaipur by {$siteName}.")),
-                'keywords'    => $service->meta_keyword     ?: "{$service->title} Jaipur, {$service->title} India, {$siteName} {$service->title}",
+                'title'       => $serviceData['meta_title']       ?: "{$serviceData['title']} — Jaipur | {$siteName}",
+                'description' => $serviceData['meta_description'] ?: ($serviceData['subtitle'] ?: ($descShort ?: "Professional {$serviceData['title']} services in Jaipur by {$siteName}.")),
+                'keywords'    => $serviceData['meta_keyword']     ?: "{$serviceData['title']} Jaipur, {$serviceData['title']} India, {$siteName} {$serviceData['title']}",
                 'canonical'   => url()->current(),
                 'robots'      => 'index, follow',
             ],

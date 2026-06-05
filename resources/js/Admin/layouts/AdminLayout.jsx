@@ -201,12 +201,12 @@ const NAV_ITEMS = [
 export default function AdminLayout({ children, title = 'Admin Panel', hideSidebar = false }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [openMenus, setOpenMenus] = useState({});
-  const [notifOpen, setNotifOpen] = useState(false);
+  const [notificationOpen, setNotificationOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
-  const notifRef = useRef(null);
   const navRef = useRef(null);
   const savedNavScroll = useRef(0);
+  const notifRef = useRef(null);
   const { url } = usePage();
 
   useEffect(() => {
@@ -223,6 +223,37 @@ export default function AdminLayout({ children, title = 'Admin Panel', hideSideb
     });
     return () => { removeBeforeNav(); removeNavigate(); };
   }, []);
+
+  // Fetch notifications
+  useEffect(() => {
+    const fetchNotifications = () => {
+      fetch('/admin/notifications')
+        .then(r => r.json())
+        .then(data => {
+          setNotifications(data.notifications || []);
+          setUnreadCount(data.unread_count || 0);
+        })
+        .catch(() => {});
+    };
+    
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 30000); // Every 30 seconds
+    return () => clearInterval(interval);
+  }, []);
+
+  // Close notification dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (notifRef.current && !notifRef.current.contains(e.target)) {
+        setNotificationOpen(false);
+      }
+    };
+    
+    if (notificationOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [notificationOpen]);
 
   useEffect(() => {
     const auto = {};
@@ -250,34 +281,24 @@ export default function AdminLayout({ children, title = 'Admin Panel', hideSideb
     setOpenMenus(prev => ({ ...prev, [href]: !prev[href] }));
   };
 
-  const fetchNotifications = () => {
-    fetch('/admin/notifications')
-      .then(res => res.json())
-      .then(data => {
-        setNotifications(data.notifications || []);
-        setUnreadCount(data.unread_count || 0);
-      })
-      .catch(() => {});
-  };
-
-  useEffect(() => {
-    fetchNotifications();
-    const interval = setInterval(fetchNotifications, 60000);
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (notifRef.current && !notifRef.current.contains(e.target)) {
-        setNotifOpen(false);
-      }
-    };
-    if (notifOpen) document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [notifOpen]);
-
   const handleLogout = () => {
     router.post('/admin/logout');
+  };
+
+  const formatTime = (date) => {
+    if (!date) return '';
+    const d = new Date(date);
+    const now = new Date();
+    const diffMs = now - d;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
   };
 
   const getAnimationClass = (anim) => {
@@ -389,59 +410,79 @@ export default function AdminLayout({ children, title = 'Admin Panel', hideSideb
             <span className="admin-topbar-title">{title}</span>
           </div>
           <div className="topbar-right">
-            <div className="notif-wrapper" ref={notifRef}>
-              <button
-                className="topbar-notif-btn"
-                title="Notifications"
-                onClick={() => setNotifOpen(o => !o)}
+            {/* Notification Button */}
+            <div className="notification-container" ref={notifRef}>
+              <button 
+                className="notification-btn"
+                onClick={() => setNotificationOpen(!notificationOpen)}
+                aria-label="Notifications"
               >
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
                 </svg>
                 {unreadCount > 0 && (
-                  <span className="notif-badge">{unreadCount > 9 ? '9+' : unreadCount}</span>
+                  <span className="notification-badge">{unreadCount > 9 ? '9+' : unreadCount}</span>
                 )}
               </button>
-              {notifOpen && (
-                <div className="notif-dropdown">
-                  <div className="notif-header">
-                    <span className="notif-title">Notifications</span>
-                    {unreadCount > 0 && (
-                      <span className="notif-unread-label">{unreadCount} unread</span>
-                    )}
+
+              {/* Notification Dropdown */}
+              {notificationOpen && (
+                <div className="notification-dropdown">
+                  <div className="notification-header">
+                    <h3>Notifications</h3>
+                    <span className="notification-count">{unreadCount} unread</span>
                   </div>
-                  <div className="notif-list">
+                  
+                  <div className="notification-list">
                     {notifications.length === 0 ? (
-                      <div className="notif-empty">No notifications</div>
+                      <div className="notification-empty">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                        </svg>
+                        <p>No notifications yet</p>
+                      </div>
                     ) : (
-                      notifications.map(n => (
+                      notifications.slice(0, 5).map((notif) => (
                         <Link
-                          key={n.id}
-                          href={`/admin/messages/${n.id}`}
-                          className={`notif-item ${!n.is_read ? 'notif-item-unread' : ''}`}
-                          onClick={() => setNotifOpen(false)}
+                          key={notif.id}
+                          href={`/admin/messages/${notif.id}`}
+                          className={`notification-item ${!notif.is_read ? 'unread' : ''}`}
+                          onClick={() => setNotificationOpen(false)}
                         >
-                          <div className="notif-item-icon">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                            </svg>
+                          <div className="notification-avatar">
+                            {notif.name?.charAt(0)?.toUpperCase() || '?'}
                           </div>
-                          <div className="notif-item-content">
-                            <p className="notif-item-name">{n.name}</p>
-                            <p className="notif-item-msg">{n.message ? n.message.slice(0, 50) + (n.message.length > 50 ? '…' : '') : ''}</p>
-                            <p className="notif-item-time">{n.created_at ? new Date(n.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : ''}</p>
+                          <div className="notification-content">
+                            <div className="notification-title">
+                              <strong>{notif.name}</strong>
+                              {!notif.is_read && <span className="unread-dot"></span>}
+                            </div>
+                            <p className="notification-message">
+                              {notif.message?.slice(0, 60)}
+                              {notif.message?.length > 60 ? '...' : ''}
+                            </p>
+                            <span className="notification-time">{formatTime(notif.created_at)}</span>
                           </div>
-                          {!n.is_read && <span className="notif-dot" />}
                         </Link>
                       ))
                     )}
                   </div>
-                  <Link href="/admin/messages" className="notif-footer" onClick={() => setNotifOpen(false)}>
-                    View all messages →
-                  </Link>
+
+                  {notifications.length > 0 && (
+                    <Link
+                      href="/admin/messages"
+                      className="notification-view-all"
+                      onClick={() => setNotificationOpen(false)}
+                    >
+                      View all messages
+                    </Link>
+                  )}
                 </div>
               )}
             </div>
+
             <div className="topbar-divider" />
             <div className="user-info">
               <span className="user-name">Nikhil Sharma</span>

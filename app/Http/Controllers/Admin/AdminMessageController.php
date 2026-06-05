@@ -23,7 +23,7 @@ class AdminMessageController extends Controller
         }
 
         if ($request->filled('status')) {
-            $query->where('is_read', $request->status === 'read');
+            $query->where('is_check', $request->status === 'read' ? 1 : 0);
         }
 
         $messages = $query->latest()->paginate(10)->withQueryString();
@@ -38,7 +38,7 @@ class AdminMessageController extends Controller
     {
         // Mark as read when opened
         if (!$message->is_read) {
-            $message->update(['is_read' => true]);
+            $message->update(['is_check' => 1]);
         }
 
         return Inertia::render('Admin/Messages/show', [
@@ -48,7 +48,7 @@ class AdminMessageController extends Controller
 
     public function markRead(ContactMessage $message)
     {
-        $message->update(['is_read' => true]);
+        $message->update(['is_check' => 1]);
 
         return back()->with('success', 'Message marked as read.');
     }
@@ -63,8 +63,8 @@ class AdminMessageController extends Controller
 
     public function notifications()
     {
-        $unreadCount = ContactMessage::where('is_read', false)->count();
-        $recent = ContactMessage::latest()->take(5)->get(['id', 'name', 'email', 'message', 'is_read', 'created_at']);
+        $unreadCount = ContactMessage::where('is_check', 0)->count();
+        $recent = ContactMessage::latest()->take(5)->get(['id', 'name', 'email', 'description as message', 'is_check as is_read', 'created_at']);
 
         return response()->json([
             'unread_count' => $unreadCount,
