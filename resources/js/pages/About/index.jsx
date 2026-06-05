@@ -95,7 +95,7 @@ export default function AboutPage() {
   return (
     <main className="ap-root">
       <SEO 
-        title="About Nikhil Sharma | Full Stack Developer & UI/UX Designer — Jaipur"
+        title="About Nikhil Sharma | Full Stack Developer & UI/UX Designer — Jaipur."
         description="9+ years building PHP, React & Flutter apps. Nikhil Sharma is a Jaipur-based Full Stack Developer specialising in web apps, mobile apps, and UI/UX design for startups and SMEs."
         keywords="About Nikhil Sharma, Full Stack Developer Jaipur, PHP React Flutter Developer, Software Architect Jaipur, Web Development Expert India"
         structuredData={[
