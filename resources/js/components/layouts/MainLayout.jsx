@@ -47,7 +47,7 @@ export default function MainLayout({ children }) {
     ? `/storage/${setting.logo}`
     : '/images/logo.png'
   const siteEmail   = setting.email   || 'technikhilsharma7@gmail.com'
-  const sitePhone   = setting.phonenumber || setting.phone || '+91 9529921038'
+  const sitePhone   = '+91 9529921038'
   const siteAddress = 'Nikhil Sharma, Jaipur, Rajasthan, India'
 
   // social_links is stored as JSON: { facebook, twitter, linkedin, github, ... }

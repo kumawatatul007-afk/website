@@ -9,13 +9,17 @@ class PortfolioItem extends Model
 {
     use HasFactory;
 
-    // Actual table name in the database
+    // Actual table name in the database (portfolio table)
     protected $table = 'portfolio';
 
     protected $fillable = [
         'category_id',
         'title',
         'slug',
+        'year',
+        'client',
+        'services',
+        'project',
         'image',
         'clint_name',
         'status',
@@ -23,8 +27,13 @@ class PortfolioItem extends Model
         'website_link',
         'short_description',
         'description',
+        'summary',
+        'meta_title',
+        'og_title',
         'meta_keyword',
+        'image_alt',
         'meta_description',
+        'og_description',
         'is_publish',
     ];
 
@@ -43,16 +52,13 @@ class PortfolioItem extends Model
      */
     public function getImageUrlAttribute(): string
     {
-        if (!$this->image) return '';
-        if (str_starts_with($this->image, 'http')) return $this->image;
+        $image = $this->image ?? '';
         
-        // Check uploads folder first (for new uploads)
-        if (file_exists(public_path('uploads/portfolio/' . $this->image))) {
-            return '/uploads/portfolio/' . $this->image;
-        }
+        if (!$image) return '';
+        if (str_starts_with($image, 'http')) return $image;
         
-        // Fallback to images folder (for old images)
-        return '/images/portfolio/' . $this->image;
+        // Return proper path
+        return '/uploads/portfolio/' . $image;
     }
 
     /**

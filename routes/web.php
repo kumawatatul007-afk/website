@@ -122,15 +122,26 @@ Route::prefix('admin')->name('admin.')->middleware(\App\Http\Middleware\AdminMid
 
 // ─── Public / Portfolio Site ────────────────────────────────────────────────
 
+// Sitemap Index (main entry point)
 Route::get('/sitemap.xml', [SitemapController::class, 'index']);
+
+// Individual Sitemaps
+Route::get('/sitemap-main.xml', [SitemapController::class, 'main']);
 Route::get('/sitemap-pages.xml', [SitemapController::class, 'pages']);
 Route::get('/sitemap-blog.xml', [SitemapController::class, 'blog']);
 Route::get('/sitemap-portfolio.xml', [SitemapController::class, 'portfolio']);
 Route::get('/sitemap-services.xml', [SitemapController::class, 'services']);
+
+// Paginated Sitemaps for Keywords and Tags
+Route::get('/sitemap-keywords-{page}.xml', [SitemapController::class, 'keywordsPage'])->where('page', '[1-9][0-9]*');
+Route::get('/sitemap-tags-{page}.xml', [SitemapController::class, 'tagsPage'])->where('page', '[1-9][0-9]*');
+
+// Legacy routes (backward compatibility)
 Route::get('/keywords.xml', [SitemapController::class, 'keywords']);
 Route::get('/keywords-{page}.xml', [SitemapController::class, 'keywordsPage'])->where('page', '[1-9][0-9]*');
 Route::get('/tags.xml', [SitemapController::class, 'tags']);
 Route::get('/tags-{page}.xml', [SitemapController::class, 'tagsPage'])->where('page', '[1-9][0-9]*');
+
 Route::get('/robots.txt', [SitemapController::class, 'robots']);
 
 Route::get('/', [PublicController::class, 'home']);

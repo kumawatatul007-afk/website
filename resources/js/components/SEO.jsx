@@ -60,8 +60,8 @@ const SEO = ({
             "postalCode": "302001",
             "addressCountry": "IN"
         },
-        "email": "nikhilsharma@thenikhilsharma.in",
-        "telephone": "+91-98765-43210",
+        "email": "technikhilsharma7@gmail.com",
+        "telephone": "+91-9529921038",
         "sameAs": [
             "https://www.linkedin.com/in/nikhil-sharma-jaipur",
             "https://x.com/NikhilSharma881",
@@ -81,8 +81,8 @@ const SEO = ({
         "logo": "https://www.thenikhilsharma.in/public/admin/images/logo/GUJKF-100621-yYB.png",
         "image": "https://www.thenikhilsharma.in/public/profile/images/n2.png",
         "description": "Professional web development and UI/UX design services in Jaipur, Rajasthan. Specialising in React, Laravel, and mobile app development.",
-        "telephone": "+91-98765-43210",
-        "email": "nikhilsharma@thenikhilsharma.in",
+        "telephone": "+91-9529921038",
+        "email": "technikhilsharma7@gmail.com",
         "address": {
             "@type": "PostalAddress",
             "streetAddress": "Jaipur",
@@ -150,8 +150,8 @@ const SEO = ({
         "@type": "ProfessionalService",
         "name": "Nikhil Sharma - Web & App Development",
         "url": "https://thenikhilsharma.in",
-        "telephone": "+91-98765-43210",
-        "email": "nikhilsharma@thenikhilsharma.in",
+        "telephone": "+91-9529921038",
+        "email": "technikhilsharma7@gmail.com",
         "address": {
             "@type": "PostalAddress",
             "addressLocality": "Jaipur",

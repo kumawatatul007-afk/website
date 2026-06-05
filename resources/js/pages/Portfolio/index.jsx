@@ -8,7 +8,7 @@ export default function PortfolioPage({ items: dbItems }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Always use data from Inertia props (server-side)
+    // Use data from Inertia props
     if (dbItems && dbItems.length > 0) {
       setPortfolios(dbItems);
     }
@@ -70,10 +70,16 @@ export default function PortfolioPage({ items: dbItems }) {
         )}
 
         {/* ── Portfolio Grid ── */}
-        {!loading && (
+        {!loading && portfolios.length === 0 && (
+          <div style={{ textAlign: 'center', padding: '3rem', color: '#9ca3af' }}>
+            <p>No portfolio items available yet.</p>
+          </div>
+        )}
+
+        {!loading && portfolios.length > 0 && (
           <div className="port-grid" ref={gridRef}>
             {portfolios.map((project, i) => (
-              <a
+              <Link
                 key={project.id}
                 href={`/portfolio/${project.slug || project.id}`}
                 style={{ textDecoration: 'none' }}
@@ -84,34 +90,26 @@ export default function PortfolioPage({ items: dbItems }) {
                 >
                   <div className="port-img-wrap">
                     <img
-                      src={
-                        project.image
-                          ? (project.image.startsWith('http') ? project.image : `/uploads/portfolio/${project.image}`)
-                          : (project.image_url || 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/project-5.jpg')
-                      }
-                      alt={project.title}
+                      src={project.image_url || project.image || 'https://via.placeholder.com/600x400?text=No+Image'}
+                      alt={project.title || 'Portfolio Item'}
                       className="port-img"
                       loading="lazy"
-                      onError={e => { 
-                        // Try images folder as fallback
-                        if (!e.target.src.includes('/images/portfolio/')) {
-                          e.target.src = `/images/portfolio/${project.image}`;
-                        } else {
-                          e.target.src = 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/project-5.jpg';
-                        }
+                      onError={(e) => {
+                        e.target.src = 'https://via.placeholder.com/600x400?text=No+Image';
                       }}
                     />
                     <div className="port-overlay">
                       <div className="port-overlay-content">
+                        <h3 className="port-overlay-title">{project.title || 'Untitled Project'}</h3>
                         {project.short_description && (
-                          <p className="port-overlay-cat">{project.short_description.slice(0, 80)}</p>
+                          <p className="port-overlay-desc">{project.short_description.slice(0, 100)}</p>
                         )}
                         <span className="port-link">View Details →</span>
                       </div>
                     </div>
                   </div>
                 </div>
-              </a>
+              </Link>
             ))}
           </div>
         )}
@@ -258,13 +256,21 @@ export default function PortfolioPage({ items: dbItems }) {
         }
 
         .port-overlay-title {
-          font-size: 1rem;
-          font-weight: 600;
+          font-size: 1.1rem;
+          font-weight: 700;
           color: #131313;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
+          letter-spacing: -0.01em;
           font-family: 'Space Grotesk', sans-serif;
-          margin: 0;
+          margin: 0 0 0.5rem 0;
+          line-height: 1.3;
+        }
+
+        .port-overlay-desc {
+          font-size: 0.82rem;
+          color: #6b7280;
+          line-height: 1.5;
+          font-family: 'Space Grotesk', sans-serif;
+          margin: 0.5rem 0;
         }
 
         .port-overlay-type {

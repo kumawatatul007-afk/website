@@ -314,7 +314,7 @@ export default function KeywordDetailPage({ keyword, services = [], relatedKeywo
 
   // ── Dynamic values from setting ──────────────────────────────────────────
   const siteName    = setting?.website_title || 'Nikhil Sharma';
-  const sitePhone   = setting?.phone         || null;
+  const sitePhone   = '9529921038';
   const siteEmail   = setting?.email         || null;
   const siteAddress = setting?.address       || 'Jaipur, Rajasthan';
   const siteTiming  = setting?.timing        || null;

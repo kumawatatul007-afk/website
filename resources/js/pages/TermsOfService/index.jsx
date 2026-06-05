@@ -159,7 +159,7 @@ export default function TermsOfService() {
               <p>
                 <strong>Nikhil Sharma</strong><br />
                 Jaipur, Rajasthan, India<br />
-                Email: <a href="mailto:nikhilsharma@thenikhilsharma.in" style={{ color: '#6366f1' }}>nikhilsharma@thenikhilsharma.in</a><br />
+                Email: <a href="mailto:technikhilsharma7@gmail.com" style={{ color: '#6366f1' }}>technikhilsharma7@gmail.com</a><br />
                 Website: <a href="https://thenikhilsharma.in" style={{ color: '#6366f1' }}>thenikhilsharma.in</a>
               </p>
             </Section>

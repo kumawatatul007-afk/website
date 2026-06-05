@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\BlogPost;
+use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -28,13 +28,10 @@ function cleanServiceContent(?string $html): string
 
 class AdminServiceController extends Controller
 {
-    // type=1 means service in blogs table
-    private const TYPE_SERVICE = 1;
-
     public function index()
     {
-        $services = BlogPost::where('type', self::TYPE_SERVICE)
-            ->orderBy('serial_number')
+        $services = Service::where('is_active', 1)
+            ->orderBy('sort_order')
             ->orderBy('id')
             ->paginate(10)
             ->withQueryString();
@@ -53,26 +50,31 @@ class AdminServiceController extends Controller
     {
         $validated = $request->validate([
             'title'            => 'required|string|max:255',
-            'slug'             => 'nullable|string|max:255|unique:blogs,slug',
-            'meta_description' => 'nullable|string',
-            'meta_keywords'    => 'nullable|string',
+            'slug'             => 'nullable|string|max:255|unique:services,slug',
+            'subtitle'         => 'nullable|string|max:255',
+            'price_range'      => 'nullable|string|max:255',
+            'description'      => 'nullable|string',
+            'features'         => 'nullable|array',
+            'cta_text'         => 'nullable|string|max:255',
+            'sort_order'       => 'nullable|integer|min:0',
+            'is_active'        => 'nullable|boolean',
             'tags'             => 'nullable|string',
-            'content'          => 'nullable|string',
-            'main_image'       => 'nullable|string|max:255',
-            'serial_number'    => 'nullable|integer|min:0',
-            'status'           => 'nullable|integer',
+            'image'            => 'nullable|string|max:255',
             'category_id'      => 'nullable|integer',
+            'meta_title'       => 'nullable|string|max:255',
+            'meta_keyword'     => 'nullable|string',
+            'meta_description' => 'nullable|string',
+            'image_alt'        => 'nullable|string|max:255',
         ]);
 
         if (empty($validated['slug'])) {
             $validated['slug'] = Str::slug($validated['title']);
         }
 
-        $validated['content'] = cleanServiceContent($validated['content'] ?? '');
-        $validated['type']    = self::TYPE_SERVICE;
-        $validated['status']  = $validated['status'] ?? 1;
+        $validated['description'] = cleanServiceContent($validated['description'] ?? '');
+        $validated['is_active']   = $validated['is_active'] ?? true;
 
-        BlogPost::create($validated);
+        Service::create($validated);
 
         return redirect()->route('admin.services.index')
             ->with('success', 'Service created successfully.');
@@ -80,47 +82,41 @@ class AdminServiceController extends Controller
 
     public function edit($id)
     {
-        $service = BlogPost::where('type', self::TYPE_SERVICE)->findOrFail($id);
-
-        // Parse meta_keywords from JSON array to plain comma string for the form
-        $data = $service->toArray();
-        if ($data['meta_keywords']) {
-            $decoded = json_decode($data['meta_keywords'], true);
-            if (is_array($decoded)) {
-                $data['meta_keywords'] = implode(', ', array_column($decoded, 'value'));
-            }
-        }
+        $service = Service::findOrFail($id);
 
         return Inertia::render('Admin/Services/edit', [
-            'service' => $data,
+            'service' => $service,
         ]);
     }
 
     public function update(Request $request, $id)
     {
-        $service = BlogPost::where('type', self::TYPE_SERVICE)->findOrFail($id);
+        $service = Service::findOrFail($id);
 
         $validated = $request->validate([
             'title'            => 'required|string|max:255',
-            'slug'             => 'nullable|string|max:255|unique:blogs,slug,' . $service->id,
-            'meta_description' => 'nullable|string',
-            'meta_keywords'    => 'nullable|string',
+            'slug'             => 'nullable|string|max:255|unique:services,slug,' . $service->id,
+            'subtitle'         => 'nullable|string|max:255',
+            'price_range'      => 'nullable|string|max:255',
+            'description'      => 'nullable|string',
+            'features'         => 'nullable|array',
+            'cta_text'         => 'nullable|string|max:255',
+            'sort_order'       => 'nullable|integer|min:0',
+            'is_active'        => 'nullable|boolean',
             'tags'             => 'nullable|string',
-            'content'          => 'nullable|string',
-            'main_image'       => 'nullable|string|max:255',
-            'serial_number'    => 'nullable|integer|min:0',
-            'status'           => 'nullable|integer',
+            'image'            => 'nullable|string|max:255',
             'category_id'      => 'nullable|integer',
+            'meta_title'       => 'nullable|string|max:255',
+            'meta_keyword'     => 'nullable|string',
+            'meta_description' => 'nullable|string',
+            'image_alt'        => 'nullable|string|max:255',
         ]);
 
         if (empty($validated['slug'])) {
             $validated['slug'] = Str::slug($validated['title']);
         }
 
-        $validated['content'] = cleanServiceContent($validated['content'] ?? '');
-
-        // Never change type
-        unset($validated['type']);
+        $validated['description'] = cleanServiceContent($validated['description'] ?? '');
 
         $service->update($validated);
 
@@ -130,7 +126,7 @@ class AdminServiceController extends Controller
 
     public function destroy($id)
     {
-        $service = BlogPost::where('type', self::TYPE_SERVICE)->findOrFail($id);
+        $service = Service::findOrFail($id);
         $service->delete();
 
         return redirect()->route('admin.services.index')

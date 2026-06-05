@@ -210,7 +210,7 @@ export default function ServiceDetailPage({ service, related = [], setting = nul
   }, [service?.id]);
 
   const siteName = setting?.website_title || 'Nikhil Sharma';
-  const sitePhone = setting?.phone || null;
+  const sitePhone = '+91 9529921038';
   const siteEmail = setting?.email || null;
 
   if (!service) {

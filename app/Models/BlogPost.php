@@ -33,7 +33,6 @@ class BlogPost extends Model
 
     protected $casts = [
         'content'    => 'string',
-        'status'     => 'integer',
         'type'       => 'integer',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
@@ -61,13 +60,31 @@ class BlogPost extends Model
         return $this->meta_keywords;
     }
 
+    protected $appends = [];
+
     /**
      * Get the main image URL.
      */
     public function getImageUrlAttribute(): string
     {
-        if (!$this->main_image) return '';
-        if (str_starts_with($this->main_image, 'http')) return $this->main_image;
-        return '/images/blogs/' . $this->main_image;
+        // Prevent infinite loop - check raw attribute directly
+        $mainImage = $this->attributes['main_image'] ?? null;
+        
+        if (!$mainImage) return '';
+        if (str_starts_with($mainImage, 'http')) return $mainImage;
+        return '/images/blogs/' . $mainImage;
+    }
+    
+    /**
+     * Get description attribute (fallback to content if not set).
+     */
+    public function getDescriptionAttribute(): string
+    {
+        // Check if description column exists in attributes
+        if (array_key_exists('description', $this->attributes)) {
+            return $this->attributes['description'] ?? '';
+        }
+        // Fallback to content
+        return $this->attributes['content'] ?? '';
     }
 }
