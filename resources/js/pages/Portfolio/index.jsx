@@ -8,7 +8,7 @@ export default function PortfolioPage({ items: dbItems }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Use data from Inertia props
+    // Always use data from Inertia props (server-side)
     if (dbItems && dbItems.length > 0) {
       setPortfolios(dbItems);
     }

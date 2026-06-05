@@ -1,0 +1,556 @@
+/* ============================================================
+   AboutPage — matches the Mora WordPress theme design exactly
+   Font: Space Grotesk | Colors from index.css CSS variables
+   ============================================================ */
+
+/* ── Root wrapper ── */
+.ap-root {
+  font-family: 'Space Grotesk', sans-serif;
+  background-color: #f8fafb;
+  color: #2d2d2d;
+}
+
+/* ── Shared container ── */
+.ap-container {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* ============================================================
+   SECTION 1 — HERO / ABOUT ME
+   ============================================================ */
+.ap-hero-section {
+  padding: 5rem 0 4rem;
+  border-bottom: 1px solid #e9e9e9;
+}
+
+.ap-hero-row {
+  display: flex;
+  align-items: center;
+  gap: 4rem;
+  flex-wrap: wrap;
+}
+
+/* ── Text column ── */
+.ap-hero-text {
+  flex: 1;
+  min-width: 280px;
+  order: 1;
+}
+
+/* "About Me" — outlined stroke label, exactly like the image */
+.ap-about-label {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-weight: 500;
+  letter-spacing: 2px;
+  color: transparent;
+  -webkit-text-stroke: 1px #2d2d2d;
+  text-transform: none;
+  margin: 0 0 0.75rem 0;
+  line-height: 1.2;
+}
+
+/* Large bold uppercase name — "ETHAN WEST" */
+.ap-hero-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(3.5rem, 8vw, 6.5rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #131313;
+  line-height: 1;
+  letter-spacing: -1px;
+  margin: 0 0 1.25rem 0;
+}
+
+/* "WEB DEVELOPER" subtitle */
+.ap-hero-role {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #2d2d2d;
+  margin: 0 0 1.25rem 0;
+}
+
+/* Body paragraphs */
+.ap-hero-desc {
+  font-size: clamp(0.875rem, 2vw, 1rem);
+  line-height: 1.75;
+  color: #4d4d4d;
+  margin: 0 0 0.75rem 0;
+  max-width: 480px;
+}
+
+.ap-hero-desc--muted {
+  color: #777777;
+}
+
+/* ── Image column ── */
+.ap-hero-img-wrap {
+  flex: 1;
+  min-width: 260px;
+  max-width: 480px;
+  position: relative;
+  order: 2;
+}
+
+/* Decorative circle behind the image — removed */
+
+/* Blob-shaped image container */
+.ap-img-blob {
+  border-radius: 51% 49% 77% 23% / 65% 50% 50% 35%;
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+.ap-img-blob img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+/* ============================================================
+   SECTION 2 — SKILLS
+   ============================================================ */
+.ap-skills-section {
+  padding: 5rem 0;
+  border-bottom: 1px solid #e9e9e9;
+}
+
+.ap-skills-row {
+  display: flex;
+  gap: 5rem;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.ap-skills-left {
+  flex: 1;
+  min-width: 260px;
+  max-width: 420px;
+}
+
+.ap-skills-right {
+  flex: 1.3;
+  min-width: 280px;
+}
+
+/* Bold uppercase heading — exactly like image */
+.ap-skills-heading {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #131313;
+  line-height: 1.2;
+  letter-spacing: 0.5px;
+  margin: 0 0 1.5rem 0;
+}
+
+.ap-skills-desc {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: #4d4d4d;
+  margin: 0 0 2.25rem 0;
+}
+
+/* Primary CTA button — dark navy, square, uppercase */
+.ap-btn-primary {
+  display: inline-block;
+  background-color: #0A3981;
+  color: #ffffff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 1rem 2.25rem;
+  border: 2px solid transparent;
+  transition: all 0.3s cubic-bezier(0, 0, 0.58, 1);
+}
+
+.ap-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 6px 6px 0 0 #0A3981;
+  background-color: #ffffff;
+  color: #131313;
+  border-color: #0A3981;
+}
+
+/* ── Skill progress bars — override/extend global styles to match image ── */
+.ap-skills-right .skill-progress-item {
+  margin-bottom: 0;
+  overflow: visible;
+}
+
+/* Skill label row — name left, no inline percent (badge is on bar) */
+.ap-skills-right .skill-progress-item .title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 400;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #2d2d2d;
+  padding: 0.75rem 0 0.5rem;
+  margin-bottom: 0;
+}
+
+/* Track — light grey, flat (no border-radius) */
+.ap-skills-right .skill-progress-item .progress {
+  background-color: #e9e9e9;
+  border-radius: 0;
+  height: 8px;
+  overflow: visible;
+  margin-bottom: 1.5rem;
+}
+
+/* Filled bar — animates from 0 to target width on load */
+.ap-skills-right .skill-progress-item .progress-bar {
+  background-color: #2d2d2d;
+  height: 100%;
+  width: 0;
+  position: relative;
+  overflow: visible;
+}
+
+/* CSS keyframe: grows from 0 → var(--bar-width) */
+.ap-bar-animate {
+  animation: barGrow 1.4s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes barGrow {
+  from { width: 0; }
+  to   { width: var(--bar-width); }
+}
+
+/* Blue badge with percentage — top-right of bar */
+.ap-skills-right .skill-progress-item .progress-bar span {
+  background-color: #0A3981;
+  color: #ffffff;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 3px 6px;
+  position: absolute;
+  bottom: 18px;
+  right: 0;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+/* Small triangle pointer below badge */
+.ap-skills-right .skill-progress-item .progress-bar span::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  right: 0;
+  width: 8px;
+  height: 6px;
+  background-color: #0A3981;
+  clip-path: polygon(100% 0, 0 0, 100% 100%);
+}
+
+/* ============================================================
+   SECTION 3 — TESTIMONIALS
+   ============================================================ */
+.ap-testimonials-section {
+  padding: 5rem 0;
+}
+
+.ap-testimonials-row {
+  display: flex;
+  gap: 4rem;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.ap-testimonials-left {
+  flex: 1;
+  min-width: 220px;
+  max-width: 340px;
+}
+
+.ap-testimonials-right {
+  flex: 2;
+  min-width: 280px;
+  overflow: hidden;
+}
+
+/* "what my clients say" heading */
+.ap-testimonials-heading {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(1.5rem, 3.5vw, 2.25rem);
+  font-weight: 500;
+  text-transform: uppercase;
+  color: #131313;
+  line-height: 1.25;
+  margin: 0;
+}
+
+/* ── Testimonial card — extends global .testimonial-item ── */
+.testimonial-item {
+  background: #ffffff;
+  border: 2px solid #2d2d2d;
+  margin-top: 3rem;
+  padding: 2rem;
+  position: relative;
+  text-align: center;
+}
+
+.ap-testi-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ap-testi-meta {
+  margin-top: 0.75rem;
+}
+
+.ap-testi-stars {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  margin-top: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.testi-avatar-initials {
+  border-radius: 50%;
+  background: #1e3a6e;
+  color: #fff;
+  font-weight: 700;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  letter-spacing: 0.05em;
+}
+
+.testimonial-item__client-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #2d2d2d;
+  margin-bottom: 0.15rem;
+}
+
+.testimonial-item__client-occ {
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  color: #777777;
+  text-transform: uppercase;
+}
+
+.testimonial-item__text {
+  margin-top: 1rem;
+  padding: 0;
+  border: none;
+}
+
+.testimonial-item__text p {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #4d4d4d;
+  font-style: italic;
+  margin: 0;
+}
+
+/* ── Slider nav buttons ── */
+.ap-slider-nav-row {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 2rem;
+}
+
+.ap-slider-nav {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.ap-nav-btn {
+  width: 3.5rem;
+  height: 3.5rem;
+  background: #ffffff;
+  border: 2px solid #2d2d2d;
+  color: #2d2d2d;
+  font-size: 1.75rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.ap-nav-btn:hover {
+  background: #0A3981;
+  border-color: #0A3981;
+  color: #ffffff;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+  .ap-hero-row {
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .ap-hero-img-wrap {
+    order: -1;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+
+  .ap-img-circle-bg {
+    display: none;
+  }
+
+  .ap-skills-row,
+  .ap-testimonials-row {
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .ap-testimonials-left {
+    max-width: 100%;
+  }
+
+  .ap-hero-name {
+    font-size: clamp(2.5rem, 12vw, 4rem);
+  }
+}
+
+/* ============================================================
+   SECTION 4 — CERTIFICATIONS & BADGES
+   ============================================================ */
+.ap-certs-section {
+  padding: 4rem 0;
+  background: #fff;
+  border-top: 1px solid #e9e9e9;
+}
+
+.ap-certs-heading {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+  margin: 0.5rem 0 2rem;
+}
+
+.ap-certs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.ap-cert-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  background: #f8fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 1.1rem 1.25rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.ap-cert-card:hover {
+  border-color: #1e3a8a;
+  box-shadow: 0 4px 16px rgba(30, 58, 138, 0.08);
+}
+
+.ap-cert-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.ap-cert-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.2rem;
+}
+
+.ap-cert-issuer {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* ============================================================
+   SECTION 5 — AS SEEN ON / DIRECTORIES
+   ============================================================ */
+.ap-dirs-section {
+  padding: 4rem 0 5rem;
+  background: #f8fafb;
+  border-top: 1px solid #e9e9e9;
+}
+
+.ap-dirs-heading {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+  margin: 0.5rem 0 0.75rem;
+}
+
+.ap-dirs-desc {
+  font-size: 0.95rem;
+  color: #6b7280;
+  margin-bottom: 2rem;
+  max-width: 560px;
+}
+
+.ap-dirs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.ap-dir-card {
+  display: block;
+  background: #fff;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  text-decoration: none;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+.ap-dir-card:hover {
+  border-color: #1e3a8a;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(30, 58, 138, 0.1);
+}
+
+.ap-dir-name {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #1e3a8a;
+  margin: 0 0 0.4rem;
+  letter-spacing: 0.02em;
+}
+
+.ap-dir-desc {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.55;
+}

@@ -11,42 +11,6 @@ const DEFAULT_THEME = {
   accentBorder: '#bfdbfe',
 };
 
-// Project-specific themes with luxury color palettes
-const PROJECT_THEMES = {
-  'kisan-gateway': {
-    heroGradient: 'linear-gradient(135deg, #064e3b, #10b981)',
-    accent: '#10b981',
-    accentRgb: '16, 185, 129',
-    accentLight: '#d1fae5',
-    accentBorder: '#6ee7b7',
-    name: 'Emerald Green'
-  },
-  'ckship': {
-    heroGradient: 'linear-gradient(135deg, #7c2d12, #f97316)',
-    accent: '#f97316',
-    accentRgb: '249, 115, 22',
-    accentLight: '#ffedd5',
-    accentBorder: '#fdba74',
-    name: 'Sunset Orange'
-  },
-  'cloves-rinagar': {
-    heroGradient: 'linear-gradient(135deg, #831843, #ec4899)',
-    accent: '#ec4899',
-    accentRgb: '236, 72, 153',
-    accentLight: '#fce7f3',
-    accentBorder: '#f9a8d4',
-    name: 'Rose Pink'
-  },
-  'uyutyt': {
-    heroGradient: 'linear-gradient(135deg, #1e3a8a, #3b82f6)',
-    accent: '#3b82f6',
-    accentRgb: '59, 130, 246',
-    accentLight: '#dbeafe',
-    accentBorder: '#93c5fd',
-    name: 'Royal Blue'
-  }
-};
-
 function useCountUp(target, isVisible, duration = 1800) {
   const [count, setCount] = useState(0);
   useEffect(() => {
@@ -100,20 +64,8 @@ function StatItem({ stat, isVisible }) {
 }
 
 function ImageSlider({ imgSrc, websiteUrl }) {
-  const SECTIONS = 4; // Number of scroll sections
-  const [currentSection, setCurrentSection] = useState(0);
-
-  const goToPrevious = () => {
-    setCurrentSection((prev) => (prev === 0 ? SECTIONS - 1 : prev - 1));
-  };
-
-  const goToNext = () => {
-    setCurrentSection((prev) => (prev === SECTIONS - 1 ? 0 : prev + 1));
-  };
-
-  const goToSection = (index) => {
-    setCurrentSection(index);
-  };
+  const STEPS = 4;
+  const [step, setStep] = useState(0);
 
   return (
     <div className="pd3-slider-wrap">
@@ -125,55 +77,36 @@ function ImageSlider({ imgSrc, websiteUrl }) {
         <div style={{width:60}} />
       </div>
       <div className="pd3-slide-track">
-        <div className="pd3-scroll-container">
-          <img
-            src={imgSrc}
-            alt="Website preview"
-            className="pd3-slide-img"
-            style={{ 
-              transform: `translateY(-${currentSection * 25}%)`,
-              transition: 'transform 0.7s cubic-bezier(0.4, 0, 0.2, 1)'
-            }}
-            loading="eager"
-            onError={(e) => {
-              // Try old images folder as fallback
-              if (!e.target.src.includes('/images/portfolio/')) {
-                const imageName = imgSrc.split('/').pop();
-                e.target.src = `/images/portfolio/${imageName}`;
-              }
-            }}
-          />
-        </div>
-        
+        <img
+          src={imgSrc}
+          alt="preview"
+          className="pd3-slide-img"
+          style={{ transform: `translateY(${-step * 25}%)`, transition: 'transform 0.75s cubic-bezier(0.4,0,0.2,1)' }}
+          loading="eager"
+        />
         <div className="pd3-slider-controls">
           <button
             className="pd3-slider-arr"
-            onClick={goToPrevious}
-            aria-label="Previous section"
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" width="18" height="18">
-              <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-          </button>
+            onClick={() => setStep(s => Math.max(0, s - 1))}
+            disabled={step === 0}
+            aria-label="Scroll up"
+          >↑</button>
           <div className="pd3-slider-dots">
-            {Array.from({ length: SECTIONS }).map((_, index) => (
+            {Array.from({ length: STEPS }).map((_, i) => (
               <button
-                key={index}
-                className={`pd3-dot${index === currentSection ? ' pd3-dot-active' : ''}`}
-                onClick={() => goToSection(index)}
-                aria-label={`Go to section ${index + 1}`}
+                key={i}
+                className={`pd3-dot${i === step ? ' pd3-dot-active' : ''}`}
+                onClick={() => setStep(i)}
+                aria-label={`Go to section ${i + 1}`}
               />
             ))}
           </div>
           <button
             className="pd3-slider-arr"
-            onClick={goToNext}
-            aria-label="Next section"
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" width="18" height="18">
-              <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
-          </button>
+            onClick={() => setStep(s => Math.min(STEPS - 1, s + 1))}
+            disabled={step === STEPS - 1}
+            aria-label="Scroll down"
+          >↓</button>
         </div>
       </div>
     </div>
@@ -219,41 +152,26 @@ export default function ProjectDetailPage({ id, slug, item: dbItem, related }) {
   );
   if (!project) return <div style={{textAlign:'center',padding:'5rem',fontFamily:"'Space Grotesk',sans-serif"}}><p style={{color:'#9ca3af'}}>Project not found.</p><Link href="/portfolio" style={{color:'#0A3981',fontWeight:600}}>← Back to Portfolio</Link></div>;
 
-  // Get theme based on project slug or use default
-  const projectSlug = project.slug || pathSlug;
-  const theme = PROJECT_THEMES[projectSlug] || DEFAULT_THEME;
-  
-  // Use theme values
-  const accent       = theme.accent;
-  const accentRgb    = theme.accentRgb;
-  const accentLight  = theme.accentLight;
-  const accentBorder = theme.accentBorder;
-  const heroGrad     = theme.heroGradient;
+  // Use database values with fallbacks to defaults
+  const accent       = DEFAULT_THEME.accent;
+  const accentRgb    = DEFAULT_THEME.accentRgb;
+  const accentLight  = DEFAULT_THEME.accentLight;
+  const accentBorder = DEFAULT_THEME.accentBorder;
+  const heroGrad     = DEFAULT_THEME.heroGradient;
   
   // Parse description as JSON if it contains structured data
   let projectData = {
     tagline: project.short_description || '',
     category: project.category || 'Web Development',
     client: project.clint_name || project.title,
-    year: project.date && project.date !== '0000-00-00' && project.date !== '1970-01-01' 
-      ? new Date(project.date).getFullYear().toString() 
-      : '2026',
+    year: project.date ? new Date(project.date).getFullYear().toString() : new Date().getFullYear().toString(),
     website: project.website_link || '',
     overview: '',
     challenge: '',
     approach: '',
-    solution: '',
     result: '',
     tech: [],
-    stats: [],
-    duration: '3-6 Months',
-    team: '4 Members',
-    industry: 'Technology',
-    services: [],
-    testimonial: null,
-    gallery: [],
-    features: [],
-    metrics: []
+    stats: []
   };
 
   // Try to parse description as JSON for structured data
@@ -269,26 +187,7 @@ export default function ProjectDetailPage({ id, slug, item: dbItem, related }) {
 
   const stats  = projectData.stats || [];
   const tech   = projectData.tech || [];
-  const services = projectData.services || [];
-  const features = projectData.features || [];
-  const metrics = projectData.metrics || [];
-  const gallery = projectData.gallery || [];
-  
-  // Default luxury stats if no stats provided
-  const defaultLuxuryStats = [
-    { value: 9, suffix: '+', label: 'Years of Excellence', type: 'experience' },
-    { value: 120, suffix: '+', label: 'Successful Projects Delivered', type: 'projects' },
-    { value: 3, suffix: '+', label: 'Countries Served Worldwide', type: 'countries' },
-    { value: 98, suffix: '%', label: 'Client Satisfaction Rate', type: 'satisfaction' }
-  ];
-  
-  const displayStats = stats.length > 0 ? stats : defaultLuxuryStats;
-  
-  // Use image_url accessor from model which handles fallback automatically
-  const imgSrc = project.image_url || 
-    (project.image 
-      ? (project.image.startsWith('http') ? project.image : `/uploads/portfolio/${project.image}`) 
-      : '');
+  const imgSrc = project.image ? (project.image.startsWith('http') ? project.image : `/images/portfolio/${project.image}`) : (project.image_url || '');
 
   return (
     <>
@@ -347,20 +246,15 @@ export default function ProjectDetailPage({ id, slug, item: dbItem, related }) {
         .pd3-browser-addr{flex:1;background:rgba(255,255,255,0.08);border-radius:6px;padding:0.3rem 0.75rem;font-size:0.7rem;color:rgba(255,255,255,0.5);font-family:'Space Grotesk',sans-serif;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
         .pd3-slide-track{position:relative;height:520px;overflow:hidden;background:#000}
         @media(max-width:768px){.pd3-slide-track{height:320px}}
-        
-        /* Scroll Container for Full Page Preview */
-        .pd3-scroll-container{width:100%;height:100%;overflow:hidden;position:relative}
-        .pd3-slide-img{width:100%;height:auto;display:block;min-height:200%}
-        
-        /* Controls */
+        .pd3-slide-img{width:100%;height:auto;object-fit:unset;display:block}
         .pd3-slider-controls{position:absolute;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:1.5rem;z-index:20;background:rgba(0,0,0,0.78);backdrop-filter:blur(12px);padding:0.9rem 1.5rem;border-top:1px solid rgba(255,255,255,0.1)}
-        .pd3-slider-arr{background:rgba(0,0,0,0.85);border:2px solid rgba(255,255,255,0.85);color:#fff;width:42px;height:42px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:all 0.3s ease;flex-shrink:0;box-shadow:0 2px 12px rgba(0,0,0,0.4)}
-        .pd3-slider-arr:hover{background:rgba(255,255,255,0.95);border-color:#fff;transform:scale(1.15);box-shadow:0 4px 20px rgba(255,255,255,0.3)}
-        .pd3-slider-arr:hover svg{stroke:#000}
+        .pd3-slider-arr{background:black;border:2px solid rgba(255,255,255,0.85);color:#fff;width:42px;height:42px;border-radius:50%;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:background 0.2s,transform 0.2s,opacity 0.2s;flex-shrink:0;font-weight:700}
+        .pd3-slider-arr:hover:not(:disabled){background:black;transform:scale(1.1)}
+        .pd3-slider-arr:disabled{opacity:0.25;cursor:not-allowed}
         .pd3-slider-dots{display:flex;gap:10px;align-items:center}
-        .pd3-dot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,0.3);border:none;cursor:pointer;transition:all 0.3s ease;padding:0}
-        .pd3-dot:hover{background:rgba(255,255,255,0.6);transform:scale(1.2)}
-        .pd3-dot-active{background:rgba(255,255,255,0.95);transform:scale(1.35);box-shadow:0 0 8px rgba(255,255,255,0.5)}
+        .pd3-dot{width:9px;height:9px;border-radius:50%;background:black;border:none;cursor:pointer;transition:background 0.2s,transform 0.2s;padding:0}
+        .pd3-dot-active{background:black;transform:scale(1.4)}
+        .pd3-slide-label{position:absolute;top:1rem;right:1rem;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);color:#fff;font-size:0.7rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;padding:0.3rem 0.75rem;border-radius:100px;font-family:'Space Grotesk',sans-serif;z-index:10;border:1px solid rgba(255,255,255,0.15)}
 
         /* ══ MAIN ══ */
         .pd3-main{max-width:1200px;margin:0 auto;padding:5rem 2rem 6rem}
@@ -825,70 +719,6 @@ export default function ProjectDetailPage({ id, slug, item: dbItem, related }) {
             </div>
           )}
 
-          {/* Project Info Cards */}
-          <div className={`pd3-info-grid${overVis ? ' pd3-vis' : ''}`}>
-            <div className="pd3-info-card">
-              <div className="pd3-info-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                  <line x1="16" y1="2" x2="16" y2="6"/>
-                  <line x1="8" y1="2" x2="8" y2="6"/>
-                  <line x1="3" y1="10" x2="21" y2="10"/>
-                </svg>
-              </div>
-              <div className="pd3-info-content">
-                <div className="pd3-info-label">Duration</div>
-                <div className="pd3-info-value">{projectData.duration}</div>
-              </div>
-            </div>
-            <div className="pd3-info-card">
-              <div className="pd3-info-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24">
-                  <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
-                  <circle cx="9" cy="7" r="4"/>
-                  <path d="M23 21v-2a4 4 0 00-3-3.87"/>
-                  <path d="M16 3.13a4 4 0 010 7.75"/>
-                </svg>
-              </div>
-              <div className="pd3-info-content">
-                <div className="pd3-info-label">Team Size</div>
-                <div className="pd3-info-value">{projectData.team}</div>
-              </div>
-            </div>
-            <div className="pd3-info-card">
-              <div className="pd3-info-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="24" height="24">
-                  <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
-                  <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-                  <line x1="12" y1="22.08" x2="12" y2="12"/>
-                </svg>
-              </div>
-              <div className="pd3-info-content">
-                <div className="pd3-info-label">Industry</div>
-                <div className="pd3-info-value">{projectData.industry}</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Services Provided */}
-          {services.length > 0 && (
-            <div className={`pd3-section${overVis ? ' pd3-vis' : ''}`}>
-              <div className="pd3-section-eyebrow">
-                <div className="pd3-section-dot"/>
-                <span className="pd3-section-tag">Services Provided</span>
-                <div className="pd3-section-rule"/>
-              </div>
-              <div className="pd3-services-grid">
-                {services.map((service, i) => (
-                  <div key={i} className="pd3-service-item">
-                    <div className="pd3-service-icon">✓</div>
-                    <div className="pd3-service-name">{service}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* Challenge & Approach */}
           {(projectData.challenge || projectData.approach) && (
             <div>
@@ -941,118 +771,6 @@ export default function ProjectDetailPage({ id, slug, item: dbItem, related }) {
               <div className="pd3-section-eyebrow"><div className="pd3-section-dot"/><span className="pd3-section-tag">Results & Impact</span><div className="pd3-section-rule"/></div>
               <h3 className="pd3-result-title">What We Achieved</h3>
               <p className="pd3-result-text">{projectData.result}</p>
-            </div>
-          )}
-
-          {/* Solution Section */}
-          {projectData.solution && (
-            <div className={`pd3-section${resultVis ? ' pd3-vis' : ''}`}>
-              <div className="pd3-section-eyebrow">
-                <div className="pd3-section-dot"/>
-                <span className="pd3-section-tag">Solution</span>
-                <div className="pd3-section-rule"/>
-              </div>
-              <div className="pd3-solution-card">
-                <div className="pd3-solution-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" width="28" height="28">
-                    <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
-                    <polyline points="22 4 12 14.01 9 11.01"/>
-                  </svg>
-                </div>
-                <h3 className="pd3-solution-title">Our Solution</h3>
-                <p className="pd3-solution-text">{projectData.solution}</p>
-              </div>
-            </div>
-          )}
-
-          {/* Key Features */}
-          {features.length > 0 && (
-            <div className={`pd3-section${techVis ? ' pd3-vis' : ''}`}>
-              <div className="pd3-section-eyebrow">
-                <div className="pd3-section-dot"/>
-                <span className="pd3-section-tag">Key Features</span>
-                <div className="pd3-section-rule"/>
-              </div>
-              <h2 className="pd3-section-title">What Makes This Project Special</h2>
-              <div className="pd3-features-grid">
-                {features.map((feature, i) => (
-                  <div key={i} className="pd3-feature-card">
-                    <div className="pd3-feature-icon">{feature.icon || '⚡'}</div>
-                    <div className="pd3-feature-content">
-                      <div className="pd3-feature-title">{feature.title}</div>
-                      <div className="pd3-feature-desc">{feature.description}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Performance Metrics */}
-          {metrics.length > 0 && (
-            <div className={`pd3-section${resultVis ? ' pd3-vis' : ''}`}>
-              <div className="pd3-section-eyebrow">
-                <div className="pd3-section-dot"/>
-                <span className="pd3-section-tag">Performance Metrics</span>
-                <div className="pd3-section-rule"/>
-              </div>
-              <h2 className="pd3-section-title">Measurable Impact</h2>
-              <div className="pd3-metrics-grid">
-                {metrics.map((metric, i) => (
-                  <div key={i} className="pd3-metric-card">
-                    <div className="pd3-metric-value">{metric.value}{metric.suffix || ''}</div>
-                    <div className="pd3-metric-label">{metric.label}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Client Testimonial */}
-          {projectData.testimonial && (
-            <div className={`pd3-section${resultVis ? ' pd3-vis' : ''}`}>
-              <div className="pd3-section-eyebrow">
-                <div className="pd3-section-dot"/>
-                <span className="pd3-section-tag">Client Feedback</span>
-                <div className="pd3-section-rule"/>
-              </div>
-              <div className="pd3-testimonial">
-                <p className="pd3-testimonial-text">{projectData.testimonial.text}</p>
-                <div className="pd3-testimonial-author">
-                  <div className="pd3-testimonial-avatar">
-                    {projectData.testimonial.avatar ? (
-                      <img src={projectData.testimonial.avatar} alt={projectData.testimonial.name} style={{width:'100%',height:'100%',objectFit:'cover',borderRadius:'50%'}} />
-                    ) : (
-                      <div style={{width:'100%',height:'100%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'1.5rem',fontWeight:700,color:'#fff'}}>
-                        {projectData.testimonial.name?.charAt(0) || 'C'}
-                      </div>
-                    )}
-                  </div>
-                  <div className="pd3-testimonial-info">
-                    <div className="pd3-testimonial-name">{projectData.testimonial.name}</div>
-                    <div className="pd3-testimonial-role">{projectData.testimonial.role}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Project Gallery */}
-          {gallery.length > 0 && (
-            <div className={`pd3-section${techVis ? ' pd3-vis' : ''}`}>
-              <div className="pd3-section-eyebrow">
-                <div className="pd3-section-dot"/>
-                <span className="pd3-section-tag">Project Gallery</span>
-                <div className="pd3-section-rule"/>
-              </div>
-              <h2 className="pd3-section-title">More Screenshots & Highlights</h2>
-              <div className="pd3-gallery-grid">
-                {gallery.map((img, i) => (
-                  <div key={i} className="pd3-gallery-item">
-                    <img src={img} alt={`${project.title} screenshot ${i + 1}`} className="pd3-gallery-img" />
-                  </div>
-                ))}
-              </div>
             </div>
           )}
 

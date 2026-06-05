@@ -1,0 +1,12 @@
+*
+!.gitignore
+!gallery/
+!gallery/**
+!portfolio/
+!portfolio/**
+!blog/
+!blog/**
+!services/
+!services/**
+!uploads/
+!uploads/**
