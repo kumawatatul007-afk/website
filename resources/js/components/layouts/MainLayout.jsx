@@ -7,6 +7,8 @@ export default function MainLayout({ children }) {
   const [pageReady, setPageReady] = useState(false)
   const [navProgress, setNavProgress] = useState(0)
   const [navActive, setNavActive] = useState(false)
+  const [showBackToTop, setShowBackToTop] = useState(false)
+  const [scrollProgress, setScrollProgress] = useState(0)
   const progressTimer = useRef(null)
   const { props } = usePage()
 
@@ -39,6 +41,44 @@ export default function MainLayout({ children }) {
     const t = setTimeout(() => setPageReady(true), 80)
     return () => clearTimeout(t)
   }, [])
+
+  // Back to top button scroll handling
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY
+      const height = document.documentElement.scrollHeight - window.innerHeight
+      const progress = (scrollY / height) * 100
+      setScrollProgress(progress)
+      setShowBackToTop(scrollY > 300)
+    }
+    
+    // Handle regular window scroll
+    window.addEventListener('scroll', handleScroll)
+    
+    // Also handle Lenis smooth scroll events if available
+    const lenisCheckInterval = setInterval(() => {
+      if (window.lenis?.on) {
+        window.lenis.on('scroll', handleScroll)
+        clearInterval(lenisCheckInterval)
+      }
+    }, 100)
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      clearInterval(lenisCheckInterval)
+      if (window.lenis?.off) {
+        window.lenis.off('scroll', handleScroll)
+      }
+    }
+  }, [])
+
+  const scrollToTop = () => {
+    if (window.lenis) {
+      window.lenis.scrollTo(0, { immediate: false })
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }
 
   // ── Settings from DB ──────────────────────────────────────────────────────
   const setting     = props.setting || {}
@@ -124,6 +164,25 @@ export default function MainLayout({ children }) {
       {/* Custom Cursor */}
       <div ref={dotRef}  className="cursor-dot"  />
       <div ref={ringRef} className="cursor-ring" />
+
+      {/* Back to top button with scroll progress */}
+      {showBackToTop && (
+        <button className="back-to-top-btn" onClick={scrollToTop}>
+          <svg viewBox="0 0 100 100" className="progress-ring">
+            <circle cx="50" cy="50" r="45" className="progress-ring-bg" />
+            <circle
+              cx="50"
+              cy="50"
+              r="45"
+              className="progress-ring-fill"
+              style={{ strokeDashoffset: `calc(283 - (283 * ${scrollProgress}) / 100)` }}
+            />
+          </svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="arrow-icon">
+            <polyline points="18 15 12 9 6 15" />
+          </svg>
+        </button>
+      )}
 
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap');
@@ -440,6 +499,59 @@ export default function MainLayout({ children }) {
           .mora-footer-main { grid-template-columns: 1fr; gap: 1.25rem; padding: 1.25rem 1.25rem 1rem; }
           .mora-footer-bottom { flex-direction: column; align-items: flex-start; gap: 0.5rem; padding: 0.6rem 1.25rem; }
           .mora-footer-bottom-links { flex-wrap: wrap; gap: 0.75rem; }
+        }
+
+        /* Back to Top Button */
+        .back-to-top-btn {
+          position: fixed;
+          bottom: 2rem;
+          right: 2rem;
+          width: 52px;
+          height: 52px;
+          border-radius: 50%;
+          background: #ffffff;
+          border: none;
+          cursor: pointer;
+          z-index: 1000;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+          transition: transform 0.2s ease;
+        }
+
+        .back-to-top-btn:hover {
+          transform: translateY(-3px);
+        }
+
+        .progress-ring {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          transform: rotate(-90deg);
+        }
+
+        .progress-ring-bg {
+          fill: none;
+          stroke: #e2e8f0;
+          stroke-width: 3;
+        }
+
+        .progress-ring-fill {
+          fill: none;
+          stroke: #1e3a8a;
+          stroke-width: 3;
+          stroke-dasharray: 283;
+          transition: stroke-dashoffset 0.1s linear;
+        }
+
+        .arrow-icon {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 20px;
+          height: 20px;
+          color: #1e3a8a;
         }
       `}</style>
 

@@ -245,9 +245,9 @@ export default function PortfolioListPage({ items: dbItems }) {
                       className="pl-img"
                       loading="lazy"
                       onError={e => { 
-                        // Try images folder as fallback
-                        if (!e.target.src.includes('/images/portfolio/')) {
-                          e.target.src = `/images/portfolio/${project.image}`;
+                        // Try uploads folder as fallback
+                        if (!e.target.src.includes('/uploads/portfolio/')) {
+                          e.target.src = `/uploads/portfolio/${project.image}`;
                         } else {
                           e.target.src = 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/project-5.jpg';
                         }

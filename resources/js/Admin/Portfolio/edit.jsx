@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 
 export default function AdminPortfolioEdit({ item, categories = [] }) {
 const [imagePreview, setImagePreview] = useState(
-    item?.image ? `/storage/uploads/portfolio/${item.image}` : null
+    item?.image_url || (item?.image ? `/uploads/portfolio/${item.image}` : null)
 );
 
 const [notification, setNotification] = useState(null);

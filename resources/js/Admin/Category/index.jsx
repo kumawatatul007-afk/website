@@ -27,6 +27,7 @@ const IconFolder   = () => <svg width="36" height="36" viewBox="0 0 24 24" fill=
 const IconAlert    = () => <svg width="28" height="28" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>;
 const IconChevron  = () => <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>;
 const IconHome     = () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>;
+const IconPlus     = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>;
 
 /* ── Delete confirmation modal ──────────────────────────────────────────── */
 function DeleteModal({ category, onClose, onConfirm, loading }) {
@@ -153,6 +154,173 @@ function DeleteModal({ category, onClose, onConfirm, loading }) {
     );
 }
 
+/* ── Create Modal ──────────────────────────────────────────────────────── */
+function CreateModal({ onClose, onSuccess }) {
+    const [name, setName] = useState('');
+    const [textFor, setTextFor] = useState('blog');
+    const [slug, setSlug] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        setLoading(true);
+        
+        router.post('/admin/categories', {
+            name,
+            text_for: textFor,
+            slug: slug || undefined,
+        }, {
+            onSuccess: () => {
+                onSuccess();
+                onClose();
+            },
+            onFinish: () => setLoading(false),
+        });
+    };
+
+    return createPortal(
+        <div
+            style={{
+                position: 'fixed', inset: 0, zIndex: 9999,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: 'rgba(15,23,42,0.55)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+                animation: 'modalOverlayIn 0.2s ease both',
+                padding: '1rem',
+            }}
+            onClick={(e) => e.target === e.currentTarget && !loading && onClose()}
+        >
+            <div style={{
+                background: '#fff',
+                borderRadius: '24px',
+                padding: '2rem',
+                width: '100%',
+                maxWidth: '500px',
+                boxShadow: '0 32px 80px rgba(15,23,42,0.25), 0 8px 24px rgba(15,23,42,0.1)',
+                border: '1px solid rgba(255,255,255,0.85)',
+                animation: 'modalPanelIn 0.3s cubic-bezier(0.22,1,0.36,1) both',
+            }}>
+                <h2 style={{
+                    fontSize: '1.4rem', fontWeight: 800, color: '#0f172a',
+                    marginBottom: '1.5rem', letterSpacing: '-0.3px',
+                }}>
+                    Add New Category
+                </h2>
+
+                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                    <div>
+                        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#334155', marginBottom: '0.5rem' }}>
+                            Category Name
+                        </label>
+                        <input
+                            type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            style={{
+                                width: '100%',
+                                padding: '0.75rem 1rem',
+                                borderRadius: '12px',
+                                border: '1.5px solid #e2e8f0',
+                                fontSize: '0.875rem',
+                                outline: 'none',
+                                transition: 'all 0.2s',
+                            }}
+                            placeholder="Enter category name"
+                            required
+                            disabled={loading}
+                        />
+                    </div>
+
+                    <div>
+                        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#334155', marginBottom: '0.5rem' }}>
+                            Type
+                        </label>
+                        <select
+                            value={textFor}
+                            onChange={(e) => setTextFor(e.target.value)}
+                            style={{
+                                width: '100%',
+                                padding: '0.75rem 1rem',
+                                borderRadius: '12px',
+                                border: '1.5px solid #e2e8f0',
+                                fontSize: '0.875rem',
+                                outline: 'none',
+                                transition: 'all 0.2s',
+                            }}
+                            disabled={loading}
+                        >
+                            <option value="blog">Blog</option>
+                            <option value="service">Service</option>
+                            <option value="portfolio">Portfolio</option>
+                            <option value="project">Project</option>
+                            <option value="news">News</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: 600, color: '#334155', marginBottom: '0.5rem' }}>
+                            Slug (optional)
+                        </label>
+                        <input
+                            type="text"
+                            value={slug}
+                            onChange={(e) => setSlug(e.target.value)}
+                            style={{
+                                width: '100%',
+                                padding: '0.75rem 1rem',
+                                borderRadius: '12px',
+                                border: '1.5px solid #e2e8f0',
+                                fontSize: '0.875rem',
+                                outline: 'none',
+                                transition: 'all 0.2s',
+                            }}
+                            placeholder="Leave empty to auto-generate"
+                            disabled={loading}
+                        />
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            disabled={loading}
+                            style={{
+                                flex: 1, padding: '0.875rem 1.25rem',
+                                borderRadius: '14px', border: '1.5px solid #e2e8f0',
+                                background: '#fff', color: '#475569',
+                                fontSize: '0.875rem', fontWeight: 600,
+                                cursor: loading ? 'not-allowed' : 'pointer',
+                                transition: 'all 0.15s',
+                                opacity: loading ? 0.5 : 1,
+                            }}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            disabled={loading || !name.trim()}
+                            style={{
+                                flex: 1, padding: '0.875rem 1.25rem',
+                                borderRadius: '14px', border: 'none',
+                                background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+                                color: '#fff',
+                                fontSize: '0.875rem', fontWeight: 700,
+                                cursor: loading || !name.trim() ? 'not-allowed' : 'pointer',
+                                transition: 'all 0.15s',
+                                boxShadow: loading ? 'none' : '0 4px 14px rgba(99,102,241,0.4)',
+                            }}
+                        >
+                            {loading ? 'Creating...' : 'Create Category'}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>,
+        document.body
+    );
+}
+
 /* ── Main page ──────────────────────────────────────────────────────────── */
 export default function AdminCategoryIndex({ categories, filters }) {
     const [search,        setSearch]        = useState(filters?.search   ?? '');
@@ -162,6 +330,7 @@ export default function AdminCategoryIndex({ categories, filters }) {
     const [deleteModal,   setDeleteModal]   = useState(false);
     const [deleteTarget,  setDeleteTarget]  = useState(null);
     const [deleteLoading, setDeleteLoading] = useState(false);
+    const [createModal,   setCreateModal]   = useState(false);
     const inputRef = useRef(null);
 
     useEffect(() => {
@@ -332,6 +501,31 @@ export default function AdminCategoryIndex({ categories, filters }) {
                     box-shadow: 0 8px 26px rgba(99,102,241,0.55);
                 }
                 .btn-search:active { transform: translateY(0); }
+
+                .btn-add-category {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    padding: 0.9rem 1.65rem;
+                    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+                    color: #fff;
+                    border: none;
+                    border-radius: 14px;
+                    font-size: 0.875rem;
+                    font-weight: 700;
+                    font-family: inherit;
+                    cursor: pointer;
+                    white-space: nowrap;
+                    box-shadow: 0 4px 14px rgba(99,102,241,0.4);
+                    transition: transform 0.15s, box-shadow 0.15s;
+                }
+
+                .btn-add-category:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 26px rgba(99,102,241,0.55);
+                }
+
+                .btn-add-category:active { transform: translateY(0); }
 
                 /* ── Card ──────────────────────────────────────────────── */
                 .cat-card {

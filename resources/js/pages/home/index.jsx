@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import './index.css';
@@ -162,9 +162,9 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
     title: p.title,
     slug: p.slug || null,
     category: p.short_description || '',
-    image: p.image
-      ? (p.image.startsWith('http') ? p.image : `/images/portfolio/${p.image}`)
-      : (p.image_url || 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/project-5.jpg'),
+    image: p.image_url || (p.image
+      ? (p.image.startsWith('http') ? p.image : `/uploads/portfolio/${p.image}`)
+      : 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/project-5.jpg'),
     url: p.website_link || null,
   });
 
@@ -298,6 +298,9 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
           wheelMultiplier: 1,
           touchMultiplier: 2,
         });
+        
+        // Assign lenis to window so MainLayout can access it
+        window.lenis = lenis;
 
         function raf(time) {
           lenis.raf(time);
@@ -580,25 +583,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
     return () => observer.disconnect();
   }, []);
 
-  // Back to top button and scroll progress
-  const [showBackToTop, setShowBackToTop] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const height = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = (scrollY / height) * 100;
-      setScrollProgress(progress);
-      setShowBackToTop(scrollY > 300);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
 
   // Keywords for preloader ticker — use DB data if available, else static fallback
   const preloaderKeywords = keywordHighlights.length > 0
@@ -822,24 +807,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
         }]}
       />
 
-      {/* Back to top button with scroll progress */}
-      {showBackToTop && (
-        <button className="back-to-top-btn" onClick={scrollToTop}>
-          <svg viewBox="0 0 100 100" className="progress-ring">
-            <circle cx="50" cy="50" r="45" className="progress-ring-bg" />
-            <circle
-              cx="50"
-              cy="50"
-              r="45"
-              className="progress-ring-fill"
-              style={{ strokeDashoffset: `calc(283 - (283 * ${scrollProgress}) / 100)` }}
-            />
-          </svg>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="arrow-icon">
-            <polyline points="18 15 12 9 6 15" />
-          </svg>
-        </button>
-      )}
+
 
       {/* Hero Section */}
       <section className="hero-section">

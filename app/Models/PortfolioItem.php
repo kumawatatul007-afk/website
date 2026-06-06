@@ -9,8 +9,8 @@ class PortfolioItem extends Model
 {
     use HasFactory;
 
-    // Actual table name in the database (portfolio table)
-    protected $table = 'portfolio';
+    // Actual table name in the database (portfolio_items table)
+    protected $table = 'portfolio_items';
 
     protected $fillable = [
         'category_id',

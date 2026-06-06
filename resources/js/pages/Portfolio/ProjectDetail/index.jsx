@@ -86,11 +86,15 @@ function ImageSlider({ imgSrc, websiteUrl }) {
         />
         <div className="pd3-slider-controls">
           <button
-            className="pd3-slider-arr"
+            className="pd3-slider-arr pd3-slider-arr-left"
             onClick={() => setStep(s => Math.max(0, s - 1))}
             disabled={step === 0}
-            aria-label="Scroll up"
-          >↑</button>
+            aria-label="Previous section"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
           <div className="pd3-slider-dots">
             {Array.from({ length: STEPS }).map((_, i) => (
               <button
@@ -102,11 +106,15 @@ function ImageSlider({ imgSrc, websiteUrl }) {
             ))}
           </div>
           <button
-            className="pd3-slider-arr"
+            className="pd3-slider-arr pd3-slider-arr-right"
             onClick={() => setStep(s => Math.min(STEPS - 1, s + 1))}
             disabled={step === STEPS - 1}
-            aria-label="Scroll down"
-          >↓</button>
+            aria-label="Next section"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
         </div>
       </div>
     </div>
@@ -187,7 +195,7 @@ export default function ProjectDetailPage({ id, slug, item: dbItem, related }) {
 
   const stats  = projectData.stats || [];
   const tech   = projectData.tech || [];
-  const imgSrc = project.image ? (project.image.startsWith('http') ? project.image : `/images/portfolio/${project.image}`) : (project.image_url || '');
+  const imgSrc = project.image_url || (project.image ? (project.image.startsWith('http') ? project.image : `/uploads/portfolio/${project.image}`) : '');
 
   return (
     <>
@@ -248,12 +256,20 @@ export default function ProjectDetailPage({ id, slug, item: dbItem, related }) {
         @media(max-width:768px){.pd3-slide-track{height:320px}}
         .pd3-slide-img{width:100%;height:auto;object-fit:unset;display:block}
         .pd3-slider-controls{position:absolute;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:1.5rem;z-index:20;background:rgba(0,0,0,0.78);backdrop-filter:blur(12px);padding:0.9rem 1.5rem;border-top:1px solid rgba(255,255,255,0.1)}
-        .pd3-slider-arr{background:black;border:2px solid rgba(255,255,255,0.85);color:#fff;width:42px;height:42px;border-radius:50%;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:background 0.2s,transform 0.2s,opacity 0.2s;flex-shrink:0;font-weight:700}
-        .pd3-slider-arr:hover:not(:disabled){background:black;transform:scale(1.1)}
-        .pd3-slider-arr:disabled{opacity:0.25;cursor:not-allowed}
+        .pd3-slider-arr{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border:none;color:#fff;width:48px;height:48px;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);flex-shrink:0;box-shadow:0 4px 12px rgba(102,126,234,0.4)}
+        .pd3-slider-arr:hover:not(:disabled){background:linear-gradient(135deg,#764ba2 0%,#667eea 100%);transform:translateY(-2px);box-shadow:0 6px 20px rgba(102,126,234,0.6)}
+        .pd3-slider-arr:active:not(:disabled){transform:translateY(0);box-shadow:0 2px 8px rgba(102,126,234,0.4)}
+        .pd3-slider-arr:disabled{opacity:0.3;cursor:not-allowed;background:linear-gradient(135deg,#4a5568 0%,#2d3748 100%);box-shadow:none}
+        .pd3-slider-arr svg{transition:transform 0.3s ease}
+        .pd3-slider-arr:hover:not(:disabled) svg{transform:scale(1.1)}
+        .pd3-slider-arr-left{background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%);box-shadow:0 4px 12px rgba(245,87,108,0.4)}
+        .pd3-slider-arr-left:hover:not(:disabled){background:linear-gradient(135deg,#f5576c 0%,#f093fb 100%);box-shadow:0 6px 20px rgba(245,87,108,0.6)}
+        .pd3-slider-arr-right{background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%);box-shadow:0 4px 12px rgba(79,172,254,0.4)}
+        .pd3-slider-arr-right:hover:not(:disabled){background:linear-gradient(135deg,#00f2fe 0%,#4facfe 100%);box-shadow:0 6px 20px rgba(79,172,254,0.6)}
         .pd3-slider-dots{display:flex;gap:10px;align-items:center}
-        .pd3-dot{width:9px;height:9px;border-radius:50%;background:black;border:none;cursor:pointer;transition:background 0.2s,transform 0.2s;padding:0}
-        .pd3-dot-active{background:black;transform:scale(1.4)}
+        .pd3-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.3);border:none;cursor:pointer;transition:all 0.3s ease;padding:0}
+        .pd3-dot:hover{background:rgba(255,255,255,0.5);transform:scale(1.2)}
+        .pd3-dot-active{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);transform:scale(1.3);box-shadow:0 0 12px rgba(102,126,234,0.6)}
         .pd3-slide-label{position:absolute;top:1rem;right:1rem;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);color:#fff;font-size:0.7rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;padding:0.3rem 0.75rem;border-radius:100px;font-family:'Space Grotesk',sans-serif;z-index:10;border:1px solid rgba(255,255,255,0.15)}
 
         /* ══ MAIN ══ */
@@ -692,21 +708,23 @@ export default function ProjectDetailPage({ id, slug, item: dbItem, related }) {
           </div>
 
           {/* Ultra-Minimal Luxury Stats Section - Clean Design */}
-          <div className="pd3-stats-section" ref={statsRef}>
-            <div className="pd3-stats-container">
-              <div className="pd3-stats-grid">
-                {displayStats.map((stat, i) => (
-                  <LuxuryStatCard 
-                    key={i} 
-                    stat={stat} 
-                    isVisible={statsVis} 
-                    index={i}
-                    accent={accent}
-                  />
-                ))}
+          {stats && stats.length > 0 && (
+            <div className="pd3-stats-section" ref={statsRef}>
+              <div className="pd3-stats-container">
+                <div className="pd3-stats-grid">
+                  {stats.map((stat, i) => (
+                    <LuxuryStatCard 
+                      key={i} 
+                      stat={stat} 
+                      isVisible={statsVis} 
+                      index={i}
+                      accent={accent}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Overview */}
           {projectData.overview && (

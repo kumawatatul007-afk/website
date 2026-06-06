@@ -134,9 +134,9 @@ export default function AdminPortfolioIndex({ items, filters, hasSearched, categ
                                                 alt={item.title}
                                                 className="thumb"
                                                 onError={e => { 
-                                                    // Try old images folder as fallback
-                                                    if (!e.target.src.includes('/images/portfolio/')) {
-                                                        e.target.src = `/images/portfolio/${item.image}`;
+                                                    // Try old uploads folder as fallback
+                                                    if (!e.target.src.includes('/uploads/portfolio/')) {
+                                                        e.target.src = `/uploads/portfolio/${item.image}`;
                                                     } else {
                                                         e.target.style.display = 'none';
                                                     }

@@ -64,6 +64,7 @@ Route::prefix('admin')->name('admin.')->middleware(\App\Http\Middleware\AdminMid
 
     // Categories CRUD
     Route::get('/categories', [AdminCategoryController::class, 'index'])->name('categories.index');
+    Route::post('/categories', [AdminCategoryController::class, 'store'])->name('categories.store');
     Route::get('/categories/{category}/edit', [AdminCategoryController::class, 'edit'])->name('categories.edit');
     Route::put('/categories/{category}', [AdminCategoryController::class, 'update'])->name('categories.update');
     Route::delete('/categories/{category}', [AdminCategoryController::class, 'destroy'])->name('categories.destroy');
@@ -143,6 +144,14 @@ Route::get('/tags-{page}.xml', [SitemapController::class, 'tagsPage'])->where('p
 
 Route::get('/robots.txt', [SitemapController::class, 'robots']);
 
+// ─── Auth ────────────────────────────────────────────────────────────────────
+
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+Route::post('/register', [AuthController::class, 'register'])->name('register.post');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
 Route::get('/', [PublicController::class, 'home']);
 Route::get('/dashboard', [PublicController::class, 'home']);
 Route::get('/about', [PublicController::class, 'about']);
@@ -184,14 +193,6 @@ Route::post('/blog-comment', [\App\Http\Controllers\BlogCommentController::class
 
 // Newsletter subscription
 Route::post('/newsletter-subscribe', [\App\Http\Controllers\NewsletterController::class, 'store'])->name('newsletter.subscribe');
-
-// ─── Auth ────────────────────────────────────────────────────────────────────
-
-Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login.post');
-Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-Route::post('/register', [AuthController::class, 'register'])->name('register.post');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // ─── Users (legacy) ──────────────────────────────────────────────────────────
 

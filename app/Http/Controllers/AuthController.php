@@ -14,27 +14,27 @@ class AuthController extends Controller
         if (Auth::check()) {
             return redirect('/dashboard');
         }
+
         return Inertia::render('Login/index');
     }
 
     public function login(Request $request)
     {
-        $request->validate([
-            'email'    => 'required',
-            'password' => 'required',
+        $credentials = $request->validate([
+            'email'    => 'required|email',
+            'password' => 'required|string|min:6',
         ]);
 
-        $user = User::first();
+        $remember = $request->boolean('remember');
 
-        if ($user) {
-            Auth::login($user, $request->boolean('remember'));
+        if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
             return redirect()->intended('/dashboard');
         }
 
         return back()->withErrors([
-            'email' => 'No admin user found in database.',
-        ]);
+            'email' => 'The provided credentials do not match our records.',
+        ])->onlyInput('email');
     }
 
     public function showRegister()
@@ -42,15 +42,16 @@ class AuthController extends Controller
         if (Auth::check()) {
             return redirect('/dashboard');
         }
+
         return Inertia::render('Register/index');
     }
 
     public function register(Request $request)
     {
         $validated = $request->validate([
-            'name'                  => 'required|string|max:255',
-            'email'                 => 'required|email|unique:users,email',
-            'password'              => 'required|string|min:8|confirmed',
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
         $user = User::create([

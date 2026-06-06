@@ -91,11 +91,18 @@ createInertiaApp({
         }
 
         // Website pages ko pages/ folder se resolve karo
-        const pageKey = `./pages/${name}.jsx`;
-        const page = pages[pageKey];
+        // First try exact match, then try with /index
+        let pageKey = `./pages/${name}.jsx`;
+        let page = pages[pageKey];
+        
+        // If not found, try with /index.jsx
+        if (!page) {
+            pageKey = `./pages/${name}/index.jsx`;
+            page = pages[pageKey];
+        }
 
         if (!page) {
-            console.error(`[Inertia] Page not found: ${name} (key: ${pageKey})`);
+            console.error(`[Inertia] Page not found: ${name} (tried both ${`./pages/${name}.jsx`} and ${pageKey})`);
             return;
         }
 
