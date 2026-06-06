@@ -39,10 +39,15 @@ export default function AdminPortfolioIndex({ items, filters, hasSearched, categ
                 .filters { display:flex; gap:0.75rem; margin-bottom:1.25rem; flex-wrap:wrap; }
                 .filter-input { padding:0.6rem 0.875rem; border:1px solid #e2e8f0; border-radius:8px; font-size:0.875rem; outline:none; background:#fff; color:#374151; transition:border-color 0.15s; }
                 .filter-input:focus { border-color:#3b82f6; box-shadow:0 0 0 3px rgba(59,130,246,0.1); }
+                .pf-page { max-width:1140px; width:100%; margin:0 auto; padding:1rem 1rem 1.25rem; }
                 .card { background:#fff; border-radius:12px; box-shadow:0 1px 4px rgba(0,0,0,0.06); border:1px solid #f1f5f9; overflow:hidden; }
                 .table { width:100%; border-collapse:collapse; font-size:0.875rem; table-layout:fixed; }
                 .table th { text-align:left; padding:0.75rem 1rem; font-size:0.7rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.08em; border-bottom:1px solid #f1f5f9; background:#fafafa; }
-                .table td { padding:0.75rem 1rem; border-bottom:1px solid #f8fafc; color:#374151; vertical-align:middle; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+                .table td { padding:0.75rem 1rem; border-bottom:1px solid #f8fafc; color:#374151; vertical-align:middle; overflow:hidden; text-overflow:ellipsis; white-space:normal; }
+                /* keep small columns single-line */
+                .table td:nth-child(1), .table td:nth-child(5), .table td:nth-child(6), .table td:nth-child(7), .table th:nth-child(1), .table th:nth-child(5), .table th:nth-child(6), .table th:nth-child(7) { white-space:nowrap; }
+                /* reserve actions column */
+                .table th:nth-child(8), .table td:nth-child(8) { width:120px; text-align:center; white-space:nowrap; }
                 .table tr:last-child td { border-bottom:none; }
                 .table tr:hover td { background:#fafafa; }
                 .badge { display:inline-block; padding:0.2rem 0.65rem; border-radius:20px; font-size:0.7rem; font-weight:700; }
@@ -64,7 +69,8 @@ export default function AdminPortfolioIndex({ items, filters, hasSearched, categ
                 .card        { animation:fadeSlideUp 0.4s cubic-bezier(0.22,1,0.36,1) 0.1s both; }
             `}</style>
 
-            <div className="page-header">
+            <div className="pf-page">
+                <div className="page-header">
                 <h2 className="page-title">
                     Portfolio Items
                     {items?.total != null && (
@@ -76,29 +82,29 @@ export default function AdminPortfolioIndex({ items, filters, hasSearched, categ
                 <Link href="/admin/portfolio/create" className="btn-primary">+ New Item</Link>
             </div>
 
-            <div className="filters">
-                <input
-                    className="filter-input"
-                    placeholder="Search title or description..."
-                    value={search}
-                    onChange={e => setSearch(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && applyFilters()}
-                    style={{ flex: 1, minWidth: 200 }}
-                />
-                <select
-                    className="filter-input"
-                    value={statusFilter}
-                    onChange={e => setStatus(e.target.value)}
-                    style={{ minWidth: 130 }}
-                >
+                <div className="filters">
+                    <input
+                        className="filter-input"
+                        placeholder="Search title or description..."
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                        onKeyDown={e => e.key === 'Enter' && applyFilters()}
+                        style={{ flex: '1 1 360px', minWidth: 140, maxWidth: 360 }}
+                    />
+                    <select
+                        className="filter-input"
+                        value={statusFilter}
+                        onChange={e => setStatus(e.target.value)}
+                        style={{ flex: '0 0 360px', minWidth: 140, maxWidth: 360 }}
+                    >
                     <option value="">All Status</option>
                     <option value="1">Published</option>
                     <option value="0">Draft</option>
                 </select>
-                <button className="btn-primary" onClick={applyFilters}>Search</button>
-            </div>
+                    <button className="btn-primary" onClick={applyFilters} style={{ flex: '0 0 auto', padding: '0.6rem 1rem' }}>Search</button>
+                </div>
 
-            <div className="card">
+                <div className="card">
                 {!hasSearched ? (
                     <div className="empty" style={{ padding:'4rem' }}>
                         <div style={{ fontWeight:600, fontSize:'0.95rem', color:'#64748b', marginBottom:'0.35rem' }}>
@@ -185,6 +191,7 @@ export default function AdminPortfolioIndex({ items, filters, hasSearched, categ
                         <Pagination links={items.links} />
                     </div>
                 )}
+                </div>
             </div>
         </AdminLayout>
     );

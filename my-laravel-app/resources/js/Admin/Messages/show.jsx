@@ -105,7 +105,6 @@ export default function AdminMessageShow({ message }) {
                 </div>
 
                 <div style={{ display: 'flex', gap: '0.75rem', paddingTop: '1rem', borderTop: '1px solid #f1f5f9', flexWrap: 'wrap' }}>
-                    <a href={`mailto:${message.email}`} className="btn-reply">Reply via Email</a>
                     <button className="btn-delete" onClick={handleDelete}>Delete</button>
                     <Link href="/admin/messages" className="btn-cancel">Back to List</Link>
                 </div>

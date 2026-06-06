@@ -69,17 +69,27 @@ export default function AdminBlogIndex({ posts, filters, categories = [] }) {
             <style>{`
                 @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap');
 
-                .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:2rem; flex-wrap:wrap; gap:1.25rem; }
-                .page-title  { font-size:1.5rem; font-weight:700; color:#1e293b; letter-spacing:-0.5px; }
+                .blog-page {
+                    max-width: 1120px;
+                    width: 100%;
+                    margin: 0 auto;
+                    padding: 1.5rem 1rem 0;
+                }
 
-                .btn-primary { background:#2563eb; color:#fff; border:none; padding:0.75rem 1.5rem; border-radius:8px; font-size:0.875rem; font-weight:600; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:0.5rem; transition:all 0.15s ease; }
+                .page-header { display:flex; align-items:center; justify-content:space-between; margin:1.5rem 0 1rem; flex-wrap:wrap; gap:1.25rem; }
+                .page-title  { font-size:1.5rem; font-weight:700; color:#1e293b; letter-spacing:-0.5px; margin:0; }
+
+                .btn-primary { background:#2563eb; color:#fff; border:none; padding:0.75rem 1.5rem; border-radius:10px; font-size:0.875rem; font-weight:600; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:0.5rem; transition:all 0.15s ease; }
                 .btn-primary:hover { background:#1d4ed8; }
 
-                .filters { display:flex; gap:0.875rem; margin-bottom:1.5rem; flex-wrap:wrap; align-items:center; }
-                .filter-input { padding:0.75rem 1rem; border:1px solid #e2e8f0; border-radius:8px; font-size:0.875rem; outline:none; background:#fff; color:#1e293b; transition:all 0.15s ease; }
+                .filters { display:flex; gap:0.85rem; margin-bottom:2rem; flex-wrap:wrap; align-items:center; }
+                .filter-input { padding:0.72rem 0.95rem; border:1px solid #e2e8f0; border-radius:12px; font-size:0.875rem; outline:none; background:#fff; color:#1e293b; transition:all 0.15s ease; min-width:120px; }
                 .filter-input:focus { border-color:#2563eb; box-shadow:0 0 0 3px rgba(37,99,235,0.1); }
 
-                .card { background:#fff; border-radius:16px; box-shadow:0 1px 3px rgba(0,0,0,0.05); border:1px solid #e2e8f0; overflow:hidden; }
+                .btn-primary { background:#2563eb; color:#fff; border:none; padding:0.72rem 1.2rem; border-radius:12px; font-size:0.875rem; font-weight:600; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:0.5rem; transition:all 0.15s ease; }
+                .btn-primary:hover { background:#1d4ed8; }
+
+                .card { background:#fff; border-radius:16px; box-shadow:0 1px 3px rgba(0,0,0,0.05); border:1px solid #e2e8f0; overflow:hidden; margin-top:1.35rem; }
 
                 .table { width:100%; border-collapse:collapse; font-size:0.875rem; table-layout:fixed; }
                 .table th { text-align:left; padding:0.875rem 1rem; font-size:0.72rem; font-weight:600; color:#64748b; text-transform:uppercase; border-bottom:1px solid #e2e8f0; background:#f8fafc; }
@@ -139,9 +149,10 @@ export default function AdminBlogIndex({ posts, filters, categories = [] }) {
                 .btn-save:hover { background:#1d4ed8; }
             `}</style>
 
-            {/* Header */}
-            <div className="page-header">
-                <h2 className="page-title">All Blog Posts
+            <div className="blog-page">
+                {/* Header */}
+                <div className="page-header">
+                    <h2 className="page-title">All Blog Posts
                     <span style={{ fontSize:'0.875rem', fontWeight:500, color:'#64748b', marginLeft:'0.75rem' }}>
                         ({posts?.total ?? 0} total)
                     </span>
@@ -159,13 +170,13 @@ export default function AdminBlogIndex({ posts, filters, categories = [] }) {
                     value={search}
                     onChange={e => setSearch(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && applyFilters()}
-                    style={{ flex: 1, minWidth: '220px' }}
+                    style={{ flex: '1 1 260px', minWidth: '180px', maxWidth: '330px' }}
                 />
                 <select
                     className="filter-input"
                     value={catFilter}
                     onChange={e => setCatFilter(e.target.value)}
-                    style={{ minWidth: '160px' }}
+                    style={{ minWidth: '140px', maxWidth: '190px' }}
                 >
                     <option value="">All Categories</option>
                     {categories.map(c => (
@@ -176,7 +187,7 @@ export default function AdminBlogIndex({ posts, filters, categories = [] }) {
                     className="filter-input"
                     value={statusFilter}
                     onChange={e => setStatus(e.target.value)}
-                    style={{ minWidth: '130px' }}
+                    style={{ minWidth: '110px', maxWidth: '150px' }}
                 >
                     <option value="">All Status</option>
                     <option value="1">Published</option>
@@ -278,6 +289,7 @@ export default function AdminBlogIndex({ posts, filters, categories = [] }) {
             </div>
 
             {/* ── Delete Modal ── */}
+            </div>
             {deleteModal && createPortal(
                 <div className="modal-overlay" onClick={e => e.target === e.currentTarget && setDeleteModal(false)}>
                     <div className="delete-modal-box">

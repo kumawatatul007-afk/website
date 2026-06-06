@@ -13,7 +13,8 @@ export default function AdminMessageShow({ message }) {
     return (
         <AdminLayout title="View Message">
             <style>{`
-                .msg-card { background: #fff; border-radius: 12px; padding: 2rem; box-shadow: 0 1px 4px rgba(0,0,0,0.06); border: 1px solid #f1f5f9; max-width: 700px; }
+                .page-container { max-width: 1140px; width: 100%; margin: 0 auto; padding: 1.8rem 1rem 2.5rem; }
+                .msg-card { background: #fff; border-radius: 12px; padding: 2rem; box-shadow: 0 1px 4px rgba(0,0,0,0.06); border: 1px solid #f1f5f9; max-width: 700px; width: 100%; }
                 .msg-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid #f1f5f9; }
                 .meta-item label { display: block; font-size: 0.7rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.3rem; }
                 .meta-item span { font-size: 0.9rem; color: #0f172a; font-weight: 500; }
@@ -65,11 +66,12 @@ export default function AdminMessageShow({ message }) {
                 @media (max-width: 600px) { .msg-meta { grid-template-columns: 1fr; } }
             `}</style>
 
-            <div className="page-header">
-                <Link href="/admin/messages" className="btn-cancel">← Back</Link>
-                <h2 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0f172a' }}>Message Detail</h2>
-                <span className={`badge badge-${message.is_read ? 'read' : 'unread'}`}>{message.is_read ? 'Read' : 'Unread'}</span>
-            </div>
+            <div className="page-container">
+                <div className="page-header">
+                    <Link href="/admin/messages" className="btn-cancel">← Back</Link>
+                    <h2 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0f172a' }}>Message Detail</h2>
+                    <span className={`badge badge-${message.is_read ? 'read' : 'unread'}`}>{message.is_read ? 'Read' : 'Unread'}</span>
+                </div>
 
             <div className="msg-card">
                 <div className="msg-meta">
@@ -105,10 +107,10 @@ export default function AdminMessageShow({ message }) {
                 </div>
 
                 <div style={{ display: 'flex', gap: '0.75rem', paddingTop: '1rem', borderTop: '1px solid #f1f5f9', flexWrap: 'wrap' }}>
-                    <a href={`mailto:${message.email}`} className="btn-reply">Reply via Email</a>
                     <button className="btn-delete" onClick={handleDelete}>Delete</button>
                     <Link href="/admin/messages" className="btn-cancel">Back to List</Link>
                 </div>
+            </div>
             </div>
         </AdminLayout>
     );

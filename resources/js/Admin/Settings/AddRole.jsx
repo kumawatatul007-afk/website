@@ -88,6 +88,8 @@ export default function AdminSettingsAddRole({ roles }) {
     return (
         <AdminLayout title="Role">
             <style>{`
+                .page-container { max-width: 1140px; width: 100%; margin: 0 auto; padding: 1.8rem 1rem 2.5rem; }
+                .page-panel { background: #fff; border-radius: 24px; padding: 1.5rem; box-shadow: 0 18px 60px rgba(15,23,42,0.06); border: 1px solid #e5e7eb; }
                 .seo-header {
                     display: flex;
                     align-items: center;
@@ -439,8 +441,10 @@ export default function AdminSettingsAddRole({ roles }) {
                 }
             `}</style>
 
-            {/* Header */}
-            <div className="seo-header">
+            <div className="page-container">
+                <div className="page-panel">
+                    {/* Header */}
+                    <div className="seo-header">
                 <div>
                     <div className="seo-title">Role</div>
                     <div className="seo-subtitle">Role Details</div>
@@ -450,8 +454,8 @@ export default function AdminSettingsAddRole({ roles }) {
                 </div>
             </div>
 
-            {/* Card */}
-            <div className="seo-card">
+                    {/* Card */}
+                    <div className="seo-card">
                 <div className="card-title">Roles</div>
 
                 {/* Controls */}
@@ -553,6 +557,8 @@ export default function AdminSettingsAddRole({ roles }) {
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 
             {/* Add Modal */}
             {addModal && (

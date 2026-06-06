@@ -17,6 +17,8 @@ export default function AdminSettingsScripts({ scripts }) {
     return (
         <AdminLayout title="Scripts">
             <style>{`
+                .page-container { max-width: 1140px; width: 100%; margin: 0 auto; padding: 1.8rem 1rem 2.5rem; }
+                .page-panel { background: #fff; border-radius: 24px; padding: 1.5rem; box-shadow: 0 18px 60px rgba(15,23,42,0.06); border: 1px solid #e5e7eb; }
                 .page-header {
                     display: flex;
                     align-items: flex-start;
@@ -143,14 +145,16 @@ export default function AdminSettingsScripts({ scripts }) {
                     white-space: pre-wrap;
                 }
             `}</style>
-            <div className="page-header">
-                <div>
-                    <div className="page-title">Scripts</div>
-                    <div className="page-subtitle">Manage custom script snippets.</div>
-                </div>
-            </div>
+            <div className="page-container">
+                <div className="page-panel">
+                    <div className="page-header">
+                        <div>
+                            <div className="page-title">Scripts</div>
+                            <div className="page-subtitle">Manage custom script snippets.</div>
+                        </div>
+                    </div>
 
-            <div className="card">
+                    <div className="card">
                 <div className="card-header">
                     <div className="section-label">Existing Scripts</div>
                 </div>
@@ -181,6 +185,8 @@ export default function AdminSettingsScripts({ scripts }) {
                             No scripts found.
                         </div>
                     )}
+                </div>
+                    </div>
                 </div>
             </div>
         </AdminLayout>

@@ -97,22 +97,30 @@ const handleSubmit = (e) => {
     return (
         <AdminLayout title="Edit Portfolio Item">
             <style>{`
-                .form-card { background:#fff; border-radius:12px; padding:2rem; box-shadow:0 1px 4px rgba(0,0,0,0.06); border:1px solid #f1f5f9; width:100%; }
-                .form-group { margin-bottom:1.25rem; }
-                .form-label { display:block; font-size:0.72rem; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.45rem; }
-                .form-input { width:100%; padding:0.7rem 0.875rem; border:1px solid #e2e8f0; border-radius:8px; font-size:0.875rem; color:#0f172a; outline:none; transition:border-color 0.15s,box-shadow 0.15s; background:#fff; box-sizing:border-box; }
+                .admin-container { max-width:1080px; width:100%; margin:0 auto; padding:1.25rem 1rem 1.75rem; }
+                .form-card { background:#fff; border-radius:12px; padding:1.5rem; box-shadow:0 1px 4px rgba(0,0,0,0.06); border:1px solid #f1f5f9; width:100%; }
+                .form-group { margin-bottom:1rem; }
+                .form-label { display:block; font-size:0.72rem; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.35rem; }
+                .form-input { width:100%; padding:0.65rem 0.85rem; border:1px solid #e2e8f0; border-radius:8px; font-size:0.875rem; color:#0f172a; outline:none; transition:border-color 0.15s,box-shadow 0.15s; background:#fff; box-sizing:border-box; }
                 .form-input:focus { border-color:#3b82f6; box-shadow:0 0 0 3px rgba(59,130,246,0.1); }
                 .form-input.err { border-color:#ef4444; }
-                .form-error { color:#ef4444; font-size:0.78rem; margin-top:0.3rem; }
-                .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
-                .section-label { font-size:0.72rem; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.12em; margin:1.5rem 0 0.875rem; padding-bottom:0.5rem; border-bottom:1px solid #e2e8f0; }
-                .btn-primary { background:#2563eb; color:#fff; border:none; padding:0.7rem 1.5rem; border-radius:8px; font-size:0.875rem; font-weight:600; cursor:pointer; transition:background 0.15s; }
+                .form-error { color:#ef4444; font-size:0.78rem; margin-top:0.25rem; }
+                .form-row { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; }
+                .section-label { font-size:0.72rem; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.12em; margin:0.9rem 0 0.6rem; padding-bottom:0.45rem; border-bottom:1px solid #e2e8f0; }
+                .image-upload-area { display:grid; gap:0.65rem; }
+                .image-preview-container { width:160px; max-width:100%; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden; background:#f8fafc; padding:0.45rem; }
+                .image-preview { width:100%; height:auto; display:block; border-radius:10px; object-fit:cover; max-height:180px; }
+                .image-label { display:block; font-size:0.72rem; font-weight:700; color:#475569; margin-top:0.5rem; }
+                .help-text { font-size:0.8rem; color:#6b7280; margin-top:0.3rem; }
+                .btn-primary { background:#2563eb; color:#fff; border:none; padding:0.65rem 1.4rem; border-radius:8px; font-size:0.875rem; font-weight:600; cursor:pointer; transition:background 0.15s; }
                 .btn-primary:hover:not(:disabled) { background:#1d4ed8; }
                 .btn-primary:disabled { opacity:0.6; cursor:not-allowed; }
-                .btn-cancel { background:#f8fafc; color:#374151; border:1px solid #e2e8f0; padding:0.7rem 1.5rem; border-radius:8px; font-size:0.875rem; font-weight:600; cursor:pointer; text-decoration:none; display:inline-block; transition:background 0.15s; }
+                .btn-cancel { background:#f8fafc; color:#374151; border:1px solid #e2e8f0; padding:0.65rem 1.4rem; border-radius:8px; font-size:0.875rem; font-weight:600; cursor:pointer; text-decoration:none; display:inline-block; transition:background 0.15s; }
                 .btn-cancel:hover { background:#f1f5f9; }
-                .page-header { display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem; }
-                @media (max-width:600px) { .form-row { grid-template-columns:1fr; } }
+                .page-header { display:flex; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1.25rem; flex-wrap:wrap; }
+                .form-actions { display:flex; gap:0.8rem; flex-wrap:wrap; margin-top:1.25rem; }
+                @media (max-width:900px) { .image-preview-container { width:140px; } }
+                @media (max-width:600px) { .form-row { grid-template-columns:1fr; } .form-actions { flex-direction:column; } }
             `}</style>
 
             <div className="admin-container">

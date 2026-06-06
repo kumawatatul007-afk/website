@@ -106,13 +106,28 @@ export default function AdminSettingsIndex({ setting }) {
     const handleSubmit = (e) => {
         e.preventDefault();
         setLoading(true);
-        const payload = {
-            ...form,
-            strating_keyword: keywords.join(','),
-            service_keyword:  serviceKeywords.join(','),
-            locations:        locations.join(','),
-        };
-        router.put('/admin/settings', payload, {
+
+        const formData = new FormData();
+        formData.append('_method', 'PUT');
+        formData.append('website_title', form.website_title);
+        formData.append('email', form.email);
+        formData.append('phone', form.phone);
+        formData.append('timing', form.timing);
+        formData.append('preloader', form.preloader);
+        formData.append('address', form.address);
+        formData.append('strating_keyword', keywords.join(','));
+        formData.append('service_keyword', serviceKeywords.join(','));
+        formData.append('locations', locations.join(','));
+
+        if (logoFile) {
+            formData.append('logo', logoFile);
+        }
+        if (faviconFile) {
+            formData.append('favicon', faviconFile);
+        }
+
+        router.post('/admin/settings', formData, {
+            forceFormData: true,
             preserveScroll: true,
             onSuccess: () => setLoading(false),
             onError: (err) => { setErrors(err); setLoading(false); },
@@ -125,6 +140,9 @@ export default function AdminSettingsIndex({ setting }) {
     return (
         <AdminLayout title="General Setting">
             <style>{`
+                .page-container { max-width: 1140px; width: 100%; margin: 0 auto; padding: 1.8rem 1rem 2.5rem; }
+                .page-panel { background: #ffffff; border-radius: 24px; padding: 1.4rem; box-shadow: 0 18px 60px rgba(15,23,42,0.06); border: 1px solid #e5e7eb; }
+
                 /* ── Page header ── */
                 .gs-page-header {
                     display: flex; align-items: flex-start; justify-content: space-between;
@@ -301,16 +319,18 @@ export default function AdminSettingsIndex({ setting }) {
                 }
             `}</style>
 
-            {/* Page Header */}
-            <div className="gs-page-header">
-                <div>
-                    <div className="gs-title">General Setting</div>
-                    <div className="gs-subtitle">Add Settings</div>
-                </div>
-            </div>
+            <div className="page-container">
+                <div className="page-panel">
+                    {/* Page Header */}
+                    <div className="gs-page-header">
+                        <div>
+                            <div className="gs-title">General Setting</div>
+                            <div className="gs-subtitle">Add Settings</div>
+                        </div>
+                    </div>
 
-            {/* Main Card */}
-            <div className="gs-card">
+                    {/* Main Card */}
+                    <div className="gs-card">
                 <div className="gs-section-label">
                     <span className="pink">GENERAL</span>{' '}
                     <span className="gray">SETTING</span>
@@ -479,6 +499,7 @@ export default function AdminSettingsIndex({ setting }) {
                                     <img
                                         src={logoPreview || (IMG_BASE + form.logo)}
                                         alt="Logo"
+                                        style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
                                         onError={e => { e.target.style.display = 'none'; }}
                                     />
                                 ) : (
@@ -506,6 +527,7 @@ export default function AdminSettingsIndex({ setting }) {
                                     <img
                                         src={faviconPreview || (IMG_BASE + form.favicon)}
                                         alt="Favicon"
+                                        style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
                                         onError={e => { e.target.style.display = 'none'; }}
                                     />
                                 ) : (
@@ -536,6 +558,8 @@ export default function AdminSettingsIndex({ setting }) {
                     </div>
 
                 </form>
+            </div>
+                </div>
             </div>
         </AdminLayout>
     );

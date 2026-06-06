@@ -27,7 +27,9 @@ class BlogPost extends Model
         'type',
         'tags',
         'main_image',
+        'description',
         'content',
+        'created_by',
         'status',
     ];
 
@@ -61,6 +63,15 @@ class BlogPost extends Model
     }
 
     protected $appends = [];
+
+    public function getContentAttribute($value)
+    {
+        if ($value !== null) {
+            return $value;
+        }
+
+        return $this->attributes['description'] ?? '';
+    }
 
     /**
      * Get the main image URL.

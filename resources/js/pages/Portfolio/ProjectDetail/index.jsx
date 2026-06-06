@@ -77,17 +77,6 @@ function ImageSlider({ imgSrc, websiteUrl }) {
   const STEPS = 4;
   const [step, setStep] = useState(0);
   const imgRef = useRef(null);
-  const [isVerticalSprite, setIsVerticalSprite] = useState(false);
-
-  const onImgLoad = useCallback((e) => {
-    const img = e.currentTarget || imgRef.current;
-    if (!img) return;
-    const w = img.naturalWidth || img.width;
-    const h = img.naturalHeight || img.height;
-    // If image is significantly taller than wide, treat as vertical sprite
-    if (h / Math.max(w, 1) > 1.2) setIsVerticalSprite(true);
-    else setIsVerticalSprite(false);
-  }, []);
 
   const commonImgStyle = {
     transition: 'transform 0.75s cubic-bezier(0.4,0,0.2,1)',
@@ -110,11 +99,12 @@ function ImageSlider({ imgSrc, websiteUrl }) {
           src={imgSrc}
           alt="preview"
           className="pd3-slide-img"
-          onLoad={onImgLoad}
-          style={isVerticalSprite
-            ? { ...commonImgStyle, transform: `translateY(${-step * (100 / STEPS)}%)`, height: `${STEPS * 100}%`, width: '100%' }
-            : { ...commonImgStyle, transform: `translateX(${-step * (100 / STEPS)}%)`, width: `${STEPS * 100}%`, height: '100%' }
-          }
+          style={{
+            ...commonImgStyle,
+            transform: `translateX(${-step * (100 / STEPS)}%)`,
+            width: `${STEPS * 100}%`,
+            height: '100%'
+          }}
           loading="eager"
         />
         <div className="pd3-slider-controls">

@@ -71,20 +71,27 @@ export default function AdminGalleryIndex({ items, filters }) {
     return (
         <AdminLayout title="Image Gallery">
             <style>{`
+                .gallery-page {
+                    max-width: 700px;
+                    width: 100%;
+                    margin: 0 auto;
+                    padding: 0.7rem 0.6rem 0.85rem;
+                }
+
                 /* ── Page title ── */
                 .page-title {
-                    font-size: 1.3rem; font-weight: 700; color: #0f172a;
-                    margin-bottom: 1.5rem;
+                    font-size: 1.1rem; font-weight: 700; color: #0f172a;
+                    margin-bottom: 0.95rem;
                     animation: fadeUp 0.3s cubic-bezier(0.22,1,0.36,1) both;
                 }
 
                 /* ── White card ── */
                 .section-card {
                     background: #fff; border-radius: 10px;
-                    box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
                     border: 1px solid #f1f5f9;
-                    padding: 1.75rem 1.75rem 1.5rem;
-                    margin-bottom: 1.5rem;
+                    padding: 0.7rem 0.75rem 0.7rem;
+                    margin-bottom: 0.6rem;
                     animation: fadeUp 0.35s cubic-bezier(0.22,1,0.36,1) both;
                 }
                 .section-card:nth-child(2) { animation-delay: 0.06s; }
@@ -144,8 +151,8 @@ export default function AdminGalleryIndex({ items, filters }) {
 
                 /* ── Gallery List heading ── */
                 .gallery-heading {
-                    font-size: 1rem; font-weight: 400;
-                    margin-bottom: 1.25rem;
+                    font-size: 0.88rem; font-weight: 500;
+                    margin-bottom: 0.5rem;
                 }
                 .gallery-heading .pink { color: #e91e8c; font-weight: 700; font-family: 'Courier New', monospace; }
                 .gallery-heading .dark { color: #0f172a; font-weight: 700; }
@@ -153,8 +160,8 @@ export default function AdminGalleryIndex({ items, filters }) {
                 /* ── Grid ── */
                 .gallery-grid {
                     display: grid;
-                    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-                    gap: 1rem;
+                    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                    gap: 0.35rem;
                 }
 
                 /* ── Card ── */
@@ -169,7 +176,7 @@ export default function AdminGalleryIndex({ items, filters }) {
                 .gallery-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
 
                 .img-wrap {
-                    position: relative; width: 100%; padding-top: 70%;
+                    position: relative; width: 100%; padding-top: 42%;
                     background: #f3f4f6; overflow: hidden; cursor: zoom-in;
                 }
                 .img-wrap img {
@@ -193,28 +200,28 @@ export default function AdminGalleryIndex({ items, filters }) {
                 }
                 .img-placeholder span { font-size: 0.68rem; color: #d1d5db; }
 
-                .card-body { padding: 0.65rem 0.75rem; }
+                .card-body { padding: 0.26rem 0.45rem 0.35rem; }
                 .card-name {
-                    font-size: 0.72rem; color: #6b7280;
+                    font-size: 0.64rem; color: #4b5563;
                     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-                    margin-bottom: 0.25rem;
+                    margin-bottom: 0.1rem;
                 }
-                .card-date { font-size: 0.68rem; color: #9ca3af; margin-bottom: 0.5rem; }
+                .card-date { font-size: 0.58rem; color: #94a3b8; margin-bottom: 0.14rem; }
 
                 .btn-del {
-                    width: 100%; padding: 0.35rem; border-radius: 5px;
-                    font-size: 0.72rem; font-weight: 600; cursor: pointer; border: none;
+                    width: 100%; padding: 0.22rem; border-radius: 5px;
+                    font-size: 0.64rem; font-weight: 600; cursor: pointer; border: none;
                     background: #fef2f2; color: #dc2626;
-                    display: flex; align-items: center; justify-content: center; gap: 0.3rem;
+                    display: flex; align-items: center; justify-content: center; gap: 0.22rem;
                     transition: background 0.15s;
                 }
                 .btn-del:hover { background: #fee2e2; }
 
                 /* ── Empty ── */
                 .empty-state {
-                    text-align: center; padding: 3rem 1rem; color: #9ca3af;
+                    text-align: center; padding: 0.85rem 0.6rem; color: #9ca3af;
                 }
-                .empty-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+                .empty-icon { font-size: 1.6rem; margin-bottom: 0.25rem; }
 
                 /* ── Pagination ── */
                 .pagination-wrap { margin-top: 1.25rem; }
@@ -301,7 +308,8 @@ export default function AdminGalleryIndex({ items, filters }) {
                 }
             `}</style>
 
-            <div className="page-title">Image Gallery</div>
+            <div className="gallery-page">
+                <div className="page-title">Image Gallery</div>
 
             {/* ── Add Image Section ── */}
             <div className="section-card">
@@ -412,6 +420,7 @@ export default function AdminGalleryIndex({ items, filters }) {
                     <div className="lightbox-caption">{lightbox.image}</div>
                 </div>
             )}
+            </div>
         </AdminLayout>
     );
 }

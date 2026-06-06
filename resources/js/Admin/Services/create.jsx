@@ -1,19 +1,55 @@
 import AdminLayout from '../layouts/AdminLayout';
 import { useForm, Link } from '@inertiajs/react';
+import { useState, useRef, useEffect } from 'react';
 
-export default function AdminServiceCreate() {
+function makeSlug(value) {
+    return value
+        .toString()
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
+
+export default function AdminServiceCreate({ categories = [] }) {
+    const fileInputRef = useRef(null);
+    const [imagePreview, setImagePreview] = useState(null);
+    const [autoSlug, setAutoSlug] = useState('');
     const { data, setData, post, processing, errors } = useForm({
         title: '',
         slug: '',
+        subtitle: '',
+        meta_title: '',
+        meta_keyword: '',
         meta_description: '',
-        meta_keywords: '',
         tags: '',
         content: '',
         main_image: '',
-        serial_number: 100,
+        image_alt: '',
+        serial_number: 0,
         status: 1,
         category_id: '',
     });
+
+    const handleFileChange = (e) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setData('main_image', file.name);
+            setImagePreview(URL.createObjectURL(file));
+        }
+    };
+
+    useEffect(() => {
+        const nextSlug = makeSlug(data.title);
+        if ((!data.slug && nextSlug) || data.slug === autoSlug) {
+            setData('slug', nextSlug);
+            setAutoSlug(nextSlug);
+        }
+    }, [data.title]);
+
+    const openFilePicker = () => {
+        fileInputRef.current?.click();
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -21,183 +57,177 @@ export default function AdminServiceCreate() {
     };
 
     return (
-        <AdminLayout title="New Service">
+        <AdminLayout title="Add / Update Services">
             <style>{`
-                .form-card {
-                    background: #fff; border-radius: 12px;
-                    box-shadow: 0 1px 4px rgba(0,0,0,0.06); border: 1px solid #f1f5f9;
-                    padding: 2rem; max-width: 820px;
-                    animation: fadeSlideUp 0.4s cubic-bezier(0.22,1,0.36,1) both;
-                }
-                @keyframes fadeSlideUp {
-                    from { opacity: 0; transform: translateY(16px); }
-                    to   { opacity: 1; transform: translateY(0); }
-                }
-                .form-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.75rem; flex-wrap: wrap; gap: 1rem; }
-                .form-title { font-size: 1.1rem; font-weight: 700; color: #0f172a; }
-                .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
-                @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
-                .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+                .page-container { max-width: 1140px; width: 100%; margin: 0 auto; padding: 1.8rem 1rem 2.5rem; }
+                .page-topbar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem; }
+                .page-overline { margin: 0; color: #2563eb; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; }
+                .page-heading { margin: 0; font-size: 1.7rem; font-weight: 800; color: #0f172a; }
+                .page-actions { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
+                .btn-secondary { background: #1d4ed8; color: #fff; border: none; padding: 0.75rem 1.25rem; border-radius: 10px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
+                .btn-secondary:hover { background: #1e40af; }
+                .btn-icon { width: 48px; height: 48px; border-radius: 12px; background: #2563eb; color: #fff; border: none; display: inline-flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer; }
+                .form-card { background: #fff; border-radius: 20px; border: 1px solid #e5e7eb; box-shadow: 0 18px 60px rgba(15,23,42,0.06); padding: 2rem; }
+                .section-grid { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 1.5rem; }
+                .image-panel { display: grid; gap: 1rem; }
+                .image-preview { position: relative; border: 1px solid #d1d5db; border-radius: 18px; background: #f8fafc; min-height: 140px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+                .image-preview img { width: 100%; height: 100%; object-fit: contain; }
+                .image-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.75rem; color: #6b7280; text-align: center; padding: 1rem; }
+                .image-placeholder svg { width: 36px; height: 36px; }
+                .upload-action { position: absolute; top: 12px; right: 12px; width: 34px; height: 34px; border-radius: 12px; background: #fff; border: 1px solid #d1d5db; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+                .image-note { font-size: 0.85rem; color: #6b7280; }
+                .rich-editor { border: 1px solid #d1d5db; border-radius: 16px; overflow: hidden; background: #fff; }
+                .rich-editor-toolbar { display: flex; flex-wrap: wrap; gap: 0.45rem; padding: 0.85rem 0.9rem; background: #f8fafc; border-bottom: 1px solid #e5e7eb; }
+                .toolbar-btn { border: 1px solid #d1d5db; background: #fff; color: #374151; border-radius: 10px; padding: 0.55rem 0.8rem; font-size: 0.82rem; cursor: pointer; transition: background 0.15s, border-color 0.15s; }
+                .toolbar-btn:hover { background: #f1f5f9; border-color: #cbd5e1; }
+                .rich-editor-body { border: none; width: 100%; min-height: 240px; padding: 1rem; resize: vertical; font-size: 0.95rem; line-height: 1.7; color: #111827; outline: none; }
+                .rich-editor-body:focus { box-shadow: inset 0 0 0 2px rgba(37,99,235,0.15); }
+                .form-grid-two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+                .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
                 .form-group.full { grid-column: 1 / -1; }
-                label { font-size: 0.78rem; font-weight: 600; color: #374151; letter-spacing: 0.04em; text-transform: uppercase; }
-                .form-input, .form-textarea {
-                    padding: 0.65rem 0.875rem; border: 1px solid #e2e8f0; border-radius: 8px;
-                    font-size: 0.875rem; color: #374151; background: #fff; outline: none;
-                    transition: border-color 0.15s, box-shadow 0.15s; font-family: inherit;
-                }
-                .form-input:focus, .form-textarea:focus {
-                    border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
-                }
-                .form-textarea { resize: vertical; min-height: 160px; }
-                .error { font-size: 0.75rem; color: #dc2626; margin-top: 0.2rem; }
-                .form-actions { display: flex; gap: 0.75rem; margin-top: 1.75rem; flex-wrap: wrap; }
-                .btn-primary {
-                    background: #2563eb; color: #fff; border: none; padding: 0.7rem 1.75rem;
-                    border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer;
-                    transition: background 0.15s, transform 0.15s; font-family: inherit;
-                }
-                .btn-primary:hover:not(:disabled) { background: #1d4ed8; transform: translateY(-1px); }
-                .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-                .btn-cancel { background: #f1f5f9; color: #374151; border: none; padding: 0.7rem 1.5rem; border-radius: 8px; font-size: 0.875rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; transition: background 0.15s; font-family: inherit; }
-                .btn-cancel:hover { background: #e2e8f0; }
-                .toggle-row { display: flex; align-items: center; gap: 0.75rem; }
-                .toggle { position: relative; width: 42px; height: 24px; }
-                .toggle input { opacity: 0; width: 0; height: 0; }
-                .toggle-slider {
-                    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-                    background: #cbd5e1; border-radius: 24px; transition: background 0.2s;
-                }
-                .toggle-slider::before {
-                    content: ''; position: absolute; height: 18px; width: 18px;
-                    left: 3px; bottom: 3px; background: #fff; border-radius: 50%;
-                    transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-                }
-                .toggle input:checked + .toggle-slider { background: #2563eb; }
-                .toggle input:checked + .toggle-slider::before { transform: translateX(18px); }
-                .toggle-label { font-size: 0.875rem; color: #374151; font-weight: 500; }
-                .hint { font-size: 0.72rem; color: #94a3b8; margin-top: 0.2rem; }
-                .content-textarea { resize: vertical; min-height: 240px; line-height: 1.75; font-family: inherit; }
+                .form-label { font-size: 0.78rem; font-weight: 700; color: #374151; letter-spacing: 0.08em; text-transform: uppercase; }
+                .form-input, .form-textarea, .form-select { width: 100%; padding: 0.9rem 1rem; border-radius: 14px; border: 1px solid #d1d5db; font-size: 0.95rem; color: #111827; background: #fff; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
+                .form-input:focus, .form-textarea:focus, .form-select:focus { border-color: #2563eb; box-shadow: 0 0 0 4px rgba(37,99,235,0.12); }
+                .form-textarea { min-height: 200px; resize: vertical; }
+                .small-input { max-width: 100%; }
+                .hint { font-size: 0.85rem; color: #6b7280; }
+                .row-3 { display: grid; grid-template-columns: 1fr 1fr 220px; gap: 1.25rem; }
+                .checkbox-row { display: flex; align-items: center; gap: 0.8rem; }
+                .checkbox-row input { width: 18px; height: 18px; accent-color: #2563eb; }
+                .checkbox-label { font-size: 0.95rem; color: #374151; }
+                .form-footer { display: flex; justify-content: flex-end; margin-top: 1.75rem; }
+                .form-error { color: #dc2626; font-size: 0.82rem; }
+                @media (max-width: 980px) { .section-grid { grid-template-columns: 1fr; } .row-3 { grid-template-columns: 1fr; } }
             `}</style>
 
-            <div className="form-card">
-                <div className="form-header">
-                    <h2 className="form-title">New Service</h2>
-                    <Link href="/admin/services" className="btn-cancel">← Back</Link>
+            <div className="page-container">
+                <div className="page-topbar">
+                    <div>
+                        <p className="page-overline">Add Services</p>
+                        <h1 className="page-heading">Add / Update Services</h1>
+                    </div>
+                    <div className="page-actions">
+                        <Link href="/admin/services" className="btn-secondary">Back</Link>
+                    </div>
                 </div>
 
-                <form onSubmit={handleSubmit}>
-                    <div className="form-grid">
+                <div className="form-card">
+                    <form id="service-form" onSubmit={handleSubmit}>
+                        <div className="section-grid">
+                            <div className="image-panel">
+                                <div className="image-preview">
+                                    {imagePreview ? (
+                                        <img src={imagePreview} alt="Service preview" />
+                                    ) : (
+                                        <div className="image-placeholder">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <path d="M4 7h16M4 11h16M4 15h16M4 19h16" />
+                                                <path d="M11 5l1 14" />
+                                            </svg>
+                                            <div>No Image Available</div>
+                                        </div>
+                                    )}
+                                    <button type="button" className="upload-action" onClick={openFilePicker} title="Upload image">
+                                        ⬆
+                                    </button>
+                                </div>
+                                <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
+                                <div className="form-group">
+                                    <label className="form-label">Image filename or URL</label>
+                                    <input className="form-input" value={data.main_image} onChange={e => setData('main_image', e.target.value)} placeholder="Enter filename or URL" />
+                                    <span className="hint">Use a URL or choose a file to use the filename.</span>
+                                    {errors.main_image && <div className="form-error">{errors.main_image}</div>}
+                                </div>
+                            </div>
 
-                        {/* Title */}
-                        <div className="form-group">
-                            <label>Title *</label>
-                            <input className="form-input" value={data.title}
-                                onChange={e => setData('title', e.target.value)}
-                                placeholder="e.g. Custom Website Development Services" />
-                            {errors.title && <span className="error">{errors.title}</span>}
-                        </div>
+                            <div className="form-grid-two">
+                                <div className="form-group">
+                                    <label className="form-label">Title *</label>
+                                    <input className="form-input" value={data.title} onChange={e => setData('title', e.target.value)} placeholder="Enter Services Name" />
+                                    {errors.title && <div className="form-error">{errors.title}</div>}
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Slug</label>
+                                    <input className="form-input" value={data.slug} onChange={e => setData('slug', e.target.value)} placeholder="Leave blank to generate from title" />
+                                    <span className="hint">If empty, slug is created automatically from the title.</span>
+                                    {errors.slug && <div className="form-error">{errors.slug}</div>}
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Meta Title</label>
+                                    <input className="form-input" value={data.meta_title} onChange={e => setData('meta_title', e.target.value)} placeholder="Enter Meta Title" />
+                                    {errors.meta_title && <div className="form-error">{errors.meta_title}</div>}
+                                </div>
 
-                        {/* Slug */}
-                        <div className="form-group">
-                            <label>Slug (URL)</label>
-                            <input className="form-input" value={data.slug}
-                                onChange={e => setData('slug', e.target.value)}
-                                placeholder="auto-generated if empty" />
-                            <span className="hint">Leave empty to auto-generate from title</span>
-                            {errors.slug && <span className="error">{errors.slug}</span>}
-                        </div>
+                                <div className="form-group">
+                                    <label className="form-label">Category Name</label>
+                                    <select className="form-select" value={data.category_id} onChange={e => setData('category_id', e.target.value)}>
+                                        <option value="">Select category</option>
+                                        {categories.map(category => (
+                                            <option key={category.id} value={category.id}>{category.name}</option>
+                                        ))}
+                                    </select>
+                                    {errors.category_id && <div className="form-error">{errors.category_id}</div>}
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Meta Keyword</label>
+                                    <input className="form-input" value={data.meta_keyword} onChange={e => setData('meta_keyword', e.target.value)} placeholder="Enter Meta Keyword" />
+                                    {errors.meta_keyword && <div className="form-error">{errors.meta_keyword}</div>}
+                                </div>
 
-                        {/* Meta Description */}
-                        <div className="form-group full">
-                            <label>Meta Description</label>
-                            <textarea className="form-textarea" rows={3} value={data.meta_description}
-                                onChange={e => setData('meta_description', e.target.value)}
-                                placeholder="Short description for SEO and listing..." />
-                            {errors.meta_description && <span className="error">{errors.meta_description}</span>}
-                        </div>
-
-                        {/* Meta Keywords */}
-                        <div className="form-group full">
-                            <label>Meta Keywords</label>
-                            <input className="form-input" value={data.meta_keywords}
-                                onChange={e => setData('meta_keywords', e.target.value)}
-                                placeholder="website, development, software..." />
-                            {errors.meta_keywords && <span className="error">{errors.meta_keywords}</span>}
-                        </div>
-
-                        {/* Tags */}
-                        <div className="form-group full">
-                            <label>Tags</label>
-                            <input className="form-input" value={data.tags}
-                                onChange={e => setData('tags', e.target.value)}
-                                placeholder="website,software,application,web-application" />
-                            <span className="hint">Comma-separated tags</span>
-                            {errors.tags && <span className="error">{errors.tags}</span>}
-                        </div>
-
-                        {/* Content — Plain Text */}
-                        <div className="form-group full">
-                            <label>Content (Full Description)</label>
-                            <textarea
-                                className="form-textarea content-textarea"
-                                value={data.content}
-                                onChange={e => setData('content', e.target.value)}
-                                placeholder="Full service description..."
-                            />
-                            <span className="hint">Plain text only — no HTML tags</span>
-                            {errors.content && <span className="error">{errors.content}</span>}
-                        </div>
-
-                        {/* Main Image */}
-                        <div className="form-group full">
-                            <label>Main Image (filename or URL)</label>
-                            <input className="form-input" value={data.main_image}
-                                onChange={e => setData('main_image', e.target.value)}
-                                placeholder="e.g. 1637216446.png or https://..." />
-                            {errors.main_image && <span className="error">{errors.main_image}</span>}
-                        </div>
-
-                        {/* Serial Number */}
-                        <div className="form-group">
-                            <label>Serial / Sort Order</label>
-                            <input className="form-input" type="number" min="0" value={data.serial_number}
-                                onChange={e => setData('serial_number', parseInt(e.target.value) || 0)} />
-                            {errors.serial_number && <span className="error">{errors.serial_number}</span>}
-                        </div>
-
-                        {/* Category ID */}
-                        <div className="form-group">
-                            <label>Category ID</label>
-                            <input className="form-input" type="number" min="1" value={data.category_id}
-                                onChange={e => setData('category_id', e.target.value)}
-                                placeholder="e.g. 2" />
-                            {errors.category_id && <span className="error">{errors.category_id}</span>}
-                        </div>
-
-                        {/* Status toggle */}
-                        <div className="form-group full">
-                            <label>Status</label>
-                            <div className="toggle-row">
-                                <label className="toggle">
-                                    <input type="checkbox" checked={data.status == 1}
-                                        onChange={e => setData('status', e.target.checked ? 1 : 0)} />
-                                    <span className="toggle-slider" />
-                                </label>
-                                <span className="toggle-label">
-                                    {data.status == 1 ? 'Active (visible on site)' : 'Inactive (hidden)'}
-                                </span>
+                                <div className="form-group">
+                                    <label className="form-label">Image Alt</label>
+                                    <input className="form-input" value={data.image_alt} onChange={e => setData('image_alt', e.target.value)} placeholder="Enter Image Alt" />
+                                    {errors.image_alt && <div className="form-error">{errors.image_alt}</div>}
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Meta Description</label>
+                                    <textarea className="form-textarea" rows={3} value={data.meta_description} onChange={e => setData('meta_description', e.target.value)} placeholder="Enter Meta Description" />
+                                    {errors.meta_description && <div className="form-error">{errors.meta_description}</div>}
+                                </div>
                             </div>
                         </div>
 
-                    </div>
+                        <div className="form-group full">
+                            <label className="form-label">Description</label>
+                            <div className="rich-editor">
+                                <div className="rich-editor-toolbar">
+                                    <button type="button" className="toolbar-btn">B</button>
+                                    <button type="button" className="toolbar-btn">I</button>
+                                    <button type="button" className="toolbar-btn">U</button>
+                                    <button type="button" className="toolbar-btn">Link</button>
+                                    <button type="button" className="toolbar-btn">Image</button>
+                                    <button type="button" className="toolbar-btn">Source</button>
+                                </div>
+                                <textarea className="rich-editor-body" value={data.content} onChange={e => setData('content', e.target.value)} placeholder="Enter service description..." />
+                            </div>
+                            {errors.content && <div className="form-error">{errors.content}</div>}
+                        </div>
 
-                    <div className="form-actions">
-                        <button type="submit" className="btn-primary" disabled={processing}>
-                            {processing ? 'Saving…' : 'Create Service'}
-                        </button>
-                        <Link href="/admin/services" className="btn-cancel">Cancel</Link>
-                    </div>
-                </form>
+                        <div className="form-grid-two" style={{ marginTop: '1rem' }}>
+                            <div className="form-group">
+                                <label className="form-label">Designation</label>
+                                <input className="form-input" value={data.subtitle} onChange={e => setData('subtitle', e.target.value)} placeholder="Enter designation" />
+                                {errors.subtitle && <div className="form-error">{errors.subtitle}</div>}
+                            </div>
+                            <div className="form-group">
+                                <label className="form-label">Tags</label>
+                                <input className="form-input" value={data.tags} onChange={e => setData('tags', e.target.value)} placeholder="Enter tags" />
+                                {errors.tags && <div className="form-error">{errors.tags}</div>}
+                            </div>
+                        </div>
+                        <div className="form-group" style={{ marginTop: '1rem' }}>
+                            <label className="form-label">Include Area</label>
+                            <div className="checkbox-row">
+                                <input type="checkbox" checked={data.is_active == 1} onChange={e => setData('is_active', e.target.checked ? 1 : 0)} />
+                                <span className="checkbox-label">Active</span>
+                            </div>
+                        </div>
+
+                        <div className="form-footer">
+                            <button type="submit" className="btn-primary" disabled={processing}>{processing ? 'Saving…' : 'Submit'}</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </AdminLayout>
     );

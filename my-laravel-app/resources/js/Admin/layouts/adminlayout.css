@@ -461,9 +461,13 @@ body { font-family: 'Inter', system-ui, sans-serif; }
 /* ── Content ── */
 .admin-content {
   flex: 1;
-  padding: 1.5rem;
+  padding: 1.5rem 2rem;
   overflow-y: auto;
   animation: pageIn 0.35s ease both;
+  /* Constrain content width to a readable max and center it */
+  width: 100%;
+  max-width: 920px;
+  margin: 0 auto;
 }
 
 /* NO transform here — transform on a parent breaks position:fixed modals */

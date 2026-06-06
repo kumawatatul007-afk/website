@@ -19,6 +19,8 @@ export default function AdminUsersIndex({ users, filters }) {
     return (
         <AdminLayout title="Users">
             <style>{`
+                .page-container { max-width: 1140px; width: 100%; margin: 0 auto; padding: 1.8rem 1rem 2.5rem; }
+                .page-panel { background: #fff; border-radius: 24px; padding: 1.5rem; box-shadow: 0 18px 60px rgba(15,23,42,0.06); border: 1px solid #e5e7eb; }
                 .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
                 .page-title { font-size: 1.1rem; font-weight: 700; color: #0f172a; }
                 .btn-primary {
@@ -138,12 +140,14 @@ export default function AdminUsersIndex({ users, filters }) {
                 }
             `}</style>
 
-            <div className="page-header">
-                <h2 className="page-title">All Users</h2>
-                <Link href="/admin/users/create" className="btn-primary">+ New User</Link>
-            </div>
+            <div className="page-container">
+                <div className="page-panel">
+                    <div className="page-header">
+                        <h2 className="page-title">All Users</h2>
+                        <Link href="/admin/users/create" className="btn-primary">+ New User</Link>
+                    </div>
 
-            <div className="filters">
+                    <div className="filters">
                 <input
                     className="filter-input"
                     placeholder="Search name or email..."
@@ -155,7 +159,7 @@ export default function AdminUsersIndex({ users, filters }) {
                 <button className="btn-primary" onClick={applyFilters}>Search</button>
             </div>
 
-            <div className="card">
+                    <div className="card">
                 <table className="table">
                     <thead>
                         <tr>
@@ -196,6 +200,8 @@ export default function AdminUsersIndex({ users, filters }) {
                     </tbody>
                 </table>
                 {users?.links && <div className="pagination-wrap"><Pagination links={users.links} /></div>}
+                    </div>
+                </div>
             </div>
         </AdminLayout>
     );

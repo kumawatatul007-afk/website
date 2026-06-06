@@ -1447,12 +1447,20 @@ body {
 .testi-controls {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0;
+  height: auto;
 }
 
 .testi-arrows {
   display: flex;
-  gap: 0.5rem;
+  align-items: center;
+  gap: 0.75rem;
+}
+.testi-arrows .testi-arrow-btn {
+  position: static;
+  pointer-events: auto;
 }
 
 .testi-arrow-btn {
@@ -1479,6 +1487,8 @@ body {
   display: flex;
   gap: 0.5rem;
   align-items: center;
+  justify-content: center;
+  z-index: 10;
 }
 
 .testi-dot {

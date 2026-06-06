@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\BlogPost;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -82,6 +84,13 @@ class AdminBlogController extends Controller
         $validated['serial_number'] = $validated['serial_number'] ?? 0;
         $validated['status']        = $validated['status'] ?? 1;
         $validated['type']          = $validated['type'] ?? 0;
+        $validated['category_id']   = $validated['category_id'] ?: null;
+        $validated['created_by']    = Auth::id() ?: 0;
+
+        if (! Schema::hasColumn('blogs', 'content') && Schema::hasColumn('blogs', 'description')) {
+            $validated['description'] = $validated['content'] ?? null;
+            unset($validated['content']);
+        }
 
         BlogPost::create($validated);
 
@@ -155,6 +164,11 @@ class AdminBlogController extends Controller
         $validated['status']        = $validated['status'] ?? 1;
         $validated['type']          = $validated['type'] ?? 0;
         $validated['category_id']   = $validated['category_id'] ?: null;
+
+        if (! Schema::hasColumn('blogs', 'content') && Schema::hasColumn('blogs', 'description')) {
+            $validated['description'] = $validated['content'] ?? null;
+            unset($validated['content']);
+        }
 
         $blog->update($validated);
 

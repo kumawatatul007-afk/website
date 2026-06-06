@@ -33,34 +33,39 @@ export default function AdminSettingsEmail({ setting }) {
     return (
         <AdminLayout title="Email Setting">
             <style>{`
+                .page-container { max-width: 1140px; width: 100%; margin: 0 auto; padding: 1.8rem 1rem 2.5rem; }
+                .page-panel { background: #fff; border-radius: 24px; padding: 1.5rem; box-shadow: 0 18px 60px rgba(15,23,42,0.06); border: 1px solid #e5e7eb; }
                 .page-header {
                     display: flex;
                     align-items: flex-start;
                     justify-content: space-between;
                     margin-bottom: 1.5rem;
+                    flex-wrap: wrap;
+                    gap: 1rem;
                 }
                 .page-title {
-                    font-size: 1.75rem;
-                    font-weight: 600;
-                    color: #1a202c;
+                    font-size: 1.35rem;
+                    font-weight: 700;
+                    color: #0f172a;
                     margin-bottom: 0.25rem;
                 }
                 .page-subtitle {
-                    font-size: 0.875rem;
-                    color: #3182ce;
+                    font-size: 0.95rem;
+                    color: #2563eb;
                 }
                 .card {
-                    background: #ffffff;
-                    border-radius: 8px;
-                    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                    background: #fff;
+                    border-radius: 20px;
+                    box-shadow: 0 12px 40px rgba(15,23,42,0.04);
+                    border: 1px solid #f1f5f9;
                 }
                 .section-label {
                     padding: 1.5rem 1.5rem 1rem;
                     font-size: 0.875rem;
                     font-weight: 600;
-                    letter-spacing: 0.05em;
+                    letter-spacing: 0.08em;
                     text-transform: uppercase;
-                    color: #718096;
+                    color: #94a3b8;
                 }
                 .section-label .pink {
                     color: #e53e3e;
@@ -83,67 +88,68 @@ export default function AdminSettingsEmail({ setting }) {
                 }
                 .form-label {
                     display: block;
-                    font-size: 0.875rem;
-                    font-weight: 500;
-                    color: #2d3748;
+                    font-size: 0.9rem;
+                    font-weight: 600;
+                    color: #334155;
                     margin-bottom: 0.5rem;
                 }
                 .form-input {
                     width: 100%;
-                    padding: 0.5rem 0.75rem;
-                    border: 1px solid #cbd5e0;
-                    border-radius: 4px;
-                    font-size: 0.875rem;
-                    color: #2d3748;
+                    padding: 0.85rem 1rem;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 14px;
+                    font-size: 0.95rem;
+                    color: #0f172a;
                     outline: none;
                     transition: border-color 0.15s, box-shadow 0.15s;
+                    background: #f8fafc;
                 }
                 .form-input:focus {
-                    border-color: #3182ce;
-                    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+                    border-color: #6366f1;
+                    box-shadow: 0 0 0 4px rgba(99,102,241,0.08);
                 }
                 .btn-submit {
-                    background: #3182ce;
-                    color: #ffffff;
+                    background: #2563eb;
+                    color: #fff;
                     border: none;
-                    padding: 0.5rem 1.25rem;
-                    border-radius: 4px;
-                    font-size: 0.875rem;
-                    font-weight: 600;
+                    padding: 0.85rem 1.65rem;
+                    border-radius: 14px;
+                    font-size: 0.95rem;
+                    font-weight: 700;
                     cursor: pointer;
-                    transition: background 0.15s;
+                    transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
                 }
                 .btn-submit:hover {
-                    background: #2b6cb0;
+                    background: #1d4ed8;
+                    transform: translateY(-1px);
+                    box-shadow: 0 6px 16px rgba(37,99,235,0.22);
                 }
                 .btn-submit:disabled {
                     opacity: 0.6;
                     cursor: not-allowed;
+                    transform: none;
+                    box-shadow: none;
                 }
                 .form-error {
-                    font-size: 0.75rem;
-                    color: #e53e3e;
-                    margin-top: 0.25rem;
+                    font-size: 0.8rem;
+                    color: #dc2626;
+                    margin-top: 0.35rem;
                 }
             `}</style>
 
-            <div className="page-header">
-                <div>
-                    <div className="page-title">Email Setting</div>
-                    <div className="page-subtitle">Add Email Settings</div>
-                </div>
-                <div style={{ visibility: 'hidden' }}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <line x1="5" y1="12" x2="19" y2="12"/>
-                        <polyline points="12 5 19 12 12 19"/>
-                    </svg>
-                </div>
-            </div>
+            <div className="page-container">
+                <div className="page-panel">
+                    <div className="page-header">
+                        <div>
+                            <div className="page-title">Email Setting</div>
+                            <div className="page-subtitle">Add Email Settings</div>
+                        </div>
+                    </div>
 
-            <div className="card">
-                <div className="section-label">
-                    <span className="pink">EMAIL</span> SETTING
-                </div>
+                    <div className="card">
+                        <div className="section-label">
+                            <span className="pink">EMAIL</span> SETTING
+                        </div>
 
                 <div className="form-container">
                     <form onSubmit={handleSubmit}>
@@ -222,12 +228,13 @@ export default function AdminSettingsEmail({ setting }) {
                             <div className="form-group">
                                 <label className="form-label">Mail From Address</label>
                                 <input
-                                    type="email"
+                                    type="text"
                                     className="form-input"
                                     value={form.from_address}
                                     onChange={e => set('from_address', e.target.value)}
                                     placeholder="from@example.com"
                                 />
+                                {errors.from_address && <div className="form-error">{errors.from_address}</div>}
                             </div>
                             <div className="form-group">
                                 <label className="form-label">Mail From Name</label>
@@ -238,6 +245,7 @@ export default function AdminSettingsEmail({ setting }) {
                                     onChange={e => set('from_name', e.target.value)}
                                     placeholder="From Name"
                                 />
+                                {errors.from_name && <div className="form-error">{errors.from_name}</div>}
                             </div>
                         </div>
 
@@ -249,6 +257,8 @@ export default function AdminSettingsEmail({ setting }) {
                     </form>
                 </div>
             </div>
+        </div>
+    </div>
         </AdminLayout>
     );
 }

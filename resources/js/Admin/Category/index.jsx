@@ -403,11 +403,18 @@ export default function AdminCategoryIndex({ categories, filters }) {
                 }
 
                 /* ── Base ──────────────────────────────────────────────── */
-                .cat-page { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+                .cat-page {
+                    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                    max-width: 1120px;
+                    margin: 0 auto;
+                    width: 100%;
+                    padding: 1.5rem 1rem 0;
+                }
 
                 /* ── Page header ───────────────────────────────────────── */
                 .cat-header {
                     display: flex; align-items: flex-end;
+                    margin-top: 0.75rem;
                     justify-content: space-between;
                     margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;
                     animation: fadeSlideUp 0.5s cubic-bezier(0.22,1,0.36,1) both;

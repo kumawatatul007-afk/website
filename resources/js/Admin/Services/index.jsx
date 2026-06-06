@@ -14,7 +14,7 @@ export default function AdminServicesIndex({ services = {} }) {
     return (
         <AdminLayout title="Services">
             <style>{`
-                .svc-wrap { padding: 0; }
+                .svc-wrap { padding: 1.2rem 0 0; max-width: 1140px; width: 100%; margin: 0 auto; }
 
                 /* ── Page header ── */
                 .page-header {

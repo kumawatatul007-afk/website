@@ -230,6 +230,10 @@ export default function AdminDashboard({
     return (
         <AdminLayout title="Dashboard" hideSidebar={true}>
             <style>{`
+                .page-container { max-width: 1140px; width: 100%; margin: 0 auto; padding: 1.8rem 1rem 2.5rem; }
+                .page-panel { background: transparent; border-radius: 24px; padding: 0; /* keep hero rounded */ }
+            
+`}
                 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
                 @keyframes dashIn    { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:none} }
@@ -343,8 +347,10 @@ export default function AdminDashboard({
                 .d-footer { text-align:center; font-size:0.7rem; color:#c8d1dc; padding:1.25rem 0 0; border-top:1px solid #f1f5f9; font-weight:500; animation:dashIn 0.5s ease 0.36s both; }
             `}</style>
 
-            {/* ═══════════ Hero ═══════════ */}
-            <div className="d-hero">
+            <div className="page-container">
+                <div className="page-panel">
+                    {/* ═══════════ Hero ═══════════ */}
+                    <div className="d-hero">
                 <div style={{ position:'relative', zIndex:1 }}>
                     <div className="hero-greet">{greet()}, Nikhil! 👋</div>
                     <div className="hero-sub">Here's your complete platform overview for today.</div>
@@ -379,7 +385,7 @@ export default function AdminDashboard({
                 {navCards.map((c, i) => <NavCard key={i} {...c} />)}
             </div>
 
-            {/* ═══════════ Charts ═══════════ */}
+                    {/* ═══════════ Charts ═══════════ */}
             <div className="d-charts">
                 <div className="d-card">
                     <div className="d-card-head">
@@ -445,7 +451,9 @@ export default function AdminDashboard({
                                     <td>
                                         <div style={{ display:'flex', alignItems:'center' }}>
                                             <div className="u-av" style={{ background:avatarColors[i%avatarColors.length] }}>{u.name?.charAt(0)?.toUpperCase()}</div>
-                                            <div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                                 <div style={{ fontWeight:700, color:'#1e293b', fontSize:'0.83rem' }}>{u.name}</div>
                                                 <div style={{ fontSize:'0.68rem', color:'#94a3b8', marginTop:1 }}>{u.email}</div>
                                             </div>

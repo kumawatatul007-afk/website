@@ -29,6 +29,8 @@ export default function AdminSettingsTags() {
     return (
         <AdminLayout title="Tags">
             <style>{`
+                .page-container { max-width: 1140px; width: 100%; margin: 0 auto; padding: 1.8rem 1rem 2.5rem; }
+                .page-panel { background: #fff; border-radius: 24px; padding: 1.5rem; box-shadow: 0 18px 60px rgba(15,23,42,0.06); border: 1px solid #e5e7eb; }
                 .gs-page-header {
                     display: flex; align-items: flex-start; justify-content: space-between;
                     margin-bottom: 1.5rem;
@@ -98,14 +100,16 @@ export default function AdminSettingsTags() {
                 }
             `}</style>
 
-            <div className="gs-page-header">
-                <div>
-                    <div className="gs-title">Tags</div>
-                    <div className="gs-subtitle">Manage your content tags</div>
-                </div>
-            </div>
+            <div className="page-container">
+                <div className="page-panel">
+                    <div className="gs-page-header">
+                        <div>
+                            <div className="gs-title">Tags</div>
+                            <div className="gs-subtitle">Manage your content tags</div>
+                        </div>
+                    </div>
 
-            <div className="gs-card">
+                    <div className="gs-card">
                 <div className="gs-section-label">
                     <span className="pink">TAGS</span>{' '}
                     <span className="gray">MANAGEMENT</span>
@@ -134,6 +138,8 @@ export default function AdminSettingsTags() {
 
                 <div className="tags-list">
                     <div className="tags-list-title">Current Tags ({tags.length})</div>
+                </div>
+                    </div>
                 </div>
             </div>
         </AdminLayout>

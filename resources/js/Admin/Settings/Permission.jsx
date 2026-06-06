@@ -19,6 +19,8 @@ export default function AdminSettingsPermission({ permissions }) {
     return (
         <AdminLayout title="Permissions">
             <style>{`
+                .page-container { max-width: 1140px; width: 100%; margin: 0 auto; padding: 1.8rem 1rem 2.5rem; }
+                .page-panel { background: #fff; border-radius: 24px; padding: 1.5rem; box-shadow: 0 18px 60px rgba(15,23,42,0.06); border: 1px solid #e5e7eb; }
                 .permission-header {
                     display: flex;
                     align-items: center;
@@ -155,16 +157,18 @@ export default function AdminSettingsPermission({ permissions }) {
                 }
             `}</style>
 
-            {/* Header */}
-            <div className="permission-header">
-                <div>
-                    <div className="permission-title">Permissions</div>
-                    <div className="permission-subtitle">Permission Details</div>
-                </div>
-            </div>
+            <div className="page-container">
+                <div className="page-panel">
+                    {/* Header */}
+                    <div className="permission-header">
+                        <div>
+                            <div className="permission-title">Permissions</div>
+                            <div className="permission-subtitle">Permission Details</div>
+                        </div>
+                    </div>
 
-            {/* Card */}
-            <div className="permission-card">
+                    {/* Card */}
+                    <div className="permission-card">
                 <div className="card-title">Permission Details</div>
 
                 {/* Controls */}
@@ -258,6 +262,8 @@ export default function AdminSettingsPermission({ permissions }) {
                         >
                             NEXT
                         </button>
+                    </div>
+                </div>
                     </div>
                 </div>
             </div>

@@ -12,6 +12,7 @@ class Service extends Model
         'slug',
         'price_range',
         'description',
+        'content',
         'features',
         'cta_text',
         'sort_order',

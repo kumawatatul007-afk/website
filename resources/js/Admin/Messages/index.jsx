@@ -143,24 +143,27 @@ export default function AdminMessagesIndex({ messages, filters }) {
                 @keyframes msgOverlayIn { from { opacity:0 } to { opacity:1 } }
                 @keyframes msgPanelIn   { from { opacity:0; transform:translateY(20px) scale(.97) } to { opacity:1; transform:none } }
                 @keyframes msgSpin      { to { transform:rotate(360deg) } }
+                .page-container { max-width: 1140px; width: 100%; margin: 0 auto; padding: 1.8rem 1rem 2.5rem; }
                 .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
                 .page-title { font-size: 1.1rem; font-weight: 700; color: #0f172a; }
+                .page-panel { background: #fff; border-radius: 24px; padding: 1.5rem; box-shadow: 0 18px 60px rgba(15,23,42,0.06); border: 1px solid #e5e7eb; }
                 .btn-primary {
                     background: #2563eb; color: #fff; border: none;
-                    padding: 0.6rem 1.25rem; border-radius: 8px;
-                    font-size: 0.875rem; font-weight: 600; cursor: pointer;
-                    text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem;
+                    padding: 0.75rem 1.35rem; border-radius: 14px;
+                    font-size: 0.95rem; font-weight: 700; cursor: pointer;
+                    text-decoration: none; display: inline-flex; align-items: center; gap: 0.45rem;
                     transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
                 }
-                .btn-primary:hover { background: #1d4ed8; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37,99,235,0.25); }
-                .filters { display: flex; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+                .btn-primary:hover { background: #1d4ed8; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(37,99,235,0.22); }
+                .filters { display: flex; align-items: center; gap: 0.85rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
                 .filter-input {
-                    padding: 0.6rem 0.875rem; border: 1px solid #e2e8f0; border-radius: 8px;
-                    font-size: 0.875rem; outline: none; background: #fff; color: #374151; transition: border-color 0.15s;
+                    flex: 1; min-width: 240px; padding: 0.85rem 1rem; border: 1px solid #e2e8f0; border-radius: 14px;
+                    font-size: 0.95rem; outline: none; background: #f8fafc; color: #374151; transition: border-color 0.15s, box-shadow 0.15s;
                 }
+                .filter-input:focus { border-color: #6366f1; box-shadow: 0 0 0 4px rgba(99,102,241,0.08); }
                 .filter-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
-                .card { background: #fff; border-radius: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); border: 1px solid #f1f5f9; overflow: hidden; }
-                .table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+                .card { background: #fff; border-radius: 18px; overflow: hidden; border: 1px solid #f1f5f9; box-shadow: 0 12px 40px rgba(15,23,42,0.04); }
+                .table { width: 100%; border-collapse: collapse; font-size: 0.95rem; min-width: 640px; }
                 .table th {
                     text-align: left; padding: 0.75rem 1.25rem;
                     font-size: 0.7rem; font-weight: 700; color: #94a3b8;
@@ -207,32 +210,33 @@ export default function AdminMessagesIndex({ messages, filters }) {
                 .table tbody tr:nth-child(10) { animation-delay:.57s }
             `}</style>
 
-            <div className="page-header">
-                <h2 className="page-title">Contact Messages</h2>
-            </div>
+            <div className="page-container">
+                <div className="page-header">
+                    <h2 className="page-title">Contact Messages</h2>
+                </div>
 
-            <div className="filters">
-                <input
-                    className="filter-input"
-                    placeholder="Search name, email or subject..."
-                    value={search}
-                    onChange={e => setSearch(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && applyFilters()}
-                    style={{ flex: 1, minWidth: 200 }}
-                />
-                <select
-                    className="filter-input"
-                    value={status}
-                    onChange={e => { setStatus(e.target.value); router.get('/admin/messages', { search, status: e.target.value }, { preserveState: true, replace: true }); }}
-                >
-                    <option value="">All Messages</option>
-                    <option value="read">Read</option>
-                    <option value="unread">Unread</option>
-                </select>
-                <button className="btn-primary" onClick={applyFilters}>Search</button>
-            </div>
+                <div className="page-panel">
+                    <div className="filters">
+                        <input
+                            className="filter-input"
+                            placeholder="Search name, email or subject..."
+                            value={search}
+                            onChange={e => setSearch(e.target.value)}
+                            onKeyDown={e => e.key === 'Enter' && applyFilters()}
+                        />
+                        <select
+                            className="filter-input"
+                            value={status}
+                            onChange={e => { setStatus(e.target.value); router.get('/admin/messages', { search, status: e.target.value }, { preserveState: true, replace: true }); }}
+                        >
+                            <option value="">All Messages</option>
+                            <option value="read">Read</option>
+                            <option value="unread">Unread</option>
+                        </select>
+                        <button className="btn-primary" onClick={applyFilters}>Search</button>
+                    </div>
 
-            <div className="card">
+                    <div className="card">
                 <table className="table">
                     <thead>
                         <tr>
@@ -269,6 +273,8 @@ export default function AdminMessagesIndex({ messages, filters }) {
                     </tbody>
                 </table>
                 {messages?.links && <div className="pagination-wrap"><Pagination links={messages.links} /></div>}
+                    </div>
+                </div>
             </div>
 
             {selectedMsg && (

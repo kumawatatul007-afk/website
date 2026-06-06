@@ -7,34 +7,34 @@ import { useRef, useState } from 'react';
 const s = {
     label: {
         display: 'block',
-        fontSize: '0.8rem',
-        fontWeight: 600,
-        color: '#0073aa',
-        marginBottom: '0.35rem',
+        fontSize: '0.85rem',
+        fontWeight: 700,
+        color: '#1f2937',
+        marginBottom: '0.5rem',
     },
     input: {
         width: '100%',
-        padding: '0.5rem 0.65rem',
-        border: '1px solid #8c8f94',
-        borderRadius: '3px',
-        fontSize: '0.875rem',
-        color: '#2c3338',
+        padding: '0.75rem 0.9rem',
+        border: '1px solid #cbd5e1',
+        borderRadius: '8px',
+        fontSize: '0.9rem',
+        color: '#111827',
         outline: 'none',
         background: '#fff',
         boxSizing: 'border-box',
     },
     textarea: {
         width: '100%',
-        padding: '0.5rem 0.65rem',
-        border: '1px solid #8c8f94',
-        borderRadius: '3px',
-        fontSize: '0.875rem',
-        color: '#2c3338',
+        padding: '0.75rem 0.9rem',
+        border: '1px solid #cbd5e1',
+        borderRadius: '8px',
+        fontSize: '0.9rem',
+        color: '#111827',
         outline: 'none',
         background: '#fff',
         boxSizing: 'border-box',
         resize: 'vertical',
-        minHeight: '82px',
+        minHeight: '110px',
     },
 };
 
@@ -139,6 +139,19 @@ export default function AdminBlogCreate({ categories = [] }) {
     return (
         <AdminLayout title="Blog Post">
             <style>{`
+                /* ── Container ── */
+                .blog-form-page {
+                    max-width: 1040px;
+                    width: 100%;
+                    margin: 0 auto;
+                    padding: 1.5rem 1rem 2rem;
+                }
+                .blog-form-card {
+                    max-width: 100%;
+                    width: 100%;
+                    margin: 0 auto;
+                }
+
                 /* ── Editor two-row toolbar ── */
                 #create-blog-toolbar { padding: 4px 6px; background: #f6f7f7; border: 1px solid #c5c5c5; border-bottom: none; border-radius: 3px 3px 0 0; }
                 .ck-row { display: flex; align-items: center; flex-wrap: wrap; gap: 2px; min-height: 30px; }
@@ -172,8 +185,9 @@ export default function AdminBlogCreate({ categories = [] }) {
                 .bp-upload-icon { position: absolute; top: 4px; right: 4px; background: #fff; border: 1px solid #c3c4c7; border-radius: 2px; padding: 2px 5px; font-size: 0.7rem; color: #646970; }
             `}</style>
 
-            {/* ── Page Header ── */}
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+            <div className="blog-form-page">
+                {/* ── Page Header ── */}
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
                 <div>
                     <h1 style={{ fontSize: '1.4rem', fontWeight: 700, color: '#1d2327', margin: 0, lineHeight: 1.3 }}>Blog Post</h1>
                     <div style={{ fontSize: '0.8rem', color: '#646970', marginTop: '3px' }}>
@@ -191,7 +205,7 @@ export default function AdminBlogCreate({ categories = [] }) {
             </div>
 
             {/* ── Form Card ── */}
-            <div style={{ background: '#fff', border: '1px solid #c3c4c7', borderRadius: '4px', padding: '1.5rem 1.75rem' }}>
+            <div className="blog-form-card" style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '1.75rem', boxShadow: '0 12px 30px rgba(15,23,42,0.08)' }}>
                 <form onSubmit={handleSubmit}>
 
                     {/* Title */}
@@ -307,6 +321,7 @@ export default function AdminBlogCreate({ categories = [] }) {
                     </div>
 
                 </form>
+            </div>
             </div>
         </AdminLayout>
     );

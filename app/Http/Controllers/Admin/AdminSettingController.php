@@ -33,9 +33,32 @@ class AdminSettingController extends Controller
             'address'          => 'nullable|string',
             'preloader'        => 'nullable|string|max:251',
             'timing'           => 'nullable|string|max:251',
-            'logo'             => 'nullable|string|max:500',
-            'favicon'          => 'nullable|string|max:500',
+            'logo'             => 'nullable|file|image|mimes:jpg,jpeg,png,webp,svg|max:5120',
+            'favicon'          => 'nullable|file|image|mimes:jpg,jpeg,png,webp,svg,ico|max:2048',
         ]);
+
+        $uploadPath = public_path('uploads/settings');
+        if (!file_exists($uploadPath)) {
+            mkdir($uploadPath, 0755, true);
+        }
+
+        if ($request->hasFile('logo')) {
+            $logo = $request->file('logo');
+            $logoName = 'logo_' . time() . '.' . $logo->getClientOriginalExtension();
+            $logo->move($uploadPath, $logoName);
+            $validated['logo'] = $logoName;
+        } elseif ($request->filled('logo')) {
+            $validated['logo'] = $request->input('logo');
+        }
+
+        if ($request->hasFile('favicon')) {
+            $favicon = $request->file('favicon');
+            $faviconName = 'favicon_' . time() . '.' . $favicon->getClientOriginalExtension();
+            $favicon->move($uploadPath, $faviconName);
+            $validated['favicon'] = $faviconName;
+        } elseif ($request->filled('favicon')) {
+            $validated['favicon'] = $request->input('favicon');
+        }
 
         $setting = Setting::first();
 

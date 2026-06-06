@@ -1203,21 +1203,21 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
                   <polyline points="15 18 9 12 15 6" />
                 </svg>
               </button>
+              <div className="testi-dots">
+                {testimonials.map((_, i) => (
+                  <button
+                    key={i}
+                    className={`testi-dot ${i === activeSlide ? 'testi-dot-active' : ''}`}
+                    onClick={() => { setActiveSlide(i); startAutoScroll(); }}
+                    aria-label={`Go to slide ${i + 1}`}
+                  />
+                ))}
+              </div>
               <button className="testi-arrow-btn" onClick={() => { nextSlide(); startAutoScroll(); }} aria-label="Next">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <polyline points="9 18 15 12 9 6" />
                 </svg>
               </button>
-            </div>
-            <div className="testi-dots">
-              {testimonials.map((_, i) => (
-                <button
-                  key={i}
-                  className={`testi-dot ${i === activeSlide ? 'testi-dot-active' : ''}`}
-                  onClick={() => { setActiveSlide(i); startAutoScroll(); }}
-                  aria-label={`Go to slide ${i + 1}`}
-                />
-              ))}
             </div>
           </div>
         </div>
