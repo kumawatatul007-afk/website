@@ -6,7 +6,7 @@
 
     @forelse ($keywordUrls as $item)
     <url>
-        <loc>{{ url($item['url']) }}</loc>
+        <loc>{{ url($item['url'] ?? '') }}</loc>
         <lastmod>{{ now()->toAtomString() }}</lastmod>
         <changefreq>weekly</changefreq>
         <priority>1.00</priority>

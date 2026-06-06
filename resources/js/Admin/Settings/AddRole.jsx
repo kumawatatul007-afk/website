@@ -93,165 +93,231 @@ export default function AdminSettingsAddRole({ roles }) {
                     align-items: center;
                     justify-content: space-between;
                     margin-bottom: 1rem;
-                    padding: 1.25rem 1.5rem;
-                    background: #f5f5f5;
-                    border-radius: 0;
+                    padding: 1.5rem 1.75rem;
+                    background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(167,139,250,0.05));
+                    border-radius: 24px;
+                    border: 1px solid rgba(99,102,241,0.12);
+                    box-shadow: 0 18px 50px rgba(99,102,241,0.08);
                 }
                 .seo-title {
-                    font-size: 1.75rem;
-                    font-weight: 500;
-                    color: #333;
+                    font-size: 2rem;
+                    font-weight: 700;
+                    color: #1f2937;
+                    letter-spacing: -0.02em;
                 }
                 .seo-subtitle {
-                    font-size: 0.9rem;
-                    color: #3b82f6;
-                    margin-top: 0.25rem;
+                    font-size: 0.95rem;
+                    color: #7c3aed;
+                    margin-top: 0.35rem;
                 }
                 .seo-actions {
                     display: flex;
                     gap: 0.75rem;
                 }
                 .btn-add {
-                    background: #3b82f6;
-                    color: white;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 0.95rem 1.5rem;
+                    border-radius: 18px;
                     border: none;
-                    padding: 0.5rem 1.5rem;
-                    border-radius: 4px;
-                    font-size: 0.9rem;
-                    font-weight: 500;
+                    font-size: 0.95rem;
+                    font-weight: 700;
+                    color: #fff;
+                    background: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%);
+                    box-shadow: 0 16px 38px rgba(99,102,241,0.22);
                     cursor: pointer;
+                    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
                 }
                 .btn-add:hover {
-                    background: #2563eb;
+                    transform: translateY(-2px);
+                    box-shadow: 0 22px 50px rgba(99,102,241,0.28);
+                    opacity: 0.98;
                 }
                 .seo-card {
-                    background: white;
-                    border-radius: 0;
-                    padding: 1.5rem;
-                    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                    background: linear-gradient(180deg, #ffffff 0%, #f8f6ff 100%);
+                    border-radius: 24px;
+                    padding: 1.75rem;
+                    box-shadow: 0 20px 55px rgba(15,23,42,0.08);
+                    border: 1px solid rgba(99,102,241,0.12);
                 }
                 .card-title {
-                    font-size: 1.25rem;
-                    font-weight: 600;
-                    color: #ec4899;
+                    font-size: 1.5rem;
+                    font-weight: 700;
+                    color: #d946ef;
                     margin-bottom: 1.5rem;
                 }
                 .seo-controls {
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
-                    margin-bottom: 1rem;
-                    padding-bottom: 0.75rem;
-                    border-bottom: 1px solid #ddd;
+                    flex-wrap: wrap;
+                    gap: 1rem;
+                    margin-bottom: 1.25rem;
+                    padding-bottom: 1rem;
+                    border-bottom: 1px solid rgba(148,163,184,0.18);
                 }
                 .show-entries {
-                    display: flex;
+                    display: inline-flex;
                     align-items: center;
-                    gap: 0.5rem;
-                    font-size: 0.9rem;
-                    color: #444;
+                    gap: 0.75rem;
+                    font-size: 0.95rem;
+                    color: #475569;
                 }
                 .show-entries select {
-                    padding: 0.25rem 0.5rem;
-                    border: 1px solid #ccc;
-                    border-radius: 4px;
-                    font-size: 0.9rem;
+                    padding: 0.75rem 0.95rem;
+                    border-radius: 14px;
+                    border: 1px solid rgba(148,163,184,0.45);
+                    background: #fff;
+                    color: #0f172a;
+                    font-size: 0.95rem;
+                    font-weight: 600;
+                    min-width: 5rem;
+                }
+                .show-entries select:focus {
+                    outline: none;
+                    border-color: #8b5cf6;
+                    box-shadow: 0 0 0 4px rgba(124,58,237,0.12);
                 }
                 .search-box {
                     display: flex;
                     align-items: center;
-                    gap: 0.5rem;
+                    gap: 0.75rem;
                 }
                 .search-box label {
-                    font-size: 0.9rem;
-                    color: #444;
+                    font-size: 0.95rem;
+                    color: #475569;
                 }
                 .search-box input {
-                    padding: 0.35rem 0.5rem;
-                    border: none;
-                    border-bottom: 1px solid #aaa;
-                    font-size: 0.9rem;
-                    width: 200px;
+                    width: 220px;
+                    padding: 0.85rem 1rem;
+                    border-radius: 16px;
+                    border: 1px solid rgba(148,163,184,0.4);
+                    background: #fff;
+                    color: #0f172a;
+                    font-size: 0.95rem;
+                    transition: border-color 0.2s ease, box-shadow 0.2s ease;
                 }
                 .search-box input:focus {
                     outline: none;
-                    border-bottom-color: #3b82f6;
+                    border-color: #7c3aed;
+                    box-shadow: 0 0 0 4px rgba(124,58,237,0.12);
                 }
                 .seo-table {
                     width: 100%;
-                    border-collapse: collapse;
+                    border-collapse: separate;
+                    border-spacing: 0;
+                    background: #fff;
+                    border-radius: 20px;
+                    overflow: hidden;
+                    box-shadow: 0 18px 40px rgba(15,23,42,0.08);
+                }
+                .seo-table th,
+                .seo-table td {
+                    padding: 1rem 1.25rem;
                 }
                 .seo-table th {
-                    padding: 0.75rem;
                     text-align: left;
                     font-size: 0.9rem;
-                    font-weight: 600;
-                    color: #333;
-                    border-bottom: 2px solid #ddd;
+                    font-weight: 700;
+                    color: #0f172a;
+                    background: linear-gradient(180deg, #f8f5ff 0%, #f3f0ff 100%);
+                    border-bottom: 1px solid rgba(148,163,184,0.18);
                 }
                 .seo-table td {
-                    padding: 0.75rem;
-                    border-bottom: 1px solid #ddd;
-                    font-size: 0.9rem;
-                    color: #333;
+                    font-size: 0.95rem;
+                    color: #334155;
+                    border-bottom: 1px solid rgba(148,163,184,0.14);
+                }
+                .seo-table tbody tr {
+                    transition: background 0.2s ease;
+                }
+                .seo-table tbody tr:hover {
+                    background: rgba(167,139,250,0.1);
                 }
                 .seo-table tbody tr:nth-child(odd) {
-                    background: #f5f5f5;
+                    background: rgba(99,102,241,0.04);
                 }
                 .route-name {
-                    font-weight: 500;
-                    color: #333;
+                    font-weight: 600;
+                    color: #1e293b;
                 }
                 .action-buttons {
                     display: flex;
-                    gap: 0.5rem;
+                    gap: 0.65rem;
+                    justify-content: center;
                 }
                 .btn-icon {
-                    background: none;
-                    border: none;
-                    font-size: 1rem;
+                    width: 42px;
+                    height: 42px;
+                    border-radius: 14px;
+                    border: 1px solid rgba(99,102,241,0.18);
+                    background: #f8f5ff;
+                    color: #5b21b6;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
                     cursor: pointer;
-                    padding: 0.25rem;
-                    color: #3b82f6;
+                    font-size: 1rem;
+                    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+                }
+                .btn-icon:hover {
+                    transform: translateY(-1px);
+                    background: #ede9fe;
+                    box-shadow: 0 10px 22px rgba(99,102,241,0.12);
                 }
                 .btn-icon.delete {
-                    color: #3b82f6;
+                    background: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
+                    color: #fff;
+                    border-color: transparent;
+                }
+                .btn-icon.delete:hover {
+                    background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%);
+                    box-shadow: 0 10px 24px rgba(220,38,38,0.2);
                 }
                 .pagination-area {
                     display: flex;
                     align-items: center;
                     justify-content: space-between;
-                    margin-top: 1rem;
+                    gap: 1rem;
+                    margin-top: 1.5rem;
                     padding-top: 1rem;
+                    border-top: 1px solid rgba(148,163,184,0.18);
                 }
                 .info-text {
-                    font-size: 0.9rem;
-                    color: #666;
+                    font-size: 0.95rem;
+                    color: #64748b;
                 }
                 .pagination-buttons {
                     display: flex;
                     align-items: center;
-                    gap: 0.5rem;
+                    gap: 0.55rem;
+                    flex-wrap: wrap;
                 }
                 .pagination-btn {
-                    padding: 0.4rem 0.9rem;
-                    border-radius: 20px;
-                    background: #e0e0e0;
-                    color: #666;
-                    border: none;
+                    min-width: 2.7rem;
+                    padding: 0.7rem 1rem;
+                    border-radius: 999px;
+                    background: #eef2ff;
+                    color: #4338ca;
+                    border: 1px solid transparent;
                     font-size: 0.85rem;
-                    font-weight: 600;
+                    font-weight: 700;
                     cursor: pointer;
+                    transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
                 }
                 .pagination-btn:hover:not(:disabled) {
-                    background: #ccc;
+                    transform: translateY(-1px);
+                    background: #e0e7ff;
+                    box-shadow: 0 10px 24px rgba(99,102,241,0.12);
                 }
                 .pagination-btn.active {
-                    background: #666;
-                    color: white;
+                    background: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%);
+                    color: #fff;
+                    box-shadow: 0 14px 30px rgba(99,102,241,0.24);
                 }
                 .pagination-btn:disabled {
-                    opacity: 0.5;
+                    opacity: 0.45;
                     cursor: not-allowed;
                 }
 

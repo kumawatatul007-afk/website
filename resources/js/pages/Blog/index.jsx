@@ -107,7 +107,7 @@ export default function BlogPage({ posts, seo }) {
               </span>
               <Link
                 href="/blog"
-                style={{ fontSize: '0.85rem', color: '#ef4444', border: '1px solid #ef4444', borderRadius: '999px', padding: '2px 12px', textDecoration: 'none' }}
+                style={{ fontSize: '0.85rem', color: '#fff', background: 'linear-gradient(135deg, #ef4444, #f87171)', border: 'none', borderRadius: '100px', padding: '6px 16px', textDecoration: 'none', fontWeight: '600', boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)', display: 'inline-flex', alignItems: 'center', gap: '4px', transition: 'all 0.2s ease' }}
               >
                 ✕ Clear
               </Link>

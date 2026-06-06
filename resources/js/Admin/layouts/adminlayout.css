@@ -3,7 +3,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --sidebar-w: 270px;
+  --sidebar-w: 200px;
   --sidebar-collapsed: 74px;
   --topbar-h: 68px;
   --primary: #7c3aed;
@@ -680,13 +680,283 @@ body { font-family: 'Inter', system-ui, sans-serif; }
   transform: translateY(-1px);
 }
 
-/* ── Content ── */
-.admin-content {
-  flex: 1;
-  padding: 1.5rem;
-  overflow-y: auto;
-  animation: pageIn 0.35s ease both;
+/* ── Admin list & button design ── */
+.admin-content table,
+.admin-content .table,
+.admin-content .cat-table,
+.admin-content .svc-table,
+.admin-content .u-table,
+.admin-content .cm-table,
+.admin-content .permission-table,
+.admin-content .seo-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 16px 40px rgba(15,23,42,0.05);
 }
+
+.admin-content table th,
+.admin-content table td {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #f1f5f9;
+  vertical-align: middle;
+}
+
+.admin-content table th {
+  background: linear-gradient(180deg, #f8f4ff 0%, #f5f3ff 100%);
+  color: #475569;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.admin-content table tbody tr:hover td {
+  background: #f9f5ff;
+}
+
+.admin-content table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-content table td {
+  color: #0f172a;
+  font-size: 0.95rem;
+}
+
+.admin-content table td:nth-child(1),
+.admin-content table th:nth-child(1) {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.admin-content table td:last-child,
+.admin-content table th:last-child {
+  text-align: center;
+}
+
+.admin-content .table-action-group,
+.admin-content .actions-cell,
+.admin-content .action-buttons {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.admin-content .btn-primary,
+.admin-content .btn-search,
+.admin-content .btn-add,
+.admin-content .btn-new,
+.admin-content .btn-upload,
+.admin-content .btn-add-category,
+.admin-content .cm-btn-search,
+.admin-content .btn-submit,
+.admin-content .btn-reply,
+.admin-content .btn-view,
+.admin-content .btn-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.85rem 1.4rem;
+  border-radius: 14px;
+  border: none;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: 0 12px 32px rgba(99,102,241,0.22);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.admin-content .btn-primary:hover,
+.admin-content .btn-search:hover,
+.admin-content .btn-add:hover,
+.admin-content .btn-new:hover,
+.admin-content .btn-upload:hover,
+.admin-content .btn-add-category:hover,
+.admin-content .cm-btn-search:hover,
+.admin-content .btn-submit:hover,
+.admin-content .btn-reply:hover,
+.admin-content .btn-view:hover,
+.admin-content .btn-mark:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 38px rgba(99,102,241,0.28);
+}
+
+.admin-content .btn-danger,
+.admin-content .btn-delete,
+.admin-content .btn-icon-danger {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: #fff;
+  border: none;
+  box-shadow: 0 12px 30px rgba(220,38,38,0.18);
+}
+
+.admin-content .btn-danger:hover,
+.admin-content .btn-delete:hover,
+.admin-content .btn-icon-danger:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 28px rgba(220,38,38,0.22);
+}
+
+.admin-content .btn-cancel,
+.admin-content .btn-cancel-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.75rem 1.2rem;
+  border-radius: 12px;
+  background: #fff;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 8px 18px rgba(15,23,42,0.05);
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.admin-content .btn-cancel:hover,
+.admin-content .btn-cancel-secondary:hover {
+  transform: translateY(-1px);
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.admin-content .btn-sm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 1rem;
+  border-radius: 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  border: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.admin-content .btn-sm.btn-edit,
+.admin-content .btn-sm.btn-view,
+.admin-content .btn-sm.btn-mark {
+  background: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%);
+  color: #fff;
+  box-shadow: 0 10px 22px rgba(99,102,241,0.18);
+}
+
+.admin-content .btn-sm.btn-edit:hover,
+.admin-content .btn-sm.btn-view:hover,
+.admin-content .btn-sm.btn-mark:hover {
+  transform: translateY(-1px);
+}
+
+.admin-content .btn-sm.btn-delete {
+  background: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
+  color: #fff;
+  box-shadow: 0 10px 22px rgba(248,115,22,0.18);
+}
+
+.admin-content .btn-sm.btn-delete:hover {
+  transform: translateY(-1px);
+}
+
+.admin-content .btn-icon,
+.admin-content .btn-icon-edit,
+.admin-content .btn-icon-del {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #e2e8f0;
+  background: #fff;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.admin-content .btn-icon:hover,
+.admin-content .btn-icon-edit:hover,
+.admin-content .btn-icon-del:hover {
+  transform: translateY(-1px);
+  border-color: #cbd5e1;
+  background: #f8fafc;
+  box-shadow: 0 10px 20px rgba(15,23,42,0.08);
+}
+
+.admin-content select,
+.admin-content .form-select,
+.admin-content .gs-select,
+.admin-content .cm-select,
+.admin-content .cat-select {
+  width: 100%;
+  max-width: 100%;
+  padding: 0.95rem 1.3rem;
+  border-radius: 16px;
+  border: 1.5px solid #e2e8f0;
+  background: linear-gradient(180deg, #ffffff 0%, #f8f7ff 100%);
+  color: #0f172a;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1.25rem center;
+  background-size: 16px 16px;
+}
+
+.admin-content select:focus,
+.admin-content .form-select:focus,
+.admin-content .gs-select:focus,
+.admin-content .cm-select:focus,
+.admin-content .cat-select:focus {
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 4px rgba(124,58,237,0.14);
+  transform: translateY(-1px);
+}
+
+.admin-content .gs-select-wrap {
+  position: relative;
+}
+
+.admin-content .gs-select-arrow {
+  position: absolute;
+  top: 50%;
+  right: 1.1rem;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+
+.admin-content .show-entries select {
+  width: auto;
+  padding-right: 1.2rem;
+}
+
+.admin-content .admin-table-card {
+  width: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 20px 50px rgba(15,23,42,0.05);
+}
+
 
 /* NO transform here — transform on a parent breaks position:fixed modals */
 @keyframes pageIn {

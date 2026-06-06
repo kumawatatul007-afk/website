@@ -11,6 +11,16 @@ const DEFAULT_THEME = {
   accentBorder: '#bfdbfe',
 };
 
+function getThemeForSlug(slug) {
+  if (!slug) return { grad: 'linear-gradient(90deg,#7c3aed 0%,#06b6d4 100%)', accent: '#7c3aed', accentRgb: '124,58,237' };
+  const s = slug.toLowerCase();
+  if (s.includes('kisan') || s.includes('kisanget') || s.includes('farm')) return { grad: 'linear-gradient(90deg,#16a34a 0%,#86efac 100%)', accent: '#16a34a', accentRgb: '22,163,74' };
+  if (s.includes('ck') || s.includes('click') || s.includes('commerce')) return { grad: 'linear-gradient(90deg,#f97316 0%,#fb923c 100%)', accent: '#f97316', accentRgb: '249,115,22' };
+  if (s.includes('bank') || s.includes('finance')) return { grad: 'linear-gradient(90deg,#0ea5a4 0%,#06b6d4 100%)', accent: '#0ea5a4', accentRgb: '14,165,164' };
+  // default
+  return { grad: 'linear-gradient(90deg,#7c3aed 0%,#06b6d4 100%)', accent: '#7c3aed', accentRgb: '124,58,237' };
+}
+
 function useCountUp(target, isVisible, duration = 1800) {
   const [count, setCount] = useState(0);
   useEffect(() => {
@@ -42,7 +52,7 @@ function LuxuryStatCard({ stat, isVisible, index, accent }) {
       <div className="pd3-stat-icon">
         {icons[stat.type] || '✨'}
       </div>
-      <div className="pd3-stat-value">
+      <div className="pd3-stat-value" style={{ color: stat.color || accent }}>
         {stat.value % 1 === 0 ? Math.floor(count) : count.toFixed(1)}{stat.suffix}
       </div>
       <div className="pd3-stat-label">{stat.label}</div>
@@ -66,6 +76,24 @@ function StatItem({ stat, isVisible }) {
 function ImageSlider({ imgSrc, websiteUrl }) {
   const STEPS = 4;
   const [step, setStep] = useState(0);
+  const imgRef = useRef(null);
+  const [isVerticalSprite, setIsVerticalSprite] = useState(false);
+
+  const onImgLoad = useCallback((e) => {
+    const img = e.currentTarget || imgRef.current;
+    if (!img) return;
+    const w = img.naturalWidth || img.width;
+    const h = img.naturalHeight || img.height;
+    // If image is significantly taller than wide, treat as vertical sprite
+    if (h / Math.max(w, 1) > 1.2) setIsVerticalSprite(true);
+    else setIsVerticalSprite(false);
+  }, []);
+
+  const commonImgStyle = {
+    transition: 'transform 0.75s cubic-bezier(0.4,0,0.2,1)',
+    objectFit: 'cover',
+    display: 'block'
+  };
 
   return (
     <div className="pd3-slider-wrap">
@@ -78,10 +106,15 @@ function ImageSlider({ imgSrc, websiteUrl }) {
       </div>
       <div className="pd3-slide-track">
         <img
+          ref={imgRef}
           src={imgSrc}
           alt="preview"
           className="pd3-slide-img"
-          style={{ transform: `translateY(${-step * 25}%)`, transition: 'transform 0.75s cubic-bezier(0.4,0,0.2,1)' }}
+          onLoad={onImgLoad}
+          style={isVerticalSprite
+            ? { ...commonImgStyle, transform: `translateY(${-step * (100 / STEPS)}%)`, height: `${STEPS * 100}%`, width: '100%' }
+            : { ...commonImgStyle, transform: `translateX(${-step * (100 / STEPS)}%)`, width: `${STEPS * 100}%`, height: '100%' }
+          }
           loading="eager"
         />
         <div className="pd3-slider-controls">
@@ -160,12 +193,14 @@ export default function ProjectDetailPage({ id, slug, item: dbItem, related }) {
   );
   if (!project) return <div style={{textAlign:'center',padding:'5rem',fontFamily:"'Space Grotesk',sans-serif"}}><p style={{color:'#9ca3af'}}>Project not found.</p><Link href="/portfolio" style={{color:'#0A3981',fontWeight:600}}>← Back to Portfolio</Link></div>;
 
-  // Use database values with fallbacks to defaults
-  const accent       = DEFAULT_THEME.accent;
-  const accentRgb    = DEFAULT_THEME.accentRgb;
-  const accentLight  = DEFAULT_THEME.accentLight;
-  const accentBorder = DEFAULT_THEME.accentBorder;
-  const heroGrad     = DEFAULT_THEME.heroGradient;
+  // Use database values with fallbacks to defaults, but allow per-project theme by slug
+  const theme = getThemeForSlug(project.slug || project.title);
+  const accent       = project.accent || theme.accent || DEFAULT_THEME.accent;
+  const accentRgb    = project.accentRgb || theme.accentRgb || DEFAULT_THEME.accentRgb;
+  const accentLight  = project.accentLight || DEFAULT_THEME.accentLight;
+  const accentBorder = project.accentBorder || DEFAULT_THEME.accentBorder;
+  const heroGrad     = project.heroGradient || theme.grad || DEFAULT_THEME.heroGradient;
+  const btnGrad      = project.btnGradient || theme.grad || DEFAULT_THEME.heroGradient;
   
   // Parse description as JSON if it contains structured data
   let projectData = {
@@ -194,6 +229,13 @@ export default function ProjectDetailPage({ id, slug, item: dbItem, related }) {
   }
 
   const stats  = projectData.stats || [];
+  const defaultStats = [
+    { label: 'Years Experience', value: 9, suffix: '+', type: 'experience' },
+    { label: 'Projects Delivered', value: 120, suffix: '+', type: 'projects' },
+    { label: 'Countries Served', value: 3, suffix: '', type: 'countries' },
+    { label: 'Client Satisfaction', value: 98, suffix: '%', type: 'satisfaction' }
+  ];
+  const statsToShow = (stats && stats.length > 0) ? stats : defaultStats;
   const tech   = projectData.tech || [];
   const imgSrc = project.image_url || (project.image ? (project.image.startsWith('http') ? project.image : `/uploads/portfolio/${project.image}`) : '');
 
@@ -230,8 +272,8 @@ export default function ProjectDetailPage({ id, slug, item: dbItem, related }) {
         .pd3-hero-title{font-family:'Playfair Display',serif;font-size:clamp(3rem,7vw,6rem);font-weight:700;color:#fff;line-height:1.05;letter-spacing:-0.02em;animation:pd3-up 0.8s 0.1s ease both;hyphens:none;-webkit-hyphens:none;overflow-wrap:break-word;word-break:break-word}
         .pd3-hero-tagline{font-size:clamp(1rem,2.2vw,1.3rem);color:rgba(255,255,255,0.6);font-weight:400;max-width:560px;line-height:1.6;animation:pd3-up 0.8s 0.2s ease both}
         .pd3-hero-actions{display:flex;flex-wrap:wrap;gap:1rem;animation:pd3-up 0.8s 0.3s ease both}
-        .pd3-btn-primary{display:inline-flex;align-items:center;gap:0.5rem;background:#fff;color:#1a1a2e;border-radius:100px;padding:0.9rem 2rem;font-size:0.82rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 8px 32px rgba(0,0,0,0.25)}
-        .pd3-btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(0,0,0,0.35)}
+        .pd3-btn-primary{display:inline-flex;align-items:center;gap:0.5rem;background:${btnGrad};color:#fff;border-radius:100px;padding:0.9rem 2rem;font-size:0.82rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 12px 36px rgba(0,0,0,0.18)}
+        .pd3-btn-primary:hover{transform:translateY(-4px);box-shadow:0 18px 48px rgba(0,0,0,0.28)}
         .pd3-btn-ghost{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.25);color:#fff;border-radius:100px;padding:0.9rem 2rem;font-size:0.82rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;transition:background 0.2s}
         .pd3-btn-ghost:hover{background:rgba(255,255,255,0.18)}
         .pd3-hero-scroll{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:0.5rem;color:rgba(255,255,255,0.4);font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;animation:pd3-fade 1s 1s ease both;z-index:3}
@@ -254,7 +296,7 @@ export default function ProjectDetailPage({ id, slug, item: dbItem, related }) {
         .pd3-browser-addr{flex:1;background:rgba(255,255,255,0.08);border-radius:6px;padding:0.3rem 0.75rem;font-size:0.7rem;color:rgba(255,255,255,0.5);font-family:'Space Grotesk',sans-serif;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
         .pd3-slide-track{position:relative;height:520px;overflow:hidden;background:#000}
         @media(max-width:768px){.pd3-slide-track{height:320px}}
-        .pd3-slide-img{width:100%;height:auto;object-fit:unset;display:block}
+        .pd3-slide-img{width:auto;height:100%;object-fit:cover;display:block;transition:transform 0.75s cubic-bezier(0.4,0,0.2,1)}
         .pd3-slider-controls{position:absolute;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:1.5rem;z-index:20;background:rgba(0,0,0,0.78);backdrop-filter:blur(12px);padding:0.9rem 1.5rem;border-top:1px solid rgba(255,255,255,0.1)}
         .pd3-slider-arr{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border:none;color:#fff;width:48px;height:48px;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);flex-shrink:0;box-shadow:0 4px 12px rgba(102,126,234,0.4)}
         .pd3-slider-arr:hover:not(:disabled){background:linear-gradient(135deg,#764ba2 0%,#667eea 100%);transform:translateY(-2px);box-shadow:0 6px 20px rgba(102,126,234,0.6)}
@@ -598,8 +640,8 @@ export default function ProjectDetailPage({ id, slug, item: dbItem, related }) {
         .pd3-cta::after{content:'';position:absolute;bottom:-40px;left:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,0.04)}
         .pd3-cta-title{font-family:'Playfair Display',serif;font-size:clamp(1.5rem,3vw,2.2rem);color:#fff;font-weight:700;margin-bottom:0.5rem;position:relative;z-index:1}
         .pd3-cta-sub{font-size:0.95rem;color:rgba(255,255,255,0.65);position:relative;z-index:1;margin:0}
-        .pd3-cta-btn{display:inline-flex;align-items:center;gap:0.5rem;background:#fff;color:#1a1a2e;padding:1rem 2.25rem;border-radius:100px;font-size:0.82rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;transition:transform 0.2s,box-shadow 0.2s;white-space:nowrap;flex-shrink:0;box-shadow:0 8px 28px rgba(0,0,0,0.25);position:relative;z-index:1}
-        .pd3-cta-btn:hover{transform:translateY(-2px);box-shadow:0 14px 40px rgba(0,0,0,0.35)}
+        .pd3-cta-btn{display:inline-flex;align-items:center;gap:0.5rem;background:${btnGrad};color:#fff;padding:1rem 2.25rem;border-radius:100px;font-size:0.82rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;transition:transform 0.2s,box-shadow 0.2s;white-space:nowrap;flex-shrink:0;box-shadow:0 12px 34px rgba(0,0,0,0.18);position:relative;z-index:1}
+        .pd3-cta-btn:hover{transform:translateY(-4px);box-shadow:0 18px 48px rgba(0,0,0,0.28)}
 
         /* NAV */
         .pd3-nav{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:3rem;opacity:0;transform:translateY(20px);transition:opacity 0.6s,transform 0.6s}
@@ -708,11 +750,11 @@ export default function ProjectDetailPage({ id, slug, item: dbItem, related }) {
           </div>
 
           {/* Ultra-Minimal Luxury Stats Section - Clean Design */}
-          {stats && stats.length > 0 && (
+          {(statsToShow && statsToShow.length > 0) && (
             <div className="pd3-stats-section" ref={statsRef}>
               <div className="pd3-stats-container">
                 <div className="pd3-stats-grid">
-                  {stats.map((stat, i) => (
+                  {statsToShow.map((stat, i) => (
                     <LuxuryStatCard 
                       key={i} 
                       stat={stat} 

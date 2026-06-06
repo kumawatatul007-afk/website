@@ -290,14 +290,22 @@ export default function ServicesPage({ services = [] }) {
         .srv-btn-ghost {
           display: inline-flex; align-items: center; gap: 10px;
           padding: 0.85rem 2rem;
-          background: transparent; color: rgba(255,255,255,0.8);
-          border: 1.5px solid rgba(255,255,255,0.2);
+          background: linear-gradient(135deg, rgba(236, 72, 153, 0.9), rgba(249, 115, 22, 0.9));
+          color: #fff;
+          border: none;
           font-family: 'Space Grotesk', sans-serif;
-          font-size: 0.82rem; font-weight: 600; letter-spacing: 0.06em;
+          font-size: 0.82rem; font-weight: 700; letter-spacing: 0.06em;
           text-transform: uppercase; text-decoration: none;
-          border-radius: 8px; transition: all 0.25s ease;
+          border-radius: 8px; 
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 0 6px 18px rgba(236, 72, 153, 0.3);
         }
-        .srv-btn-ghost:hover { border-color: rgba(255,255,255,0.5); color: #fff; transform: translateY(-2px); }
+        .srv-btn-ghost:hover { 
+          background: linear-gradient(135deg, rgba(249, 115, 22, 0.95), rgba(236, 72, 153, 0.95));
+          transform: translateY(-2px); 
+          box-shadow: 0 10px 28px rgba(236, 72, 153, 0.4);
+          gap: 14px;
+        }
 
         /* ═══════════════════════════════════════
            STATS STRIP
@@ -523,13 +531,23 @@ export default function ServicesPage({ services = [] }) {
         }
         .srv-pg-arrow {
           width: 42px; height: 42px; border-radius: 10px;
-          border: 1.5px solid #e5e7eb; background: #fff;
+          border: none;
+          background: linear-gradient(135deg, #6366f1, #8b5cf6);
           display: flex; align-items: center; justify-content: center;
-          cursor: pointer; color: #374151;
-          transition: all 0.2s ease;
+          cursor: pointer; color: #fff;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
         }
-        .srv-pg-arrow:hover:not(:disabled) { background: #111; color: #fff; border-color: #111; }
-        .srv-pg-arrow:disabled { opacity: 0.3; cursor: not-allowed; }
+        .srv-pg-arrow:hover:not(:disabled) { 
+          background: linear-gradient(135deg, #8b5cf6, #6366f1);
+          transform: translateY(-2px);
+          box-shadow: 0 6px 18px rgba(99, 102, 241, 0.4);
+        }
+        .srv-pg-arrow:disabled { 
+          opacity: 0.3; 
+          cursor: not-allowed; 
+          box-shadow: none;
+        }
         .srv-pg-num {
           min-width: 42px; height: 42px; border-radius: 10px;
           border: 1.5px solid #e5e7eb; background: #fff;

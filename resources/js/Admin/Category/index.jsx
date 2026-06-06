@@ -99,12 +99,12 @@ function DeleteModal({ category, onClose, onConfirm, loading }) {
                         disabled={loading}
                         style={{
                             flex: 1, padding: '0.875rem 1.25rem',
-                            borderRadius: '14px', border: '1.5px solid #e2e8f0',
+                            borderRadius: '12px', border: '1.5px solid #e2e8f0',
                             background: '#fff', color: '#475569',
                             fontSize: '0.875rem', fontWeight: 600,
                             cursor: loading ? 'not-allowed' : 'pointer',
                             fontFamily: 'inherit',
-                            transition: 'all 0.15s',
+                            transition: 'all 0.2s',
                             opacity: loading ? 0.5 : 1,
                         }}
                         onMouseEnter={e => { if (!loading) { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.borderColor = '#cbd5e1'; } }}
@@ -117,7 +117,7 @@ function DeleteModal({ category, onClose, onConfirm, loading }) {
                         disabled={loading}
                         style={{
                             flex: 1, padding: '0.875rem 1.25rem',
-                            borderRadius: '14px', border: 'none',
+                            borderRadius: '12px', border: 'none',
                             background: loading
                                 ? 'linear-gradient(135deg,#fca5a5,#f87171)'
                                 : 'linear-gradient(135deg,#ef4444,#dc2626)',
@@ -125,13 +125,13 @@ function DeleteModal({ category, onClose, onConfirm, loading }) {
                             fontSize: '0.875rem', fontWeight: 700,
                             cursor: loading ? 'not-allowed' : 'pointer',
                             fontFamily: 'inherit',
-                            transition: 'all 0.15s',
-                            boxShadow: loading ? 'none' : '0 4px 14px rgba(239,68,68,0.4)',
+                            transition: 'all 0.2s',
+                            boxShadow: loading ? 'none' : '0 6px 18px rgba(239,68,68,0.35)',
                             display: 'flex', alignItems: 'center',
                             justifyContent: 'center', gap: '0.5rem',
                         }}
-                        onMouseEnter={e => { if (!loading) e.currentTarget.style.boxShadow = '0 8px 24px rgba(239,68,68,0.55)'; }}
-                        onMouseLeave={e => { if (!loading) e.currentTarget.style.boxShadow = '0 4px 14px rgba(239,68,68,0.4)'; }}
+                        onMouseEnter={e => { if (!loading) e.currentTarget.style.boxShadow = '0 10px 28px rgba(239,68,68,0.5)'; }}
+                        onMouseLeave={e => { if (!loading) e.currentTarget.style.boxShadow = '0 6px 18px rgba(239,68,68,0.35)'; }}
                     >
                         {loading ? (
                             <>
@@ -287,13 +287,15 @@ function CreateModal({ onClose, onSuccess }) {
                             disabled={loading}
                             style={{
                                 flex: 1, padding: '0.875rem 1.25rem',
-                                borderRadius: '14px', border: '1.5px solid #e2e8f0',
+                                borderRadius: '12px', border: '1.5px solid #e2e8f0',
                                 background: '#fff', color: '#475569',
                                 fontSize: '0.875rem', fontWeight: 600,
                                 cursor: loading ? 'not-allowed' : 'pointer',
-                                transition: 'all 0.15s',
+                                transition: 'all 0.2s',
                                 opacity: loading ? 0.5 : 1,
                             }}
+                            onMouseEnter={e => { if (!loading) { e.currentTarget.style.background = '#f8fafc'; e.currentTarget.style.borderColor = '#cbd5e1'; } }}
+                            onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.borderColor = '#e2e8f0'; }}
                         >
                             Cancel
                         </button>
@@ -302,14 +304,16 @@ function CreateModal({ onClose, onSuccess }) {
                             disabled={loading || !name.trim()}
                             style={{
                                 flex: 1, padding: '0.875rem 1.25rem',
-                                borderRadius: '14px', border: 'none',
-                                background: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
+                                borderRadius: '12px', border: 'none',
+                                background: loading ? 'linear-gradient(135deg, #a5b4fc, #c4b5fd)' : 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
                                 color: '#fff',
                                 fontSize: '0.875rem', fontWeight: 700,
                                 cursor: loading || !name.trim() ? 'not-allowed' : 'pointer',
-                                transition: 'all 0.15s',
-                                boxShadow: loading ? 'none' : '0 4px 14px rgba(99,102,241,0.4)',
+                                transition: 'all 0.2s',
+                                boxShadow: loading ? 'none' : '0 6px 18px rgba(99,102,241,0.35)',
                             }}
+                            onMouseEnter={e => { if (!loading && name.trim()) e.currentTarget.style.boxShadow = '0 10px 28px rgba(99,102,241,0.5)'; }}
+                            onMouseLeave={e => { if (!loading && name.trim()) e.currentTarget.style.boxShadow = '0 6px 18px rgba(99,102,241,0.35)'; }}
                         >
                             {loading ? 'Creating...' : 'Create Category'}
                         </button>
@@ -445,7 +449,13 @@ export default function AdminCategoryIndex({ categories, filters }) {
                     flex-wrap: wrap; align-items: center;
                     animation: fadeSlideUp 0.5s cubic-bezier(0.22,1,0.36,1) 0.07s both;
                 }
-                .search-wrap { position: relative; flex: 1; min-width: 220px; }
+                .search-actions {
+                    display: flex; align-items: center;
+                    gap: 0.75rem;
+                    flex-wrap: nowrap;
+                    width: 100%;
+                }
+                .search-wrap { position: relative; flex: 1 1 auto; min-width: 0; max-width: 420px; }
                 .search-icon-wrap {
                     position: absolute; left: 1rem; top: 50%;
                     transform: translateY(-50%);
@@ -488,26 +498,27 @@ export default function AdminCategoryIndex({ categories, filters }) {
                 }
                 .btn-search {
                     display: inline-flex; align-items: center; gap: 0.5rem;
-                    padding: 0.9rem 1.65rem;
-                    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+                    padding: 0.95rem 1.8rem;
+                    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
                     color: #fff; border: none; border-radius: 14px;
                     font-size: 0.875rem; font-weight: 700; font-family: inherit;
                     cursor: pointer; white-space: nowrap;
-                    box-shadow: 0 4px 16px rgba(99,102,241,0.4);
-                    transition: transform 0.15s, box-shadow 0.15s;
+                    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
+                    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
                 }
                 .btn-search:hover {
-                    transform: translateY(-2px);
-                    box-shadow: 0 8px 26px rgba(99,102,241,0.55);
+                    transform: translateY(-3px);
+                    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.5);
+                    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
                 }
-                .btn-search:active { transform: translateY(0); }
+                .btn-search:active { transform: translateY(-1px); }
 
                 .btn-add-category {
                     display: inline-flex;
                     align-items: center;
                     gap: 0.5rem;
-                    padding: 0.9rem 1.65rem;
-                    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+                    padding: 0.95rem 1.8rem;
+                    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
                     color: #fff;
                     border: none;
                     border-radius: 14px;
@@ -516,16 +527,19 @@ export default function AdminCategoryIndex({ categories, filters }) {
                     font-family: inherit;
                     cursor: pointer;
                     white-space: nowrap;
-                    box-shadow: 0 4px 14px rgba(99,102,241,0.4);
-                    transition: transform 0.15s, box-shadow 0.15s;
+                    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
+                    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
                 }
 
                 .btn-add-category:hover {
-                    transform: translateY(-2px);
-                    box-shadow: 0 8px 26px rgba(99,102,241,0.55);
+                    transform: translateY(-3px);
+                    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.5);
+                    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
                 }
 
-                .btn-add-category:active { transform: translateY(0); }
+                .btn-add-category:active { 
+                    transform: translateY(-1px); 
+                }
 
                 /* ── Card ──────────────────────────────────────────────── */
                 .cat-card {
@@ -564,17 +578,30 @@ export default function AdminCategoryIndex({ categories, filters }) {
                 }
                 .cat-table th {
                     text-align: left;
-                    padding: 1.05rem 1.5rem;
+                    padding: 1rem 1rem;
                     font-size: 0.695rem; font-weight: 800;
                     color: #b0bec8; text-transform: uppercase;
                     letter-spacing: 0.11em; white-space: nowrap;
                     border-bottom: 1px solid #f1f5f9;
                     user-select: none;
+                    vertical-align: middle;
+                }
+                /* Actions header — always right-aligned */
+                .cat-table th.col-actions {
+                    text-align: right;
+                    padding-right: 1rem;
                 }
                 .cat-table td {
-                    padding: 1.05rem 1.5rem;
+                    padding: 1rem 1rem;
                     border-bottom: 1px solid #f8fafc;
                     color: #0f172a; vertical-align: middle;
+                    text-align: left;
+                }
+                /* Actions cell — always right-aligned */
+                .cat-table td.col-actions {
+                    text-align: right;
+                    padding-right: 1rem;
+                    white-space: nowrap;
                 }
                 .cat-table tbody tr:last-child td { border-bottom: none; }
                 .cat-table tbody tr {
@@ -594,12 +621,6 @@ export default function AdminCategoryIndex({ categories, filters }) {
                 .cat-table tbody tr:nth-child(8)  { animation-delay: 0.43s; }
                 .cat-table tbody tr:nth-child(9)  { animation-delay: 0.47s; }
                 .cat-table tbody tr:nth-child(10) { animation-delay: 0.51s; }
-
-                /* ── Row index ─────────────────────────────────────────── */
-                .row-num {
-                    color: #dce3ed; font-size: 0.775rem; font-weight: 700;
-                    font-variant-numeric: tabular-nums; letter-spacing: 0.02em;
-                }
 
                 /* ── Type badge ────────────────────────────────────────── */
                 .type-badge {
@@ -642,33 +663,41 @@ export default function AdminCategoryIndex({ categories, filters }) {
 
                 /* ── Action buttons ────────────────────────────────────── */
                 .actions-cell {
-                    display: flex; align-items: center; justify-content: center;
-                    gap: 0.375rem;
+                    display: inline-flex !important;
+                    align-items: center !important;
+                    justify-content: flex-end !important;
+                    gap: 0.5rem !important;
+                    flex-wrap: nowrap !important;
                 }
                 .btn-icon {
-                    width: 32px; height: 32px; border-radius: 9px;
+                    width: 38px; height: 38px; border-radius: 10px;
                     display: inline-flex; align-items: center; justify-content: center;
-                    border: 1.5px solid #e8ecf2; background: #fff;
-                    color: #64748b; cursor: pointer;
-                    transition: all 0.15s ease;
+                    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); 
+                    color: #fff; cursor: pointer;
+                    border: none;
+                    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
                     text-decoration: none; flex-shrink: 0;
+                    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
                 }
                 .btn-icon:hover {
-                    background: #f1f5f9; border-color: #cbd5e1;
-                    color: #0f172a; transform: translateY(-1px);
-                    box-shadow: 0 4px 10px rgba(15,23,42,0.1);
+                    background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.45);
                 }
                 .btn-icon-danger {
-                    width: 32px; height: 32px; border-radius: 9px;
+                    width: 38px; height: 38px; border-radius: 10px;
                     display: inline-flex; align-items: center; justify-content: center;
-                    border: 1.5px solid #fee2e2; background: #fff5f5;
-                    color: #f87171; cursor: pointer;
-                    transition: all 0.15s ease; flex-shrink: 0;
+                    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+                    color: #fff; cursor: pointer;
+                    border: none;
+                    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1); 
+                    flex-shrink: 0;
+                    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
                 }
                 .btn-icon-danger:hover {
-                    background: #fef2f2; border-color: #fca5a5;
-                    color: #ef4444; transform: translateY(-1px);
-                    box-shadow: 0 4px 12px rgba(239,68,68,0.18);
+                    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 20px rgba(239, 68, 68, 0.45);
                 }
 
                 /* ── Shimmer ───────────────────────────────────────────── */
@@ -705,15 +734,15 @@ export default function AdminCategoryIndex({ categories, filters }) {
                 .cat-footer {
                     display: flex; align-items: center;
                     justify-content: space-between;
-                    padding: 1.2rem 1.75rem;
-                    border-top: 1px solid #f1f5f9;
-                    background: linear-gradient(180deg, transparent 0%, #fafbff 100%);
-                    flex-wrap: wrap; gap: 0.75rem;
+                    padding: 1.4rem 1.75rem;
+                    border-top: 1px solid #e0e7f1;
+                    background: linear-gradient(180deg, #f9faff 0%, #f5f8ff 100%);
+                    flex-wrap: wrap; gap: 1rem;
                 }
                 .footer-info {
-                    font-size: 0.8rem; color: #b0bec8; font-weight: 500;
+                    font-size: 0.8rem; color: #7c8fa3; font-weight: 500;
                 }
-                .footer-info strong { color: #64748b; font-weight: 700; }
+                .footer-info strong { color: #4f46e5; font-weight: 700; }
 
                 /* ── Responsive breakpoints ────────────────────────────── */
                 @media (max-width: 900px) {
@@ -758,20 +787,26 @@ export default function AdminCategoryIndex({ categories, filters }) {
 
                 {/* ═══════════ Toolbar ═══════════ */}
                 <div className="cat-toolbar">
-                    <div className="search-wrap">
-                        <span className={`search-icon-wrap ${searchFocused ? 'focused' : ''}`}>
+                    <div className="search-actions">
+                        <div className="search-wrap">
+                            <span className={`search-icon-wrap ${searchFocused ? 'focused' : ''}`}>
+                                <IconSearch />
+                            </span>
+                            <input
+                                ref={inputRef}
+                                className="cat-search"
+                                placeholder="Search by name or slug…"
+                                value={search}
+                                onChange={e => setSearch(e.target.value)}
+                                onFocus={() => setSearchFocused(true)}
+                                onBlur={() => setSearchFocused(false)}
+                                onKeyDown={e => e.key === 'Enter' && applyFilters()}
+                            />
+                        </div>
+                        <button className="btn-search" onClick={() => applyFilters()}>
                             <IconSearch />
-                        </span>
-                        <input
-                            ref={inputRef}
-                            className="cat-search"
-                            placeholder="Search by name or slug…"
-                            value={search}
-                            onChange={e => setSearch(e.target.value)}
-                            onFocus={() => setSearchFocused(true)}
-                            onBlur={() => setSearchFocused(false)}
-                            onKeyDown={e => e.key === 'Enter' && applyFilters()}
-                        />
+                            Search
+                        </button>
                     </div>
 
                     <select
@@ -787,11 +822,6 @@ export default function AdminCategoryIndex({ categories, filters }) {
                             <option key={n} value={n}>Show {n} entries</option>
                         ))}
                     </select>
-
-                    <button className="btn-search" onClick={() => applyFilters()}>
-                        <IconSearch />
-                        Search
-                    </button>
                 </div>
 
                 {/* ═══════════ Data Card ═══════════ */}
@@ -810,32 +840,27 @@ export default function AdminCategoryIndex({ categories, filters }) {
                     <table className="cat-table">
                         <thead>
                             <tr>
-                                {/* <th style={{ width: '52px' }}>#</th> */}
-                                <th style={{ width: '15%' }} className="col-type">Type</th>
-                                <th>Name</th>
-                                <th style={{ width: '24%' }} className="col-slug">Slug</th>
-                                <th style={{ width: '17%' }}>Created</th>
-                                <th style={{ width: '13%' }} className="col-updated">Updated</th>
-                                <th style={{ width: '88px', textAlign: 'center' }}>Actions</th>
+                                <th style={{ width: '12%' }} className="col-type">Type</th>
+                                <th style={{ width: '20%' }}>Name</th>
+                                <th style={{ width: '18%' }} className="col-slug">Slug</th>
+                                <th style={{ width: '15%' }}>Created</th>
+                                <th style={{ width: '12%' }} className="col-updated">Updated</th>
+                                <th style={{ width: '80px' }} className="col-actions">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {shimmer ? (
-                                <ShimmerTableRows count={8} cols={7} />
+                                <ShimmerTableRows count={8} cols={6} />
                             ) : categories?.data?.length > 0 ? (
                                 categories.data.map((cat, i) => {
-                                    const palette    = typePalette(cat.text_for);
-                                    const created    = cat.created_at ? new Date(cat.created_at) : null;
-                                    const updated    = cat.updated_at ? new Date(cat.updated_at) : null;
-                                    const fmtDate    = (d) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-                                    const fmtTime    = (d) => d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                                    const palette = typePalette(cat.text_for);
+                                    const created = cat.created_at ? new Date(cat.created_at) : null;
+                                    const updated = cat.updated_at ? new Date(cat.updated_at) : null;
+                                    const fmtDate = (d) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                                    const fmtTime = (d) => d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 
                                     return (
                                         <tr key={cat.id}>
-                                            {/* # */}
-                                            <td className="row-num">
-                                                {(categories.from ?? 0) + i}
-                                            </td>
 
                                             {/* Type */}
                                             <td className="col-type">
@@ -887,7 +912,7 @@ export default function AdminCategoryIndex({ categories, filters }) {
                                             </td>
 
                                             {/* Actions */}
-                                            <td>
+                                            <td className="col-actions">
                                                 <div className="actions-cell">
                                                     <Link
                                                         href={`/admin/categories/${cat.id}/edit`}
@@ -910,7 +935,7 @@ export default function AdminCategoryIndex({ categories, filters }) {
                                 })
                             ) : (
                                 <tr>
-                                    <td colSpan={7} style={{ padding: 0, borderBottom: 'none' }}>
+                                    <td colSpan={6} style={{ padding: 0, borderBottom: 'none' }}>
                                         <div className="cat-empty">
                                             <div className="cat-empty-icon-wrap">
                                                 <IconFolder />

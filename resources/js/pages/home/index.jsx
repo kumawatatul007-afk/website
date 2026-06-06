@@ -998,8 +998,8 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
             {/* Row 1: American Express — Left = logo+company+date | Right = title+desc */}
             <div className="edu-item" data-aos="fade-right" data-aos-delay="100" data-aos-duration="800">
               <div className="edu-item-left edu-item-logo-side">
-                <div className="edu-item-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+                <div className="edu-item-icon edu-icon-amex">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 7h12v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V7z" opacity="0.12"/><path d="M9.5 11.5h5v1.5h-5z" fill="#fff"/><path d="M7 8h10v2H7z" fill="#fff"/></svg>
                 </div>
                 <h4 className="edu-item-company">American Express</h4>
                 <p className="edu-item-date">Sep 2023 – Present</p>
@@ -1019,8 +1019,8 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
               </div>
               <div className="edu-item-dot"></div>
               <div className="edu-item-right edu-item-logo-side">
-                <div className="edu-item-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/><line x1="14" y1="4" x2="10" y2="20"/></svg>
+                <div className="edu-item-icon edu-icon-keendroid">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9.5 7.75L6 12l3.5 4.25" stroke="none" fill="#fff"/><path d="M14.5 7.75L18 12l-3.5 4.25" stroke="none" fill="#fff"/><rect x="10" y="9" width="4" height="6" rx="1" fill="#fff" opacity="0.95"/></svg>
                 </div>
                 <h4 className="edu-item-company">Keendroid Pvt. Ltd.</h4>
                 <p className="edu-item-date">Dec 2018 – Aug 2023</p>
@@ -1030,8 +1030,8 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
             {/* Row 3: MCA — Left = logo+company+date | Right = title+desc */}
             <div className="edu-item" data-aos="fade-right" data-aos-delay="300" data-aos-duration="800">
               <div className="edu-item-left edu-item-logo-side">
-                <div className="edu-item-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                <div className="edu-item-icon edu-icon-uni">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3l9 4.5-9 4.5-9-4.5L12 3z" fill="#fff"/><path d="M4.5 9.5v3.5c0 3 3.5 5 7.5 5s7.5-2 7.5-5V9.5" fill="#fff" opacity="0.95"/></svg>
                 </div>
                 <h4 className="edu-item-company">Jaipur National University</h4>
                 <p className="edu-item-date">2020 – 2022</p>
@@ -1141,7 +1141,10 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
           </div>
           <div style={{ textAlign: 'center', marginTop: '2.5rem' }} data-aos="fade-up" data-aos-delay="200">
             <a href="/portfolio" className="view-all-btn">
-              VIEW ALL PROJECTS &nbsp;›
+              <span className="view-all-label">VIEW ALL PROJECTS</span>
+              <span className="view-all-arrow" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5 12h14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/><path d="M13 6l6 6-6 6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </span>
             </a>
           </div>
         </div>

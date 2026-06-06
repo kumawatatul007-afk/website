@@ -16,18 +16,41 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-8">
-      <div className="w-full max-w-md">
+    <div
+      className="min-h-screen flex items-center justify-start bg-[#f7f9fc] px-4 py-8"
+      style={{
+        backgroundImage: `radial-gradient(circle at top left, rgba(59, 130, 246, 0.12), transparent 28%), radial-gradient(circle at bottom left, rgba(56, 189, 248, 0.14), transparent 22%), url('https://www.thenikhilsharma.in/public/admin/images/signin.svg')`,
+        backgroundPosition: 'top left, bottom left, right 10% center',
+        backgroundRepeat: 'no-repeat, no-repeat, no-repeat',
+        backgroundSize: '38%, 32%, 36%',
+      }}
+    >
+      <div className="w-full max-w-md ml-4 md:ml-12 lg:ml-20 xl:ml-28">
         <div style={{
-          background: '#fff',
+          background: '#ffffff',
           padding: '2rem',
-          borderRadius: '1rem',
-          boxShadow: '0 4px 24px rgba(0,0,0,0.08)'
+          borderRadius: '1.5rem',
+          boxShadow: '0 24px 80px rgba(15, 23, 42, 0.07)',
+          border: '1px solid rgba(15, 23, 42, 0.08)'
         }}>
-          <h1 className="text-2xl font-bold text-gray-900 mb-1 text-center">
+          <div style={{
+            height: '4px',
+            width: '80px',
+            margin: '0 auto 1.5rem',
+            borderRadius: '999px',
+            background: 'linear-gradient(90deg, #2563eb, #0ea5e9, #22d3ee)'
+          }}/>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+            <img
+              src="http://127.0.0.1:8000/images/logo.png"
+              alt="Logo"
+              style={{ width: '100px', maxWidth: '100%', height: 'auto', filter: 'grayscale(1) brightness(0)'}}
+            />
+          </div>
+          <h1 className="text-2xl font-bold text-slate-950 mb-1 text-center">
             Welcome back
           </h1>
-          <p className="text-sm text-gray-500 text-center mb-6">
+          <p className="text-sm text-slate-600 text-center mb-6">
             Sign in to your account to continue
           </p>
 
@@ -41,7 +64,7 @@ export default function Login() {
                   display: 'block',
                   fontSize: '0.875rem',
                   fontWeight: '500',
-                  color: '#374151',
+                  color: '#111827',
                   marginBottom: '0.25rem'
                 }}
               >
@@ -84,7 +107,7 @@ export default function Login() {
                   display: 'block',
                   fontSize: '0.875rem',
                   fontWeight: '500',
-                  color: '#374151',
+                  color: '#111827',
                   marginBottom: '0.25rem'
                 }}
               >
@@ -199,19 +222,31 @@ export default function Login() {
               disabled={processing}
               style={{
                 width: '100%',
-                padding: '0.675rem',
-                background: processing ? '#9ca3af' : '#4f46e5',
+                padding: '0.8rem',
+                background: processing ? '#64748b' : 'linear-gradient(135deg, #7c3aed 0%, #0ea5e9 100%)',
                 color: '#fff',
                 border: 'none',
-                borderRadius: '0.5rem',
+                borderRadius: '0.75rem',
                 cursor: processing ? 'not-allowed' : 'pointer',
                 marginTop: '1.5rem',
-                fontSize: '0.9375rem',
-                fontWeight: '500',
-                transition: 'background-color 0.2s'
+                fontSize: '1rem',
+                fontWeight: '600',
+                boxShadow: processing ? 'none' : '0 18px 50px rgba(56, 189, 248, 0.18)',
+                letterSpacing: '0.02em',
+                transition: 'transform 0.2s, box-shadow 0.2s, filter 0.2s'
               }}
-              onMouseOver={(e) => !processing && (e.currentTarget.style.background = '#4338ca')}
-              onMouseOut={(e) => !processing && (e.currentTarget.style.background = '#4f46e5')}
+              onMouseOver={(e) => {
+                if (!processing) {
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                  e.currentTarget.style.filter = 'brightness(1.05)';
+                }
+              }}
+              onMouseOut={(e) => {
+                if (!processing) {
+                  e.currentTarget.style.transform = 'none';
+                  e.currentTarget.style.filter = 'none';
+                }
+              }}
             >
               {processing ? (
                 <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -283,3 +318,5 @@ export default function Login() {
     </div>
   )
 }
+
+Login.layout = page => page;
