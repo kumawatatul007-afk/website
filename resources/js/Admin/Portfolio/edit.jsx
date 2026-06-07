@@ -9,7 +9,7 @@ const [imagePreview, setImagePreview] = useState(
 
 const [notification, setNotification] = useState(null);
 
-const { data, setData, processing, errors, reset } = useForm({
+const { data, setData, processing, errors, reset, put } = useForm({
     title: item?.title || '',
     category_id: item?.category_id || '',
     image: null,
@@ -67,23 +67,31 @@ const handleImageChange = (e) => {
 const handleSubmit = (e) => {
     e.preventDefault();
 
-    router.post(`/admin/portfolio/${item.id}`, {
-        _method: 'PUT',
-        title: data.title,
-        category_id: data.category_id || null,
-        image: data.image,
-        clint_name: data.clint_name || null,
-        status: data.status,
-        date: data.date || null,
-        website_link: data.website_link || null,
-        short_description: data.short_description || null,
-        description: data.description || null,
-        meta_keyword: data.meta_keyword || null,
-        meta_description: data.meta_description || null,
-        is_publish: data.is_publish,
-    }, {
-        forceFormData: true,
+    // Client-side guard: ensure title is present
+    if (!data.title || String(data.title).trim() === '') {
+        showNotification('Please enter a title before updating.', 'error');
+        return;
+    }
+
+    // Build FormData explicitly to ensure fields are sent reliably
+    const payload = new FormData();
+    payload.append('_method', 'PUT');
+    payload.append('title', data.title || '');
+    payload.append('category_id', data.category_id || '');
+    if (data.image) payload.append('image', data.image);
+    payload.append('clint_name', data.clint_name || '');
+    payload.append('status', data.status || 'Active');
+    payload.append('date', data.date || '');
+    payload.append('website_link', data.website_link || '');
+    payload.append('short_description', data.short_description || '');
+    payload.append('description', data.description || '');
+    payload.append('meta_keyword', data.meta_keyword || '');
+    payload.append('meta_description', data.meta_description || '');
+    payload.append('is_publish', data.is_publish ?? 1);
+
+    router.post(`/admin/portfolio/${item.id}`, payload, {
         preserveScroll: true,
+        onStart: () => {},
         onSuccess: () => {
             showNotification('Portfolio updated successfully!', 'success');
         },

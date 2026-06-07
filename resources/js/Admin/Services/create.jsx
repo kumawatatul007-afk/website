@@ -25,16 +25,27 @@ export default function AdminServiceCreate({ categories = [] }) {
         tags: '',
         content: '',
         main_image: '',
+        main_image_file: null,
         image_alt: '',
         serial_number: 0,
         status: 1,
         category_id: '',
     });
 
+    function resolveServiceImageUrl(image) {
+        if (!image) return null;
+        if (image.startsWith('http') || image.startsWith('//')) return image;
+        if (image.startsWith('/')) return image;
+        return `/uploads/services/${image}`;
+    }
+
+    const previewUrl = imagePreview || resolveServiceImageUrl(data.main_image);
+
     const handleFileChange = (e) => {
         const file = e.target.files?.[0];
         if (file) {
             setData('main_image', file.name);
+            setData('main_image_file', file);
             setImagePreview(URL.createObjectURL(file));
         }
     };
@@ -46,6 +57,14 @@ export default function AdminServiceCreate({ categories = [] }) {
             setAutoSlug(nextSlug);
         }
     }, [data.title]);
+
+    useEffect(() => {
+        return () => {
+            if (imagePreview) {
+                URL.revokeObjectURL(imagePreview);
+            }
+        };
+    }, [imagePreview]);
 
     const openFilePicker = () => {
         fileInputRef.current?.click();
@@ -70,11 +89,11 @@ export default function AdminServiceCreate({ categories = [] }) {
                 .form-card { background: #fff; border-radius: 20px; border: 1px solid #e5e7eb; box-shadow: 0 18px 60px rgba(15,23,42,0.06); padding: 2rem; }
                 .section-grid { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 1.5rem; }
                 .image-panel { display: grid; gap: 1rem; }
-                .image-preview { position: relative; border: 1px solid #d1d5db; border-radius: 18px; background: #f8fafc; min-height: 140px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+                .image-preview { position: relative; border: 1px solid #d1d5db; border-radius: 18px; background: #f8fafc; min-height: 100px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
                 .image-preview img { width: 100%; height: 100%; object-fit: contain; }
-                .image-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.75rem; color: #6b7280; text-align: center; padding: 1rem; }
-                .image-placeholder svg { width: 36px; height: 36px; }
-                .upload-action { position: absolute; top: 12px; right: 12px; width: 34px; height: 34px; border-radius: 12px; background: #fff; border: 1px solid #d1d5db; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+                .image-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; color: #6b7280; text-align: center; padding: 0.75rem; }
+                .image-placeholder svg { width: 30px; height: 30px; }
+                .upload-action { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border-radius: 10px; background: #fff; border: 1px solid #d1d5db; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
                 .image-note { font-size: 0.85rem; color: #6b7280; }
                 .rich-editor { border: 1px solid #d1d5db; border-radius: 16px; overflow: hidden; background: #fff; }
                 .rich-editor-toolbar { display: flex; flex-wrap: wrap; gap: 0.45rem; padding: 0.85rem 0.9rem; background: #f8fafc; border-bottom: 1px solid #e5e7eb; }
@@ -116,8 +135,8 @@ export default function AdminServiceCreate({ categories = [] }) {
                         <div className="section-grid">
                             <div className="image-panel">
                                 <div className="image-preview">
-                                    {imagePreview ? (
-                                        <img src={imagePreview} alt="Service preview" />
+                                    {previewUrl ? (
+                                        <img src={previewUrl} alt="Service preview" />
                                     ) : (
                                         <div className="image-placeholder">
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -134,8 +153,12 @@ export default function AdminServiceCreate({ categories = [] }) {
                                 <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
                                 <div className="form-group">
                                     <label className="form-label">Image filename or URL</label>
-                                    <input className="form-input" value={data.main_image} onChange={e => setData('main_image', e.target.value)} placeholder="Enter filename or URL" />
-                                    <span className="hint">Use a URL or choose a file to use the filename.</span>
+                                    <input className="form-input" value={data.main_image} onChange={e => {
+                                        setData('main_image', e.target.value);
+                                        setData('main_image_file', null);
+                                        setImagePreview(null);
+                                    }} placeholder="Enter filename or URL" />
+                                    <span className="hint">Use a URL or choose a file to upload.</span>
                                     {errors.main_image && <div className="form-error">{errors.main_image}</div>}
                                 </div>
                             </div>

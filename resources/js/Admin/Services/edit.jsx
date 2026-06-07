@@ -1,5 +1,6 @@
 import AdminLayout from '../layouts/AdminLayout';
 import { useForm, Link } from '@inertiajs/react';
+import { useRef, useState, useEffect } from 'react';
 
 function stripHtml(html) {
     if (!html) return '';
@@ -34,11 +35,50 @@ export default function AdminServiceEdit({ service }) {
         meta_keyword:     service.meta_keyword     ?? '',
         tags:             service.tags             ?? '',
         content:          stripHtml(service.content ?? service.description ?? ''),
-        main_image:       service.main_image       ?? '',
+        main_image:       service.main_image ?? service.image ?? '',
+        main_image_file:  null,
         serial_number:    service.serial_number    ?? 100,
         status:           service.status           ?? 1,
         category_id:      service.category_id      ?? '',
     });
+
+    const fileInputRef = useRef(null);
+    const [filePreviewUrl, setFilePreviewUrl] = useState(null);
+
+    function resolveServiceImageUrl(image) {
+        if (!image) return null;
+        if (image.startsWith('http') || image.startsWith('//')) return image;
+        if (image.startsWith('/')) return image;
+        return `/uploads/services/${image}`;
+    }
+
+    const previewUrl = filePreviewUrl || resolveServiceImageUrl(data.main_image);
+
+    const handleFileChange = (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        if (filePreviewUrl) {
+            URL.revokeObjectURL(filePreviewUrl);
+        }
+
+        const objectUrl = URL.createObjectURL(file);
+        setFilePreviewUrl(objectUrl);
+        setData('main_image', file.name);
+        setData('main_image_file', file);
+    };
+
+    const openFilePicker = () => {
+        fileInputRef.current?.click();
+    };
+
+    useEffect(() => {
+        return () => {
+            if (filePreviewUrl) {
+                URL.revokeObjectURL(filePreviewUrl);
+            }
+        };
+    }, [filePreviewUrl]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -78,6 +118,25 @@ export default function AdminServiceEdit({ service }) {
                 .toggle input:checked + .toggle-slider::before { transform: translateX(20px); }
                 .toggle-label { font-size: 0.95rem; color: #374151; font-weight: 600; }
                 .form-actions { display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.75rem; flex-wrap: wrap; }
+                .btn-primary { background: #2563eb; color: #fff; border: none; padding: 0.9rem 1.3rem; border-radius: 14px; font-weight: 700; cursor: pointer; }
+                .btn-primary:hover { background: #1d4ed8; }
+                .btn-cancel { background: transparent; color: #374151; border: 1px solid #d1d5db; padding: 0.9rem 1.3rem; border-radius: 14px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
+                .btn-cancel:hover { background: #f8fafc; }
+                .image-preview { position: relative; display: flex; align-items: center; gap: 0.75rem; }
+
+                /* Thumbnail card to mimic portfolio thumbnails */
+                .thumb-card { background: #fff; border: 1px solid #e6e9ef; border-radius: 12px; padding: 8px; box-shadow: 0 10px 30px rgba(2,6,23,0.06); width: 140px; display: inline-block; }
+                .thumb-card.thumb-empty { display: flex; align-items: center; justify-content: center; height: 120px; }
+                .thumb-img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; display: block; }
+                .thumb-caption { text-align: center; font-size: 0.82rem; color: #6b7280; margin-top: 6px; }
+
+                @media (max-width: 980px) {
+                    .thumb-card { width: 110px; }
+                    .thumb-img { height: 96px; }
+                }
+
+                .upload-action { position: absolute; top: 6px; right: 6px; width: 30px; height: 30px; border-radius: 8px; background: #fff; border: 1px solid #d1d5db; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.75rem; padding: 0; }
+                .image-placeholder { color: #6b7280; text-align: center; padding: 0.2rem; font-size: 0.75rem; }
             `}</style>
 
             <div className="page-container">
@@ -147,10 +206,33 @@ export default function AdminServiceEdit({ service }) {
                                 {errors.content && <div className="error">{errors.content}</div>}
                             </div>
 
+                            <div className="form-group full">
+                                <label className="form-label">Main Image Preview</label>
+                                <div className="image-preview">
+                                    {previewUrl ? (
+                                        <div className="thumb-card">
+                                            <img src={previewUrl} alt="Current Image" className="thumb-img" onError={(e) => { e.target.src = previewUrl; }} />
+                                            <div className="thumb-caption">Current Image</div>
+                                        </div>
+                                    ) : (
+                                        <div className="thumb-card thumb-empty">
+                                            <div className="thumb-empty-box">No image</div>
+                                            <div className="thumb-caption">No Image</div>
+                                        </div>
+                                    )}
+                                    <button type="button" className="upload-action" onClick={openFilePicker} title="Upload image">Upload</button>
+                                </div>
+                                <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
+                            </div>
+
                             <div className="form-group">
                                 <label className="form-label">Main Image (filename or URL)</label>
                                 <input className="form-input" value={data.main_image}
-                                    onChange={e => setData('main_image', e.target.value)}
+                                    onChange={e => {
+                                        setData('main_image', e.target.value);
+                                        setData('main_image_file', null);
+                                        setFilePreviewUrl(null);
+                                    }}
                                     placeholder="e.g. 1637216446.png or https://..." />
                                 {errors.main_image && <div className="error">{errors.main_image}</div>}
                             </div>

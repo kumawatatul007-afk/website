@@ -81,12 +81,24 @@ class AdminServiceController extends Controller
             'tags'             => 'nullable|string',
             'image'            => 'nullable|string|max:255',
             'main_image'       => 'nullable|string|max:255',
+            'main_image_file'  => 'nullable|file|image|mimes:jpeg,jpg,png,gif,webp|max:5120',
             'category_id'      => 'nullable|integer',
             'meta_title'       => 'nullable|string|max:255',
             'meta_keyword'     => 'nullable|string',
             'meta_description' => 'nullable|string',
             'image_alt'        => 'nullable|string|max:255',
         ]);
+
+        if ($request->hasFile('main_image_file')) {
+            $file = $request->file('main_image_file');
+            $filename = time() . '_' . preg_replace('/[^A-Za-z0-9_.-]/', '_', $file->getClientOriginalName());
+            $uploadPath = public_path('uploads/services');
+            if (!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0755, true);
+            }
+            $file->move($uploadPath, $filename);
+            $validated['main_image'] = $filename;
+        }
 
         if (empty($validated['slug'])) {
             $validated['slug'] = Str::slug($validated['title']);
@@ -98,6 +110,8 @@ class AdminServiceController extends Controller
             $validated['image'] = $validated['main_image'];
             unset($validated['main_image']);
         }
+
+        unset($validated['main_image_file']);
 
         $validated['description'] = cleanServiceContent($validated['content'] ?? $validated['description'] ?? '');
 
@@ -145,12 +159,29 @@ class AdminServiceController extends Controller
             'tags'             => 'nullable|string',
             'image'            => 'nullable|string|max:255',
             'main_image'       => 'nullable|string|max:255',
+            'main_image_file'  => 'nullable|file|image|mimes:jpeg,jpg,png,gif,webp|max:5120',
             'category_id'      => 'nullable|integer',
             'meta_title'       => 'nullable|string|max:255',
             'meta_keyword'     => 'nullable|string',
             'meta_description' => 'nullable|string',
             'image_alt'        => 'nullable|string|max:255',
         ]);
+
+        if ($request->hasFile('main_image_file')) {
+            $file = $request->file('main_image_file');
+            $filename = time() . '_' . preg_replace('/[^A-Za-z0-9_.-]/', '_', $file->getClientOriginalName());
+            $uploadPath = public_path('uploads/services');
+            if (!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0755, true);
+            }
+            $file->move($uploadPath, $filename);
+
+            if ($service->image && !str_starts_with($service->image, 'http') && file_exists($uploadPath . '/' . $service->image)) {
+                @unlink($uploadPath . '/' . $service->image);
+            }
+
+            $validated['main_image'] = $filename;
+        }
 
         if (empty($validated['slug'])) {
             $validated['slug'] = Str::slug($validated['title']);
@@ -160,6 +191,8 @@ class AdminServiceController extends Controller
             $validated['image'] = $validated['main_image'];
             unset($validated['main_image']);
         }
+
+        unset($validated['main_image_file']);
 
         $validated['description'] = cleanServiceContent($validated['content'] ?? $service->description ?? '');
 
