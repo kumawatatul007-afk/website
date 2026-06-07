@@ -353,8 +353,19 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
     { id: 3, title: 'UI/UX Design', slug: 'ui-ux-design', description: 'Visually compelling, brand-consistent designs in Figma grounded in user research.' },
   ];
 
-  // Keywords from Setting.strating_keyword (comma-separated)
+  // Keywords from service meta_keyword, then Setting.strating_keyword, then fallback
   const keywordHighlights = (() => {
+    const serviceKeywords = dbServices.flatMap((service) => {
+      if (!service.meta_keyword) return [];
+      return service.meta_keyword
+        .split(',')
+        .map((entry) => entry.trim())
+        .filter(Boolean);
+    });
+    if (serviceKeywords.length > 0) {
+      return Array.from(new Set(serviceKeywords));
+    }
+
     if (setting && setting.strating_keyword) {
       const parsed = setting.strating_keyword.split(',').map(k => k.trim()).filter(Boolean);
       if (parsed.length > 0) return parsed;
@@ -430,9 +441,20 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
     ];
   })();
 
-  // Service highlights — always shows these 18 fixed SEO keyword chips
-  // Only overridden if Admin has saved custom service_keyword in DB settings
+  // Service highlights — use service meta keywords if available, otherwise fall back to settings or defaults.
   const serviceHighlights = (() => {
+    const serviceKeywords = dbServices.flatMap((service) => {
+      if (!service.meta_keyword) return [];
+      return service.meta_keyword
+        .split(',')
+        .map((entry) => entry.trim())
+        .filter(Boolean)
+        .map((title) => ({ title, slug: '' }));
+    });
+    if (serviceKeywords.length > 0) {
+      return serviceKeywords;
+    }
+
     if (setting && setting.service_keyword) {
       const parsed = setting.service_keyword.split(',').map(entry => {
         const parts = entry.trim().split('|');

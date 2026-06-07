@@ -380,31 +380,36 @@
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  box-shadow: 0 8px 28px rgba(99, 102, 241, 0.45);
-  transition: all 0.25s ease;
+  box-shadow: 0 10px 34px rgba(99, 102, 241, 0.35);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.sd-hero-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 44px rgba(99, 102, 241, 0.4);
 }
 
 .sd-hero-ghost-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 0.85rem 1.8rem;
+  gap: 10px;
+  padding: 0.85rem 2rem;
   border-radius: 8px;
   text-decoration: none;
-  background: transparent;
-  color: rgba(255, 255, 255, 0.75);
-  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.92), rgba(249, 115, 22, 0.92));
+  color: #fff;
+  border: none;
   font-size: 0.82rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  transition: all 0.25s ease;
+  box-shadow: 0 8px 28px rgba(236, 72, 153, 0.28);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
 }
 .sd-hero-ghost-btn:hover {
-  border-color: rgba(255, 255, 255, 0.6);
-  color: #fff;
-  background: rgba(255, 255, 255, 0.1);
   transform: translateY(-2px);
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.95), rgba(236, 72, 153, 0.95));
+  box-shadow: 0 12px 38px rgba(236, 72, 153, 0.32);
 }
 
 /* Scroll hint — chhoti height mein hide */
@@ -1040,23 +1045,35 @@
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  box-shadow: 0 8px 28px rgba(99, 102, 241, 0.4);
-  transition: all 0.25s ease;
+  box-shadow: 0 10px 32px rgba(99, 102, 241, 0.38);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.sd-bottom-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 42px rgba(99, 102, 241, 0.42);
 }
 
 .sd-bottom-btn-ghost {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   padding: 0.9rem 2rem;
-  background: transparent;
-  color: rgba(255, 255, 255, 0.7);
-  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.92), rgba(249, 115, 22, 0.92));
+  color: #fff;
+  border: none;
   text-decoration: none;
   border-radius: 8px;
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  transition: all 0.25s ease;
+  box-shadow: 0 8px 28px rgba(236, 72, 153, 0.28);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.sd-bottom-btn-ghost:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.95), rgba(236, 72, 153, 0.95));
+  box-shadow: 0 12px 38px rgba(236, 72, 153, 0.32);
 }

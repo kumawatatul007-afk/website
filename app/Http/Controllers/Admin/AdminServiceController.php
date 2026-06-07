@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Service;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -29,9 +30,22 @@ function cleanServiceContent(?string $html): string
 
 class AdminServiceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $services = Service::where('is_active', 1)
+        $query = Service::query();
+
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('slug', 'like', "%{$search}%")
+                  ->orWhere('tags', 'like', "%{$search}%")
+                  ->orWhere('meta_description', 'like', "%{$search}%");
+            });
+        }
+
+        $services = $query
             ->orderBy('sort_order')
             ->orderByDesc('id')
             ->paginate(10)
@@ -39,6 +53,7 @@ class AdminServiceController extends Controller
 
         return Inertia::render('Admin/Services/index', [
             'services' => $services,
+            'filters'  => $request->only('search'),
         ]);
     }
 
@@ -84,8 +99,13 @@ class AdminServiceController extends Controller
             unset($validated['main_image']);
         }
 
-        $validated['description'] = cleanServiceContent($validated['content'] ?? '');
-        unset($validated['content']);
+        $validated['description'] = cleanServiceContent($validated['content'] ?? $validated['description'] ?? '');
+
+        if (Schema::hasColumn('services', 'content')) {
+            $validated['content'] = $validated['content'] ?? null;
+        } else {
+            unset($validated['content']);
+        }
 
         $validated['is_active'] = $validated['status'] ?? $validated['is_active'] ?? 1;
         unset($validated['status']);
@@ -141,8 +161,13 @@ class AdminServiceController extends Controller
             unset($validated['main_image']);
         }
 
-        $validated['description'] = cleanServiceContent($validated['content'] ?? '');
-        unset($validated['content']);
+        $validated['description'] = cleanServiceContent($validated['content'] ?? $service->description ?? '');
+
+        if (Schema::hasColumn('services', 'content')) {
+            $validated['content'] = $validated['content'] ?? $service->content ?? null;
+        } else {
+            unset($validated['content']);
+        }
 
         $validated['is_active'] = $validated['status'] ?? $validated['is_active'] ?? $service->is_active;
         unset($validated['status']);

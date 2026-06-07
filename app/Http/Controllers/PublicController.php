@@ -67,6 +67,7 @@ class PublicController extends Controller
                     'slug'        => $service->slug,
                     'description' => $service->description,
                     'features'    => $service->features ?? [],
+                    'meta_keyword' => $service->meta_keyword ?? '',
                 ];
             });
 

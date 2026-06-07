@@ -422,11 +422,11 @@ export default function ServiceDetailPage({ service, related = [], setting = nul
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2">
                   <polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" />
                 </svg>
-                <span className="sd-side-card-title">Technologies</span>
+                <span className="sd-side-card-title">Keywords</span>
               </div>
               <div className="sd-tech-grid">
-                {['React', 'Laravel', 'PHP', 'MySQL', 'Flutter', 'Figma', 'Node.js', 'Tailwind'].map((t, i) => (
-                  <span key={i} className="sd-tech-badge">{t}</span>
+                {(service.meta_keyword ? service.meta_keyword.split(',').map(k => k.trim()).filter(Boolean) : []).map((keyword, i) => (
+                  <span key={i} className="sd-tech-badge">{keyword}</span>
                 ))}
               </div>
             </div>

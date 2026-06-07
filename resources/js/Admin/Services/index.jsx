@@ -1,9 +1,14 @@
 import AdminLayout from '../layouts/AdminLayout';
 import { Link, router } from '@inertiajs/react';
 import Pagination from '../../components/admin/Pagination';
+import { useState } from 'react';
 
-export default function AdminServicesIndex({ services = {} }) {
+export default function AdminServicesIndex({ services = {}, filters = {} }) {
     const data = services.data ?? [];
+    const [search, setSearch] = useState(filters.search ?? '');
+
+    const applyFilters = (overrides = {}) =>
+        router.get('/admin/services', { search, ...overrides }, { preserveState: true, replace: true });
 
     const handleDelete = (id) => {
         if (confirm('Delete this service?')) {
@@ -32,9 +37,9 @@ export default function AdminServicesIndex({ services = {} }) {
                     background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
                     color: #fff;
                     border: none;
-                    padding: 0.65rem 1.4rem;
+                    padding: 0.6rem 1.2rem;
                     border-radius: 10px;
-                    font-size: 0.875rem;
+                    font-size: 0.865rem;
                     font-weight: 600;
                     cursor: pointer;
                     text-decoration: none;
@@ -126,9 +131,9 @@ export default function AdminServicesIndex({ services = {} }) {
                 }
 
                 .btn-sm {
-                    padding: 0.35rem 0.8rem;
+                    padding: 0.28rem 0.6rem;
                     border-radius: 7px;
-                    font-size: 0.78rem;
+                    font-size: 0.75rem;
                     font-weight: 600;
                     cursor: pointer;
                     border: none;
@@ -139,8 +144,15 @@ export default function AdminServicesIndex({ services = {} }) {
                     transition: all 0.15s;
                     white-space: nowrap;
                     flex-shrink: 0;
-                    min-width: 52px;
+                    min-width: 44px;
                 }
+
+                /* Search controls */
+                .svc-search-group { display: flex; gap: 0.5rem; align-items: center; }
+                .svc-search { padding: 0.5rem 0.75rem; border-radius: 10px; border: 1px solid #e8ecf2; outline: none; font-size: 0.9rem; min-width: 220px; }
+                .svc-search:focus { box-shadow: 0 0 0 4px rgba(99,102,241,0.08); border-color: #6366f1; }
+                .btn-search { padding: 0.48rem 0.9rem; border-radius: 8px; border: none; background: #eef2ff; color: #2563eb; font-weight: 700; cursor: pointer; font-size: 0.85rem; }
+                .btn-search:hover { background: #e0e7ff; transform: translateY(-1px); }
                 .btn-edit   { background: #eff6ff; color: #2563eb; }
                 .btn-edit:hover   { background: #dbeafe; transform: translateY(-1px); }
                 .btn-delete { background: #fef2f2; color: #dc2626; }
@@ -247,14 +259,29 @@ export default function AdminServicesIndex({ services = {} }) {
             <div className="svc-wrap">
                 {/* Header */}
                 <div className="page-header">
-                    <h2 className="page-title">
-                        Services
-                        {services.total > 0 && (
-                            <span style={{ fontSize: '0.875rem', fontWeight: 500, color: '#64748b', marginLeft: '0.6rem' }}>
-                                ({services.total} total)
-                            </span>
-                        )}
-                    </h2>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+                        <h2 className="page-title">
+                            Services
+                            {services.total > 0 && (
+                                <span style={{ fontSize: '0.875rem', fontWeight: 500, color: '#64748b', marginLeft: '0.6rem' }}>
+                                    ({services.total} total)
+                                </span>
+                            )}
+                        </h2>
+                        <div className="svc-search-group">
+                            <input
+                                type="search"
+                                className="svc-search"
+                                placeholder="Search by title, slug, tags..."
+                                value={search}
+                                onChange={e => setSearch(e.target.value)}
+                                onKeyDown={e => e.key === 'Enter' && applyFilters({ page: 1 })}
+                            />
+                            <button type="button" className="btn-search" onClick={() => applyFilters({ page: 1 })}>
+                                Search
+                            </button>
+                        </div>
+                    </div>
                     <Link href="/admin/services/create" className="btn-new">+ New Service</Link>
                 </div>
 
@@ -333,8 +360,12 @@ export default function AdminServicesIndex({ services = {} }) {
                                     <tr>
                                         <td colSpan={7}>
                                             <div className="empty-state">
-                                                <div className="empty-state-title">No services found</div>
-                                                <div className="empty-state-sub">Click "+ New Service" to add one.</div>
+                                                <div className="empty-state-title">
+                                                    {search ? 'No services match your search' : 'No services found'}
+                                                </div>
+                                                <div className="empty-state-sub">
+                                                    {search ? 'Try another keyword or clear the search.' : 'Click "+ New Service" to add one.'}
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>

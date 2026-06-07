@@ -568,7 +568,8 @@ export default function AdminCategoryIndex({ categories, filters }) {
                 /* ── Base ──────────────────────────────────────────────── */
                 .cat-page {
                     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-                    max-width: 1120px;
+                    /* increased width to give more horizontal room */
+                    max-width: 1280px;
                     margin: 0 auto;
                     width: 100%;
                     padding: 1.5rem 1rem 0;
@@ -688,7 +689,7 @@ export default function AdminCategoryIndex({ categories, filters }) {
                     align-items: center;
                     gap: 0.5rem;
                     padding: 0.95rem 1.8rem;
-                    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+                    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); 
                     color: #fff;
                     border: none;
                     border-radius: 14px;

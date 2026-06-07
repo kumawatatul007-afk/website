@@ -33,7 +33,7 @@ export default function AdminServiceEdit({ service }) {
         meta_description: service.meta_description ?? '',
         meta_keyword:     service.meta_keyword     ?? '',
         tags:             service.tags             ?? '',
-        content:          stripHtml(service.content  ?? ''),
+        content:          stripHtml(service.content ?? service.description ?? ''),
         main_image:       service.main_image       ?? '',
         serial_number:    service.serial_number    ?? 100,
         status:           service.status           ?? 1,

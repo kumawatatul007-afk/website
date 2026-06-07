@@ -47,7 +47,8 @@ export default function AdminPortfolioIndex({ items, filters, hasSearched, categ
                 /* keep small columns single-line */
                 .table td:nth-child(1), .table td:nth-child(5), .table td:nth-child(6), .table td:nth-child(7), .table th:nth-child(1), .table th:nth-child(5), .table th:nth-child(6), .table th:nth-child(7) { white-space:nowrap; }
                 /* reserve actions column */
-                .table th:nth-child(8), .table td:nth-child(8) { width:120px; text-align:center; white-space:nowrap; }
+                .table th:nth-child(8), .table td:nth-child(8) { width:170px; min-width:170px; text-align:center; white-space:nowrap; }
+                .table td:nth-child(8) > div { display:flex; justify-content:center; gap:0.35rem; flex-wrap:wrap; }
                 .table tr:last-child td { border-bottom:none; }
                 .table tr:hover td { background:#fafafa; }
                 .badge { display:inline-block; padding:0.2rem 0.65rem; border-radius:20px; font-size:0.7rem; font-weight:700; }

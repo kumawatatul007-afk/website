@@ -276,39 +276,41 @@ const handleSubmit = (e) => {
                             </div>
                         </div>
 
-                        <div className="form-group">
-                            <label className="form-label">Website Link</label>
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label className="form-label">Website Link</label>
 
-                            <input
-                                type="url"
-                                name="website_link"
-                                className={`form-input ${errors.website_link ? 'err' : ''}`}
-                                placeholder="https://example.com"
-                                value={data.website_link}
-                                onChange={(e) => setData('website_link', e.target.value)}
-                            />
+                                <input
+                                    type="url"
+                                    name="website_link"
+                                    className={`form-input ${errors.website_link ? 'err' : ''}`}
+                                    placeholder="https://example.com"
+                                    value={data.website_link}
+                                    onChange={(e) => setData('website_link', e.target.value)}
+                                />
 
-                            {errors.website_link && (
-                                <p className="form-error">{errors.website_link}</p>
-                            )}
-                            <p className="help-text">Full URL including https://</p>
-                        </div>
+                                {errors.website_link && (
+                                    <p className="form-error">{errors.website_link}</p>
+                                )}
+                                <p className="help-text">Full URL including https://</p>
+                            </div>
 
-                        <div className="form-group">
-                            <label className="form-label">Short Description</label>
+                            <div className="form-group">
+                                <label className="form-label">Short Description</label>
 
-                            <input
-                                type="text"
-                                name="short_description"
-                                className={`form-input ${errors.short_description ? 'err' : ''}`}
-                                value={data.short_description}
-                                onChange={(e) => setData('short_description', e.target.value)}
-                                placeholder="Brief summary for listings and previews"
-                            />
+                                <input
+                                    type="text"
+                                    name="short_description"
+                                    className={`form-input ${errors.short_description ? 'err' : ''}`}
+                                    value={data.short_description}
+                                    onChange={(e) => setData('short_description', e.target.value)}
+                                    placeholder="Brief summary for listings and previews"
+                                />
 
-                            {errors.short_description && (
-                                <p className="form-error">{errors.short_description}</p>
-                            )}
+                                {errors.short_description && (
+                                    <p className="form-error">{errors.short_description}</p>
+                                )}
+                            </div>
                         </div>
 
                         <div className="form-group">
