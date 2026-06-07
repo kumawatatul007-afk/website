@@ -1,5 +1,5 @@
 import AdminLayout from '../layouts/AdminLayout';
-import { Link, router } from '@inertiajs/react';
+import { Link, router, useForm } from '@inertiajs/react';
 import Pagination from '../../components/admin/Pagination';
 import { ShimmerTableRows } from '../../components/ShimmerLoader';
 import { useState, useEffect, useRef } from 'react';
@@ -325,6 +325,161 @@ function CreateModal({ onClose, onSuccess }) {
     );
 }
 
+function EditModal({ category, onClose, onSuccess }) {
+    const { data, setData, put, processing, errors } = useForm({
+        name:     category.name     ?? '',
+        text_for: category.text_for ?? '',
+        slug:     category.slug     ?? '',
+    });
+
+    useEffect(() => {
+        const handleEsc = (e) => e.key === 'Escape' && !processing && onClose();
+        window.addEventListener('keydown', handleEsc);
+        return () => window.removeEventListener('keydown', handleEsc);
+    }, [onClose, processing]);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        put(`/admin/categories/${category.id}`, {
+            preserveScroll: true,
+            onSuccess: () => onSuccess(),
+        });
+    };
+
+    return createPortal(
+        <div
+            style={{
+                position: 'fixed', inset: 0, zIndex: 9999,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: 'rgba(15,23,42,0.55)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+                animation: 'modalOverlayIn 0.2s ease both',
+                padding: '1rem',
+            }}
+            onClick={(e) => e.target === e.currentTarget && !processing && onClose()}
+        >
+            <div style={{
+                background: '#fff',
+                borderRadius: '24px',
+                padding: '2rem',
+                width: '100%',
+                maxWidth: '520px',
+                boxShadow: '0 32px 80px rgba(15,23,42,0.25), 0 8px 24px rgba(15,23,42,0.1)',
+                border: '1px solid rgba(255,255,255,0.85)',
+                animation: 'modalPanelIn 0.3s cubic-bezier(0.22,1,0.36,1) both',
+            }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', marginBottom: '1.5rem' }}>
+                    <div>
+                        <h2 style={{ fontSize: '1.35rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>Edit Category</h2>
+                        <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.35rem' }}>ID: {category.id}</div>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        disabled={processing}
+                        style={{
+                            width: '38px', height: '38px', borderRadius: '12px',
+                            border: '1px solid #e2e8f0', background: '#f8fafc',
+                            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                            cursor: processing ? 'not-allowed' : 'pointer',
+                        }}
+                    >
+                        ✕
+                    </button>
+                </div>
+
+                <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '1.25rem' }}>
+                    <div>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 600, color: '#334155' }}>Category Name *</label>
+                        <input
+                            type="text"
+                            value={data.name}
+                            onChange={(e) => setData('name', e.target.value)}
+                            placeholder="e.g. Web Development"
+                            disabled={processing}
+                            style={{
+                                width: '100%', padding: '0.85rem 1rem', borderRadius: '14px',
+                                border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.95rem',
+                                transition: 'all 0.2s',
+                            }}
+                        />
+                        {errors.name && <div style={{ marginTop: '0.45rem', color: '#dc2626', fontSize: '0.8rem' }}>{errors.name}</div>}
+                    </div>
+
+                    <div>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 600, color: '#334155' }}>Type (text_for)</label>
+                        <select
+                            value={data.text_for}
+                            onChange={(e) => setData('text_for', e.target.value)}
+                            disabled={processing}
+                            style={{
+                                width: '100%', padding: '0.85rem 1rem', borderRadius: '14px',
+                                border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.95rem',
+                                background: '#fff', appearance: 'none', WebkitAppearance: 'none',
+                            }}
+                        >
+                            <option value="">— Select type —</option>
+                            <option value="blog">blog</option>
+                            <option value="service">service</option>
+                            <option value="portfolio">portfolio</option>
+                            <option value="project">project</option>
+                            <option value="news">news</option>
+                        </select>
+                        <div style={{ marginTop: '0.35rem', fontSize: '0.78rem', color: '#94a3b8' }}>Which section does this category belong to?</div>
+                        {errors.text_for && <div style={{ marginTop: '0.45rem', color: '#dc2626', fontSize: '0.8rem' }}>{errors.text_for}</div>}
+                    </div>
+
+                    <div>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 600, color: '#334155' }}>Slug (URL)</label>
+                        <input
+                            type="text"
+                            value={data.slug}
+                            onChange={(e) => setData('slug', e.target.value)}
+                            placeholder="e.g. web-development"
+                            disabled={processing}
+                            style={{
+                                width: '100%', padding: '0.85rem 1rem', borderRadius: '14px',
+                                border: '1.5px solid #e2e8f0', outline: 'none', fontSize: '0.95rem',
+                                transition: 'all 0.2s',
+                            }}
+                        />
+                        <div style={{ marginTop: '0.35rem', fontSize: '0.78rem', color: '#94a3b8' }}>Leave empty to auto-generate from name</div>
+                        {errors.slug && <div style={{ marginTop: '0.45rem', color: '#dc2626', fontSize: '0.8rem' }}>{errors.slug}</div>}
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '0.85rem', flexWrap: 'wrap', marginTop: '0.5rem' }}>
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            disabled={processing}
+                            style={{
+                                flex: 1, minWidth: '120px', padding: '0.95rem 1.1rem', borderRadius: '14px',
+                                border: '1px solid #e2e8f0', background: '#fff', color: '#475569',
+                                fontWeight: 700, cursor: processing ? 'not-allowed' : 'pointer',
+                            }}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            disabled={processing || !data.name.trim()}
+                            style={{
+                                flex: 1, minWidth: '120px', padding: '0.95rem 1.1rem', borderRadius: '14px',
+                                border: 'none', background: processing ? '#a5b4fc' : 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                                color: '#fff', fontWeight: 700, cursor: processing || !data.name.trim() ? 'not-allowed' : 'pointer',
+                            }}
+                        >
+                            {processing ? 'Saving…' : 'Update Category'}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>,
+        document.body
+    );
+}
+
 /* ── Main page ──────────────────────────────────────────────────────────── */
 export default function AdminCategoryIndex({ categories, filters }) {
     const [search,        setSearch]        = useState(filters?.search   ?? '');
@@ -335,6 +490,8 @@ export default function AdminCategoryIndex({ categories, filters }) {
     const [deleteTarget,  setDeleteTarget]  = useState(null);
     const [deleteLoading, setDeleteLoading] = useState(false);
     const [createModal,   setCreateModal]   = useState(false);
+    const [editModal,     setEditModal]     = useState(false);
+    const [editTarget,    setEditTarget]    = useState(null);
     const inputRef = useRef(null);
 
     useEffect(() => {
@@ -362,8 +519,14 @@ export default function AdminCategoryIndex({ categories, filters }) {
 
     const openCreate  = () => setCreateModal(true);
     const closeCreate = () => setCreateModal(false);
+    const openEdit    = (cat) => { setEditTarget(cat); setEditModal(true); };
+    const closeEdit   = () => { setEditModal(false); setEditTarget(null); };
     const onCreateSuccess = () => {
         router.reload({ only: ['categories'] });
+    };
+    const onUpdateSuccess = () => {
+        router.reload({ only: ['categories'] });
+        closeEdit();
     };
 
     const totalCount = categories?.total ?? categories?.data?.length ?? 0;
@@ -921,13 +1084,14 @@ export default function AdminCategoryIndex({ categories, filters }) {
                                             {/* Actions */}
                                             <td className="col-actions">
                                                 <div className="actions-cell">
-                                                    <Link
-                                                        href={`/admin/categories/${cat.id}/edit`}
+                                                    <button
+                                                        type="button"
                                                         className="btn-icon"
                                                         title="Edit"
+                                                        onClick={() => openEdit(cat)}
                                                     >
                                                         <IconEdit />
-                                                    </Link>
+                                                    </button>
                                                     <button
                                                         className="btn-icon-danger"
                                                         title="Delete"
@@ -995,6 +1159,14 @@ export default function AdminCategoryIndex({ categories, filters }) {
                 <CreateModal
                     onClose={closeCreate}
                     onSuccess={onCreateSuccess}
+                />
+            )}
+
+            {editModal && editTarget && (
+                <EditModal
+                    category={editTarget}
+                    onClose={closeEdit}
+                    onSuccess={onUpdateSuccess}
                 />
             )}
         </AdminLayout>

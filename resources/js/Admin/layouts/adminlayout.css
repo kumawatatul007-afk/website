@@ -268,6 +268,32 @@ body { font-family: 'Inter', system-ui, sans-serif; }
 .admin-main.collapsed { margin-left: var(--sidebar-collapsed); }
 .admin-main.nosidebar { margin-left: 0; }
 
+.admin-content {
+  flex: 1;
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 2rem 2rem 3rem;
+}
+
+@media (max-width: 1280px) {
+  .admin-content {
+    padding: 2rem 1.5rem 3rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .admin-content {
+    padding: 1.5rem 1rem 2.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-content {
+    padding: 1rem 0.85rem 2rem;
+  }
+}
+
 /* ── Topbar ── */
 .admin-topbar {
   height: var(--topbar-h);

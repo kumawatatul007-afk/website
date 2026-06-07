@@ -74,72 +74,70 @@ function StatItem({ stat, isVisible }) {
 }
 
 function ImageSlider({ imgSrc, websiteUrl }) {
-  const STEPS = 4;
-  const [step, setStep] = useState(0);
-  const imgRef = useRef(null);
+  const SLIDES = [
+    { position: 'center top',   label: 'Homepage' },
+    { position: 'center 25%',   label: 'Features' },
+    { position: 'center 50%',   label: 'Details'  },
+    { position: 'center 75%',   label: 'Menu'     },
+  ];
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
 
-  const commonImgStyle = {
-    transition: 'transform 0.75s cubic-bezier(0.4,0,0.2,1)',
-    objectFit: 'cover',
-    display: 'block'
-  };
+  useEffect(() => {
+    if (paused) return;
+    const timer = setInterval(() => setActive(prev => (prev + 1) % SLIDES.length), 3500);
+    return () => clearInterval(timer);
+  }, [paused]);
 
   return (
-    <div className="pd3-slider-wrap">
+    <div className="pd3-slider-wrap" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
       <div className="pd3-browser-chrome">
         <div className="pd3-browser-dots">
-          <span style={{background:'#ff5f57'}} /><span style={{background:'#febc2e'}} /><span style={{background:'#28c840'}} />
+          <span style={{background:'#ff5f57'}} /><span style={{background:'#fdbc40'}} /><span style={{background:'#33c748'}} /><span style={{background:'#3b82f6'}} />
         </div>
         <div className="pd3-browser-addr">{websiteUrl || 'https://example.com'}</div>
         <div style={{width:60}} />
       </div>
       <div className="pd3-slide-track">
-        <img
-          ref={imgRef}
-          src={imgSrc}
-          alt="preview"
-          className="pd3-slide-img"
-          style={{
-            ...commonImgStyle,
-            transform: `translateX(${-step * (100 / STEPS)}%)`,
-            width: `${STEPS * 100}%`,
-            height: '100%'
-          }}
-          loading="eager"
-        />
-        <div className="pd3-slider-controls">
-          <button
-            className="pd3-slider-arr pd3-slider-arr-left"
-            onClick={() => setStep(s => Math.max(0, s - 1))}
-            disabled={step === 0}
-            aria-label="Previous section"
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-          </button>
-          <div className="pd3-slider-dots">
-            {Array.from({ length: STEPS }).map((_, i) => (
-              <button
-                key={i}
-                className={`pd3-dot${i === step ? ' pd3-dot-active' : ''}`}
-                onClick={() => setStep(i)}
-                aria-label={`Go to section ${i + 1}`}
-              />
-            ))}
+        {SLIDES.map((slide, index) => (
+          <div key={index} className={`pd3-slide${index === active ? ' pd3-slide-active' : ''}`}>
+            <img
+              src={imgSrc}
+              alt={slide.label}
+              className="pd3-slide-img"
+              style={{ objectPosition: slide.position }}
+              loading={index === 0 ? 'eager' : 'lazy'}
+            />
           </div>
-          <button
-            className="pd3-slider-arr pd3-slider-arr-right"
-            onClick={() => setStep(s => Math.min(STEPS - 1, s + 1))}
-            disabled={step === STEPS - 1}
-            aria-label="Next section"
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
-          </button>
-        </div>
+        ))}
       </div>
+      <div className="pd3-slider-controls">
+        <button
+          className="pd3-slider-arr"
+          onClick={() => setActive(prev => (prev - 1 + SLIDES.length) % SLIDES.length)}
+          aria-label="Previous slide"
+        >
+          ‹
+        </button>
+        <div className="pd3-slider-dots">
+          {SLIDES.map((slide, index) => (
+            <button
+              key={index}
+              className={`pd3-dot${index === active ? ' pd3-dot-active' : ''}`}
+              onClick={() => setActive(index)}
+              aria-label={slide.label}
+            />
+          ))}
+        </div>
+        <button
+          className="pd3-slider-arr"
+          onClick={() => setActive(prev => (prev + 1) % SLIDES.length)}
+          aria-label="Next slide"
+        >
+          ›
+        </button>
+      </div>
+      <div className="pd3-slide-label">{SLIDES[active].label}</div>
     </div>
   );
 }
@@ -286,7 +284,9 @@ export default function ProjectDetailPage({ id, slug, item: dbItem, related }) {
         .pd3-browser-addr{flex:1;background:rgba(255,255,255,0.08);border-radius:6px;padding:0.3rem 0.75rem;font-size:0.7rem;color:rgba(255,255,255,0.5);font-family:'Space Grotesk',sans-serif;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
         .pd3-slide-track{position:relative;height:520px;overflow:hidden;background:#000}
         @media(max-width:768px){.pd3-slide-track{height:320px}}
-        .pd3-slide-img{width:auto;height:100%;object-fit:cover;display:block;transition:transform 0.75s cubic-bezier(0.4,0,0.2,1)}
+        .pd3-slide{position:absolute;inset:0;opacity:0;transition:opacity 0.7s ease}
+        .pd3-slide-active{opacity:1}
+        .pd3-slide-img{width:100%;height:100%;object-fit:cover;display:block;transition:object-position 0.7s ease}
         .pd3-slider-controls{position:absolute;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:1.5rem;z-index:20;background:rgba(0,0,0,0.78);backdrop-filter:blur(12px);padding:0.9rem 1.5rem;border-top:1px solid rgba(255,255,255,0.1)}
         .pd3-slider-arr{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border:none;color:#fff;width:48px;height:48px;border-radius:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);flex-shrink:0;box-shadow:0 4px 12px rgba(102,126,234,0.4)}
         .pd3-slider-arr:hover:not(:disabled){background:linear-gradient(135deg,#764ba2 0%,#667eea 100%);transform:translateY(-2px);box-shadow:0 6px 20px rgba(102,126,234,0.6)}

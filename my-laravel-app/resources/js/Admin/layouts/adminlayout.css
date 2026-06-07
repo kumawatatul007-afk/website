@@ -466,7 +466,7 @@ body { font-family: 'Inter', system-ui, sans-serif; }
   animation: pageIn 0.35s ease both;
   /* Constrain content width to a readable max and center it */
   width: 100%;
-  max-width: 920px;
+  max-width: 1240px;
   margin: 0 auto;
 }
 

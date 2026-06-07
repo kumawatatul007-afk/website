@@ -105,8 +105,9 @@ function StatItem({ stat, isVisible }) {
 function ImageSlider({ imgSrc, websiteUrl }) {
   const SLIDES = [
     { position: 'center top',   label: 'Homepage' },
-    { position: 'center 33%',   label: 'Features' },
-    { position: 'center 67%',   label: 'Details'  },
+    { position: 'center 25%',   label: 'Features' },
+    { position: 'center 50%',   label: 'Details'  },
+    { position: 'center 75%',   label: 'Menu'     },
   ];
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -122,7 +123,7 @@ function ImageSlider({ imgSrc, websiteUrl }) {
       {/* Browser chrome */}
       <div className="pd3-browser-chrome">
         <div className="pd3-browser-dots">
-          <span style={{background:'#fc5753'}} /><span style={{background:'#fdbc40'}} /><span style={{background:'#33c748'}} />
+          <span style={{background:'#fc5753'}} /><span style={{background:'#fdbc40'}} /><span style={{background:'#33c748'}} /><span style={{background:'#3b82f6'}} />
         </div>
         <div className="pd3-browser-addr">{websiteUrl || 'https://example.com'}</div>
         <div style={{width:60}} />

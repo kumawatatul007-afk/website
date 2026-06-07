@@ -1,10 +1,107 @@
 import AdminLayout from '../layouts/AdminLayout';
-import { Link, router } from '@inertiajs/react';
+import { Link, router, useForm } from '@inertiajs/react';
 import Pagination from '../../components/admin/Pagination';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
+
+function CreateUserModal({ onClose }) {
+    const { data, setData, post, processing, errors, reset } = useForm({
+        name: '', email: '', password: '', password_confirmation: '', role: 'user', phone: '',
+    });
+
+    useEffect(() => {
+        const handleEscape = (e) => { if (e.key === 'Escape' && !processing) onClose(); };
+        window.addEventListener('keydown', handleEscape);
+        return () => window.removeEventListener('keydown', handleEscape);
+    }, [processing, onClose]);
+
+    const onSubmit = (e) => {
+        e.preventDefault();
+        post('/admin/users', {
+            onSuccess: () => { reset(); onClose(); },
+        });
+    };
+
+    const inputStyle = (field) => ({
+        width: '100%', padding: '0.75rem 0.95rem', borderRadius: '10px', border: `1.5px solid ${errors[field] ? '#ef4444' : '#e2e8f0'}`,
+        fontSize: '0.875rem', outline: 'none', background: '#fff', color: '#0f172a', fontFamily: 'inherit', boxSizing: 'border-box', transition: 'border-color 0.15s, box-shadow 0.15s',
+    });
+
+    const fieldLabel = { display: 'block', marginBottom: '0.35rem', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.07em', color: '#64748b', fontWeight: 700 };
+    const errorText = { display: 'block', marginTop: '0.35rem', fontSize: '0.75rem', color: '#ef4444' };
+
+    return createPortal(
+        <div
+            style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(15,23,42,0.6)', backdropFilter: 'blur(8px)', zIndex: 9999, padding: '1rem' }}
+            onClick={(e) => e.target === e.currentTarget && !processing && onClose()}
+        >
+            <div style={{ width: '100%', maxWidth: 560, background: '#fff', borderRadius: 24, padding: '2rem', boxShadow: '0 28px 90px rgba(15,23,42,0.18)', maxHeight: '90vh', overflowY: 'auto' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+                    <div>
+                        <h3 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800, color: '#0f172a' }}>Create New User</h3>
+                        <p style={{ margin: '0.35rem 0 0', fontSize: '0.875rem', color: '#64748b' }}>Add a new user directly from this page.</p>
+                    </div>
+                    <button type="button" onClick={() => !processing && onClose()} style={{ width: 36, height: 36, borderRadius: 12, border: '1px solid #e2e8f0', background: '#f8fafc', color: '#475569', cursor: processing ? 'not-allowed' : 'pointer' }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+
+                <form onSubmit={onSubmit}>
+                    <div style={{ display: 'grid', gap: '1rem', marginBottom: '1rem', gridTemplateColumns: '1fr 1fr' }}>
+                        <div>
+                            <label style={fieldLabel}>Name *</label>
+                            <input style={inputStyle('name')} value={data.name} onChange={e => setData('name', e.target.value)} disabled={processing} />
+                            {errors.name && <span style={errorText}>{errors.name}</span>}
+                        </div>
+                        <div>
+                            <label style={fieldLabel}>Email *</label>
+                            <input type="email" style={inputStyle('email')} value={data.email} onChange={e => setData('email', e.target.value)} disabled={processing} />
+                            {errors.email && <span style={errorText}>{errors.email}</span>}
+                        </div>
+                    </div>
+                    <div style={{ display: 'grid', gap: '1rem', marginBottom: '1rem', gridTemplateColumns: '1fr 1fr' }}>
+                        <div>
+                            <label style={fieldLabel}>Password *</label>
+                            <input type="password" style={inputStyle('password')} value={data.password} onChange={e => setData('password', e.target.value)} disabled={processing} />
+                            {errors.password && <span style={errorText}>{errors.password}</span>}
+                        </div>
+                        <div>
+                            <label style={fieldLabel}>Confirm Password *</label>
+                            <input type="password" style={inputStyle('password_confirmation')} value={data.password_confirmation} onChange={e => setData('password_confirmation', e.target.value)} disabled={processing} />
+                        </div>
+                    </div>
+                    <div style={{ display: 'grid', gap: '1rem', marginBottom: '1.5rem', gridTemplateColumns: '1fr 1fr' }}>
+                        <div>
+                            <label style={fieldLabel}>Role *</label>
+                            <select value={data.role} onChange={e => setData('role', e.target.value)} disabled={processing} style={{ ...inputStyle('role'), cursor: 'pointer', appearance: 'none', backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%2394a3b8\' stroke-width=\'2.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3E%3Cpolyline points=\'6 9 12 15 18 9\'/%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', paddingRight: '2.5rem' }}>
+                                <option value="user">User</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style={fieldLabel}>Phone</label>
+                            <input style={inputStyle('phone')} value={data.phone} onChange={e => setData('phone', e.target.value)} disabled={processing} />
+                        </div>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                        <button type="button" onClick={() => !processing && onClose()} disabled={processing} style={{ flex: '1 1 140px', padding: '0.85rem 1rem', borderRadius: 12, border: '1.5px solid #e2e8f0', background: '#fff', color: '#475569', fontWeight: 700, cursor: processing ? 'not-allowed' : 'pointer', fontFamily: 'inherit', opacity: processing ? 0.6 : 1 }}>
+                            Cancel
+                        </button>
+                        <button type="submit" disabled={processing} style={{ flex: '2 1 220px', padding: '0.85rem 1rem', borderRadius: 12, border: 'none', background: processing ? '#93c5fd' : 'linear-gradient(135deg,#2563eb,#1d4ed8)', color: '#fff', fontWeight: 700, cursor: processing ? 'not-allowed' : 'pointer', boxShadow: processing ? 'none' : '0 10px 25px rgba(37,99,235,0.16)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                            {processing ? 'Creating…' : 'Create User'}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>,
+        document.body
+    );
+}
 
 export default function AdminUsersIndex({ users, filters }) {
     const [search, setSearch] = useState(filters?.search ?? '');
+    const [createModal, setCreateModal] = useState(false);
 
     const applyFilters = () => {
         router.get('/admin/users', { search }, { preserveState: true, replace: true });
@@ -144,7 +241,9 @@ export default function AdminUsersIndex({ users, filters }) {
                 <div className="page-panel">
                     <div className="page-header">
                         <h2 className="page-title">All Users</h2>
-                        <Link href="/admin/users/create" className="btn-primary">+ New User</Link>
+                        <button type="button" className="btn-primary" onClick={() => setCreateModal(true)}>
+                            + New User
+                        </button>
                     </div>
 
                     <div className="filters">
@@ -203,6 +302,7 @@ export default function AdminUsersIndex({ users, filters }) {
                     </div>
                 </div>
             </div>
+            {createModal && <CreateUserModal onClose={() => setCreateModal(false)} />}
         </AdminLayout>
     );
 }
