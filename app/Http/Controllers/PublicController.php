@@ -7,6 +7,7 @@ use App\Models\PortfolioItem;
 use App\Models\Category;
 use App\Models\Service;
 use App\Models\Setting;
+use Illuminate\Support\Facades\Schema;
 use Inertia\Inertia;
 
 class PublicController extends Controller
@@ -54,8 +55,14 @@ class PublicController extends Controller
                 ];
             });
 
-        $services = \App\Models\Service::where('is_active', true)
-            ->orderBy('sort_order', 'asc')
+        $servicesQuery = \App\Models\Service::query();
+        if (Schema::hasColumn('services', 'is_active')) {
+            $servicesQuery->where('is_active', true);
+        }
+        if (Schema::hasColumn('services', 'sort_order')) {
+            $servicesQuery->orderBy('sort_order', 'asc');
+        }
+        $services = $servicesQuery
             ->latest()
             ->take(6)
             ->get()
@@ -444,8 +451,14 @@ class PublicController extends Controller
      */
     public function services()
     {
-        $services = \App\Models\Service::where('is_active', true)
-            ->orderBy('sort_order', 'asc')
+        $servicesQuery = \App\Models\Service::query();
+        if (Schema::hasColumn('services', 'is_active')) {
+            $servicesQuery->where('is_active', true);
+        }
+        if (Schema::hasColumn('services', 'sort_order')) {
+            $servicesQuery->orderBy('sort_order', 'asc');
+        }
+        $services = $servicesQuery
             ->latest()
             ->get()
             ->map(function ($service) {
@@ -592,9 +605,11 @@ class PublicController extends Controller
      */
     public function serviceDetail($slug)
     {
-        $service = \App\Models\Service::where('slug', $slug)
-            ->where('is_active', true)
-            ->first();
+        $query = \App\Models\Service::where('slug', $slug);
+        if (Schema::hasColumn('services', 'is_active')) {
+            $query->where('is_active', true);
+        }
+        $service = $query->first();
 
         if (!$service) {
             abort(404);
@@ -612,9 +627,11 @@ class PublicController extends Controller
         // Reconstruct slug: "Web" + "development" → "web-development"
         $slug = strtolower($prefix) . '-' . $rest;
 
-        $service = \App\Models\Service::where('slug', $slug)
-            ->where('is_active', true)
-            ->firstOrFail();
+        $query = \App\Models\Service::where('slug', $slug);
+        if (Schema::hasColumn('services', 'is_active')) {
+            $query->where('is_active', true);
+        }
+        $service = $query->firstOrFail();
 
         $serviceData = [
             'id'               => $service->id,
@@ -630,7 +647,11 @@ class PublicController extends Controller
             'meta_keyword'     => $service->meta_keyword,
         ];
 
-        $related = \App\Models\Service::where('is_active', true)
+        $relatedQuery = \App\Models\Service::query();
+        if (Schema::hasColumn('services', 'is_active')) {
+            $relatedQuery->where('is_active', true);
+        }
+        $related = $relatedQuery
             ->where('id', '!=', $service->id)
             ->latest()
             ->take(3)
@@ -710,8 +731,8 @@ class PublicController extends Controller
     public function keywordDetail($slug)
     {
         $setting     = Setting::first();
-        $allKeywords = $setting && $setting->strating_keyword
-            ? array_map('trim', explode(',', $setting->strating_keyword))
+        $allKeywords = ($setting && ($setting->start_keyword || $setting->strating_keyword))
+            ? array_map('trim', explode(',', $setting->start_keyword ?: $setting->strating_keyword))
             : [];
 
         $keyword = null;
@@ -749,9 +770,11 @@ class PublicController extends Controller
 
         $setting     = Setting::first();
 
-        // Check both strating_keyword and service_keyword
+        // Check both start_keyword (new) and strating_keyword (old, with typo) and service_keyword
         $allKeywords = [];
-        if ($setting && $setting->strating_keyword) {
+        if ($setting && $setting->start_keyword) {
+            $allKeywords = array_merge($allKeywords, array_map('trim', explode(',', $setting->start_keyword)));
+        } elseif ($setting && $setting->strating_keyword) {
             $allKeywords = array_merge($allKeywords, array_map('trim', explode(',', $setting->strating_keyword)));
         }
         if ($setting && $setting->service_keyword) {

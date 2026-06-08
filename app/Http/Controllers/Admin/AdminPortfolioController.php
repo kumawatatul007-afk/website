@@ -128,6 +128,7 @@ class AdminPortfolioController extends Controller
         // Validate the incoming request
         $validated = $request->validate([
             'title'             => 'required|string|max:255',
+            'slug'              => 'nullable|string|max:255',
             'category_id'       => 'nullable|integer|exists:categories,id',
             'image'             => 'nullable|file|image|mimes:jpeg,jpg,png,gif,webp|max:5120',
             'clint_name'        => 'nullable|string|max:255',
@@ -177,8 +178,24 @@ class AdminPortfolioController extends Controller
             unset($validated['image']);
         }
 
-        // Handle slug generation only if title changed or slug is empty
-        if (empty($portfolio->slug) || trim($portfolio->title) !== trim($validated['title'])) {
+        // Handle slug: if user provided a slug, use that (ensuring it's unique)
+        if (!empty($validated['slug'])) {
+            $baseSlug = Str::slug($validated['slug']);
+            $slug = $baseSlug;
+            $counter = 1;
+            
+            // Ensure unique slug (excluding current portfolio item)
+            while (PortfolioItem::where('slug', $slug)
+                                 ->where('id', '!=', $portfolio->id)
+                                 ->exists()) {
+                $slug = $baseSlug . '-' . $counter;
+                $counter++;
+            }
+            
+            $validated['slug'] = $slug;
+        } 
+        // Else if slug is empty or title changed, generate from title
+        else if (empty($portfolio->slug) || trim($portfolio->title) !== trim($validated['title'])) {
             $baseSlug = Str::slug($validated['title']);
             $slug = $baseSlug;
             $counter = 1;

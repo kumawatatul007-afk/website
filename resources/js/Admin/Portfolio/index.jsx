@@ -45,10 +45,10 @@ export default function AdminPortfolioIndex({ items, filters, hasSearched, categ
                 .table th { text-align:left; padding:0.75rem 1rem; font-size:0.7rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:0.08em; border-bottom:1px solid #f1f5f9; background:#fafafa; }
                 .table td { padding:0.75rem 1rem; border-bottom:1px solid #f8fafc; color:#374151; vertical-align:middle; overflow:hidden; text-overflow:ellipsis; white-space:normal; }
                 /* keep small columns single-line */
-                .table td:nth-child(1), .table td:nth-child(5), .table td:nth-child(6), .table td:nth-child(7), .table th:nth-child(1), .table th:nth-child(5), .table th:nth-child(6), .table th:nth-child(7) { white-space:nowrap; }
+                .table td:nth-child(1), .table th:nth-child(1) { white-space:nowrap; }
                 /* reserve actions column */
-                .table th:nth-child(8), .table td:nth-child(8) { width:170px; min-width:170px; text-align:center; white-space:nowrap; }
-                .table td:nth-child(8) > div { display:flex; justify-content:center; gap:0.35rem; flex-wrap:wrap; }
+                .table th:nth-child(5), .table td:nth-child(5) { width:170px; min-width:170px; text-align:center; white-space:nowrap; }
+                .table td:nth-child(5) > div { display:flex; justify-content:center; align-items:center; gap:0.5rem; flex-wrap:wrap; }
                 .table tr:last-child td { border-bottom:none; }
                 .table tr:hover td { background:#fafafa; }
                 .badge { display:inline-block; padding:0.2rem 0.65rem; border-radius:20px; font-size:0.7rem; font-weight:700; }
@@ -123,15 +123,12 @@ export default function AdminPortfolioIndex({ items, filters, hasSearched, categ
                                 <th style={{ width:'22%' }}>Title</th>
                                 <th style={{ width:'14%' }}>Category</th>
                                 <th style={{ width:'14%' }}>Client</th>
-                                <th style={{ width:'10%' }}>Status</th>
-                                <th style={{ width:'10%' }}>Published</th>
-                                <th style={{ width:'10%' }}>Date</th>
                                 <th style={{ width:'110px' }}>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {shimmer ? (
-                                <ShimmerTableRows count={5} cols={8} />
+                                <ShimmerTableRows count={5} cols={5} />
                             ) : items?.data?.length > 0 ? items.data.map(item => (
                                 <tr key={item.id}>
                                     <td>
@@ -160,19 +157,6 @@ export default function AdminPortfolioIndex({ items, filters, hasSearched, categ
                                     <td style={{ color:'#64748b', fontSize:'0.82rem' }}>{catName(item.category_id)}</td>
                                     <td style={{ color:'#64748b', fontSize:'0.82rem' }}>{item.clint_name || '—'}</td>
                                     <td>
-                                        <span className={`badge ${item.status === 'Active' ? 'badge-pub' : 'badge-off'}`}>
-                                            {item.status || '—'}
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span className={`badge ${item.is_publish === 1 ? 'badge-pub' : 'badge-draft'}`}>
-                                            {item.is_publish === 1 ? 'Yes' : 'No'}
-                                        </span>
-                                    </td>
-                                    <td style={{ color:'#94a3b8', fontSize:'0.8rem' }}>
-                                        {item.date ? new Date(item.date).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' }) : '—'}
-                                    </td>
-                                    <td>
                                         <div style={{ display:'flex', gap:'0.4rem' }}>
                                             <Link href={`/admin/portfolio/${item.id}/edit`} className="btn-sm btn-edit">Edit</Link>
                                             <button className="btn-sm btn-delete" onClick={() => handleDelete(item.id)}>Del</button>
@@ -181,7 +165,7 @@ export default function AdminPortfolioIndex({ items, filters, hasSearched, categ
                                 </tr>
                             )) : (
                                 <tr>
-                                    <td colSpan={8} className="empty">No portfolio items found</td>
+                                    <td colSpan={5} className="empty">No portfolio items found</td>
                                 </tr>
                             )}
                         </tbody>

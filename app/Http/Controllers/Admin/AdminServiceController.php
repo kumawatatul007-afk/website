@@ -45,8 +45,10 @@ class AdminServiceController extends Controller
             });
         }
 
+        if (Schema::hasColumn('services', 'sort_order')) {
+            $query->orderBy('sort_order');
+        }
         $services = $query
-            ->orderBy('sort_order')
             ->orderByDesc('id')
             ->paginate(10)
             ->withQueryString();
@@ -83,6 +85,8 @@ class AdminServiceController extends Controller
             'main_image'       => 'nullable|string|max:255',
             'main_image_file'  => 'nullable|file|image|mimes:jpeg,jpg,png,gif,webp|max:5120',
             'category_id'      => 'nullable|integer',
+            'designation'      => 'nullable|string|max:255',
+            'is_location'      => 'nullable|boolean',
             'meta_title'       => 'nullable|string|max:255',
             'meta_keyword'     => 'nullable|string',
             'meta_description' => 'nullable|string',
@@ -104,8 +108,6 @@ class AdminServiceController extends Controller
             $validated['slug'] = Str::slug($validated['title']);
         }
 
-        $validated['sort_order'] = $validated['sort_order'] ?? 0;
-
         if (isset($validated['main_image'])) {
             $validated['image'] = $validated['main_image'];
             unset($validated['main_image']);
@@ -115,14 +117,40 @@ class AdminServiceController extends Controller
 
         $validated['description'] = cleanServiceContent($validated['content'] ?? $validated['description'] ?? '');
 
-        if (Schema::hasColumn('services', 'content')) {
-            $validated['content'] = $validated['content'] ?? null;
-        } else {
-            unset($validated['content']);
+        // Now handle all columns carefully
+        $columnsToCheck = [
+            'content',
+            'sort_order',
+            'is_active',
+            'subtitle',
+            'price_range',
+            'features',
+            'cta_text',
+            'category_id',
+            'designation',
+            'is_location',
+            'meta_title',
+            'meta_keyword',
+            'meta_description',
+            'image_alt'
+        ];
+
+        foreach ($columnsToCheck as $column) {
+            if (!Schema::hasColumn('services', $column)) {
+                unset($validated[$column]);
+            }
         }
 
-        $validated['is_active'] = $validated['status'] ?? $validated['is_active'] ?? 1;
+        // Handle is_active specially
+        if (Schema::hasColumn('services', 'is_active')) {
+            $validated['is_active'] = $validated['status'] ?? $validated['is_active'] ?? 1;
+        }
         unset($validated['status']);
+
+        // Handle sort_order specially
+        if (Schema::hasColumn('services', 'sort_order')) {
+            $validated['sort_order'] = $validated['sort_order'] ?? 0;
+        }
 
         Service::create($validated);
 
@@ -161,6 +189,8 @@ class AdminServiceController extends Controller
             'main_image'       => 'nullable|string|max:255',
             'main_image_file'  => 'nullable|file|image|mimes:jpeg,jpg,png,gif,webp|max:5120',
             'category_id'      => 'nullable|integer',
+            'designation'      => 'nullable|string|max:255',
+            'is_location'      => 'nullable|boolean',
             'meta_title'       => 'nullable|string|max:255',
             'meta_keyword'     => 'nullable|string',
             'meta_description' => 'nullable|string',
@@ -196,14 +226,45 @@ class AdminServiceController extends Controller
 
         $validated['description'] = cleanServiceContent($validated['content'] ?? $service->description ?? '');
 
-        if (Schema::hasColumn('services', 'content')) {
-            $validated['content'] = $validated['content'] ?? $service->content ?? null;
-        } else {
-            unset($validated['content']);
+        // Now handle all columns carefully
+        $columnsToCheck = [
+            'content',
+            'sort_order',
+            'is_active',
+            'subtitle',
+            'price_range',
+            'features',
+            'cta_text',
+            'category_id',
+            'designation',
+            'is_location',
+            'meta_title',
+            'meta_keyword',
+            'meta_description',
+            'image_alt'
+        ];
+
+        foreach ($columnsToCheck as $column) {
+            if (!Schema::hasColumn('services', $column)) {
+                unset($validated[$column]);
+            }
         }
 
-        $validated['is_active'] = $validated['status'] ?? $validated['is_active'] ?? $service->is_active;
+        // Handle is_active specially
+        if (Schema::hasColumn('services', 'is_active')) {
+            $validated['is_active'] = $validated['status'] ?? $validated['is_active'] ?? $service->is_active;
+        }
         unset($validated['status']);
+
+        // Handle sort_order specially
+        if (Schema::hasColumn('services', 'sort_order')) {
+            $validated['sort_order'] = $validated['sort_order'] ?? $service->sort_order ?? 0;
+        }
+
+        // Handle content specially
+        if (Schema::hasColumn('services', 'content')) {
+            $validated['content'] = $validated['content'] ?? $service->content ?? null;
+        }
 
         // Never change column names that don't exist in the schema
         unset($validated['type']);

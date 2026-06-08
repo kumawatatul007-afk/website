@@ -353,23 +353,14 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
     { id: 3, title: 'UI/UX Design', slug: 'ui-ux-design', description: 'Visually compelling, brand-consistent designs in Figma grounded in user research.' },
   ];
 
-  // Keywords from service meta_keyword, then Setting.strating_keyword, then fallback
+  // Keywords from Setting.strating_keyword ONLY (no service meta_keyword interference)
   const keywordHighlights = (() => {
-    const serviceKeywords = dbServices.flatMap((service) => {
-      if (!service.meta_keyword) return [];
-      return service.meta_keyword
-        .split(',')
-        .map((entry) => entry.trim())
-        .filter(Boolean);
-    });
-    if (serviceKeywords.length > 0) {
-      return Array.from(new Set(serviceKeywords));
-    }
-
+    // Check for setting.strating_keyword first
     if (setting && setting.strating_keyword) {
       const parsed = setting.strating_keyword.split(',').map(k => k.trim()).filter(Boolean);
       if (parsed.length > 0) return parsed;
     }
+    
     // Static fallback so section is never empty
     return [
       'Best Software Developer in Jaipur',
@@ -441,20 +432,9 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
     ];
   })();
 
-  // Service highlights — use service meta keywords if available, otherwise fall back to settings or defaults.
+  // Service highlights — use ONLY Setting.service_keyword (no service meta_keyword interference)
   const serviceHighlights = (() => {
-    const serviceKeywords = dbServices.flatMap((service) => {
-      if (!service.meta_keyword) return [];
-      return service.meta_keyword
-        .split(',')
-        .map((entry) => entry.trim())
-        .filter(Boolean)
-        .map((title) => ({ title, slug: '' }));
-    });
-    if (serviceKeywords.length > 0) {
-      return serviceKeywords;
-    }
-
+    // Check for setting.service_keyword first
     if (setting && setting.service_keyword) {
       const parsed = setting.service_keyword.split(',').map(entry => {
         const parts = entry.trim().split('|');
@@ -464,25 +444,74 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
       }).filter(s => s.title);
       if (parsed.length > 0) return parsed;
     }
+    
+    // Static fallback so section is never empty
     return [
+      // Best
       { title: 'Best Website Design Near Me',             slug: '' },
       { title: 'Best WEBSITE DEVELOPER FOR HIRE',         slug: '' },
+      { title: 'Best Data-Driven Decision Making is Critical to Create Business Value', slug: '' },
+      { title: 'Best Hire the best Web Designers in Jaipur', slug: '' },
+      // Top
       { title: 'Top Website Design Near Me',              slug: '' },
       { title: 'Top WEBSITE DEVELOPER FOR HIRE',          slug: '' },
+      { title: 'Top Data-Driven Decision Making is Critical to Create Business Value', slug: '' },
+      { title: 'Top Hire the best Web Designers in Jaipur', slug: '' },
+      // Top 10
       { title: 'Top 10 Website Design Near Me',           slug: '' },
       { title: 'Top 10 WEBSITE DEVELOPER FOR HIRE',       slug: '' },
+      { title: 'Top 10 Data-Driven Decision Making is Critical to Create Business Value', slug: '' },
+      { title: 'Top 10 Hire the best Web Designers in Jaipur', slug: '' },
+      // Top 5
       { title: 'Top 5 Website Design Near Me',            slug: '' },
       { title: 'Top 5 WEBSITE DEVELOPER FOR HIRE',        slug: '' },
+      { title: 'Top 5 Data-Driven Decision Making is Critical to Create Business Value', slug: '' },
+      { title: 'Top 5 Hire the best Web Designers in Jaipur', slug: '' },
+      // Top15
+      { title: 'Top15 Website Design Near Me',            slug: '' },
+      { title: 'Top15 WEBSITE DEVELOPER FOR HIRE',        slug: '' },
+      { title: 'Top15 Data-Driven Decision Making is Critical to Create Business Value', slug: '' },
+      { title: 'Top15 Hire the best Web Designers in Jaipur', slug: '' },
+      // Top 20
       { title: 'Top 20 Website Design Near Me',           slug: '' },
       { title: 'Top 20 WEBSITE DEVELOPER FOR HIRE',       slug: '' },
+      { title: 'Top 20 Data-Driven Decision Making is Critical to Create Business Value', slug: '' },
+      { title: 'Top 20 Hire the best Web Designers in Jaipur', slug: '' },
+      // Top 25
+      { title: 'Top 25 Website Design Near Me',           slug: '' },
+      { title: 'Top 25 WEBSITE DEVELOPER FOR HIRE',       slug: '' },
+      { title: 'Top 25 Data-Driven Decision Making is Critical to Create Business Value', slug: '' },
+      { title: 'Top 25 Hire the best Web Designers in Jaipur', slug: '' },
+      // Top 30
+      { title: 'Top 30 Website Design Near Me',           slug: '' },
+      { title: 'Top 30 WEBSITE DEVELOPER FOR HIRE',       slug: '' },
+      { title: 'Top 30 Data-Driven Decision Making is Critical to Create Business Value', slug: '' },
+      { title: 'Top 30 Hire the best Web Designers in Jaipur', slug: '' },
+      // Top 50
+      { title: 'Top 50 Website Design Near Me',           slug: '' },
+      { title: 'Top 50 WEBSITE DEVELOPER FOR HIRE',       slug: '' },
+      { title: 'Top 50 Data-Driven Decision Making is Critical to Create Business Value', slug: '' },
+      { title: 'Top 50 Hire the best Web Designers in Jaipur', slug: '' },
+      // Find
       { title: 'Find Website Design Near Me',             slug: '' },
       { title: 'Find WEBSITE DEVELOPER FOR HIRE',         slug: '' },
+      { title: 'Find Data-Driven Decision Making is Critical to Create Business Value', slug: '' },
+      { title: 'Find Hire the best Web Designers in Jaipur', slug: '' },
+      // No1
       { title: 'No1 Website Design Near Me',              slug: '' },
       { title: 'No1 WEBSITE DEVELOPER FOR HIRE',          slug: '' },
+      { title: 'No1 Data-Driven Decision Making is Critical to Create Business Value', slug: '' },
+      { title: 'No1 Hire the best Web Designers in Jaipur', slug: '' },
+      // The Best
       { title: 'The Best Website Design Near Me',         slug: '' },
       { title: 'The Best WEBSITE DEVELOPER FOR HIRE',     slug: '' },
+      { title: 'The Best Data-Driven Decision Making is Critical to Create Business Value', slug: '' },
+      { title: 'The Best Hire the best Web Designers in Jaipur', slug: '' },
+      // Hire
       { title: 'Hire Website Design Near Me',             slug: '' },
       { title: 'Hire WEBSITE DEVELOPER FOR HIRE',         slug: '' },
+      { title: 'Hire Data-Driven Decision Making is Critical to Create Business Value', slug: '' },
+      { title: 'Hire Hire the best Web Designers in Jaipur', slug: '' },
     ];
   })();
 

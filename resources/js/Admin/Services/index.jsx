@@ -89,6 +89,11 @@ export default function AdminServicesIndex({ services = {}, filters = {} }) {
                     white-space: nowrap;
                     overflow: hidden;
                 }
+                
+                .svc-table th:last-child,
+                .svc-table td:last-child {
+                    text-align: center;
+                }
 
                 .svc-table td {
                     padding: 0.875rem 1rem;
@@ -96,6 +101,14 @@ export default function AdminServicesIndex({ services = {}, filters = {} }) {
                     color: #374151;
                     vertical-align: middle;
                     overflow: hidden;
+                }
+                
+                .actions-cell {
+                    display: flex;
+                    gap: 0.4rem;
+                    align-items: center;
+                    flex-wrap: nowrap;
+                    justify-content: center;
                 }
 
                 .svc-table tr:last-child td { border-bottom: none; }
@@ -295,8 +308,6 @@ export default function AdminServicesIndex({ services = {}, filters = {} }) {
                                     <th className="col-title">Title</th>
                                     <th className="col-slug hide-xs">Slug</th>
                                     <th className="col-tags hide-sm">Tags</th>
-                                    <th className="col-status">Status</th>
-                                    <th className="col-order">Order</th>
                                     <th className="col-actions">Actions</th>
                                 </tr>
                             </thead>
@@ -326,18 +337,6 @@ export default function AdminServicesIndex({ services = {}, filters = {} }) {
                                             <span className="tags-text">{svc.tags || '—'}</span>
                                         </td>
 
-                                        {/* Status */}
-                                        <td className="col-status">
-                                            <span className={`badge ${svc.status == 1 ? 'badge-active' : 'badge-inactive'}`}>
-                                                {svc.status == 1 ? 'Active' : 'Inactive'}
-                                            </span>
-                                        </td>
-
-                                        {/* Order */}
-                                        <td className="col-order" style={{ color: '#94a3b8', fontWeight: 600 }}>
-                                            {svc.serial_number ?? '—'}
-                                        </td>
-
                                         {/* Actions */}
                                         <td className="col-actions">
                                             <div className="actions-cell">
@@ -358,7 +357,7 @@ export default function AdminServicesIndex({ services = {}, filters = {} }) {
                                     </tr>
                                 )) : (
                                     <tr>
-                                        <td colSpan={7}>
+                                        <td colSpan={5}>
                                             <div className="empty-state">
                                                 <div className="empty-state-title">
                                                     {search ? 'No services match your search' : 'No services found'}

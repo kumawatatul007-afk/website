@@ -56,8 +56,9 @@ class AdminBlogController extends Controller
     {
         $validated = $request->validate([
             'title'            => 'required|string|max:255',
+            'slug'             => 'nullable|string|max:255|unique:blogs,slug',
             'content'          => 'nullable|string',
-            'main_image'       => 'nullable|string|max:500',
+            'main_image'       => 'nullable|file|image|max:5120',
             'category_id'      => 'nullable|integer',
             'serial_number'    => 'nullable|integer',
             'meta_title'       => 'nullable|string|max:255',
@@ -72,7 +73,19 @@ class AdminBlogController extends Controller
             'status'           => 'nullable|integer',
         ]);
 
-        $validated['slug'] = Str::slug($validated['title']);
+        // Handle file upload
+        if ($request->hasFile('main_image')) {
+            $file = $request->file('main_image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('images/blogs'), $filename);
+            $validated['main_image'] = $filename;
+        } else {
+            unset($validated['main_image']);
+        }
+
+        if (empty($validated['slug'])) {
+            $validated['slug'] = Str::slug($validated['title']);
+        }
 
         // Ensure unique slug
         $baseSlug = $validated['slug'];
@@ -106,6 +119,7 @@ class AdminBlogController extends Controller
         $blogData = [
             'id'               => $blog->id,
             'title'            => $blog->title ?? '',
+            'slug'             => $blog->slug ?? '',
             'content'          => $blog->content ?? '',
             'main_image'       => $blog->main_image ?? '',
             'category_id'      => $blog->category_id ?? '',
@@ -132,6 +146,7 @@ class AdminBlogController extends Controller
     {
         $validated = $request->validate([
             'title'            => 'required|string|max:255',
+            'slug'             => 'nullable|string|max:255|unique:blogs,slug,' . $blog->id,
             'content'          => 'nullable|string',
             'main_image'       => 'nullable|file|image|max:5120', // 5MB max
             'category_id'      => 'nullable|integer',
@@ -159,6 +174,17 @@ class AdminBlogController extends Controller
             unset($validated['main_image']);
         }
 
+        if (empty($validated['slug'])) {
+            $validated['slug'] = Str::slug($validated['title']);
+        }
+
+        // Ensure unique slug
+        $baseSlug = $validated['slug'];
+        $count    = 1;
+        while (BlogPost::where('slug', $validated['slug'])->where('id', '!=', $blog->id)->exists()) {
+            $validated['slug'] = $baseSlug . '-' . $count++;
+        }
+
         // Set default values for fields that cannot be null in database
         $validated['serial_number'] = $validated['serial_number'] ?? 0;
         $validated['status']        = $validated['status'] ?? 1;
@@ -172,8 +198,8 @@ class AdminBlogController extends Controller
 
         $blog->update($validated);
 
-        // Stay on edit page after update with success message
-        return redirect()->back()
+        // Redirect to blog list after update with success message
+        return redirect()->route('admin.blog.index')
             ->with('success', 'Blog post updated successfully.');
     }
 

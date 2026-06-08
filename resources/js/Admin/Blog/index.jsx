@@ -93,9 +93,12 @@ export default function AdminBlogIndex({ posts, filters, categories = [] }) {
 
                 .table { width:100%; border-collapse:collapse; font-size:0.875rem; table-layout:fixed; }
                 .table th { text-align:left; padding:0.875rem 1rem; font-size:0.72rem; font-weight:600; color:#64748b; text-transform:uppercase; border-bottom:1px solid #e2e8f0; background:#f8fafc; }
+                .table th:last-child,
+                .table td:last-child { text-align:center; }
                 .table td { padding:0.875rem 1rem; border-bottom:1px solid #f1f5f9; color:#1e293b; vertical-align:middle; }
                 .table tr:last-child td { border-bottom:none; }
                 .table tr:hover td { background:#f8fafc; }
+                .table td:last-child > div { display:flex; justify-content:center; align-items:center; gap:0.5rem; }
 
                 .badge { display:inline-block; padding:0.3rem 0.75rem; border-radius:9999px; font-size:0.72rem; font-weight:600; }
                 .badge-cat    { background:#eff6ff; color:#2563eb; }
@@ -204,16 +207,12 @@ export default function AdminBlogIndex({ posts, filters, categories = [] }) {
                             <th style={{ width:'50px' }}>Img</th>
                             <th style={{ width:'25%' }}>Title / Slug</th>
                             <th style={{ width:'12%' }}>Category</th>
-                            <th style={{ width:'8%' }}>Status</th>
-                            <th style={{ width:'8%' }}>Type</th>
-                            <th style={{ width:'12%' }}>Tags</th>
-                            <th style={{ width:'10%' }}>Date</th>
                             <th style={{ width:'120px' }}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {shimmer ? (
-                            <ShimmerTableRows count={8} cols={8} />
+                            <ShimmerTableRows count={8} cols={4} />
                         ) : posts?.data?.length > 0 ? posts.data.map((post, i) => (
                             <tr key={post.id}>
                                 <td>
@@ -245,26 +244,6 @@ export default function AdminBlogIndex({ posts, filters, categories = [] }) {
                                     }
                                 </td>
                                 <td>
-                                    <span className={`badge ${post.status === 1 ? 'badge-pub' : 'badge-draft'}`}>
-                                        {post.status === 1 ? 'Published' : 'Draft'}
-                                    </span>
-                                </td>
-                                <td style={{ color:'#64748b', fontSize:'0.8rem' }}>
-                                    {post.type === 1 ? 'Blog' : post.type === 0 ? 'Service' : `Type ${post.type}`}
-                                </td>
-                                <td style={{ fontSize:'0.75rem', color:'#64748b', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
-                                    {post.tags
-                                        ? post.tags.split(',').slice(0, 2).join(', ') + (post.tags.split(',').length > 2 ? '…' : '')
-                                        : '—'
-                                    }
-                                </td>
-                                <td style={{ color:'#64748b', fontSize:'0.8rem' }}>
-                                    {post.created_at
-                                        ? new Date(post.created_at).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' })
-                                        : '—'
-                                    }
-                                </td>
-                                <td>
                                     <div style={{ display:'flex', gap:'0.4rem' }}>
                                         <Link href={`/admin/blog/${post.id}/edit`} className="btn-sm btn-edit">Edit</Link>
                                         <button className="btn-sm btn-delete" onClick={() => openDelete(post)}>Del</button>
@@ -273,7 +252,7 @@ export default function AdminBlogIndex({ posts, filters, categories = [] }) {
                             </tr>
                         )) : (
                             <tr>
-                                <td colSpan={8} className="empty">
+                                <td colSpan={4} className="empty">
                                     <div style={{ fontSize:'1rem', fontWeight:600, color:'#64748b', marginBottom:'0.25rem' }}>No blog posts found</div>
                                     <div style={{ fontSize:'0.875rem', color:'#94a3b8' }}>Try adjusting your filters or create a new post</div>
                                 </td>

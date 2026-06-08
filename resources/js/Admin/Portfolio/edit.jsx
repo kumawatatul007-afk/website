@@ -2,6 +2,18 @@ import AdminLayout from '../layouts/AdminLayout';
 import { useForm, Link, router } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 
+// Simple slugify function
+function slugify(text) {
+    return text
+        .toString()
+        .toLowerCase()
+        .replace(/\s+/g, '-')           // Replace spaces with -
+        .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+        .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+        .replace(/^-+/, '')             // Trim - from start of text
+        .replace(/-+$/, '');            // Trim - from end of text
+}
+
 export default function AdminPortfolioEdit({ item, categories = [] }) {
 const [imagePreview, setImagePreview] = useState(
     item?.image_url || (item?.image ? `/uploads/portfolio/${item.image}` : null)
@@ -11,6 +23,7 @@ const [notification, setNotification] = useState(null);
 
 const { data, setData, processing, errors, reset, put } = useForm({
     title: item?.title || '',
+    slug: item?.slug || '',
     category_id: item?.category_id || '',
     image: null,
     clint_name: item?.clint_name || '',
@@ -77,6 +90,7 @@ const handleSubmit = (e) => {
     const payload = new FormData();
     payload.append('_method', 'PUT');
     payload.append('title', data.title || '');
+    payload.append('slug', data.slug || '');
     payload.append('category_id', data.category_id || '');
     if (data.image) payload.append('image', data.image);
     payload.append('clint_name', data.clint_name || '');
@@ -146,24 +160,48 @@ const handleSubmit = (e) => {
                     <form onSubmit={handleSubmit}>
 
                         {/* Basic Information Section */}
-                        <div className="form-group">
-                            <label className="form-label">
-                                Portfolio Title <span className="required-asterisk">*</span>
-                            </label>
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label className="form-label">
+                                    Portfolio Title <span className="required-asterisk">*</span>
+                                </label>
 
-                            <input
-                                type="text"
-                                name="title"
-                                required
-                                className={`form-input ${errors.title ? 'err' : ''}`}
-                                value={data.title}
-                                onChange={(e) => setData('title', e.target.value)}
-                                placeholder="Enter portfolio title"
-                            />
+                                <input
+                                    type="text"
+                                    name="title"
+                                    required
+                                    className={`form-input ${errors.title ? 'err' : ''}`}
+                                    value={data.title}
+                                    onChange={(e) => {
+                                        const newTitle = e.target.value;
+                                        setData('title', newTitle);
+                                        // Auto-generate slug from title
+                                        setData('slug', slugify(newTitle));
+                                    }}
+                                    placeholder="Enter portfolio title"
+                                />
 
-                            {errors.title && (
-                                <p className="form-error">{errors.title}</p>
-                            )}
+                                {errors.title && (
+                                    <p className="form-error">{errors.title}</p>
+                                )}
+                            </div>
+
+                            <div className="form-group">
+                                <label className="form-label">Slug</label>
+
+                                <input
+                                    type="text"
+                                    name="slug"
+                                    className={`form-input ${errors.slug ? 'err' : ''}`}
+                                    value={data.slug}
+                                    onChange={(e) => setData('slug', e.target.value)}
+                                    placeholder="Auto-generated from title"
+                                />
+
+                                {errors.slug && (
+                                    <p className="form-error">{errors.slug}</p>
+                                )}
+                            </div>
                         </div>
 
                         <div className="form-row">

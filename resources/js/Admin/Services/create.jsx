@@ -1,5 +1,5 @@
 import AdminLayout from '../layouts/AdminLayout';
-import { useForm, Link } from '@inertiajs/react';
+import { useForm, Link, router } from '@inertiajs/react';
 import { useState, useRef, useEffect } from 'react';
 
 function makeSlug(value) {
@@ -15,7 +15,7 @@ export default function AdminServiceCreate({ categories = [] }) {
     const fileInputRef = useRef(null);
     const [imagePreview, setImagePreview] = useState(null);
     const [autoSlug, setAutoSlug] = useState('');
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData, processing, errors } = useForm({
         title: '',
         slug: '',
         subtitle: '',
@@ -34,8 +34,7 @@ export default function AdminServiceCreate({ categories = [] }) {
 
     function resolveServiceImageUrl(image) {
         if (!image) return null;
-        if (image.startsWith('http') || image.startsWith('//')) return image;
-        if (image.startsWith('/')) return image;
+        if (image.startsWith('http') || image.startsWith('//') || image.startsWith('/')) return image;
         return `/uploads/services/${image}`;
     }
 
@@ -72,7 +71,26 @@ export default function AdminServiceCreate({ categories = [] }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post('/admin/services');
+        
+        const payload = new FormData();
+        payload.append('title', data.title || '');
+        payload.append('slug', data.slug || '');
+        payload.append('subtitle', data.subtitle || '');
+        payload.append('meta_title', data.meta_title || '');
+        payload.append('meta_keyword', data.meta_keyword || '');
+        payload.append('meta_description', data.meta_description || '');
+        payload.append('tags', data.tags || '');
+        payload.append('content', data.content || '');
+        payload.append('main_image', data.main_image || '');
+        if (data.main_image_file) payload.append('main_image_file', data.main_image_file);
+        payload.append('image_alt', data.image_alt || '');
+        payload.append('serial_number', data.serial_number || 0);
+        payload.append('status', data.status || 1);
+        payload.append('category_id', data.category_id || '');
+
+        router.post('/admin/services', payload, {
+            preserveScroll: true,
+        });
     };
 
     return (
@@ -85,6 +103,8 @@ export default function AdminServiceCreate({ categories = [] }) {
                 .page-actions { display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap; }
                 .btn-secondary { background: #1d4ed8; color: #fff; border: none; padding: 0.75rem 1.25rem; border-radius: 10px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
                 .btn-secondary:hover { background: #1e40af; }
+                .btn-primary { background: #2563eb; color: #fff; border: none; padding: 0.9rem 1.3rem; border-radius: 14px; font-weight:700; cursor:pointer; }
+                .btn-primary:hover { background:#1d4ed8; }
                 .btn-icon { width: 48px; height: 48px; border-radius: 12px; background: #2563eb; color: #fff; border: none; display: inline-flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer; }
                 .form-card { background: #fff; border-radius: 20px; border: 1px solid #e5e7eb; box-shadow: 0 18px 60px rgba(15,23,42,0.06); padding: 2rem; }
                 .section-grid { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 1.5rem; }

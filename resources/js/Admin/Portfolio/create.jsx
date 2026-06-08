@@ -2,13 +2,25 @@ import AdminLayout from '../layouts/AdminLayout';
 import { router, useForm, Link } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 
+// Simple slugify function
+function slugify(text) {
+    return text
+        .toString()
+        .toLowerCase()
+        .replace(/\s+/g, '-')           // Replace spaces with -
+        .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+        .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+        .replace(/^-+/, '')             // Trim - from start of text
+        .replace(/-+$/, '');            // Trim - from end of text
+}
+
 export default function AdminPortfolioCreate({ categories = [] }) {
     const [imagePreview, setImagePreview] = useState(null);
     const [notification, setNotification] = useState(null);
 
     const { data, setData, processing, errors, post } = useForm({
         title: '',
-
+        slug: '',
         category_id: '',
         image: null,
         clint_name: '',
@@ -45,6 +57,7 @@ export default function AdminPortfolioCreate({ categories = [] }) {
 
         const formData = new FormData();
         formData.append('title', data.title);
+        formData.append('slug', data.slug || '');
         formData.append('category_id', data.category_id || '');
         if (data.image) {
             formData.append('image', data.image);
@@ -117,10 +130,22 @@ export default function AdminPortfolioCreate({ categories = [] }) {
                 <div className="form-card">
                     <form onSubmit={handleSubmit}>
 
-                    <div className="form-group">
-                        <label className="form-label">Title *</label>
-                        <input className={`form-input${errors.title ? ' err' : ''}`} value={data.title} onChange={e => setData('title', e.target.value)} placeholder="Project title" />
-                        {errors.title && <p className="form-error">{errors.title}</p>}
+                    <div className="form-row">
+                        <div className="form-group">
+                            <label className="form-label">Title *</label>
+                            <input className={`form-input${errors.title ? ' err' : ''}`} value={data.title} onChange={e => {
+                                const newTitle = e.target.value;
+                                setData('title', newTitle);
+                                // Auto-generate slug from title
+                                setData('slug', slugify(newTitle));
+                            }} placeholder="Project title" />
+                            {errors.title && <p className="form-error">{errors.title}</p>}
+                        </div>
+                        <div className="form-group">
+                            <label className="form-label">Slug</label>
+                            <input className={`form-input${errors.slug ? ' err' : ''}`} value={data.slug} onChange={e => setData('slug', e.target.value)} placeholder="Auto-generated from title" />
+                            {errors.slug && <p className="form-error">{errors.slug}</p>}
+                        </div>
                     </div>
 
                     <div className="form-row">

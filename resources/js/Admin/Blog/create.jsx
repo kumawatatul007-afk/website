@@ -2,7 +2,16 @@ import AdminLayout from '../layouts/AdminLayout';
 import { useForm, Link } from '@inertiajs/react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
+
+function makeSlug(value) {
+    return value
+        .toString()
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
 
 const s = {
     label: {
@@ -97,6 +106,7 @@ const quillModules = {
 export default function AdminBlogCreate({ categories = [] }) {
     const { data, setData, post, processing, errors } = useForm({
         title:            '',
+        slug:             '',
         content:          '',
         main_image:       '',
         category_id:      '',
@@ -114,24 +124,35 @@ export default function AdminBlogCreate({ categories = [] }) {
     });
 
     const [imgPreview, setImgPreview] = useState('');
+    const [autoSlug, setAutoSlug] = useState('');
     const fileRef = useRef();
+
+    useEffect(() => {
+        const nextSlug = makeSlug(data.title);
+        if ((!data.slug && nextSlug) || data.slug === autoSlug) {
+            setData('slug', nextSlug);
+            setAutoSlug(nextSlug);
+        }
+    }, [data.title]);
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (!file) return;
         setImgPreview(URL.createObjectURL(file));
-        setData('main_image', file.name);
+        setData('main_image', file);
     };
 
     const getPreviewUrl = () => {
         if (imgPreview) return imgPreview;
-        if (!data.main_image) return null;
+        if (!data.main_image || typeof data.main_image !== 'string') return null;
         return data.main_image.startsWith('http') ? data.main_image : `/images/blogs/${data.main_image}`;
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post('/admin/blog');
+        post('/admin/blog', {
+            forceFormData: true,
+        });
     };
 
     const previewUrl = getPreviewUrl();
@@ -208,18 +229,31 @@ export default function AdminBlogCreate({ categories = [] }) {
             <div className="blog-form-card" style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '1.75rem', boxShadow: '0 12px 30px rgba(15,23,42,0.08)' }}>
                 <form onSubmit={handleSubmit}>
 
-                    {/* Title */}
-                    <div style={{ marginBottom: '1.1rem' }}>
-                        <label style={s.label}>Title</label>
-                        <input
-                            className="bp-input"
-                            style={{ ...s.input, ...(errors.title ? { borderColor: '#d63638' } : {}) }}
-                            value={data.title}
-                            onChange={e => setData('title', e.target.value)}
-                            placeholder="Enter post title"
-                        />
-                        {errors.title && <div style={{ color: '#d63638', fontSize: '0.78rem', marginTop: '3px' }}>{errors.title}</div>}
-                    </div>
+                    {/* Title and Slug */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem', marginBottom: '1.1rem' }}>
+                <div>
+                    <label style={s.label}>Title *</label>
+                    <input
+                        className="bp-input"
+                        style={{ ...s.input, ...(errors.title ? { borderColor: '#d63638' } : {}) }}
+                        value={data.title}
+                        onChange={e => setData('title', e.target.value)}
+                        placeholder="Enter post title"
+                    />
+                    {errors.title && <div style={{ color: '#d63638', fontSize: '0.78rem', marginTop: '3px' }}>{errors.title}</div>}
+                </div>
+                <div>
+                    <label style={s.label}>Slug (URL)</label>
+                    <input
+                        className="bp-input"
+                        style={{ ...s.input, ...(errors.slug ? { borderColor: '#d63638' } : {}) }}
+                        value={data.slug}
+                        onChange={e => setData('slug', e.target.value)}
+                        placeholder="Leave blank to auto-generate from title"
+                    />
+                    {errors.slug && <div style={{ color: '#d63638', fontSize: '0.78rem', marginTop: '3px' }}>{errors.slug}</div>}
+                </div>
+            </div>
 
                     {/* Category Name + Image Preview */}
                     <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', marginBottom: '1.25rem' }}>

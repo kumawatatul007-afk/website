@@ -3,7 +3,7 @@ import { router } from '@inertiajs/react';
 import { useState, useRef } from 'react';
 
 /* ── Tag Input Component ── */
-function TagInput({ tags, onChange, placeholder, color = 'pink' }) {
+function TagInput({ tags, onChange, placeholder, color = 'pink', style = {} }) {
     const [input, setInput] = useState('');
     const inputRef = useRef(null);
 
@@ -32,6 +32,7 @@ function TagInput({ tags, onChange, placeholder, color = 'pink' }) {
     return (
         <div
             className="tag-input-box"
+            style={style}
             onClick={() => inputRef.current?.focus()}
         >
             {tags.map((tag, i) => (
@@ -67,11 +68,19 @@ export default function AdminSettingsIndex({ setting }) {
     });
 
     // Tags state — split comma-separated strings into arrays
-    const [keywords, setKeywords] = useState(
-        setting?.strating_keyword
-            ? setting.strating_keyword.split(',').map(s => s.trim()).filter(Boolean)
-            : []
-    );
+    const defaultStartKeywords = [
+        'Best', 'Top', 'Top 10', 'Top 5', 'Top15', 'Top 20', 'Top 25', 'Top 30', 'Top 50', 'Find', 'No1', 'The Best', 'Hire'
+    ];
+
+    const [startingKeywords, setStartingKeywords] = useState(() => {
+        // Check both start_keyword (new) and strating_keyword (old, with typo) for backward compatibility
+        const keywords = setting?.start_keyword || setting?.strating_keyword;
+        if (keywords) {
+            const parsed = keywords.split(',').map(s => s.trim()).filter(Boolean);
+            return parsed.length ? parsed : defaultStartKeywords;
+        }
+        return defaultStartKeywords;
+    });
     const [serviceKeywords, setServiceKeywords] = useState(
         setting?.service_keyword
             ? setting.service_keyword.split(',').map(s => s.trim()).filter(Boolean)
@@ -115,7 +124,7 @@ export default function AdminSettingsIndex({ setting }) {
         formData.append('timing', form.timing);
         formData.append('preloader', form.preloader);
         formData.append('address', form.address);
-        formData.append('strating_keyword', keywords.join(','));
+        formData.append('start_keyword', startingKeywords.join(','));
         formData.append('service_keyword', serviceKeywords.join(','));
         formData.append('locations', locations.join(','));
 
@@ -135,10 +144,17 @@ export default function AdminSettingsIndex({ setting }) {
     };
 
     // Image base URL for logo/favicon
-    const IMG_BASE = 'https://thenikhilsharma.in/public/uploads/settings/';
+    const IMG_BASE = '/uploads/settings/';
+    const getAssetUrl = (fileName) => {
+        if (!fileName) return null;
+        if (fileName.startsWith('http') || fileName.startsWith('/')) {
+            return fileName;
+        }
+        return `${IMG_BASE}${fileName}`;
+    };
 
     return (
-        <AdminLayout title="General Setting">
+        <AdminLayout title="General Settings">
             <style>{`
                 .page-container { max-width: 1140px; width: 100%; margin: 0 auto; padding: 1.8rem 1rem 2.5rem; }
                 .page-panel { background: #ffffff; border-radius: 24px; padding: 1.4rem; box-shadow: 0 18px 60px rgba(15,23,42,0.06); border: 1px solid #e5e7eb; }
@@ -324,7 +340,7 @@ export default function AdminSettingsIndex({ setting }) {
                     {/* Page Header */}
                     <div className="gs-page-header">
                         <div>
-                            <div className="gs-title">General Setting</div>
+                            <div className="gs-title">General Settings</div>
                             <div className="gs-subtitle">Add Settings</div>
                         </div>
                     </div>
@@ -333,7 +349,7 @@ export default function AdminSettingsIndex({ setting }) {
                     <div className="gs-card">
                 <div className="gs-section-label">
                     <span className="pink">GENERAL</span>{' '}
-                    <span className="gray">SETTING</span>
+                    <span className="gray">SETTINGS</span>
                 </div>
 
                 <form onSubmit={handleSubmit}>
@@ -438,30 +454,33 @@ export default function AdminSettingsIndex({ setting }) {
                         </div>
                     </div>
 
-                    {/* Starting Keyword + Locations — tag inputs */}
+                    {/* Starting Keyword + Locations */}
                     <div className="gs-grid-2" style={{ marginBottom: '1.25rem' }}>
                         <div>
                             <label className="gs-label">Starting Keyword</label>
                             <TagInput
-                                tags={keywords}
-                                onChange={setKeywords}
-                                placeholder="Type keyword and press Enter..."
+                                tags={startingKeywords}
+                                onChange={setStartingKeywords}
+                                placeholder="Enter Starting Keyword"
                                 color="pink"
                             />
+                            <div style={{ marginTop: '0.45rem', color: '#6b7280', fontSize: '0.78rem' }}>
+                                Add prefixes like Best, Top, Top 10, Hire, Find.
+                            </div>
                         </div>
                         <div>
                             <label className="gs-label">Locations</label>
                             <TagInput
                                 tags={locations}
                                 onChange={setLocations}
-                                placeholder="Enter Starting Keyword"
+                                placeholder="Enter Location"
                                 color="teal"
                             />
                         </div>
                     </div>
 
-                    {/* Service Keywords — full width tag input */}
-                    <div style={{ marginBottom: '1.25rem' }}>
+                    {/* Service Keywords — hidden */}
+                    <div style={{ marginBottom: '1.25rem', display: 'none' }}>
                         <label className="gs-label">
                             Service Keywords{' '}
                             <span style={{ color: '#9ca3af', fontWeight: 400, fontSize: '0.75rem' }}>
@@ -473,6 +492,7 @@ export default function AdminSettingsIndex({ setting }) {
                             onChange={setServiceKeywords}
                             placeholder="Type service keyword and press Enter..."
                             color="teal"
+                            style={{ minHeight: '46px', padding: '0.35rem 0.5rem' }}
                         />
                     </div>
 
@@ -497,7 +517,7 @@ export default function AdminSettingsIndex({ setting }) {
                             <div className="gs-asset-box" onClick={() => document.getElementById('logo-file').click()} style={{ cursor: 'pointer' }}>
                                 {logoPreview || form.logo ? (
                                     <img
-                                        src={logoPreview || (IMG_BASE + form.logo)}
+                                        src={logoPreview || getAssetUrl(form.logo)}
                                         alt="Logo"
                                         style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
                                         onError={e => { e.target.style.display = 'none'; }}
@@ -525,7 +545,7 @@ export default function AdminSettingsIndex({ setting }) {
                             <div className="gs-asset-box" onClick={() => document.getElementById('favicon-file').click()} style={{ cursor: 'pointer' }}>
                                 {faviconPreview || form.favicon ? (
                                     <img
-                                        src={faviconPreview || (IMG_BASE + form.favicon)}
+                                        src={faviconPreview || getAssetUrl(form.favicon)}
                                         alt="Favicon"
                                         style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
                                         onError={e => { e.target.style.display = 'none'; }}

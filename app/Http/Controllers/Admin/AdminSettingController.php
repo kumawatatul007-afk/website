@@ -27,7 +27,7 @@ class AdminSettingController extends Controller
     {
         $validated = $request->validate([
             'website_title'    => 'required|string|max:251',
-            'strating_keyword' => 'nullable|string',
+            'start_keyword'    => 'nullable|string',
             'service_keyword'  => 'nullable|string',
             'locations'        => 'nullable|string',
             'email'            => 'nullable|email|max:251',
@@ -60,6 +60,11 @@ class AdminSettingController extends Controller
             $validated['favicon'] = $faviconName;
         } elseif ($request->filled('favicon')) {
             $validated['favicon'] = $request->input('favicon');
+        }
+
+        // Also update the old column for backward compatibility
+        if (isset($validated['start_keyword'])) {
+            $validated['strating_keyword'] = $validated['start_keyword'];
         }
 
         $setting = Setting::first();

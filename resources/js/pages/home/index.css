@@ -2016,6 +2016,7 @@ body {
   max-height: 160px;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .keywords-title {
