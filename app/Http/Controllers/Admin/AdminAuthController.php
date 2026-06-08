@@ -39,28 +39,16 @@ class AdminAuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        // Local dev bypass: any credentials log in the first admin user
-        if (app()->environment('local')) {
-            $admin = \App\Models\User::where('role', 'admin')->first();
+        $adminEmail = 'info@thenikhilsharma.in';
+        $adminPassword = '12345678';
+
+        if ($request->email === $adminEmail && $request->password === $adminPassword) {
+            $admin = \App\Models\User::where('email', $adminEmail)->first();
             if ($admin) {
                 Auth::login($admin, $request->boolean('remember'));
                 $request->session()->regenerate();
                 return redirect()->route('admin.dashboard');
             }
-        }
-
-        $credentials = $request->only('email', 'password');
-
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
-            if (!Auth::user()->isAdmin()) {
-                Auth::logout();
-                return back()->withErrors([
-                    'email' => 'You do not have admin access.',
-                ]);
-            }
-
-            $request->session()->regenerate();
-            return redirect()->route('admin.dashboard');
         }
 
         return back()->withErrors([

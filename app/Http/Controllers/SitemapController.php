@@ -20,11 +20,58 @@ class SitemapController extends Controller
             ->header('Cache-Control', 'public, max-age=3600');
     }
 
+    private function generateDynamicKeywords(): array
+    {
+        $keywords = [];
+        $prefixes = ['Best', 'Top', 'Top 10', 'Top 5', 'No1', 'Find', 'Hire'];
+        
+        // Get locations from settings
+        $setting = Setting::first();
+        $locations = [];
+        if ($setting && $setting->locations) {
+            $locations = array_map('trim', explode(',', $setting->locations));
+        }
+        
+        // Fallback locations if none in settings
+        if (empty($locations)) {
+            $locations = ['Jaipur', 'Malviya Nagar', 'Vaishali Nagar', 'C-Scheme', 'Mansarovar', 'Ajmer Road', 'Jagatpura', 'Civil Lines', 'Kalwar Road', 'Jhotwara', 'Ajmer', 'Jodhpur', 'Udaipur', 'Kota', 'Bikaner', 'Alwar', 'Sikar', 'Tonk', 'Pali', 'Nagaur', 'Bhilwara', 'Bangalore', 'Pune', 'Kolkata', 'Delhi', 'Mumbai', 'Hyderabad', 'Chennai'];
+        }
+
+        // Get services from BlogPost (type=1)
+        $services = BlogPost::where('type', 1)
+            ->where('status', 1)
+            ->latest()
+            ->get()
+            ->pluck('title')
+            ->toArray();
+
+        // Fallback services if none in database
+        if (empty($services)) {
+            $services = ['Website Development', 'Mobile App Development', 'E-Commerce Solutions', 'Custom Software Development', 'Digital Marketing', 'UI UX Design'];
+        }
+
+        // Generate keywords by combining prefixes, services, and locations
+        foreach ($prefixes as $prefix) {
+            foreach ($services as $service) {
+                foreach ($locations as $location) {
+                    $keywords[] = "{$prefix} {$service} in {$location}";
+                }
+            }
+        }
+
+        return array_values(array_filter(array_unique($keywords)));
+    }
+
     private function allKeywords(): array
     {
         $setting = Setting::first();
         $all = [];
 
+        // First, add all dynamically generated keywords
+        $dynamicKeywords = $this->generateDynamicKeywords();
+        $all = array_merge($all, $dynamicKeywords);
+
+        // Also keep the old keywords from settings as backup
         if ($setting && $setting->strating_keyword) {
             $all = array_merge($all, array_filter(array_map('trim', explode(',', $setting->strating_keyword))));
         }
@@ -50,8 +97,26 @@ class SitemapController extends Controller
             : [];
 
         $prefixes = array_values(array_unique(array_filter($rawPrefixes, fn($p) => trim($p) !== '')));
+        
+        // If no prefixes from settings, use our full list
+        if (empty($prefixes)) {
+            $prefixes = ['Best', 'Top', 'Top 10', 'Top 5', 'No1', 'Find', 'Hire'];
+        }
 
-        $serviceTypes = [
+        // Get your actual services from database
+        $yourServices = BlogPost::where('type', 1)
+            ->where('status', 1)
+            ->latest()
+            ->pluck('title')
+            ->toArray();
+        
+        // Fallback services if none in database
+        if (empty($yourServices)) {
+            $yourServices = ['Website Development', 'Mobile App Development', 'E-Commerce Solutions', 'Custom Software Development', 'Digital Marketing', 'UI UX Design'];
+        }
+
+        // Merge with existing service types for maximum coverage
+        $serviceTypes = array_merge($yourServices, [
             'Software Developer',
             'Website Developer',
             'IT Freelancer',
@@ -160,7 +225,7 @@ class SitemapController extends Controller
             'Business Intelligence Developer',
             'Power BI Developer',
             'Tableau Developer',
-        ];
+        ]);
 
         $locations = [
             // Jaipur areas
@@ -261,6 +326,21 @@ class SitemapController extends Controller
             'Dadra-Nagar-Haveli','Daman-Diu','Lakshadweep','Chandigarh-UT',
         ];
 
+        // Get your locations from settings and merge them in
+        if ($setting && $setting->locations) {
+            $yourLocations = array_map('trim', explode(',', $setting->locations));
+            // Convert your locations to hyphenated format to match existing
+            $yourLocationsHyphenated = array_map(function($loc) {
+                return str_replace(' ', '-', $loc);
+            }, $yourLocations);
+            $locations = array_merge($yourLocationsHyphenated, $locations);
+        }
+
+        // Deduplicate everything
+        $prefixes = array_unique($prefixes);
+        $serviceTypes = array_unique($serviceTypes);
+        $locations = array_unique($locations);
+
         $tagUrls = [];
         foreach ($prefixes as $prefix) {
             foreach ($serviceTypes as $service) {
@@ -289,11 +369,13 @@ class SitemapController extends Controller
 
         $portfolios = PortfolioItem::where('is_publish', 1)->latest('updated_at')->get();
 
-        $query = Service::whereNotNull('slug')->where('slug', '!=', '');
-        if (Schema::hasColumn('services', 'is_active')) {
-            $query->where('is_active', true);
-        }
-        $services = $query->latest('updated_at')->get();
+        // Fetch services from BlogPost where type=1 (consistent with the rest of the app)
+        $services = BlogPost::where('type', 1)
+            ->whereNotNull('slug')
+            ->where('slug', '!=', '')
+            ->where('status', 1)
+            ->latest('updated_at')
+            ->get();
 
         $keywords    = $this->allKeywords();
         $keywordUrls = array_map(fn($kw) => [
@@ -349,11 +431,13 @@ class SitemapController extends Controller
     /** Services sitemap */
     public function services()
     {
-        $query = Service::whereNotNull('slug')->where('slug', '!=', '');
-        if (Schema::hasColumn('services', 'is_active')) {
-            $query->where('is_active', true);
-        }
-        $services = $query->latest('updated_at')->get();
+        // Fetch services from BlogPost where type=1 (consistent with the rest of the app)
+        $services = BlogPost::where('type', 1)
+            ->whereNotNull('slug')
+            ->where('slug', '!=', '')
+            ->where('status', 1)
+            ->latest('updated_at')
+            ->get();
 
         return $this->xmlResponse('sitemap-services', ['services' => $services]);
     }

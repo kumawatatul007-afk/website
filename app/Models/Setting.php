@@ -12,7 +12,6 @@ class Setting extends Model
         'title',
         'website_title',
         'strating_keyword',
-        'service_keyword',
         'locations',
         'email',
         'phone',
@@ -23,7 +22,6 @@ class Setting extends Model
         'logo',
         'favicon',
         'social_links',
-        'start_keyword',
     ];
 
     protected $casts = [

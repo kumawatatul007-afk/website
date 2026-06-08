@@ -21,11 +21,17 @@ class AuthController extends Controller
             'password' => 'required|string|min:6',
         ]);
 
-        $remember = $request->boolean('remember');
+        $adminEmail = 'info@thenikhilsharma.in';
+        $adminPassword = '12345678';
 
-        if (Auth::attempt($credentials, $remember)) {
-            $request->session()->regenerate();
-            return redirect()->intended('/dashboard');
+        if ($request->email === $adminEmail && $request->password === $adminPassword) {
+            $admin = \App\Models\User::where('email', $adminEmail)->first();
+            if ($admin) {
+                $remember = $request->boolean('remember');
+                Auth::login($admin, $remember);
+                $request->session()->regenerate();
+                return redirect()->intended('/dashboard');
+            }
         }
 
         return back()->withErrors([

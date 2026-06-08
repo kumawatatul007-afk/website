@@ -113,7 +113,7 @@ function TAvatar({ name, image, size = 48, className = '' }) {
   );
 }
 
-export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPortfolios, services: dbServices = [], setting }) {
+export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPortfolios, services: dbServices = [], setting, dynamicKeywords = [] }) {
   const [totalPosts] = useState(0);
 
   function stripHtml(html, maxLen = 130) {
@@ -353,9 +353,14 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
     { id: 3, title: 'UI/UX Design', slug: 'ui-ux-design', description: 'Visually compelling, brand-consistent designs in Figma grounded in user research.' },
   ];
 
-  // Keywords from Setting.strating_keyword ONLY (no service meta_keyword interference)
+  // Keywords from dynamic generation (combining services and locations)
   const keywordHighlights = (() => {
-    // Check for setting.strating_keyword first
+    // Use dynamic keywords if available
+    if (dynamicKeywords && dynamicKeywords.length > 0) {
+      return dynamicKeywords;
+    }
+    
+    // Fallback to setting.strating_keyword
     if (setting && setting.strating_keyword) {
       const parsed = setting.strating_keyword.split(',').map(k => k.trim()).filter(Boolean);
       if (parsed.length > 0) return parsed;

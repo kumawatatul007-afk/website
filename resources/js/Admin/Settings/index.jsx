@@ -56,6 +56,7 @@ function TagInput({ tags, onChange, placeholder, color = 'pink', style = {} }) {
 
 /* ── Main Component ── */
 export default function AdminSettingsIndex({ setting }) {
+    console.log("Setting data:", setting);
     const [form, setForm] = useState({
         website_title:    setting?.website_title ?? '',
         email:            setting?.email         ?? '',
@@ -66,6 +67,7 @@ export default function AdminSettingsIndex({ setting }) {
         logo:             setting?.logo          ?? '',
         favicon:          setting?.favicon       ?? '',
     });
+    console.log("Form state:", form);
 
     // Tags state — split comma-separated strings into arrays
     const defaultStartKeywords = [
@@ -73,19 +75,14 @@ export default function AdminSettingsIndex({ setting }) {
     ];
 
     const [startingKeywords, setStartingKeywords] = useState(() => {
-        // Check both start_keyword (new) and strating_keyword (old, with typo) for backward compatibility
-        const keywords = setting?.start_keyword || setting?.strating_keyword;
+        const keywords = setting?.strating_keyword;
         if (keywords) {
             const parsed = keywords.split(',').map(s => s.trim()).filter(Boolean);
             return parsed.length ? parsed : defaultStartKeywords;
         }
         return defaultStartKeywords;
     });
-    const [serviceKeywords, setServiceKeywords] = useState(
-        setting?.service_keyword
-            ? setting.service_keyword.split(',').map(s => s.trim()).filter(Boolean)
-            : []
-    );
+    const [serviceKeywords, setServiceKeywords] = useState([]);
     const [locations, setLocations] = useState(
         setting?.locations
             ? setting.locations.split(',').map(s => s.trim()).filter(Boolean)
@@ -124,8 +121,7 @@ export default function AdminSettingsIndex({ setting }) {
         formData.append('timing', form.timing);
         formData.append('preloader', form.preloader);
         formData.append('address', form.address);
-        formData.append('start_keyword', startingKeywords.join(','));
-        formData.append('service_keyword', serviceKeywords.join(','));
+        formData.append('strating_keyword', startingKeywords.join(','));
         formData.append('locations', locations.join(','));
 
         if (logoFile) {
@@ -144,13 +140,15 @@ export default function AdminSettingsIndex({ setting }) {
     };
 
     // Image base URL for logo/favicon
-    const IMG_BASE = '/uploads/settings/';
+    const IMG_BASE_UPLOADS = '/uploads/settings/';
+    const IMG_BASE_IMAGES = '/images/';
     const getAssetUrl = (fileName) => {
         if (!fileName) return null;
         if (fileName.startsWith('http') || fileName.startsWith('/')) {
             return fileName;
         }
-        return `${IMG_BASE}${fileName}`;
+        // First try images/ folder (where your logo is)
+        return `${IMG_BASE_IMAGES}${fileName}`;
     };
 
     return (
@@ -520,7 +518,16 @@ export default function AdminSettingsIndex({ setting }) {
                                         src={logoPreview || getAssetUrl(form.logo)}
                                         alt="Logo"
                                         style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
-                                        onError={e => { e.target.style.display = 'none'; }}
+                                        onError={(e) => {
+                                            // If images fails, try uploads/settings
+                                            const target = e.target;
+                                            if (!target.dataset.triedUploads) {
+                                                target.dataset.triedUploads = 'true';
+                                                target.src = `${IMG_BASE_UPLOADS}${form.logo}`;
+                                            } else {
+                                                target.style.display = 'none';
+                                            }
+                                        }}
                                     />
                                 ) : (
                                     <span className="gs-asset-placeholder">🖼</span>
@@ -548,7 +555,16 @@ export default function AdminSettingsIndex({ setting }) {
                                         src={faviconPreview || getAssetUrl(form.favicon)}
                                         alt="Favicon"
                                         style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
-                                        onError={e => { e.target.style.display = 'none'; }}
+                                        onError={(e) => {
+                                            // If images fails, try uploads/settings
+                                            const target = e.target;
+                                            if (!target.dataset.triedUploads) {
+                                                target.dataset.triedUploads = 'true';
+                                                target.src = `${IMG_BASE_UPLOADS}${form.favicon}`;
+                                            } else {
+                                                target.style.display = 'none';
+                                            }
+                                        }}
                                     />
                                 ) : (
                                     <span className="gs-asset-placeholder">🖼</span>

@@ -55,14 +55,9 @@ class PublicController extends Controller
                 ];
             });
 
-        $servicesQuery = \App\Models\Service::query();
-        if (Schema::hasColumn('services', 'is_active')) {
-            $servicesQuery->where('is_active', true);
-        }
-        if (Schema::hasColumn('services', 'sort_order')) {
-            $servicesQuery->orderBy('sort_order', 'asc');
-        }
-        $services = $servicesQuery
+        // Fetch services from BlogPost where type=1 (consistent with the rest of the app)
+        $services = BlogPost::where('type', 1)
+            ->where('status', 1)
             ->latest()
             ->take(6)
             ->get()
@@ -70,10 +65,10 @@ class PublicController extends Controller
                 return [
                     'id'          => $service->id,
                     'title'       => $service->title,
-                    'subtitle'    => $service->subtitle,
+                    'subtitle'    => $service->meta_description ?? '',
                     'slug'        => $service->slug,
-                    'description' => $service->description,
-                    'features'    => $service->features ?? [],
+                    'description' => $service->content ?? '',
+                    'features'    => [],
                     'meta_keyword' => $service->meta_keyword ?? '',
                 ];
             });
@@ -81,12 +76,16 @@ class PublicController extends Controller
         $setting  = \App\Models\Setting::first();
         $siteName = $setting?->website_title ?: 'Nikhil Sharma';
 
+        // Generate dynamic keywords by combining services and locations
+        $dynamicKeywords = $this->generateDynamicKeywords($services, $setting);
+
         return Inertia::render('home/index', [
-            'blogPosts'  => $blogPosts,
-            'portfolios' => $portfolios,
-            'services'   => $services,
-            'setting'    => $setting,
-            'seo'        => [
+            'blogPosts'        => $blogPosts,
+            'portfolios'       => $portfolios,
+            'services'         => $services,
+            'setting'          => $setting,
+            'dynamicKeywords'  => $dynamicKeywords,
+            'seo'              => [
                 'title'       => "{$siteName} | Freelance PHP, React & Flutter Developer — Jaipur, India",
                 'description' => "Hire {$siteName}, a Jaipur-based Full Stack Developer with 8+ years building websites, apps & digital solutions. Fast delivery, affordable rates, real results.",
                 'keywords'    => "Web Developer Jaipur, PHP Developer Jaipur, React Developer India, Full Stack Developer Jaipur, {$siteName}",
@@ -94,6 +93,48 @@ class PublicController extends Controller
                 'robots'      => 'index, follow',
             ],
         ]);
+    }
+
+    /**
+     * Generate dynamic keywords by combining services and locations
+     */
+    private function generateDynamicKeywords($services, $setting)
+    {
+        $keywords = [];
+        $prefixes = ['Best', 'Top', 'Top 10', 'Top 5', 'No1', 'Find', 'Hire'];
+        
+        // Get locations from settings
+        $locations = [];
+        if ($setting && $setting->locations) {
+            $locations = array_map('trim', explode(',', $setting->locations));
+        }
+        
+        // Fallback locations if none in settings
+        if (empty($locations)) {
+            $locations = ['Jaipur', 'Malviya Nagar', 'Vaishali Nagar', 'C-Scheme', 'Mansarovar', 'Ajmer Road', 'Jagatpura', 'Civil Lines', 'Kalwar Road', 'Jhotwara', 'Ajmer', 'Jodhpur', 'Udaipur', 'Kota', 'Bikaner', 'Alwar', 'Sikar', 'Tonk', 'Pali', 'Nagaur', 'Bhilwara', 'Bangalore', 'Pune', 'Kolkata', 'Delhi', 'Mumbai', 'Hyderabad', 'Chennai'];
+        }
+
+        // Get service names
+        $serviceNames = [];
+        foreach ($services as $service) {
+            $serviceNames[] = $service['title'];
+        }
+
+        // Fallback services if none in database
+        if (empty($serviceNames)) {
+          $serviceNames = ['Website Development', 'Mobile App Development', 'E-Commerce Solutions', 'Custom Software Development', 'Digital Marketing', 'UI UX Design'];
+        }
+
+        // Generate keywords by combining prefixes, services, and locations
+        foreach ($prefixes as $prefix) {
+            foreach ($serviceNames as $service) {
+                foreach ($locations as $location) {
+                    $keywords[] = "{$prefix} {$service} in {$location}";
+                }
+            }
+        }
+
+        return array_unique($keywords);
     }
 
     /**
