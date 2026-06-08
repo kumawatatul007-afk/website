@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('portfolio_items', function (Blueprint $table) {
+        Schema::table('portfolio', function (Blueprint $table) {
             $table->text('challenge')->nullable()->after('description');
             $table->text('approach')->nullable()->after('challenge');
             $table->string('tech_stack')->nullable()->after('approach');
@@ -26,7 +26,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('portfolio_items', function (Blueprint $table) {
+        Schema::table('portfolio', function (Blueprint $table) {
             $table->dropColumn(['challenge', 'approach', 'tech_stack', 'result', 'client', 'duration']);
         });
     }

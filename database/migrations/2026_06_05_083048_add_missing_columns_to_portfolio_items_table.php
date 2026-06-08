@@ -11,35 +11,35 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('portfolio_items', function (Blueprint $table) {
-            if (!Schema::hasColumn('portfolio_items', 'category_id')) {
+        Schema::table('portfolio', function (Blueprint $table) {
+            if (!Schema::hasColumn('portfolio', 'category_id')) {
                 $table->unsignedBigInteger('category_id')->nullable()->after('id');
             }
-            if (!Schema::hasColumn('portfolio_items', 'image')) {
+            if (!Schema::hasColumn('portfolio', 'image')) {
                 $table->string('image')->nullable()->after('slug');
             }
-            if (!Schema::hasColumn('portfolio_items', 'clint_name')) {
+            if (!Schema::hasColumn('portfolio', 'clint_name')) {
                 $table->string('clint_name')->nullable()->after('image');
             }
-            if (!Schema::hasColumn('portfolio_items', 'status')) {
+            if (!Schema::hasColumn('portfolio', 'status')) {
                 $table->integer('status')->default(1)->after('clint_name');
             }
-            if (!Schema::hasColumn('portfolio_items', 'date')) {
+            if (!Schema::hasColumn('portfolio', 'date')) {
                 $table->date('date')->nullable()->after('status');
             }
-            if (!Schema::hasColumn('portfolio_items', 'website_link')) {
+            if (!Schema::hasColumn('portfolio', 'website_link')) {
                 $table->string('website_link')->nullable()->after('date');
             }
-            if (!Schema::hasColumn('portfolio_items', 'short_description')) {
+            if (!Schema::hasColumn('portfolio', 'short_description')) {
                 $table->text('short_description')->nullable()->after('website_link');
             }
-            if (!Schema::hasColumn('portfolio_items', 'meta_keyword')) {
+            if (!Schema::hasColumn('portfolio', 'meta_keyword')) {
                 $table->string('meta_keyword')->nullable()->after('description');
             }
-            if (!Schema::hasColumn('portfolio_items', 'meta_description')) {
+            if (!Schema::hasColumn('portfolio', 'meta_description')) {
                 $table->text('meta_description')->nullable()->after('meta_keyword');
             }
-            if (!Schema::hasColumn('portfolio_items', 'is_publish')) {
+            if (!Schema::hasColumn('portfolio', 'is_publish')) {
                 $table->integer('is_publish')->default(1)->after('meta_description');
             }
         });
@@ -50,7 +50,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('portfolio_items', function (Blueprint $table) {
+        Schema::table('portfolio', function (Blueprint $table) {
             $columns = [
                 'category_id',
                 'image',
@@ -64,7 +64,7 @@ return new class extends Migration
                 'is_publish',
             ];
             foreach ($columns as $column) {
-                if (Schema::hasColumn('portfolio_items', $column)) {
+                if (Schema::hasColumn('portfolio', $column)) {
                     $table->dropColumn($column);
                 }
             }

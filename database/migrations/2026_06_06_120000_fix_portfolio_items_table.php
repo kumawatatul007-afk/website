@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // If portfolio_items doesn't exist but portfolio does, rename it
-        if (!Schema::hasTable('portfolio_items') && Schema::hasTable('portfolio')) {
-            Schema::rename('portfolio', 'portfolio_items');
+        // If only the old portfolio_items table exists, rename it to portfolio
+        if (!Schema::hasTable('portfolio') && Schema::hasTable('portfolio_items')) {
+            Schema::rename('portfolio_items', 'portfolio');
         }
         
-        // If neither exists, create portfolio_items from scratch
-        if (!Schema::hasTable('portfolio_items')) {
-            Schema::create('portfolio_items', function (Blueprint $table) {
+        // If neither exists, create portfolio from scratch
+        if (!Schema::hasTable('portfolio')) {
+            Schema::create('portfolio', function (Blueprint $table) {
                 $table->id();
                 $table->unsignedBigInteger('category_id')->nullable();
                 $table->string('title')->nullable();
@@ -52,6 +52,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('portfolio_items');
+        Schema::dropIfExists('portfolio');
     }
 };

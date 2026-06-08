@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('portfolio_items', function (Blueprint $table) {
-            if (!Schema::hasColumn('portfolio_items', 'slug')) {
+        Schema::table('portfolio', function (Blueprint $table) {
+            if (!Schema::hasColumn('portfolio', 'slug')) {
                 $table->string('slug')->unique()->nullable()->after('title');
             }
         });
@@ -23,8 +23,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('portfolio_items', function (Blueprint $table) {
-            if (Schema::hasColumn('portfolio_items', 'slug')) {
+        Schema::table('portfolio', function (Blueprint $table) {
+            if (Schema::hasColumn('portfolio', 'slug')) {
                 $table->dropColumn('slug');
             }
         });
