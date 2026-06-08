@@ -725,22 +725,26 @@ body {
 }
 
 /* Categories Widget */
-.bds-categories {
+.bds-categories,
+.bds-category-list {
   list-style: none;
   padding: 0 1.75rem 0.5rem;
   margin: 0;
 }
 
-.bds-categories li {
+.bds-categories li,
+.bds-category-list li {
   border-bottom: 1px solid #e4e8ee;
   margin-bottom: 0;
 }
 
-.bds-categories li:last-child {
+.bds-categories li:last-child,
+.bds-category-list li:last-child {
   border-bottom: none;
 }
 
-.bds-categories li a {
+.bds-categories li a,
+.bds-category-list li a {
   text-decoration: none;
   color: #2d2d2d;
   display: flex;
@@ -753,11 +757,13 @@ body {
   transition: color 0.2s ease;
 }
 
-.bds-categories li a:hover {
+.bds-categories li a:hover,
+.bds-category-list li a:hover {
   color: var(--wp--preset--color--primary);
 }
 
-.count {
+.count,
+.bds-category-count {
   color: #2d2d2d;
   font-size: 0.95rem;
   font-weight: 500;
@@ -1143,4 +1149,78 @@ body {
 /* Smooth scroll behavior */
 html {
   scroll-behavior: smooth;
+}
+
+/* Author Widget */
+.bds-widget-author {
+  background: #2d2d2d;
+  color: #fff;
+}
+
+.bds-author-wrapper {
+  text-align: center;
+  padding: 1.75rem;
+}
+
+.bds-author-avatar {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  margin: 0 auto 1.25rem;
+  overflow: hidden;
+  border: 5px solid #3d3d3d;
+  background: #3d3d3d;
+}
+
+.bds-author-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.bds-author-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 0.75rem;
+}
+
+.bds-author-bio {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.95rem;
+  color: #b0b0b0;
+  line-height: 1.6;
+  margin: 0 0 1.5rem;
+}
+
+.bds-author-social {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.bds-social-link {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #3d3d3d;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.bds-social-link:hover {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  transform: translateY(-2px);
+}
+
+.bds-social-link svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
 }

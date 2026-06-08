@@ -160,18 +160,34 @@ class PublicController extends Controller
                     'meta_title'       => $post->meta_title ?? '',
                     'meta_keyword'     => $post->meta_keyword ?? '',
                     'category_id'      => $post->category_id,
+                    'category_name'    => optional($post->category)->name ?? '',
                     'tags'             => $post->tags ?? '',
                     'created_at'       => $post->created_at?->toISOString() ?? '',
                     'updated_at'       => $post->updated_at?->toISOString() ?? '',
                 ];
             });
 
+        // Fetch categories with post counts
+        $categories = Category::withCount(['blogs' => function ($query) {
+            $query->where('status', '!=', 'draft')
+                  ->where('status', '!=', 0);
+        }])->get()->map(function ($category) {
+            return [
+                'id'    => $category->id,
+                'name'  => $category->name ?? '',
+                'slug'  => $category->slug ?? '',
+                'count' => $category->blogs_count ?? 0,
+            ];
+        });
+
         $setting  = Setting::first();
         $siteName = $setting?->website_title ?: 'Nikhil Sharma';
 
         return Inertia::render('Blog/index', [
-            'posts' => $posts,
-            'seo'   => [
+            'posts'      => $posts,
+            'categories' => $categories,
+            'setting'    => $setting,
+            'seo'        => [
                 'title'       => "Blog — Web Development Tips & Tutorials | {$siteName}",
                 'description' => "Read the latest articles on web development, app development, UI/UX design, and SEO by {$siteName}, a Jaipur-based Full Stack Developer.",
                 'keywords'    => "Web Development Blog, PHP Tips, React Tutorials, Laravel Blog, {$siteName} Blog",
@@ -256,6 +272,7 @@ class PublicController extends Controller
         return Inertia::render('Blog/BlogDetail/index', [
             'post'        => $postArray,
             'recentPosts' => $recentPosts,
+            'setting'     => $setting,
             'seo'         => [
                 'title'       => $post->title . " | {$siteName}",
                 'description' => $post->meta_description ?: ($descShort ?: "Read {$post->title} on {$siteName}'s blog."),
@@ -295,6 +312,7 @@ class PublicController extends Controller
             'og_title'         => $post->og_title ?? '',
             'og_description'   => $post->og_description ?? '',
             'category_id'      => $post->category_id,
+            'category_name'    => optional($post->category)->name ?? '',
             'tags'             => $post->tags ?? '',
             'created_at'       => $post->created_at?->toISOString() ?? '',
             'updated_at'       => $post->updated_at?->toISOString() ?? '',
@@ -317,6 +335,19 @@ class PublicController extends Controller
                 ];
             });
 
+        // Fetch categories with post counts
+        $categories = Category::withCount(['blogs' => function ($query) {
+            $query->where('status', '!=', 'draft')
+                  ->where('status', '!=', 0);
+        }])->get()->map(function ($category) {
+            return [
+                'id'    => $category->id,
+                'name'  => $category->name ?? '',
+                'slug'  => $category->slug ?? '',
+                'count' => $category->blogs_count ?? 0,
+            ];
+        });
+
         $setting   = Setting::first();
         $siteName  = $setting?->website_title ?: 'Nikhil Sharma';
         $descText  = strip_tags($postArray['description'] ?? '');
@@ -327,6 +358,8 @@ class PublicController extends Controller
         return Inertia::render('Blog/BlogDetailSidebar/index', [
             'post'        => $postArray,
             'recentPosts' => $recentPosts,
+            'categories'  => $categories,
+            'setting'     => $setting,
             'seo'         => [
                 'title'       => $post->title . " | {$siteName}",
                 'description' => $post->meta_description ?: ($descShort ?: "Read {$post->title} on {$siteName}'s blog."),

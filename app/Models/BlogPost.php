@@ -64,6 +64,11 @@ class BlogPost extends Model
 
     protected $appends = [];
 
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
     public function getContentAttribute($value)
     {
         if ($value !== null) {

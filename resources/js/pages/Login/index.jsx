@@ -292,21 +292,7 @@ export default function Login() {
           </p>
         </div>
 
-        <p style={{
-          marginTop: '1rem',
-          textAlign: 'center',
-          fontSize: '0.75rem',
-          color: '#9ca3af'
-        }}>
-          By continuing, you agree to our{' '}
-          <a href="/terms-of-service" style={{ color: '#4f46e5', textDecoration: 'none' }}>
-            Terms of Service
-          </a>
-          {' '}and{' '}
-          <a href="/privacy-policy" style={{ color: '#4f46e5', textDecoration: 'none' }}>
-            Privacy Policy
-          </a>
-        </p>
+
       </div>
 
       <style>{`
