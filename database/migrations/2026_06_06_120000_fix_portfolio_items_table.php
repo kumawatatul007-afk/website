@@ -52,6 +52,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('portfolio');
+        // No rollback behavior. The 'portfolio' table is expected to remain available.
+        // Dropping it here would remove the current live data.
     }
 };

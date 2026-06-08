@@ -1,14 +1,14 @@
 import AdminLayout from '../layouts/AdminLayout';
-import { useForm, Link, router } from '@inertiajs/react';
+import { router, useForm, Link } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 
 export default function AdminPortfolioCreate({ categories = [] }) {
     const [imagePreview, setImagePreview] = useState(null);
     const [notification, setNotification] = useState(null);
 
-    const { data, setData, processing, errors } = useForm({
+    const { data, setData, processing, errors, post } = useForm({
         title: '',
-        slug: '',
+
         category_id: '',
         image: null,
         clint_name: '',
@@ -38,27 +38,36 @@ export default function AdminPortfolioCreate({ categories = [] }) {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        router.post('/admin/portfolio', {
-            title: data.title,
-            category_id: data.category_id || null,
-            image: data.image,
-            clint_name: data.clint_name || null,
-            status: data.status,
-            date: data.date || null,
-            website_link: data.website_link || null,
-            short_description: data.short_description || null,
-            description: data.description || null,
-            meta_keyword: data.meta_keyword || null,
-            meta_description: data.meta_description || null,
-            is_publish: data.is_publish,
-        }, {
+        if (!data.title || String(data.title).trim() === '') {
+            showNotification('Title is required to create a portfolio item.', 'error');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('title', data.title);
+        formData.append('category_id', data.category_id || '');
+        if (data.image) {
+            formData.append('image', data.image);
+        }
+        formData.append('clint_name', data.clint_name || '');
+        formData.append('status', data.status || 'Active');
+        formData.append('date', data.date || '');
+        formData.append('website_link', data.website_link || '');
+        formData.append('short_description', data.short_description || '');
+        formData.append('description', data.description || '');
+        formData.append('meta_keyword', data.meta_keyword || '');
+        formData.append('meta_description', data.meta_description || '');
+        formData.append('is_publish', String(data.is_publish ?? 1));
+
+        router.post('/admin/portfolio', formData, {
             forceFormData: true,
             preserveScroll: true,
             onSuccess: () => {
                 showNotification('Portfolio created successfully!', 'success');
             },
             onError: () => {
-                showNotification('Create failed. Please check the form.', 'error');
+                const firstError = Object.values(errors)[0] || 'Create failed. Please check the form.';
+                showNotification(firstError, 'error');
             },
         });
     };
@@ -92,6 +101,18 @@ export default function AdminPortfolioCreate({ categories = [] }) {
                     <Link href="/admin/portfolio" className="btn-cancel">← Back</Link>
                     <h2 style={{ fontSize:'1.1rem', fontWeight:700, color:'#0f172a' }}>Create Portfolio Item</h2>
                 </div>
+
+                {notification && (
+                    <div style={{ marginBottom:'1rem', padding:'1rem 1.15rem', borderRadius:'10px', background: notification.type === 'success' ? '#ecfdf5' : '#fef2f2', color: notification.type === 'success' ? '#166534' : '#b91c1c', border: notification.type === 'success' ? '1px solid #a7f3d0' : '1px solid #fecaca' }}>
+                        {notification.message}
+                    </div>
+                )}
+
+                {Object.keys(errors).length > 0 && (
+                    <div style={{ marginBottom:'1rem', padding:'1rem 1.15rem', borderRadius:'10px', background:'#fef2f2', color:'#b91c1c', border:'1px solid #fecaca' }}>
+                        Please fix the highlighted errors before submitting.
+                    </div>
+                )}
 
                 <div className="form-card">
                     <form onSubmit={handleSubmit}>
@@ -128,10 +149,19 @@ export default function AdminPortfolioCreate({ categories = [] }) {
                                 type="file"
                                 accept="image/*"
                                 className="form-input"
-                                onChange={e => setData('image', e.target.files[0])}
+                                onChange={e => {
+                                    const file = e.target.files[0];
+                                    setData('image', file);
+                                    if (file) {
+                                        setImagePreview(URL.createObjectURL(file));
+                                    }
+                                }}
                             />
                             {data.image && typeof data.image === 'object' && (
                                 <p className="help-text">Selected file: {data.image.name}</p>
+                            )}
+                            {imagePreview && (
+                                <img src={imagePreview} alt="Preview" style={{ marginTop: '0.8rem', maxWidth: '100%', borderRadius: '10px' }} />
                             )}
                         </div>
                         <div className="form-group">

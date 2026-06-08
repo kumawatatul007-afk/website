@@ -114,9 +114,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Rename back from 'portfolio' to 'portfolio_items'
-        if (Schema::hasTable('portfolio') && !Schema::hasTable('portfolio_items')) {
-            Schema::rename('portfolio', 'portfolio_items');
-        }
+        // No rollback behavior. The current project uses the 'portfolio' table permanently.
+        // Renaming back to 'portfolio_items' would break the existing database schema.
     }
 };
