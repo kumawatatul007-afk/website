@@ -20,12 +20,6 @@ class AdminGalleryController extends Controller
 
         $items = $query->latest()->paginate(12)->withQueryString();
 
-        // Append full URL to each item
-        $items->getCollection()->transform(function ($item) {
-            $item->image_url = $this->resolveImageUrl($item->image);
-            return $item;
-        });
-
         return Inertia::render('Admin/Gallery/index', [
             'items'   => $items,
             'filters' => $request->only(['search']),

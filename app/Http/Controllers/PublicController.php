@@ -55,6 +55,16 @@ class PublicController extends Controller
                 ];
             });
 
+        // Fetch gallery items
+        $gallery = \App\Models\Gallery::latest()
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'image_url' => $item->image_url,
+                ];
+            });
+
         // Fetch services from BlogPost where type=1 (consistent with the rest of the app)
         $services = BlogPost::where('type', 1)
             ->where('status', 1)
@@ -576,6 +586,28 @@ class PublicController extends Controller
                 'title'       => "About {$siteName} — Freelance Developer Jaipur",
                 'description' => "Learn about {$siteName}, a Jaipur-based Full Stack Developer with 8+ years of experience in web development, mobile apps, and UI/UX design.",
                 'keywords'    => "About {$siteName}, Freelance Developer Jaipur, Full Stack Developer India, Web Developer Bio",
+                'canonical'   => url()->current(),
+                'robots'      => 'index, follow',
+            ],
+        ]);
+    }
+
+    /**
+     * Gallery page
+     */
+    public function gallery()
+    {
+        $gallery = \App\Models\Gallery::latest()->get();
+        $setting  = Setting::first();
+        $siteName = $setting?->website_title ?: 'Nikhil Sharma';
+
+        return Inertia::render('Gallery/index', [
+            'gallery' => $gallery,
+            'setting' => $setting,
+            'seo' => [
+                'title'       => "Gallery — {$siteName} | Freelance PHP, React & Flutter Developer",
+                'description' => "Browse the work gallery of {$siteName}, a Jaipur-based Full Stack Developer. View web development, app development, and UI/UX design projects.",
+                'keywords'    => "Work Gallery, Developer Portfolio, {$siteName} Gallery, Jaipur Developer Work",
                 'canonical'   => url()->current(),
                 'robots'      => 'index, follow',
             ],

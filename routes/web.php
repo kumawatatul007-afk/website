@@ -157,6 +157,7 @@ Route::get('/blog', [PublicController::class, 'blog']);
 Route::get('/blog/{slug}', [PublicController::class, 'blogDetailLegacy']);
 Route::get('/blog/{slug}/sidebar', [PublicController::class, 'blogDetailSidebarLegacy']);
 Route::get('/contact', [PublicController::class, 'contact']);
+Route::get('/gallery', [PublicController::class, 'gallery']);
 Route::get('/portfolio/list', [PublicController::class, 'portfolioList']);
 Route::get('/portfolio/{slug}', [PublicController::class, 'portfolioDetail']);
 Route::get('/portfolio', [PublicController::class, 'portfolio']);

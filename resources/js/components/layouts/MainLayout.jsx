@@ -580,6 +580,9 @@ export default function MainLayout({ children }) {
             {/* Portfolio link */}
             <Link href="/portfolio" className={`mora-link${currentPath.startsWith('/portfolio') ? ' active' : ''}`}>Portfolio</Link>
 
+            {/* Gallery link */}
+            <Link href="/gallery" className={`mora-link${currentPath === '/gallery' ? ' active' : ''}`}>Gallery</Link>
+
             <Link href="/contact" className={`mora-link${currentPath === '/contact' ? ' active' : ''}`}>Contact</Link>
           </div>
 
@@ -609,6 +612,7 @@ export default function MainLayout({ children }) {
             <Link href="/services" className={`mora-mobile-link${currentPath === '/services' ? ' active' : ''}`} onClick={() => setMenuOpen(false)}>Services</Link>
             <Link href="/blog"    className={`mora-mobile-link${currentPath.startsWith('/blog') ? ' active' : ''}`} onClick={() => setMenuOpen(false)}>Blog</Link>
             <Link href="/portfolio" className={`mora-mobile-link${currentPath.startsWith('/portfolio') ? ' active' : ''}`} onClick={() => setMenuOpen(false)}>Portfolio</Link>
+            <Link href="/gallery" className={`mora-mobile-link${currentPath === '/gallery' ? ' active' : ''}`} onClick={() => setMenuOpen(false)}>Gallery</Link>
             <Link href="/contact" className={`mora-mobile-link${currentPath === '/contact' ? ' active' : ''}`} onClick={() => setMenuOpen(false)}>Contact</Link>
 
             <div className="mora-mobile-footer">
@@ -667,6 +671,7 @@ export default function MainLayout({ children }) {
             <Link href="/about"     className="mora-footer-col-link">About Me</Link>
             <Link href="/services"  className="mora-footer-col-link">Services</Link>
             <Link href="/portfolio" className="mora-footer-col-link">Portfolio</Link>
+            <Link href="/gallery"   className="mora-footer-col-link">Gallery</Link>
             <Link href="/blog"      className="mora-footer-col-link">Blog</Link>
             <Link href="/contact"   className="mora-footer-col-link">Contact</Link>
           </nav>
