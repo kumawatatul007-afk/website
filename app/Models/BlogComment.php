@@ -12,6 +12,7 @@ class BlogComment extends Model
         'blog_id',
         'name',
         'email',
+        'mobile_no',
         'website',
         'description',
         'is_check',

@@ -111,6 +111,7 @@ function EditModal({ comment, onClose }) {
     const [form, setForm]     = useState({
         name:        comment.name        ?? '',
         email:       comment.email       ?? '',
+        mobile_no:   comment.mobile_no   ?? '',
         website:     comment.website     ?? '',
         description: comment.description ?? '',
         is_publish:  comment.is_publish  ?? 1,
@@ -182,9 +183,16 @@ function EditModal({ comment, onClose }) {
                         </div>
                     </div>
 
-                    <div style={{ marginBottom:'.65rem' }}>
-                        <label style={lbl}>Website</label>
-                        <input style={inpStyle('website')} value={form.website} onChange={e => setForm(f => ({...f, website: e.target.value}))} placeholder="https://example.com" disabled={loading} />
+                    <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'.65rem', marginBottom:'.65rem' }}>
+                        <div>
+                            <label style={lbl}>Mobile</label>
+                            <input style={inpStyle('mobile_no')} value={form.mobile_no} onChange={e => setForm(f => ({...f, mobile_no: e.target.value}))} placeholder="+91 9876543210" disabled={loading} />
+                            {errors.mobile_no && <span style={errTxt}>{errors.mobile_no}</span>}
+                        </div>
+                        <div>
+                            <label style={lbl}>Website</label>
+                            <input style={inpStyle('website')} value={form.website} onChange={e => setForm(f => ({...f, website: e.target.value}))} placeholder="https://example.com" disabled={loading} />
+                        </div>
                     </div>
 
                     <div style={{ marginBottom:'.65rem' }}>

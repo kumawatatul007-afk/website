@@ -1,7 +1,7 @@
 import AdminLayout from '../layouts/AdminLayout';
 import { useForm, Link } from '@inertiajs/react';
 
-const TYPE_OPTIONS = ['blog', 'service', 'portfolio', 'project', 'news'];
+const TYPE_OPTIONS = ['blog', 'service'];
 
 export default function AdminCategoryEdit({ category }) {
     const { data, setData, put, processing, errors } = useForm({

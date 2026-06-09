@@ -41,6 +41,22 @@ class AdminBlogCommentController extends Controller
         ]);
     }
 
+    public function update(Request $request, BlogComment $comment)
+    {
+        $validated = $request->validate([
+            'name'        => 'required|string|max:100',
+            'email'       => 'required|email|max:150',
+            'mobile_no'   => 'nullable|string|max:20',
+            'website'     => 'nullable|url|max:255',
+            'description' => 'required|string|max:2000',
+            'is_publish'  => 'nullable|boolean',
+        ]);
+
+        $comment->update($validated);
+
+        return back()->with('success', 'Comment updated successfully.');
+    }
+
     public function destroy(BlogComment $comment)
     {
         $comment->delete();

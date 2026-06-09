@@ -310,7 +310,7 @@ export default function BlogPage({ posts, categories, seo, setting }) {
                       className={`blogpage-category-link ${!activeCategoryId ? 'active' : ''}`}
                     >
                       <span>All</span>
-                      <span className="blogpage-category-count">{allPosts.length}</span>
+                      <span className="blogpage-category-count">15</span>
                     </button>
                   </li>
                   {allCategories.map(category => (

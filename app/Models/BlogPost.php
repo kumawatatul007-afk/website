@@ -69,6 +69,11 @@ class BlogPost extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function comments()
+    {
+        return $this->hasMany(BlogComment::class, 'blog_id');
+    }
+
     public function getContentAttribute($value)
     {
         if ($value !== null) {

@@ -177,7 +177,7 @@ export default function BlogDetailSidebarPage({ post: serverPost, recentPosts: s
                             <span className="bds-comment-date">{formatDate(comment.created_at)}</span>
                           </div>
                           <div className="bds-comment-content">
-                            <p>{comment.comment}</p>
+                            <p>{comment.description}</p>
                           </div>
                         </div>
                       </li>
@@ -206,10 +206,16 @@ export default function BlogDetailSidebarPage({ post: serverPost, recentPosts: s
                         <input id="email" name="email" type="email" required />
                       </p>
                     </div>
-                    <p className="bds-form-field">
-                      <label htmlFor="url">Website</label>
-                      <input id="url" name="url" type="url" />
-                    </p>
+                    <div className="bds-form-group">
+                      <p className="bds-form-field">
+                        <label htmlFor="mobile">Mobile Number</label>
+                        <input id="mobile" name="mobile_no" type="tel" />
+                      </p>
+                      <p className="bds-form-field">
+                        <label htmlFor="url">Website</label>
+                        <input id="url" name="url" type="url" />
+                      </p>
+                    </div>
                     <p className="bds-form-checkbox">
                       <input id="save-info" name="save-info" type="checkbox" />
                       <label htmlFor="save-info">Save my name, email, and website in this browser for the next time I comment.</label>

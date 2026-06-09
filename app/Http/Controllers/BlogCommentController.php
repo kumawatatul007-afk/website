@@ -14,6 +14,7 @@ class BlogCommentController extends Controller
             'blog_id'     => 'required|integer|exists:blogs,id',
             'name'        => 'required|string|max:100',
             'email'       => 'required|email|max:150',
+            'mobile_no'   => 'nullable|string|max:20',
             'website'     => 'nullable|url|max:255',
             'description' => 'required|string|max:2000',
         ]);

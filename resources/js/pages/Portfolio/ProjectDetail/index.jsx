@@ -159,11 +159,10 @@ export default function ProjectDetailPage({ id, slug, item: dbItem, related }) {
   const [loading, setLoading] = useState(false);
 
   const statsRef    = useRef(null); const statsVis    = useVisible(statsRef);
-  const overRef     = useRef(null); const overVis     = useVisible(overRef);
-  const twoRef      = useRef(null); const twoVis      = useVisible(twoRef);
-  const techRef     = useRef(null); const techVis     = useVisible(techRef);
-  const resultRef   = useRef(null); const resultVis   = useVisible(resultRef);
-  const navRef      = useRef(null); const navVis      = useVisible(navRef);
+          const overRef     = useRef(null); const overVis     = useVisible(overRef);
+          const twoRef      = useRef(null); const twoVis      = useVisible(twoRef);
+          const techRef     = useRef(null); const techVis     = useVisible(techRef);
+          const resultRef   = useRef(null); const resultVis   = useVisible(resultRef);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -838,23 +837,7 @@ export default function ProjectDetailPage({ id, slug, item: dbItem, related }) {
             </div>
           )}
 
-          {/* Prev / Next */}
-          {related && related.length > 0 && (
-            <div className={`pd3-nav${navVis ? ' pd3-vis' : ''}`} ref={navRef}>
-              {related[0] && (
-                <Link href={`/portfolio/${related[0].slug}`} className="pd3-nav-card pd3-nav-prev">
-                  <span className="pd3-nav-label">← Previous</span>
-                  <span className="pd3-nav-title">{related[0].title}</span>
-                </Link>
-              )}
-              {related[1] && (
-                <Link href={`/portfolio/${related[1].slug}`} className="pd3-nav-card pd3-nav-next">
-                  <span className="pd3-nav-label">Next →</span>
-                  <span className="pd3-nav-title">{related[1].title}</span>
-                </Link>
-              )}
-            </div>
-          )}
+
 
           <Link href="/portfolio" className="pd3-back-link">← Back to All Projects</Link>
 

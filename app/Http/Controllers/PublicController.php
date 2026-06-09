@@ -215,7 +215,7 @@ class PublicController extends Controller
      */
     public function blogDetail($slug)
     {
-        $post = BlogPost::where('slug', $slug)->firstOrFail();
+        $post = BlogPost::where('slug', $slug)->with('comments')->firstOrFail();
         
         $postArray = [
             'id'               => $post->id,
@@ -234,6 +234,17 @@ class PublicController extends Controller
             'tags'             => $post->tags ?? '',
             'created_at'       => $post->created_at?->toISOString() ?? '',
             'updated_at'       => $post->updated_at?->toISOString() ?? '',
+            'comments'         => $post->comments->map(function ($comment) {
+                return [
+                    'id'          => $comment->id,
+                    'name'        => $comment->name,
+                    'email'       => $comment->email,
+                    'mobile_no'   => $comment->mobile_no,
+                    'website'     => $comment->website,
+                    'description' => $comment->description,
+                    'created_at'  => $comment->created_at?->toISOString(),
+                ];
+            }),
         ];
 
         // Previous post (older)
@@ -309,7 +320,7 @@ class PublicController extends Controller
      */
     public function blogDetailSidebar($slug)
     {
-        $post = BlogPost::where('slug', $slug)->firstOrFail();
+        $post = BlogPost::where('slug', $slug)->with('comments')->firstOrFail();
         
         $postArray = [
             'id'               => $post->id,
@@ -329,6 +340,17 @@ class PublicController extends Controller
             'tags'             => $post->tags ?? '',
             'created_at'       => $post->created_at?->toISOString() ?? '',
             'updated_at'       => $post->updated_at?->toISOString() ?? '',
+            'comments'         => $post->comments->map(function ($comment) {
+                return [
+                    'id'          => $comment->id,
+                    'name'        => $comment->name,
+                    'email'       => $comment->email,
+                    'mobile_no'   => $comment->mobile_no,
+                    'website'     => $comment->website,
+                    'description' => $comment->description,
+                    'created_at'  => $comment->created_at?->toISOString(),
+                ];
+            }),
         ];
 
         $recentPosts = BlogPost::where('status', '!=', 'draft')

@@ -54,6 +54,7 @@ export default function BlogDetailPage({ post, recentPosts = [], seo }) {
     blog_id:     post?.id ?? '',
     name:        '',
     email:       '',
+    mobile_no:   '',
     website:     '',
     description: '',
     save_info:   false,
@@ -63,7 +64,7 @@ export default function BlogDetailPage({ post, recentPosts = [], seo }) {
     e.preventDefault();
     submitForm('/blog-comment', {
       preserveScroll: true,
-      onSuccess: () => reset('name', 'email', 'website', 'description'),
+      onSuccess: () => reset('name', 'email', 'mobile_no', 'website', 'description'),
     });
   };
 
@@ -336,16 +337,29 @@ export default function BlogDetailPage({ post, recentPosts = [], seo }) {
                     </div>
                   </div>
 
-                  <div className="bd-form-group full-width">
-                    <label htmlFor="url">Website (optional)</label>
-                    <input
-                      id="url"
-                      type="url"
-                      value={data.website}
-                      onChange={e => setData('website', e.target.value)}
-                      placeholder="https://yourwebsite.com"
-                    />
-                    {errors.website && <span className="error-message">{errors.website}</span>}
+                  <div className="bd-form-grid">
+                    <div className="bd-form-group">
+                      <label htmlFor="mobile">Mobile Number (optional)</label>
+                      <input
+                        id="mobile"
+                        type="tel"
+                        value={data.mobile_no}
+                        onChange={e => setData('mobile_no', e.target.value)}
+                        placeholder="+91 98765 43210"
+                      />
+                      {errors.mobile_no && <span className="error-message">{errors.mobile_no}</span>}
+                    </div>
+                    <div className="bd-form-group">
+                      <label htmlFor="url">Website (optional)</label>
+                      <input
+                        id="url"
+                        type="url"
+                        value={data.website}
+                        onChange={e => setData('website', e.target.value)}
+                        placeholder="https://yourwebsite.com"
+                      />
+                      {errors.website && <span className="error-message">{errors.website}</span>}
+                    </div>
                   </div>
 
                   <button type="submit" className="bd-btn-submit" disabled={processing}>
