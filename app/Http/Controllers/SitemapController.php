@@ -37,9 +37,12 @@ class SitemapController extends Controller
             $locations = ['Jaipur', 'Malviya Nagar', 'Vaishali Nagar', 'C-Scheme', 'Mansarovar', 'Ajmer Road', 'Jagatpura', 'Civil Lines', 'Kalwar Road', 'Jhotwara', 'Ajmer', 'Jodhpur', 'Udaipur', 'Kota', 'Bikaner', 'Alwar', 'Sikar', 'Tonk', 'Pali', 'Nagaur', 'Bhilwara', 'Bangalore', 'Pune', 'Kolkata', 'Delhi', 'Mumbai', 'Hyderabad', 'Chennai'];
         }
 
-        // Get services from BlogPost (type=1)
-        $services = BlogPost::where('type', 1)
-            ->where('status', 1)
+        // Get services from Service model
+        $servicesQuery = Service::query();
+        if (Schema::hasColumn('services', 'is_active')) {
+            $servicesQuery->where('is_active', true);
+        }
+        $services = $servicesQuery
             ->latest()
             ->get()
             ->pluck('title')
@@ -104,8 +107,11 @@ class SitemapController extends Controller
         }
 
         // Get your actual services from database
-        $yourServices = BlogPost::where('type', 1)
-            ->where('status', 1)
+        $servicesQuery = Service::query();
+        if (Schema::hasColumn('services', 'is_active')) {
+            $servicesQuery->where('is_active', true);
+        }
+        $yourServices = $servicesQuery
             ->latest()
             ->pluck('title')
             ->toArray();
@@ -369,11 +375,14 @@ class SitemapController extends Controller
 
         $portfolios = PortfolioItem::where('is_publish', 1)->latest('updated_at')->get();
 
-        // Fetch services from BlogPost where type=1 (consistent with the rest of the app)
-        $services = BlogPost::where('type', 1)
+        // Fetch services from Service model
+        $servicesQuery = Service::query();
+        if (Schema::hasColumn('services', 'is_active')) {
+            $servicesQuery->where('is_active', true);
+        }
+        $services = $servicesQuery
             ->whereNotNull('slug')
             ->where('slug', '!=', '')
-            ->where('status', 1)
             ->latest('updated_at')
             ->get();
 
@@ -431,11 +440,14 @@ class SitemapController extends Controller
     /** Services sitemap */
     public function services()
     {
-        // Fetch services from BlogPost where type=1 (consistent with the rest of the app)
-        $services = BlogPost::where('type', 1)
+        // Fetch services from Service model
+        $servicesQuery = Service::query();
+        if (Schema::hasColumn('services', 'is_active')) {
+            $servicesQuery->where('is_active', true);
+        }
+        $services = $servicesQuery
             ->whereNotNull('slug')
             ->where('slug', '!=', '')
-            ->where('status', 1)
             ->latest('updated_at')
             ->get();
 

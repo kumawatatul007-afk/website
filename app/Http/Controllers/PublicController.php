@@ -65,9 +65,12 @@ class PublicController extends Controller
                 ];
             });
 
-        // Fetch services from BlogPost where type=1 (consistent with the rest of the app)
-        $services = BlogPost::where('type', 1)
-            ->where('status', 1)
+        // Fetch services from Service model
+        $servicesQuery = \App\Models\Service::query();
+        if (Schema::hasColumn('services', 'is_active')) {
+            $servicesQuery->where('is_active', true);
+        }
+        $services = $servicesQuery
             ->latest()
             ->take(6)
             ->get()
@@ -75,10 +78,10 @@ class PublicController extends Controller
                 return [
                     'id'          => $service->id,
                     'title'       => $service->title,
-                    'subtitle'    => $service->meta_description ?? '',
+                    'subtitle'    => $service->subtitle ?? '',
                     'slug'        => $service->slug,
-                    'description' => $service->content ?? '',
-                    'features'    => [],
+                    'description' => $service->description ?? '',
+                    'features'    => $service->features ?? [],
                     'meta_keyword' => $service->meta_keyword ?? '',
                 ];
             });
