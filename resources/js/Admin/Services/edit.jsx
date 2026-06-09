@@ -1,6 +1,8 @@
 import AdminLayout from '../layouts/AdminLayout';
 import { useForm, Link, router } from '@inertiajs/react';
 import { useRef, useState, useEffect } from 'react';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 
 function stripHtml(html) {
     if (!html) return '';
@@ -36,6 +38,62 @@ function makeSlug(value) {
         .replace(/^-+|-+$/g, '');
 }
 
+const BlogToolbar = ({ id }) => (
+    <div id={id}>
+        {/* Toolbar Row 1 */}
+        <div className="ck-row">
+            <span className="ql-formats">
+                <button className="ql-link"   title="Link" />
+                <button className="ql-image"  title="Image" />
+                <button className="ql-video"  title="Video" />
+            </span>
+            <span className="ql-formats">
+                <button className="ql-code-block" title="Code Block" />
+            </span>
+            <span className="ql-formats" style={{ marginLeft: 'auto' }}>
+                <button className="ql-source-btn" title="Source">Source</button>
+            </span>
+        </div>
+        {/* Toolbar Row 2 */}
+        <div className="ck-row ck-row2">
+            <span className="ql-formats">
+                <button className="ql-bold"   title="Bold" />
+                <button className="ql-italic" title="Italic" />
+                <button className="ql-strike" title="Strikethrough" />
+                <button className="ql-clean"  title="Remove Format" />
+            </span>
+            <span className="ql-formats">
+                <button className="ql-list" value="ordered" title="Ordered List" />
+                <button className="ql-list" value="bullet"  title="Bullet List" />
+                <button className="ql-indent" value="+1"    title="Increase Indent" />
+                <button className="ql-indent" value="-1"    title="Decrease Indent" />
+                <button className="ql-blockquote"           title="Blockquote" />
+            </span>
+            <span className="ql-formats">
+                <select className="ql-header" title="Heading">
+                    <option value="">Normal</option>
+                    <option value="1">Heading 1</option>
+                    <option value="2">Heading 2</option>
+                    <option value="3">Heading 3</option>
+                    <option value="4">Heading 4</option>
+                    <option value="5">Heading 5</option>
+                    <option value="6">Heading 6</option>
+                </select>
+            </span>
+            <span className="ql-formats">
+                <select className="ql-color" title="Font Color" />
+            </span>
+            <span className="ql-formats">
+                <select className="ql-align" title="Align" />
+            </span>
+        </div>
+    </div>
+);
+
+const quillModules = {
+    toolbar: { container: '#edit-service-toolbar' },
+};
+
 
 export default function AdminServiceEdit({ service }) {
     const { data, setData, processing, errors } = useForm({
@@ -44,7 +102,7 @@ export default function AdminServiceEdit({ service }) {
         meta_description: service.meta_description ?? '',
         meta_keyword:     service.meta_keyword     ?? '',
         tags:             service.tags             ?? '',
-        content:          stripHtml(service.content ?? service.description ?? ''),
+        content:          service.content ?? service.description ?? '',
         main_image:       service.main_image ?? service.image ?? '',
         main_image_file:  null,
         serial_number:    service.serial_number    ?? 100,
@@ -166,6 +224,17 @@ export default function AdminServiceEdit({ service }) {
                 .image-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; color: #6b7280; text-align: center; padding: 0.75rem; }
                 .image-placeholder svg { width: 30px; height: 30px; }
                 .upload-action { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border-radius: 10px; background: #fff; border: 1px solid #d1d5db; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+                /* Quill Editor Styles */
+                #edit-service-toolbar { padding: 4px 6px; background: #f6f7f7; border: 1px solid #c5c5c5; border-bottom: none; border-radius: 3px 3px 0 0; }
+                .ck-row { display: flex; align-items: center; flex-wrap: wrap; gap: 2px; min-height: 30px; }
+                .ck-row2 { border-top: 1px solid #ddd; padding-top: 3px; margin-top: 3px; }
+                #edit-service-toolbar .ql-formats { margin-right: 6px; }
+                #edit-service-toolbar .ql-formats button,
+                #edit-service-toolbar .ql-formats .ql-picker { height: 24px; }
+                .ql-source-btn { font-family: monospace; font-size: 11px !important; width: auto !important; padding: 0 7px !important; color: #444 !important; background: #fff !important; border: 1px solid #c5c5c5 !important; border-radius: 2px; cursor: pointer; height: 22px !important; line-height: 22px !important; }
+                #edit-service-toolbar .ql-picker-label { border: 1px solid #c5c5c5; border-radius: 2px; background: #fff; }
+                #edit-service-toolbar + .ql-container { border-color: #c5c5c5; border-radius: 0 0 3px 3px; min-height: 200px; font-size: 0.9rem; }
+                #edit-service-toolbar + .ql-container .ql-editor { min-height: 180px; line-height: 1.7; color: #2c3338; }
             `}</style>
 
             <div className="page-container">
@@ -291,9 +360,13 @@ export default function AdminServiceEdit({ service }) {
 
                         <div className="form-group full">
                             <label className="form-label">Content (Full Description)</label>
-                            <textarea className="form-textarea" value={data.content}
-                                onChange={e => setData('content', e.target.value)} />
-                            <span className="hint">Plain text only — HTML tags are stripped automatically</span>
+                            <BlogToolbar id="edit-service-toolbar" />
+                            <ReactQuill
+                                theme="snow"
+                                value={data.content}
+                                onChange={val => setData('content', val)}
+                                modules={quillModules}
+                            />
                             {errors.content && <div className="error">{errors.content}</div>}
                         </div>
 
