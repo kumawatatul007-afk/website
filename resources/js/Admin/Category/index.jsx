@@ -2,6 +2,7 @@ import AdminLayout from '../layouts/AdminLayout';
 import { Link, router, useForm } from '@inertiajs/react';
 import Pagination from '../../components/admin/Pagination';
 import { ShimmerTableRows } from '../../components/ShimmerLoader';
+import FlashMessage from '../../components/admin/FlashMessage';
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -491,6 +492,7 @@ export default function AdminCategoryIndex({ categories, filters }) {
                 .card        { animation:fadeSlideUp 0.4s cubic-bezier(0.22,1,0.36,1) 0.1s both; }
             `}</style>
 
+            <FlashMessage />
             <div className="cat-page">
                 <div className="page-header">
                     <h2 className="page-title">

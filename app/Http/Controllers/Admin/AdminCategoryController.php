@@ -76,6 +76,9 @@ class AdminCategoryController extends Controller
 
     public function destroy(Category $category)
     {
+        // Set category_id to null for all related blogs
+        $category->blogs()->update(['category_id' => null]);
+
         $category->delete();
 
         return redirect()->route('admin.categories.index')
