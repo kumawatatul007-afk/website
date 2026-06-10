@@ -281,9 +281,9 @@ export default function AdminBlogEdit({ post, categories = [] }) {
                         </div>
                     </div>
 
-                    {/* Category Name + Image Preview */}
-                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', marginBottom: '1.25rem' }}>
-                        <div style={{ flex: 1 }}>
+                    {/* Category Name + Type + Status + Image Preview */}
+                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
+                        <div style={{ flex: 1, minWidth: '200px' }}>
                             <label style={s.label}>Category Name</label>
                             <select
                                 className="bp-input"
@@ -309,7 +309,19 @@ export default function AdminBlogEdit({ post, categories = [] }) {
                                 <option value={0}>Service</option>
                             </select>
                         </div>
-                        <div>
+                        <div style={{ width: '180px' }}>
+                            <label style={s.label}>Status</label>
+                            <select
+                                className="bp-input"
+                                style={s.input}
+                                value={data.status}
+                                onChange={e => setData('status', Number(e.target.value))}
+                            >
+                                <option value={1}>Published</option>
+                                <option value={0}>Draft</option>
+                            </select>
+                        </div>
+                        <div style={{ width: '180px' }}>
                             <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />
                             <div className="bp-img-box" onClick={() => fileRef.current?.click()}>
                                 {previewUrl ? (

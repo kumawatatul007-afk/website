@@ -255,7 +255,7 @@ export default function AdminBlogCreate({ categories = [] }) {
                 </div>
             </div>
 
-                    {/* Category Name + Image Preview */}
+                    {/* Category Name + Type + Image Preview */}
                     <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', marginBottom: '1.25rem' }}>
                         <div style={{ flex: 1 }}>
                             <label style={s.label}>Category Name</label>
@@ -269,6 +269,30 @@ export default function AdminBlogCreate({ categories = [] }) {
                                 {categories.map(c => (
                                     <option key={c.id} value={c.id}>{c.name}</option>
                                 ))}
+                            </select>
+                        </div>
+                        <div style={{ width: '180px' }}>
+                            <label style={s.label}>Type</label>
+                            <select
+                                className="bp-input"
+                                style={s.input}
+                                value={data.type}
+                                onChange={e => setData('type', Number(e.target.value))}
+                            >
+                                <option value={1}>Blog</option>
+                                <option value={0}>Service</option>
+                            </select>
+                        </div>
+                        <div style={{ width: '180px' }}>
+                            <label style={s.label}>Status</label>
+                            <select
+                                className="bp-input"
+                                style={s.input}
+                                value={data.status}
+                                onChange={e => setData('status', Number(e.target.value))}
+                            >
+                                <option value={1}>Published</option>
+                                <option value={0}>Draft</option>
                             </select>
                         </div>
                         <div>

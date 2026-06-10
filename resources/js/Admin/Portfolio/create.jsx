@@ -24,7 +24,6 @@ export default function AdminPortfolioCreate({ categories = [] }) {
         category_id: '',
         image: null,
         clint_name: '',
-        status: 'Active',
         date: '',
         website_link: '',
         short_description: '',
@@ -63,7 +62,6 @@ export default function AdminPortfolioCreate({ categories = [] }) {
             formData.append('image', data.image);
         }
         formData.append('clint_name', data.clint_name || '');
-        formData.append('status', data.status || 'Active');
         formData.append('date', data.date || '');
         formData.append('website_link', data.website_link || '');
         formData.append('short_description', data.short_description || '');
@@ -159,11 +157,8 @@ export default function AdminPortfolioCreate({ categories = [] }) {
                             </select>
                         </div>
                         <div className="form-group">
-                            <label className="form-label">Status</label>
-                            <select className="form-input" value={data.status} onChange={e => setData('status', e.target.value)}>
-                                <option value="Active">Active</option>
-                                <option value="Inactive">Inactive</option>
-                            </select>
+                            <label className="form-label">Client Name</label>
+                            <input className="form-input" value={data.clint_name} onChange={e => setData('clint_name', e.target.value)} placeholder="Client / Company name" />
                         </div>
                     </div>
 
@@ -190,33 +185,20 @@ export default function AdminPortfolioCreate({ categories = [] }) {
                             )}
                         </div>
                         <div className="form-group">
-                            <label className="form-label">Client Name</label>
-                            <input className="form-input" value={data.clint_name} onChange={e => setData('clint_name', e.target.value)} placeholder="Client / Company name" />
-                        </div>
-                    </div>
-
-                    <div className="form-row">
-                        <div className="form-group">
                             <label className="form-label">Website Link</label>
                             <input className="form-input" value={data.website_link} onChange={e => setData('website_link', e.target.value)} placeholder="https://..." />
+                            <div style={{ marginTop: '0.7rem' }}>
+                                <label className="form-label">Date</label>
+                                <input type="date" className="form-input" value={data.date} onChange={e => setData('date', e.target.value)} />
+                            </div>
                         </div>
-                        <div className="form-group">
-                            <label className="form-label">Date</label>
-                            <input type="date" className="form-input" value={data.date} onChange={e => setData('date', e.target.value)} />
-                        </div>
-                    </div>
-
-                    <div className="form-group">
-                        <label className="form-label">Short Description</label>
-                        <input className="form-input" value={data.short_description} onChange={e => setData('short_description', e.target.value)} placeholder="Brief one-line description" />
-                    </div>
-
-                    <div className="form-group">
-                        <label className="form-label">Full Description</label>
-                        <textarea className="form-input" rows={4} value={data.description} onChange={e => setData('description', e.target.value)} placeholder="Detailed project description..." style={{ resize:'vertical' }} />
                     </div>
 
                     <div className="form-row">
+                        <div className="form-group">
+                            <label className="form-label">Short Description</label>
+                            <input className="form-input" value={data.short_description} onChange={e => setData('short_description', e.target.value)} placeholder="Brief one-line description" />
+                        </div>
                         <div className="form-group">
                             <label className="form-label">Published</label>
                             <select className="form-input" value={data.is_publish} onChange={e => setData('is_publish', parseInt(e.target.value))}>
@@ -226,15 +208,22 @@ export default function AdminPortfolioCreate({ categories = [] }) {
                         </div>
                     </div>
 
+                    <div className="form-group">
+                        <label className="form-label">Full Description</label>
+                        <textarea className="form-input" rows={4} value={data.description} onChange={e => setData('description', e.target.value)} placeholder="Detailed project description..." style={{ resize:'vertical' }} />
+                    </div>
+
                     <div className="section-label">SEO / Meta</div>
 
-                    <div className="form-group">
-                        <label className="form-label">Meta Description</label>
-                        <input className="form-input" value={data.meta_description} onChange={e => setData('meta_description', e.target.value)} placeholder="Meta description" />
-                    </div>
-                    <div className="form-group">
-                        <label className="form-label">Meta Keywords</label>
-                        <input className="form-input" value={data.meta_keyword} onChange={e => setData('meta_keyword', e.target.value)} placeholder="keyword1, keyword2" />
+                    <div className="form-row">
+                        <div className="form-group">
+                            <label className="form-label">Meta Description</label>
+                            <input className="form-input" value={data.meta_description} onChange={e => setData('meta_description', e.target.value)} placeholder="Meta description" />
+                        </div>
+                        <div className="form-group">
+                            <label className="form-label">Meta Keywords</label>
+                            <input className="form-input" value={data.meta_keyword} onChange={e => setData('meta_keyword', e.target.value)} placeholder="keyword1, keyword2" />
+                        </div>
                     </div>
 
                     <div style={{ display:'flex', gap:'0.75rem', marginTop:'0.5rem', paddingTop:'1rem', borderTop:'1px solid #f1f5f9' }}>

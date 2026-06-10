@@ -106,7 +106,18 @@ export default function AdminUsersCreate() {
                         </div>
                         <div className="form-group">
                             <label className="form-label">Phone</label>
-                            <input className="form-input" value={data.phone} onChange={e => setData('phone', e.target.value)} placeholder="+1 234 567 8900" />
+                            <input 
+                                className="form-input" 
+                                value={data.phone} 
+                                onChange={e => {
+                                    let val = e.target.value.replace(/\D/g, '');
+                                    if (val.length > 10) val = val.slice(0,10);
+                                    setData('phone', val);
+                                }} 
+                                placeholder="9999999999"
+                                maxLength={10}
+                                inputMode="numeric"
+                            />
                         </div>
                     </div>
 

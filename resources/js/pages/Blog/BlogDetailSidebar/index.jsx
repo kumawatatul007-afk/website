@@ -209,7 +209,11 @@ export default function BlogDetailSidebarPage({ post: serverPost, recentPosts: s
                     <div className="bds-form-group">
                       <p className="bds-form-field">
                         <label htmlFor="mobile">Mobile Number</label>
-                        <input id="mobile" name="mobile_no" type="tel" />
+                        <input id="mobile" name="mobile_no" type="tel" maxLength={10} inputMode="numeric" onChange={(e) => {
+                          let val = e.target.value.replace(/\D/g, '');
+                          if (val.length > 10) val = val.slice(0, 10);
+                          e.target.value = val;
+                        }} />
                       </p>
                       <p className="bds-form-field">
                         <label htmlFor="url">Website</label>

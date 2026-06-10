@@ -186,7 +186,11 @@ function EditModal({ comment, onClose }) {
                     <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'.65rem', marginBottom:'.65rem' }}>
                         <div>
                             <label style={lbl}>Mobile</label>
-                            <input style={inpStyle('mobile_no')} value={form.mobile_no} onChange={e => setForm(f => ({...f, mobile_no: e.target.value}))} placeholder="+91 9876543210" disabled={loading} />
+                            <input style={inpStyle('mobile_no')} value={form.mobile_no} onChange={e => {
+                              let val = e.target.value.replace(/\D/g, '');
+                              if (val.length > 10) val = val.slice(0, 10);
+                              setForm(f => ({...f, mobile_no: val}));
+                            }} placeholder="+91 9876543210" disabled={loading} maxLength={10} inputMode="numeric" />
                             {errors.mobile_no && <span style={errTxt}>{errors.mobile_no}</span>}
                         </div>
                         <div>

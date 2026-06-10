@@ -20,26 +20,36 @@ const SEO = ({
     locale = 'en_IN',
     noindex = false
 }) => {
-    const { props } = usePage();
-    const seoData = props.seo || {};
+    const { props } = usePage()
+    const seoData = props.seo || {}
+    const setting = props.setting || {}
 
-    const siteName      = 'Nikhil Sharma';
-    const siteUrl       = typeof window !== 'undefined' ? window.location.origin : 'https://thenikhilsharma.in';
-    const defaultAuthor = 'Nikhil Sharma';
+    const siteName      = setting.website_title || 'Nikhil Sharma'
+    const siteUrl       = typeof window !== 'undefined' ? window.location.origin : 'https://thenikhilsharma.in'
+    const defaultAuthor = 'Nikhil Sharma'
+
+    // Get favicon URL from settings
+    const getFaviconUrl = () => {
+        if (!setting.favicon) return '/favicon.ico'
+        if (setting.favicon.startsWith('http') || setting.favicon.startsWith('/')) {
+            return setting.favicon
+        }
+        return `/uploads/settings/${setting.favicon}`
+    }
 
     // Dynamic Title Formatting
-    const title     = propTitle || seoData.title || siteName;
-    const fullTitle = title.includes(siteName) ? title : `${title} | ${siteName}`;
+    const title     = propTitle || seoData.title || siteName
+    const fullTitle = title.includes(siteName) ? title : `${title} | ${siteName}`
 
-    const defaultDescription = 'Freelance Full Stack Developer & UI/UX Designer based in Jaipur, Rajasthan. Offering high-quality web and mobile app development at affordable prices.';
-    const description = propDescription || seoData.description || defaultDescription;
+    const defaultDescription = 'Freelance Full Stack Developer & UI/UX Designer based in Jaipur, Rajasthan. Offering high-quality web and mobile app development at affordable prices.'
+    const description = propDescription || seoData.description || defaultDescription
 
-    const keywords   = propKeywords || seoData.keywords || 'Nikhil Sharma, Software Developer Jaipur, PHP Developer, React Developer, Website Developer Jaipur, Full Stack Developer India';
-    const currentUrl = typeof window !== 'undefined' ? window.location.href : siteUrl;
-    const canonical  = propCanonical || seoData.canonical || currentUrl;
+    const keywords   = propKeywords || seoData.keywords || 'Nikhil Sharma, Software Developer Jaipur, PHP Developer, React Developer, Website Developer Jaipur, Full Stack Developer India'
+    const currentUrl = typeof window !== 'undefined' ? window.location.href : siteUrl
+    const canonical  = propCanonical || seoData.canonical || currentUrl
     // Use a proper 1200x630 social card — NOT the logo PNG
-    const ogImage    = propOgImage || seoData.og_image || `${siteUrl}/images/og-social-card.jpg`;
-    const author     = propAuthor || seoData.author || defaultAuthor;
+    const ogImage    = propOgImage || seoData.og_image || `${siteUrl}/images/og-social-card.jpg`
+    const author     = propAuthor || seoData.author || defaultAuthor
     const robots     = noindex ? 'noindex, nofollow' : (propRobots || seoData.robots || 'index, follow');
 
     // ── JSON-LD Schemas ──────────────────────────────────────────────────────
@@ -222,8 +232,8 @@ const SEO = ({
             <meta name="ICBM" content="26.9124, 75.7873" />
 
             {/* Favicon */}
-            <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
-            <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+        <link rel="shortcut icon" href={getFaviconUrl()} type="image/x-icon" />
+        <link rel="icon" href={getFaviconUrl()} type="image/x-icon" />
 
             {/* Open Graph / Facebook — explicit 1200x630 */}
             <meta property="og:type" content={ogType} />

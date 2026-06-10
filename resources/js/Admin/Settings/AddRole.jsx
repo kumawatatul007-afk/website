@@ -1,5 +1,5 @@
 import AdminLayout from '../layouts/AdminLayout';
-import { router } from '@inertiajs/react';
+import { useForm } from '@inertiajs/react';
 import { useState } from 'react';
 
 export default function AdminSettingsAddRole({ roles }) {
@@ -9,16 +9,14 @@ export default function AdminSettingsAddRole({ roles }) {
 
     // Modal states
     const [addModal, setAddModal] = useState(false);
-    const [addForm, setAddForm] = useState({ name: '' });
-    const [addLoading, setAddLoading] = useState(false);
+    const addForm = useForm({ name: '' });
 
     const [editModal, setEditModal] = useState(false);
-    const [editForm, setEditForm] = useState({});
-    const [editLoading, setEditLoading] = useState(false);
+    const editForm = useForm({ id: null, name: '' });
 
     const [deleteModal, setDeleteModal] = useState(false);
     const [deleteItem, setDeleteItem] = useState(null);
-    const [deleteLoading, setDeleteLoading] = useState(false);
+    const deleteForm = useForm({});
 
     // Filter and paginate
     const filteredRoles = roles?.filter(role =>
@@ -31,39 +29,35 @@ export default function AdminSettingsAddRole({ roles }) {
 
     // Add functions
     const openAdd = () => {
-        setAddForm({ name: '' });
+        addForm.setData('name', '');
+        addForm.clearErrors();
         setAddModal(true);
     };
 
     const handleAddSubmit = (e) => {
         e.preventDefault();
-        setAddLoading(true);
-        router.post('/admin/settings/user-management/add-role', addForm, {
+        addForm.post('/admin/settings/user-management/add-role', {
             preserveScroll: true,
             onSuccess: () => {
-                setAddLoading(false);
                 setAddModal(false);
             },
-            onError: () => setAddLoading(false),
         });
     };
 
     // Edit functions
     const openEdit = (role) => {
-        setEditForm({ ...role });
+        editForm.setData({ id: role.id, name: role.name });
+        editForm.clearErrors();
         setEditModal(true);
     };
 
     const handleEditSubmit = (e) => {
         e.preventDefault();
-        setEditLoading(true);
-        router.put(`/admin/settings/user-management/add-role/${editForm.id}`, editForm, {
+        editForm.put(`/admin/settings/user-management/add-role/${editForm.data.id}`, {
             preserveScroll: true,
             onSuccess: () => {
-                setEditLoading(false);
                 setEditModal(false);
             },
-            onError: () => setEditLoading(false),
         });
     };
 
@@ -74,14 +68,11 @@ export default function AdminSettingsAddRole({ roles }) {
     };
 
     const confirmDelete = () => {
-        setDeleteLoading(true);
-        router.delete(`/admin/settings/user-management/add-role/${deleteItem.id}`, {
+        deleteForm.delete(`/admin/settings/user-management/add-role/${deleteItem.id}`, {
             preserveScroll: true,
             onSuccess: () => {
-                setDeleteLoading(false);
                 setDeleteModal(false);
             },
-            onError: () => setDeleteLoading(false),
         });
     };
 
@@ -392,6 +383,14 @@ export default function AdminSettingsAddRole({ roles }) {
                     outline: none;
                     border-color: #3b82f6;
                 }
+                .form-control.error {
+                    border-color: #dc2626;
+                }
+                .error-text {
+                    font-size: 0.75rem;
+                    color: #dc2626;
+                    margin-top: 0.25rem;
+                }
                 .btn-cancel {
                     background: #e5e7eb;
                     color: #374151;
@@ -573,17 +572,18 @@ export default function AdminSettingsAddRole({ roles }) {
                                 <div className="form-group">
                                     <label className="form-label">Name *</label>
                                     <input
-                                        className="form-control"
-                                        value={addForm.name}
-                                        onChange={(e) => setAddForm(f => ({ ...f, name: e.target.value }))}
+                                        className={`form-control ${addForm.errors.name ? 'error' : ''}`}
+                                        value={addForm.data.name}
+                                        onChange={(e) => addForm.setData('name', e.target.value)}
                                         placeholder="e.g. editor, manager"
                                     />
+                                    {addForm.errors.name && <div className="error-text">{addForm.errors.name}</div>}
                                 </div>
                             </div>
                             <div className="modal-footer">
                                 <button type="button" className="btn-cancel" onClick={() => setAddModal(false)}>Cancel</button>
-                                <button type="submit" className="btn-primary" disabled={addLoading}>
-                                    {addLoading ? 'Saving...' : 'Save'}
+                                <button type="submit" className="btn-primary" disabled={addForm.processing}>
+                                    {addForm.processing ? 'Saving...' : 'Save'}
                                 </button>
                             </div>
                         </form>
@@ -604,16 +604,17 @@ export default function AdminSettingsAddRole({ roles }) {
                                 <div className="form-group">
                                     <label className="form-label">Name *</label>
                                     <input
-                                        className="form-control"
-                                        value={editForm.name || ''}
-                                        onChange={(e) => setEditForm(f => ({ ...f, name: e.target.value }))}
+                                        className={`form-control ${editForm.errors.name ? 'error' : ''}`}
+                                        value={editForm.data.name}
+                                        onChange={(e) => editForm.setData('name', e.target.value)}
                                     />
+                                    {editForm.errors.name && <div className="error-text">{editForm.errors.name}</div>}
                                 </div>
                             </div>
                             <div className="modal-footer">
                                 <button type="button" className="btn-cancel" onClick={() => setEditModal(false)}>Cancel</button>
-                                <button type="submit" className="btn-primary" disabled={editLoading}>
-                                    {editLoading ? 'Saving...' : 'Save'}
+                                <button type="submit" className="btn-primary" disabled={editForm.processing}>
+                                    {editForm.processing ? 'Saving...' : 'Save'}
                                 </button>
                             </div>
                         </form>
@@ -634,8 +635,8 @@ export default function AdminSettingsAddRole({ roles }) {
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn-cancel" onClick={() => setDeleteModal(false)}>Cancel</button>
-                            <button type="button" className="btn-danger" onClick={confirmDelete} disabled={deleteLoading}>
-                                {deleteLoading ? 'Deleting...' : 'Delete'}
+                            <button type="button" className="btn-danger" onClick={confirmDelete} disabled={deleteForm.processing}>
+                                {deleteForm.processing ? 'Deleting...' : 'Delete'}
                             </button>
                         </div>
                     </div>

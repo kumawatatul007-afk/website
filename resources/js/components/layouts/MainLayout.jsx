@@ -82,10 +82,17 @@ export default function MainLayout({ children }) {
 
   // ── Settings from DB ──────────────────────────────────────────────────────
   const setting     = props.setting || {}
-  const siteName    = setting.title || setting.website_title || 'Nikhil Sharma'
-  const logoUrl     = setting.logo
-    ? `/storage/${setting.logo}`
-    : '/images/logo.png'
+  const siteName    = setting.website_title || 'Nikhil Sharma'
+  
+  // Get logo URL from settings
+  const getLogoUrl = () => {
+    if (!setting.logo) return '/images/logo.png'
+    if (setting.logo.startsWith('http') || setting.logo.startsWith('/')) {
+      return setting.logo
+    }
+    return `/uploads/settings/${setting.logo}`
+  }
+  const logoUrl = getLogoUrl()
   const siteEmail   = setting.email   || 'technikhilsharma7@gmail.com'
   const sitePhone   = setting.phone || '+91 95299 21038'
   const siteAddress = setting.address || 'Nikhil Sharma, Jaipur, Rajasthan, India'

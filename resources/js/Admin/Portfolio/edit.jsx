@@ -27,7 +27,6 @@ const { data, setData, processing, errors, reset, put } = useForm({
     category_id: item?.category_id || '',
     image: null,
     clint_name: item?.clint_name || '',
-    status: item?.status || 'Active',
     date: item?.date ? item.date.split('T')[0] : '',
     website_link: item?.website_link || '',
     short_description: item?.short_description || '',
@@ -94,7 +93,6 @@ const handleSubmit = (e) => {
     payload.append('category_id', data.category_id || '');
     if (data.image) payload.append('image', data.image);
     payload.append('clint_name', data.clint_name || '');
-    payload.append('status', data.status || 'Active');
     payload.append('date', data.date || '');
     payload.append('website_link', data.website_link || '');
     payload.append('short_description', data.short_description || '');
@@ -228,67 +226,6 @@ const handleSubmit = (e) => {
                             </div>
 
                             <div className="form-group">
-                                <label className="form-label">Status</label>
-
-                                <select
-                                    name="status"
-                                    className={`form-input ${errors.status ? 'err' : ''}`}
-                                    value={data.status}
-                                    onChange={(e) => setData('status', e.target.value)}
-                                >
-                                    <option value="Active">Active</option>
-                                    <option value="Inactive">Inactive</option>
-                                </select>
-
-                                {errors.status && (
-                                    <p className="form-error">{errors.status}</p>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Image Upload Section */}
-                        <div className="section-label">Portfolio Image</div>
-
-                        <div className="form-group">
-                            <div className="image-upload-area">
-                                {imagePreview && (
-                                    <div className="image-preview-container">
-                                        <img
-                                            src={imagePreview}
-                                            alt="Portfolio preview"
-                                            className="image-preview"
-                                            onError={(e) => {
-                                                e.target.onerror = null;
-                                                e.target.src = `/uploads/portfolio/${item.image}`;
-                                            }}
-                                        />
-                                        <span className="image-label">Current Image</span>
-                                    </div>
-                                )}
-
-                                <input
-                                    type="file"
-                                    name="image"
-                                    accept="image/*"
-                                    className={`form-input ${errors.image ? 'err' : ''}`}
-                                    onChange={handleImageChange}
-                                />
-
-                                <p className="help-text">
-                                    Upload a new image to replace the current one (Max 5MB, JPG/PNG)
-                                </p>
-                            </div>
-
-                            {errors.image && (
-                                <p className="form-error">{errors.image}</p>
-                            )}
-                        </div>
-
-                        {/* Project Details Section */}
-                        <div className="section-label">Project Details</div>
-
-                        <div className="form-row">
-                            <div className="form-group">
                                 <label className="form-label">Client Name</label>
 
                                 <input
@@ -304,25 +241,46 @@ const handleSubmit = (e) => {
                                     <p className="form-error">{errors.clint_name}</p>
                                 )}
                             </div>
-
-                            <div className="form-group">
-                                <label className="form-label">Project Date</label>
-
-                                <input
-                                    type="date"
-                                    name="date"
-                                    className={`form-input ${errors.date ? 'err' : ''}`}
-                                    value={data.date || ''}
-                                    onChange={(e) => setData('date', e.target.value)}
-                                />
-
-                                {errors.date && (
-                                    <p className="form-error">{errors.date}</p>
-                                )}
-                            </div>
                         </div>
 
+                        {/* Image Upload Section */}
                         <div className="form-row">
+                            <div className="form-group">
+                                <div className="image-upload-area">
+                                    <label className="form-label">Portfolio Image</label>
+                                    {imagePreview && (
+                                        <div className="image-preview-container">
+                                            <img
+                                                src={imagePreview}
+                                                alt="Portfolio preview"
+                                                className="image-preview"
+                                                onError={(e) => {
+                                                    e.target.onerror = null;
+                                                    e.target.src = `/uploads/portfolio/${item.image}`;
+                                                }}
+                                            />
+                                            <span className="image-label">Current Image</span>
+                                        </div>
+                                    )}
+
+                                    <input
+                                        type="file"
+                                        name="image"
+                                        accept="image/*"
+                                        className={`form-input ${errors.image ? 'err' : ''}`}
+                                        onChange={handleImageChange}
+                                    />
+
+                                    <p className="help-text">
+                                        Upload a new image to replace the current one (Max 5MB, JPG/PNG)
+                                    </p>
+                                </div>
+
+                                {errors.image && (
+                                    <p className="form-error">{errors.image}</p>
+                                )}
+                            </div>
+
                             <div className="form-group">
                                 <label className="form-label">Website Link</label>
 
@@ -339,8 +297,27 @@ const handleSubmit = (e) => {
                                     <p className="form-error">{errors.website_link}</p>
                                 )}
                                 <p className="help-text">Full URL including https://</p>
-                            </div>
 
+                                <div style={{ marginTop: '0.7rem' }}>
+                                    <label className="form-label">Project Date</label>
+
+                                    <input
+                                        type="date"
+                                        name="date"
+                                        className={`form-input ${errors.date ? 'err' : ''}`}
+                                        value={data.date || ''}
+                                        onChange={(e) => setData('date', e.target.value)}
+                                    />
+
+                                    {errors.date && (
+                                        <p className="form-error">{errors.date}</p>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Project Details Section */}
+                        <div className="form-row">
                             <div className="form-group">
                                 <label className="form-label">Short Description</label>
 
@@ -355,6 +332,24 @@ const handleSubmit = (e) => {
 
                                 {errors.short_description && (
                                     <p className="form-error">{errors.short_description}</p>
+                                )}
+                            </div>
+
+                            <div className="form-group">
+                                <label className="form-label">Publish Status</label>
+
+                                <select
+                                    name="is_publish"
+                                    className={`form-input ${errors.is_publish ? 'err' : ''}`}
+                                    value={data.is_publish}
+                                    onChange={(e) => setData('is_publish', Number(e.target.value))}
+                                >
+                                    <option value={1}>Published (Visible to public)</option>
+                                    <option value={0}>Draft (Hidden from public)</option>
+                                </select>
+
+                                {errors.is_publish && (
+                                    <p className="form-error">{errors.is_publish}</p>
                                 )}
                             </div>
                         </div>
@@ -376,64 +371,48 @@ const handleSubmit = (e) => {
                             )}
                         </div>
 
-                        <div className="form-group">
-                            <label className="form-label">Publish Status</label>
-
-                            <select
-                                name="is_publish"
-                                className={`form-input ${errors.is_publish ? 'err' : ''}`}
-                                value={data.is_publish}
-                                onChange={(e) => setData('is_publish', Number(e.target.value))}
-                            >
-                                <option value={1}>Published (Visible to public)</option>
-                                <option value={0}>Draft (Hidden from public)</option>
-                            </select>
-
-                            {errors.is_publish && (
-                                <p className="form-error">{errors.is_publish}</p>
-                            )}
-                        </div>
-
                         {/* SEO Section */}
                         <div className="section-label">SEO & Meta Information</div>
 
-                        <div className="form-group">
-                            <label className="form-label">Meta Description</label>
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label className="form-label">Meta Description</label>
 
-                            <textarea
-                                name="meta_description"
-                                rows="3"
-                                className={`form-input ${errors.meta_description ? 'err' : ''}`}
-                                value={data.meta_description}
-                                onChange={(e) => setData('meta_description', e.target.value)}
-                                placeholder="Brief description for search engines (150-160 characters)"
-                                maxLength="160"
-                            />
+                                <textarea
+                                    name="meta_description"
+                                    rows="3"
+                                    className={`form-input ${errors.meta_description ? 'err' : ''}`}
+                                    value={data.meta_description}
+                                    onChange={(e) => setData('meta_description', e.target.value)}
+                                    placeholder="Brief description for search engines (150-160 characters)"
+                                    maxLength="160"
+                                />
 
-                            {errors.meta_description && (
-                                <p className="form-error">{errors.meta_description}</p>
-                            )}
-                            <p className="help-text">
-                                {data.meta_description.length}/160 characters
-                            </p>
-                        </div>
+                                {errors.meta_description && (
+                                    <p className="form-error">{errors.meta_description}</p>
+                                )}
+                                <p className="help-text">
+                                    {data.meta_description.length}/160 characters
+                                </p>
+                            </div>
 
-                        <div className="form-group">
-                            <label className="form-label">Meta Keywords</label>
+                            <div className="form-group">
+                                <label className="form-label">Meta Keywords</label>
 
-                            <input
-                                type="text"
-                                name="meta_keyword"
-                                className={`form-input ${errors.meta_keyword ? 'err' : ''}`}
-                                value={data.meta_keyword}
-                                onChange={(e) => setData('meta_keyword', e.target.value)}
-                                placeholder="keyword1, keyword2, keyword3"
-                            />
+                                <input
+                                    type="text"
+                                    name="meta_keyword"
+                                    className={`form-input ${errors.meta_keyword ? 'err' : ''}`}
+                                    value={data.meta_keyword}
+                                    onChange={(e) => setData('meta_keyword', e.target.value)}
+                                    placeholder="keyword1, keyword2, keyword3"
+                                />
 
-                            {errors.meta_keyword && (
-                                <p className="form-error">{errors.meta_keyword}</p>
-                            )}
-                            <p className="help-text">Separate keywords with commas</p>
+                                {errors.meta_keyword && (
+                                    <p className="form-error">{errors.meta_keyword}</p>
+                                )}
+                                <p className="help-text">Separate keywords with commas</p>
+                            </div>
                         </div>
 
                         {/* Form Actions */}

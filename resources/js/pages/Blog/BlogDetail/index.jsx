@@ -344,8 +344,14 @@ export default function BlogDetailPage({ post, recentPosts = [], seo }) {
                         id="mobile"
                         type="tel"
                         value={data.mobile_no}
-                        onChange={e => setData('mobile_no', e.target.value)}
+                        onChange={e => {
+                          let val = e.target.value.replace(/\D/g, '');
+                          if (val.length > 10) val = val.slice(0, 10);
+                          setData('mobile_no', val);
+                        }}
                         placeholder="+91 98765 43210"
+                        maxLength={10}
+                        inputMode="numeric"
                       />
                       {errors.mobile_no && <span className="error-message">{errors.mobile_no}</span>}
                     </div>
