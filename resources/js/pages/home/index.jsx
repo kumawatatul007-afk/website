@@ -922,7 +922,7 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
                     alt="Nikhil Sharma - Full Stack Developer & UI/UX Designer in Jaipur"
                     className="profile-circle-img"
                     loading="eager"
-                    fetchpriority="high"
+                    fetchPriority="high"
                     decoding="async"
                     width="500"
                     height="500"

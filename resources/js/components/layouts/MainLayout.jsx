@@ -246,14 +246,13 @@ export default function MainLayout({ children }) {
         .mora-brand:hover .mora-logo-img {
           transform: scale(1.05);
           opacity: 0.85;
-          filter: brightness(0);
         }
         /* Footer logo — force white */
         .mora-footer-logo {
           height: 40px; width: auto; max-width: 140px;
           object-fit: contain;
           filter: brightness(0) invert(1);
-          opacity: 0.85;
+          opacity: 0.9;
           transition: opacity 0.2s ease;
         }
         .mora-footer-logo:hover { opacity: 1; }        .mora-links {
