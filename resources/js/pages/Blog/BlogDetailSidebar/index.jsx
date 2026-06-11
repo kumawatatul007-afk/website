@@ -316,11 +316,6 @@ export default function BlogDetailSidebarPage({ post: serverPost, recentPosts: s
                 <div className="bds-widget-inner">
                   <h3 className="bds-widget-title">Categories</h3>
                   <ul className="bds-category-list">
-                    <li key="all">
-                      <Link href="/blog" className="bds-category-link">
-                        <span>All</span>
-                      </Link>
-                    </li>
                     {allCategories.map(category => (
                       <li key={category.id}>
                         <Link href={`/blog?category=${category.id}`} className="bds-category-link">

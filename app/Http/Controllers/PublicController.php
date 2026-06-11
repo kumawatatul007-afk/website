@@ -159,7 +159,7 @@ class PublicController extends Controller
      */
     public function blog()
     {
-        // Fetch all blogs with all necessary fields
+        // Fetch all blog posts
         $posts = BlogPost::query()
             ->latest()
             ->get()
@@ -181,15 +181,30 @@ class PublicController extends Controller
                 ];
             });
 
-        // Fetch categories with post counts
-        $categories = Category::withCount('blogs')->get()->map(function ($category) {
-            return [
-                'id'    => $category->id,
-                'name'  => $category->name ?? '',
-                'slug'  => $category->slug ?? '',
-                'count' => $category->blogs_count ?? 0,
-            ];
-        });
+        // Fetch all categories (check if text_for column exists first)
+        if (Schema::hasColumn('categories', 'text_for')) {
+            $categories = Category::where(function ($query) {
+                $query->where('text_for', '!=', 'service')
+                      ->orWhereNull('text_for');
+            })->withCount('blogs')->get()->map(function ($category) {
+                return [
+                    'id'    => $category->id,
+                    'name'  => $category->name ?? '',
+                    'slug'  => $category->slug ?? '',
+                    'count' => $category->blogs_count ?? 0,
+                ];
+            });
+        } else {
+            // If text_for column doesn't exist, just get all categories
+            $categories = Category::withCount('blogs')->get()->map(function ($category) {
+                return [
+                    'id'    => $category->id,
+                    'name'  => $category->name ?? '',
+                    'slug'  => $category->slug ?? '',
+                    'count' => $category->blogs_count ?? 0,
+                ];
+            });
+        }
 
         $setting  = Setting::first();
         $siteName = $setting?->website_title ?: 'Nikhil Sharma';
@@ -359,15 +374,30 @@ class PublicController extends Controller
                 ];
             });
 
-        // Fetch categories with post counts
-        $categories = Category::withCount('blogs')->get()->map(function ($category) {
-            return [
-                'id'    => $category->id,
-                'name'  => $category->name ?? '',
-                'slug'  => $category->slug ?? '',
-                'count' => $category->blogs_count ?? 0,
-            ];
-        });
+        // Fetch all categories (check if text_for column exists first)
+        if (Schema::hasColumn('categories', 'text_for')) {
+            $categories = Category::where(function ($query) {
+                $query->where('text_for', '!=', 'service')
+                      ->orWhereNull('text_for');
+            })->withCount('blogs')->get()->map(function ($category) {
+                return [
+                    'id'    => $category->id,
+                    'name'  => $category->name ?? '',
+                    'slug'  => $category->slug ?? '',
+                    'count' => $category->blogs_count ?? 0,
+                ];
+            });
+        } else {
+            // If text_for column doesn't exist, just get all categories
+            $categories = Category::withCount('blogs')->get()->map(function ($category) {
+                return [
+                    'id'    => $category->id,
+                    'name'  => $category->name ?? '',
+                    'slug'  => $category->slug ?? '',
+                    'count' => $category->blogs_count ?? 0,
+                ];
+            });
+        }
 
         $setting   = Setting::first();
         $siteName  = $setting?->website_title ?: 'Nikhil Sharma';

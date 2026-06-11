@@ -127,6 +127,21 @@ export default function AdminServiceCreate({ categories = [] }) {
         fileInputRef.current?.click();
     };
 
+    // Scroll to first error when validation fails
+    useEffect(() => {
+        if (Object.keys(errors).length > 0) {
+            // Wait for DOM to update with errors
+            setTimeout(() => {
+                const firstErrorInput = document.querySelector('.form-input.err, .form-textarea.err, .form-select.err');
+                const firstErrorMsg = document.querySelector('.form-error');
+                const firstError = firstErrorInput || firstErrorMsg;
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 200);
+        }
+    }, [errors]);
+
     const handleSubmit = (e) => {
         e.preventDefault();
         
@@ -190,6 +205,7 @@ export default function AdminServiceCreate({ categories = [] }) {
                 .form-label { font-size: 0.78rem; font-weight: 700; color: #374151; letter-spacing: 0.08em; text-transform: uppercase; }
                 .form-input, .form-textarea, .form-select { width: 100%; padding: 0.9rem 1rem; border-radius: 14px; border: 1px solid #d1d5db; font-size: 0.95rem; color: #111827; background: #fff; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
                 .form-input:focus, .form-textarea:focus, .form-select:focus { border-color: #2563eb; box-shadow: 0 0 0 4px rgba(37,99,235,0.12); }
+                .form-input.err, .form-textarea.err, .form-select.err { border-color: #dc2626; }
                 .form-textarea { min-height: 200px; resize: vertical; }
                 .small-input { max-width: 100%; }
                 .hint { font-size: 0.85rem; color: #6b7280; }
@@ -249,24 +265,24 @@ export default function AdminServiceCreate({ categories = [] }) {
                             <div className="form-grid-two">
                                 <div className="form-group">
                                     <label className="form-label">Title *</label>
-                                    <input className="form-input" value={data.title} onChange={e => setData('title', e.target.value)} placeholder="Enter Services Name" />
+                                    <input className={`form-input ${errors.title ? 'err' : ''}`} value={data.title} onChange={e => setData('title', e.target.value)} placeholder="Enter Services Name" />
                                     {errors.title && <div className="form-error">{errors.title}</div>}
                                 </div>
                                 <div className="form-group">
                                     <label className="form-label">Slug</label>
-                                    <input className="form-input" value={data.slug} onChange={e => setData('slug', e.target.value)} placeholder="Leave blank to generate from title" />
+                                    <input className={`form-input ${errors.slug ? 'err' : ''}`} value={data.slug} onChange={e => setData('slug', e.target.value)} placeholder="Leave blank to generate from title" />
                                     <span className="hint">If empty, slug is created automatically from the title.</span>
                                     {errors.slug && <div className="form-error">{errors.slug}</div>}
                                 </div>
                                 <div className="form-group">
                                     <label className="form-label">Meta Title</label>
-                                    <input className="form-input" value={data.meta_title} onChange={e => setData('meta_title', e.target.value)} placeholder="Enter Meta Title" />
+                                    <input className={`form-input ${errors.meta_title ? 'err' : ''}`} value={data.meta_title} onChange={e => setData('meta_title', e.target.value)} placeholder="Enter Meta Title" />
                                     {errors.meta_title && <div className="form-error">{errors.meta_title}</div>}
                                 </div>
 
                                 <div className="form-group">
                                     <label className="form-label">Category Name</label>
-                                    <select className="form-select" value={data.category_id} onChange={e => setData('category_id', e.target.value)}>
+                                    <select className={`form-select ${errors.category_id ? 'err' : ''}`} value={data.category_id} onChange={e => setData('category_id', e.target.value)}>
                                         <option value="">Select category</option>
                                         {categories.map(category => (
                                             <option key={category.id} value={category.id}>{category.name}</option>
@@ -276,18 +292,18 @@ export default function AdminServiceCreate({ categories = [] }) {
                                 </div>
                                 <div className="form-group">
                                     <label className="form-label">Meta Keyword</label>
-                                    <input className="form-input" value={data.meta_keyword} onChange={e => setData('meta_keyword', e.target.value)} placeholder="Enter Meta Keyword" />
+                                    <input className={`form-input ${errors.meta_keyword ? 'err' : ''}`} value={data.meta_keyword} onChange={e => setData('meta_keyword', e.target.value)} placeholder="Enter Meta Keyword" />
                                     {errors.meta_keyword && <div className="form-error">{errors.meta_keyword}</div>}
                                 </div>
 
                                 <div className="form-group">
                                     <label className="form-label">Image Alt</label>
-                                    <input className="form-input" value={data.image_alt} onChange={e => setData('image_alt', e.target.value)} placeholder="Enter Image Alt" />
+                                    <input className={`form-input ${errors.image_alt ? 'err' : ''}`} value={data.image_alt} onChange={e => setData('image_alt', e.target.value)} placeholder="Enter Image Alt" />
                                     {errors.image_alt && <div className="form-error">{errors.image_alt}</div>}
                                 </div>
                                 <div className="form-group">
                                     <label className="form-label">Meta Description</label>
-                                    <textarea className="form-textarea" rows={3} value={data.meta_description} onChange={e => setData('meta_description', e.target.value)} placeholder="Enter Meta Description" />
+                                    <textarea className={`form-textarea ${errors.meta_description ? 'err' : ''}`} rows={3} value={data.meta_description} onChange={e => setData('meta_description', e.target.value)} placeholder="Enter Meta Description" />
                                     {errors.meta_description && <div className="form-error">{errors.meta_description}</div>}
                                 </div>
                             </div>
@@ -308,12 +324,12 @@ export default function AdminServiceCreate({ categories = [] }) {
                         <div className="form-grid-two" style={{ marginTop: '1rem' }}>
                             <div className="form-group">
                                 <label className="form-label">Designation</label>
-                                <input className="form-input" value={data.subtitle} onChange={e => setData('subtitle', e.target.value)} placeholder="Enter designation" />
+                                <input className={`form-input ${errors.subtitle ? 'err' : ''}`} value={data.subtitle} onChange={e => setData('subtitle', e.target.value)} placeholder="Enter designation" />
                                 {errors.subtitle && <div className="form-error">{errors.subtitle}</div>}
                             </div>
                             <div className="form-group">
                                 <label className="form-label">Tags</label>
-                                <input className="form-input" value={data.tags} onChange={e => setData('tags', e.target.value)} placeholder="Enter tags" />
+                                <input className={`form-input ${errors.tags ? 'err' : ''}`} value={data.tags} onChange={e => setData('tags', e.target.value)} placeholder="Enter tags" />
                                 {errors.tags && <div className="form-error">{errors.tags}</div>}
                             </div>
                         </div>

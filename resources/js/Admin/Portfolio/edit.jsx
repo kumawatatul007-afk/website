@@ -1,6 +1,6 @@
 import AdminLayout from '../layouts/AdminLayout';
 import { useForm, Link, router } from '@inertiajs/react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 // Simple slugify function
 function slugify(text) {
@@ -15,104 +15,148 @@ function slugify(text) {
 }
 
 export default function AdminPortfolioEdit({ item, categories = [] }) {
-const [imagePreview, setImagePreview] = useState(
-    item?.image_url || (item?.image ? `/uploads/portfolio/${item.image}` : null)
-);
+    const [imagePreview, setImagePreview] = useState(
+        item?.image_url || (item?.image ? `/uploads/portfolio/${item.image}` : null)
+    );
+    const [notification, setNotification] = useState(null);
+    
+    // Refs for fields that need validation scrolling
+    const titleRef = useRef(null);
+    const categoryRef = useRef(null);
 
-const [notification, setNotification] = useState(null);
-
-const { data, setData, processing, errors, reset, put } = useForm({
-    title: item?.title || '',
-    slug: item?.slug || '',
-    category_id: item?.category_id || '',
-    image: null,
-    clint_name: item?.clint_name || '',
-    date: item?.date ? item.date.split('T')[0] : '',
-    website_link: item?.website_link || '',
-    short_description: item?.short_description || '',
-    description: item?.description || '',
-    meta_keyword: item?.meta_keyword || '',
-    meta_description: item?.meta_description || '',
-    is_publish: item?.is_publish ?? 1,
-});
-
-useEffect(() => {
-    if (notification) {
-        const timer = setTimeout(() => {
-            setNotification(null);
-        }, 5000);
-        return () => clearTimeout(timer);
-    }
-}, [notification]);
-
-const showNotification = (message, type = 'success') => {
-    setNotification({ message, type });
-};
-
-const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-        // Check file size (max 5MB)
-        if (file.size > 5 * 1024 * 1024) {
-            showNotification('Image size must be less than 5MB', 'error');
-            return;
-        }
-        
-        // Check file type
-        if (!file.type.startsWith('image/')) {
-            showNotification('Please select a valid image file', 'error');
-            return;
-        }
-        
-        setData('image', file);
-        
-        // Create preview
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setImagePreview(reader.result);
-        };
-        reader.readAsDataURL(file);
-        showNotification('Image selected successfully', 'success');
-    }
-};
-
-const handleSubmit = (e) => {
-    e.preventDefault();
-
-    // Client-side guard: ensure title is present
-    if (!data.title || String(data.title).trim() === '') {
-        showNotification('Please enter a title before updating.', 'error');
-        return;
-    }
-
-    // Build FormData explicitly to ensure fields are sent reliably
-    const payload = new FormData();
-    payload.append('_method', 'PUT');
-    payload.append('title', data.title || '');
-    payload.append('slug', data.slug || '');
-    payload.append('category_id', data.category_id || '');
-    if (data.image) payload.append('image', data.image);
-    payload.append('clint_name', data.clint_name || '');
-    payload.append('date', data.date || '');
-    payload.append('website_link', data.website_link || '');
-    payload.append('short_description', data.short_description || '');
-    payload.append('description', data.description || '');
-    payload.append('meta_keyword', data.meta_keyword || '');
-    payload.append('meta_description', data.meta_description || '');
-    payload.append('is_publish', data.is_publish ?? 1);
-
-    router.post(`/admin/portfolio/${item.id}`, payload, {
-        preserveScroll: true,
-        onStart: () => {},
-        onSuccess: () => {
-            showNotification('Portfolio updated successfully!', 'success');
-        },
-        onError: (errors) => {
-            console.error('Validation errors:', errors);
-            showNotification('Failed to update portfolio. Please check the form.', 'error');
-        },
+    const { data, setData, processing, errors, reset, put } = useForm({
+        title: item?.title || '',
+        slug: item?.slug || '',
+        category_id: item?.category_id || '',
+        image: null,
+        clint_name: item?.clint_name || '',
+        date: item?.date ? item.date.split('T')[0] : '',
+        website_link: item?.website_link || '',
+        short_description: item?.short_description || '',
+        description: item?.description || '',
+        meta_keyword: item?.meta_keyword || '',
+        meta_description: item?.meta_description || '',
+        is_publish: item?.is_publish ?? 1,
     });
-};
+
+    useEffect(() => {
+        if (notification) {
+            const timer = setTimeout(() => {
+                setNotification(null);
+            }, 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [notification]);
+
+    // Scroll to first error when validation fails (prioritizing title and category)
+    useEffect(() => {
+        if (Object.keys(errors).length > 0) {
+            setTimeout(() => {
+                // Priority order: title -> category -> others
+                if (errors.title && titleRef.current) {
+                    titleRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    titleRef.current.focus();
+                } 
+                else if (errors.category_id && categoryRef.current) {
+                    categoryRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    categoryRef.current.focus();
+                }
+                else {
+                    // Fallback to any error field
+                    const firstErrorInput = document.querySelector('.form-input.err, .form-textarea.err, select.err');
+                    const firstErrorMsg = document.querySelector('.form-error');
+                    const firstError = firstErrorInput || firstErrorMsg;
+                    if (firstError) {
+                        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
+            }, 200);
+        }
+    }, [errors]);
+
+    const showNotification = (message, type = 'success') => {
+        setNotification({ message, type });
+    };
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // Check file size (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                showNotification('Image size must be less than 5MB', 'error');
+                return;
+            }
+            
+            // Check file type
+            if (!file.type.startsWith('image/')) {
+                showNotification('Please select a valid image file', 'error');
+                return;
+            }
+            
+            setData('image', file);
+            
+            // Create preview
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+            showNotification('Image selected successfully', 'success');
+        }
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        // Client-side guard: ensure title is present
+        if (!data.title || String(data.title).trim() === '') {
+            showNotification('Please enter a title before updating.', 'error');
+            // Scroll to title field
+            if (titleRef.current) {
+                titleRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                titleRef.current.focus();
+            }
+            return;
+        }
+
+        // Client-side guard: ensure category is selected
+        if (!data.category_id) {
+            showNotification('Please select a category.', 'error');
+            if (categoryRef.current) {
+                categoryRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                categoryRef.current.focus();
+            }
+            return;
+        }
+
+        // Build FormData explicitly to ensure fields are sent reliably
+        const payload = new FormData();
+        payload.append('_method', 'PUT');
+        payload.append('title', data.title || '');
+        payload.append('slug', data.slug || '');
+        payload.append('category_id', data.category_id || '');
+        if (data.image) payload.append('image', data.image);
+        payload.append('clint_name', data.clint_name || '');
+        payload.append('date', data.date || '');
+        payload.append('website_link', data.website_link || '');
+        payload.append('short_description', data.short_description || '');
+        payload.append('description', data.description || '');
+        payload.append('meta_keyword', data.meta_keyword || '');
+        payload.append('meta_description', data.meta_description || '');
+        payload.append('is_publish', data.is_publish ?? 1);
+
+        router.post(`/admin/portfolio/${item.id}`, payload, {
+            preserveScroll: true,
+            onStart: () => {},
+            onSuccess: () => {
+                showNotification('Portfolio updated successfully!', 'success');
+            },
+            onError: (errors) => {
+                console.error('Validation errors:', errors);
+                showNotification('Failed to update portfolio. Please check the form.', 'error');
+            },
+        });
+    };
 
     return (
         <AdminLayout title="Edit Portfolio Item">
@@ -121,6 +165,7 @@ const handleSubmit = (e) => {
                 .form-card { background:#fff; border-radius:12px; padding:1.5rem; box-shadow:0 1px 4px rgba(0,0,0,0.06); border:1px solid #f1f5f9; width:100%; }
                 .form-group { margin-bottom:1rem; }
                 .form-label { display:block; font-size:0.72rem; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.35rem; }
+                .form-label .required-asterisk { color:#ef4444; margin-left:2px; }
                 .form-input { width:100%; padding:0.65rem 0.85rem; border:1px solid #e2e8f0; border-radius:8px; font-size:0.875rem; color:#0f172a; outline:none; transition:border-color 0.15s,box-shadow 0.15s; background:#fff; box-sizing:border-box; }
                 .form-input:focus { border-color:#3b82f6; box-shadow:0 0 0 3px rgba(59,130,246,0.1); }
                 .form-input.err { border-color:#ef4444; }
@@ -154,6 +199,18 @@ const handleSubmit = (e) => {
                     </Link>
                 </div>
 
+                {notification && (
+                    <div style={{ marginBottom:'1rem', padding:'1rem 1.15rem', borderRadius:'10px', background: notification.type === 'success' ? '#ecfdf5' : '#fef2f2', color: notification.type === 'success' ? '#166534' : '#b91c1c', border: notification.type === 'success' ? '1px solid #a7f3d0' : '1px solid #fecaca' }}>
+                        {notification.message}
+                    </div>
+                )}
+
+                {Object.keys(errors).length > 0 && (
+                    <div style={{ marginBottom:'1rem', padding:'1rem 1.15rem', borderRadius:'10px', background:'#fef2f2', color:'#b91c1c', border:'1px solid #fecaca' }}>
+                        Please fix the highlighted errors before submitting.
+                    </div>
+                )}
+
                 <div className="form-card">
                     <form onSubmit={handleSubmit}>
 
@@ -165,6 +222,7 @@ const handleSubmit = (e) => {
                                 </label>
 
                                 <input
+                                    ref={titleRef}
                                     type="text"
                                     name="title"
                                     required
@@ -204,9 +262,10 @@ const handleSubmit = (e) => {
 
                         <div className="form-row">
                             <div className="form-group">
-                                <label className="form-label">Category</label>
+                                <label className="form-label">Category <span className="required-asterisk">*</span></label>
 
                                 <select
+                                    ref={categoryRef}
                                     name="category_id"
                                     className={`form-input ${errors.category_id ? 'err' : ''}`}
                                     value={data.category_id}
@@ -426,7 +485,6 @@ const handleSubmit = (e) => {
                             </button>
 
                             <Link href="/admin/portfolio" className="btn-cancel">
-                               
                                 Cancel
                             </Link>
                         </div>

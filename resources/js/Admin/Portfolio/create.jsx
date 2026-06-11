@@ -1,6 +1,6 @@
 import AdminLayout from '../layouts/AdminLayout';
 import { router, useForm, Link } from '@inertiajs/react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 // Simple slugify function
 function slugify(text) {
@@ -17,6 +17,10 @@ function slugify(text) {
 export default function AdminPortfolioCreate({ categories = [] }) {
     const [imagePreview, setImagePreview] = useState(null);
     const [notification, setNotification] = useState(null);
+    
+    // Refs for fields that need validation scrolling
+    const titleRef = useRef(null);
+    const categoryRef = useRef(null);
 
     const { data, setData, processing, errors, post } = useForm({
         title: '',
@@ -42,6 +46,32 @@ export default function AdminPortfolioCreate({ categories = [] }) {
         }
     }, [notification]);
 
+    // Scroll to first error when validation fails (prioritizing title and category)
+    useEffect(() => {
+        if (Object.keys(errors).length > 0) {
+            setTimeout(() => {
+                // Priority order: title -> category -> others
+                if (errors.title && titleRef.current) {
+                    titleRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    titleRef.current.focus();
+                } 
+                else if (errors.category_id && categoryRef.current) {
+                    categoryRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    categoryRef.current.focus();
+                }
+                else {
+                    // Fallback to any error field
+                    const firstErrorInput = document.querySelector('.form-input.err, .form-textarea.err, select.err');
+                    const firstErrorMsg = document.querySelector('.form-error');
+                    const firstError = firstErrorInput || firstErrorMsg;
+                    if (firstError) {
+                        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
+            }, 200);
+        }
+    }, [errors]);
+
     const showNotification = (message, type = 'success') => {
         setNotification({ message, type });
     };
@@ -51,6 +81,20 @@ export default function AdminPortfolioCreate({ categories = [] }) {
 
         if (!data.title || String(data.title).trim() === '') {
             showNotification('Title is required to create a portfolio item.', 'error');
+            // Scroll to title field
+            if (titleRef.current) {
+                titleRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                titleRef.current.focus();
+            }
+            return;
+        }
+
+        if (!data.category_id) {
+            showNotification('Please select a category.', 'error');
+            if (categoryRef.current) {
+                categoryRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                categoryRef.current.focus();
+            }
             return;
         }
 
@@ -76,7 +120,8 @@ export default function AdminPortfolioCreate({ categories = [] }) {
             onSuccess: () => {
                 showNotification('Portfolio created successfully!', 'success');
             },
-            onError: () => {
+            onError: (errorResponse) => {
+                // Scroll will be handled by the errors useEffect
                 const firstError = Object.values(errors)[0] || 'Create failed. Please check the form.';
                 showNotification(firstError, 'error');
             },
@@ -131,34 +176,56 @@ export default function AdminPortfolioCreate({ categories = [] }) {
                     <div className="form-row">
                         <div className="form-group">
                             <label className="form-label">Title *</label>
-                            <input className={`form-input${errors.title ? ' err' : ''}`} value={data.title} onChange={e => {
-                                const newTitle = e.target.value;
-                                setData('title', newTitle);
-                                // Auto-generate slug from title
-                                setData('slug', slugify(newTitle));
-                            }} placeholder="Project title" />
+                            <input 
+                                ref={titleRef}
+                                className={`form-input${errors.title ? ' err' : ''}`} 
+                                value={data.title} 
+                                onChange={e => {
+                                    const newTitle = e.target.value;
+                                    setData('title', newTitle);
+                                    setData('slug', slugify(newTitle));
+                                }} 
+                                placeholder="Project title" 
+                            />
                             {errors.title && <p className="form-error">{errors.title}</p>}
                         </div>
                         <div className="form-group">
                             <label className="form-label">Slug</label>
-                            <input className={`form-input${errors.slug ? ' err' : ''}`} value={data.slug} onChange={e => setData('slug', e.target.value)} placeholder="Auto-generated from title" />
+                            <input 
+                                className={`form-input${errors.slug ? ' err' : ''}`} 
+                                value={data.slug} 
+                                onChange={e => setData('slug', e.target.value)} 
+                                placeholder="Auto-generated from title" 
+                            />
                             {errors.slug && <p className="form-error">{errors.slug}</p>}
                         </div>
                     </div>
 
                     <div className="form-row">
                         <div className="form-group">
-                            <label className="form-label">Category</label>
-                            <select className="form-input" value={data.category_id} onChange={e => setData('category_id', e.target.value)}>
+                            <label className="form-label">Category *</label>
+                            <select 
+                                ref={categoryRef}
+                                className={`form-input${errors.category_id ? ' err' : ''}`} 
+                                value={data.category_id} 
+                                onChange={e => setData('category_id', e.target.value)}
+                            >
                                 <option value="">— Select Category —</option>
                                 {categories.map(c => (
                                     <option key={c.id} value={c.id}>{c.name}</option>
                                 ))}
                             </select>
+                            {errors.category_id && <p className="form-error">{errors.category_id}</p>}
                         </div>
                         <div className="form-group">
                             <label className="form-label">Client Name</label>
-                            <input className="form-input" value={data.clint_name} onChange={e => setData('clint_name', e.target.value)} placeholder="Client / Company name" />
+                            <input 
+                                className={`form-input${errors.clint_name ? ' err' : ''}`} 
+                                value={data.clint_name} 
+                                onChange={e => setData('clint_name', e.target.value)} 
+                                placeholder="Client / Company name" 
+                            />
+                            {errors.clint_name && <p className="form-error">{errors.clint_name}</p>}
                         </div>
                     </div>
 
@@ -168,7 +235,7 @@ export default function AdminPortfolioCreate({ categories = [] }) {
                             <input
                                 type="file"
                                 accept="image/*"
-                                className="form-input"
+                                className={`form-input${errors.image ? ' err' : ''}`}
                                 onChange={e => {
                                     const file = e.target.files[0];
                                     setData('image', file);
@@ -183,13 +250,26 @@ export default function AdminPortfolioCreate({ categories = [] }) {
                             {imagePreview && (
                                 <img src={imagePreview} alt="Preview" style={{ marginTop: '0.8rem', maxWidth: '100%', borderRadius: '10px' }} />
                             )}
+                            {errors.image && <p className="form-error">{errors.image}</p>}
                         </div>
                         <div className="form-group">
                             <label className="form-label">Website Link</label>
-                            <input className="form-input" value={data.website_link} onChange={e => setData('website_link', e.target.value)} placeholder="https://..." />
+                            <input 
+                                className={`form-input${errors.website_link ? ' err' : ''}`} 
+                                value={data.website_link} 
+                                onChange={e => setData('website_link', e.target.value)} 
+                                placeholder="https://..." 
+                            />
+                            {errors.website_link && <p className="form-error">{errors.website_link}</p>}
                             <div style={{ marginTop: '0.7rem' }}>
                                 <label className="form-label">Date</label>
-                                <input type="date" className="form-input" value={data.date} onChange={e => setData('date', e.target.value)} />
+                                <input 
+                                    type="date" 
+                                    className={`form-input${errors.date ? ' err' : ''}`} 
+                                    value={data.date} 
+                                    onChange={e => setData('date', e.target.value)} 
+                                />
+                                {errors.date && <p className="form-error">{errors.date}</p>}
                             </div>
                         </div>
                     </div>
@@ -197,20 +277,39 @@ export default function AdminPortfolioCreate({ categories = [] }) {
                     <div className="form-row">
                         <div className="form-group">
                             <label className="form-label">Short Description</label>
-                            <input className="form-input" value={data.short_description} onChange={e => setData('short_description', e.target.value)} placeholder="Brief one-line description" />
+                            <input 
+                                className={`form-input${errors.short_description ? ' err' : ''}`} 
+                                value={data.short_description} 
+                                onChange={e => setData('short_description', e.target.value)} 
+                                placeholder="Brief one-line description" 
+                            />
+                            {errors.short_description && <p className="form-error">{errors.short_description}</p>}
                         </div>
                         <div className="form-group">
                             <label className="form-label">Published</label>
-                            <select className="form-input" value={data.is_publish} onChange={e => setData('is_publish', parseInt(e.target.value))}>
+                            <select 
+                                className={`form-input${errors.is_publish ? ' err' : ''}`} 
+                                value={data.is_publish} 
+                                onChange={e => setData('is_publish', parseInt(e.target.value))}
+                            >
                                 <option value={1}>Yes</option>
                                 <option value={0}>No</option>
                             </select>
+                            {errors.is_publish && <p className="form-error">{errors.is_publish}</p>}
                         </div>
                     </div>
 
                     <div className="form-group">
                         <label className="form-label">Full Description</label>
-                        <textarea className="form-input" rows={4} value={data.description} onChange={e => setData('description', e.target.value)} placeholder="Detailed project description..." style={{ resize:'vertical' }} />
+                        <textarea 
+                            className={`form-input${errors.description ? ' err' : ''}`} 
+                            rows={4} 
+                            value={data.description} 
+                            onChange={e => setData('description', e.target.value)} 
+                            placeholder="Detailed project description..." 
+                            style={{ resize:'vertical' }} 
+                        />
+                        {errors.description && <p className="form-error">{errors.description}</p>}
                     </div>
 
                     <div className="section-label">SEO / Meta</div>
@@ -218,11 +317,23 @@ export default function AdminPortfolioCreate({ categories = [] }) {
                     <div className="form-row">
                         <div className="form-group">
                             <label className="form-label">Meta Description</label>
-                            <input className="form-input" value={data.meta_description} onChange={e => setData('meta_description', e.target.value)} placeholder="Meta description" />
+                            <input 
+                                className={`form-input${errors.meta_description ? ' err' : ''}`} 
+                                value={data.meta_description} 
+                                onChange={e => setData('meta_description', e.target.value)} 
+                                placeholder="Meta description" 
+                            />
+                            {errors.meta_description && <p className="form-error">{errors.meta_description}</p>}
                         </div>
                         <div className="form-group">
                             <label className="form-label">Meta Keywords</label>
-                            <input className="form-input" value={data.meta_keyword} onChange={e => setData('meta_keyword', e.target.value)} placeholder="keyword1, keyword2" />
+                            <input 
+                                className={`form-input${errors.meta_keyword ? ' err' : ''}`} 
+                                value={data.meta_keyword} 
+                                onChange={e => setData('meta_keyword', e.target.value)} 
+                                placeholder="keyword1, keyword2" 
+                            />
+                            {errors.meta_keyword && <p className="form-error">{errors.meta_keyword}</p>}
                         </div>
                     </div>
 

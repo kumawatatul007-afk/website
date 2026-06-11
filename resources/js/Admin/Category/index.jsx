@@ -268,6 +268,21 @@ function EditModal({ category, onClose, onSuccess }) {
         return () => window.removeEventListener('keydown', handleEsc);
     }, [onClose, processing]);
 
+    // Scroll to first error when validation fails
+    useEffect(() => {
+        if (Object.keys(errors).length > 0) {
+            setTimeout(() => {
+                // Look for inputs with red border or error messages
+                const firstErrorInput = document.querySelector('[style*="border-color: rgb(220, 38, 38)"], [style*="border-color: #dc2626"]');
+                const firstErrorMsg = document.querySelector('[style*="color: rgb(220, 38, 38)"], [style*="color: #dc2626"]');
+                const firstError = firstErrorInput || firstErrorMsg;
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 200);
+        }
+    }, [errors]);
+
     const handleSubmit = (e) => {
         e.preventDefault();
         put(`/admin/categories/${category.id}`, {
@@ -327,7 +342,8 @@ function EditModal({ category, onClose, onSuccess }) {
                             disabled={processing}
                             style={{
                                 width: '100%', padding: '0.6rem 0.875rem', borderRadius: '8px',
-                                border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.875rem',
+                                border: `1px solid ${errors.name ? '#dc2626' : '#e2e8f0'}`, 
+                                outline: 'none', fontSize: '0.875rem',
                                 background: '#fff',
                                 color: '#374151',
                             }}
@@ -343,7 +359,8 @@ function EditModal({ category, onClose, onSuccess }) {
                             disabled={processing}
                             style={{
                                 width: '100%', padding: '0.6rem 0.875rem', borderRadius: '8px',
-                                border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.875rem',
+                                border: `1px solid ${errors.text_for ? '#dc2626' : '#e2e8f0'}`, 
+                                outline: 'none', fontSize: '0.875rem',
                                 background: '#fff',
                                 color: '#374151',
                             }}
@@ -365,7 +382,8 @@ function EditModal({ category, onClose, onSuccess }) {
                             disabled={processing}
                             style={{
                                 width: '100%', padding: '0.6rem 0.875rem', borderRadius: '8px',
-                                border: '1px solid #e2e8f0', outline: 'none', fontSize: '0.875rem',
+                                border: `1px solid ${errors.slug ? '#dc2626' : '#e2e8f0'}`, 
+                                outline: 'none', fontSize: '0.875rem',
                                 background: '#fff',
                                 color: '#374151',
                             }}

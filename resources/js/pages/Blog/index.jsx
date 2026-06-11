@@ -301,15 +301,6 @@ export default function BlogPage({ posts, categories, seo, setting }) {
               <div className="blogpage-widget" data-aos="fade-up" data-aos-delay="100" data-aos-duration="800">
                 <h3 className="blogpage-widget-title">Categories</h3>
                 <ul className="blogpage-category-list">
-                  <li key="all">
-                    <button
-                      onClick={() => setActiveCategoryId(null)}
-                      className={`blogpage-category-link ${!activeCategoryId ? 'active' : ''}`}
-                    >
-                      <span>All</span>
-                      <span className="blogpage-category-count">15</span>
-                    </button>
-                  </li>
                   {allCategories.map(category => (
                     <li key={category.id}>
                       <button

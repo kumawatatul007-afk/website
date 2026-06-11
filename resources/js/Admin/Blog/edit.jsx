@@ -149,6 +149,22 @@ export default function AdminBlogEdit({ post, categories = [] }) {
         return null;
     };
 
+    // Scroll to first error when validation fails
+    useEffect(() => {
+        if (Object.keys(errors).length > 0) {
+            // Wait for DOM to update with errors - increase timeout to ensure DOM is ready
+            setTimeout(() => {
+                // Find the first error field - check for either input with red border OR error message
+                const firstErrorInput = document.querySelector('[style*="borderColor: #d63638"], [style*="border-color: rgb(214, 54, 56)"]');
+                const firstErrorMsg = document.querySelector('[style*="color: #d63638"], [style*="color: rgb(214, 54, 56)"]');
+                const firstError = firstErrorInput || firstErrorMsg;
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 200);
+        }
+    }, [errors]);
+
     const handleSubmit = (e) => {
         e.preventDefault();
         
