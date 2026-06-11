@@ -109,8 +109,8 @@ export default function BlogDetailSidebarPage({ post: serverPost, recentPosts: s
               <figure className="bds-featured-image">
                 <img
                   src={
-                    post.main_image
-                      ? (post.main_image.startsWith('http') ? post.main_image : `/images/blogs/${post.main_image}`)
+                    post.image
+                      ? (post.image.startsWith('http') ? post.image : `/images/blogs/${post.image}`)
                       : 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/blog-1.jpg'
                   }
                   alt={post.title}
@@ -127,11 +127,11 @@ export default function BlogDetailSidebarPage({ post: serverPost, recentPosts: s
               </div>
 
               <div className="bds-content">
-                {post.content ? (
+                {post.description ? (
                   <div
                     className="bds-paragraph"
                     ref={addToRefs}
-                    dangerouslySetInnerHTML={{ __html: post.content }}
+                    dangerouslySetInnerHTML={{ __html: post.description }}
                   />
                 ) : (
                   <p className="bds-paragraph" ref={addToRefs}>
@@ -290,8 +290,8 @@ export default function BlogDetailSidebarPage({ post: serverPost, recentPosts: s
                           <div className="bds-recent-img">
                             <img
                               src={
-                                rp.main_image
-                                  ? (rp.main_image.startsWith('http') ? rp.main_image : `/images/blogs/${rp.main_image}`)
+                                rp.image
+                                  ? (rp.image.startsWith('http') ? rp.image : `/images/blogs/${rp.image}`)
                                   : 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/blog-fi-1.jpg'
                               }
                               alt={rp.title}

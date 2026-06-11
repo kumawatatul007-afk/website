@@ -8,7 +8,6 @@ import { ShimmerTableRows } from '../../components/ShimmerLoader';
 export default function AdminBlogIndex({ posts, filters, categories = [] }) {
     const [search, setSearch]         = useState(filters?.search ?? '');
     const [catFilter, setCatFilter]   = useState(filters?.category_id ?? '');
-    const [statusFilter, setStatus]   = useState(filters?.status ?? '');
     const [shimmer, setShimmer]       = useState(true);
 
     useEffect(() => {
@@ -24,7 +23,6 @@ export default function AdminBlogIndex({ posts, filters, categories = [] }) {
         router.get('/admin/blog', {
             search,
             category_id: catFilter,
-            status: statusFilter,
         }, { preserveState: true, replace: true });
     };
 
@@ -169,7 +167,7 @@ export default function AdminBlogIndex({ posts, filters, categories = [] }) {
             <div className="filters">
                 <input
                     className="filter-input"
-                    placeholder="Search title, slug or tags..."
+                    placeholder="Search title or slug..."
                     value={search}
                     onChange={e => setSearch(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && applyFilters()}
@@ -185,16 +183,6 @@ export default function AdminBlogIndex({ posts, filters, categories = [] }) {
                     {categories.map(c => (
                         <option key={c.id} value={c.id}>{c.name}</option>
                     ))}
-                </select>
-                <select
-                    className="filter-input"
-                    value={statusFilter}
-                    onChange={e => setStatus(e.target.value)}
-                    style={{ minWidth: '110px', maxWidth: '150px' }}
-                >
-                    <option value="">All Status</option>
-                    <option value="1">Published</option>
-                    <option value="0">Draft</option>
                 </select>
                 <button className="btn-primary" onClick={applyFilters}>Search</button>
             </div>
@@ -216,9 +204,9 @@ export default function AdminBlogIndex({ posts, filters, categories = [] }) {
                         ) : posts?.data?.length > 0 ? posts.data.map((post, i) => (
                             <tr key={post.id}>
                                 <td>
-                                    {post.main_image ? (
+                                    {post.image ? (
                                         <img
-                                            src={getImageUrl(post.main_image)}
+                                            src={getImageUrl(post.image)}
                                             alt={post.title}
                                             className="thumb"
                                             onError={e => { e.target.style.display = 'none'; }}

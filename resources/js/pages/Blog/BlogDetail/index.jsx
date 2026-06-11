@@ -106,14 +106,13 @@ export default function BlogDetailPage({ post, recentPosts = [], seo }) {
   const comments = post.comments || [];
   const prevPost = post.prev_post || null;
   const nextPost = post.next_post || null;
-  const tags = post.tags ? post.tags.split(',').map(t => t.trim()).filter(Boolean) : [];
 
   return (
     <div className="bd-root">
       <SEO
         title={seo?.title || post.title}
         description={seo?.description || post.meta_description || ''}
-        keywords={seo?.keywords || post.meta_keywords || ''}
+        keywords={seo?.keywords || post.meta_keyword || ''}
         canonical={seo?.canonical}
         robots={seo?.robots}
       />
@@ -122,18 +121,13 @@ export default function BlogDetailPage({ post, recentPosts = [], seo }) {
       <header className="bd-hero">
         <div className="bd-hero-bg">
           <img
-            src={getImageUrl(post.main_image)}
+            src={getImageUrl(post.image)}
             alt={post.title}
             onError={e => { e.target.src = FALLBACK_IMAGE; }}
           />
         </div>
         <div className="bd-hero-overlay"></div>
         <div className="bd-hero-content">
-          <div className="bd-hero-tags">
-            {tags.slice(0, 3).map((tag, i) => (
-              <span key={i} className="bd-hero-tag">#{tag}</span>
-            ))}
-          </div>
           <h1 className="bd-hero-title">{post.title}</h1>
           <div className="bd-hero-meta">
             <div className="bd-hero-meta-item">
@@ -207,13 +201,13 @@ export default function BlogDetailPage({ post, recentPosts = [], seo }) {
                 <span>Senior Writer & Tech Enthusiast</span>
               </div>
               <div className="author-stats">
-                <span>{Math.ceil((post.content?.length || 1000) / 1000)} min read</span>
+                <span>{Math.ceil((post.description?.length || 1000) / 1000)} min read</span>
               </div>
             </div>
 
             <div className="bd-body-content" ref={addRef}>
-              {post.content ? (
-                <div className="bd-prose" dangerouslySetInnerHTML={{ __html: post.content }} />
+              {post.description ? (
+                <div className="bd-prose" dangerouslySetInnerHTML={{ __html: post.description }} />
               ) : (
                 <div className="bd-fallback-text">
                   <p>{post.meta_description || 'Experience the finest insights from our expert writers. This article explores deep concepts with practical applications.'}</p>
@@ -221,17 +215,6 @@ export default function BlogDetailPage({ post, recentPosts = [], seo }) {
                 </div>
               )}
             </div>
-
-            {tags.length > 0 && (
-              <div className="bd-tags-footer" ref={addRef}>
-                <span className="label">Tags:</span>
-                <div className="bd-tag-cloud">
-                  {tags.map((tag, i) => (
-                    <span key={i} className="bd-tag-pill">{tag}</span>
-                  ))}
-                </div>
-              </div>
-            )}
 
             {/* Post Navigation */}
             <nav className="bd-post-navigation" ref={addRef}>
@@ -400,7 +383,7 @@ export default function BlogDetailPage({ post, recentPosts = [], seo }) {
                         <Link key={rp.id} href={slug.startsWith('/') ? slug : `/${slug}`} className="bd-sidebar-post-item">
                           <div className="thumb">
                             <img
-                              src={getImageUrl(rp.main_image)}
+                              src={getImageUrl(rp.image)}
                               alt={title}
                               onError={e => { e.target.src = FALLBACK_IMAGE; }}
                             />
@@ -418,17 +401,7 @@ export default function BlogDetailPage({ post, recentPosts = [], seo }) {
                 )}
               </div>
 
-              {/* Trending Tags */}
-              {tags.length > 0 && (
-                <div className="bd-widget">
-                  <h3 className="bd-widget-title"> Trending Topics</h3>
-                  <div className="widget-tags">
-                    {tags.map((tag, i) => (
-                      <span key={i} className="widget-tag">{tag}</span>
-                    ))}
-                  </div>
-                </div>
-              )}
+
 
               {/* Call to Action Widget */}
               <div className="bd-widget cta-widget">

@@ -17,8 +17,7 @@ class PublicController extends Controller
      */
     public function home()
     {
-        $blogPosts = BlogPost::where('status', '!=', 'draft')
-            ->where('status', '!=', 0)
+        $blogPosts = BlogPost::query()
             ->latest()
             ->take(3)
             ->get()
@@ -27,17 +26,22 @@ class PublicController extends Controller
                     'id'               => $post->id,
                     'title'            => $post->title ?? '',
                     'slug'             => $post->slug ?? '',
-                    'content'          => $post->content ?? '',
-                    'description'      => $post->description ?? $post->content ?? '',
-                    'main_image'       => $post->main_image ?? $post->image_url ?? '',
-                    'image_url'        => $post->image_url ?? $post->main_image ?? '',
+                    'description'      => $post->description ?? '',
+                    'image'            => $post->image ?? '',
+                    'image_url'        => $post->image_url ?? '',
                     'meta_description' => $post->meta_description ?? '',
                     'created_at'       => $post->created_at?->toISOString() ?? '',
                 ];
             });
 
-        $portfolios = PortfolioItem::where('is_publish', 1)
-            ->where('status', 'Active')
+        $portfolioQuery = PortfolioItem::query();
+        if (Schema::hasColumn('portfolio', 'is_publish')) {
+            $portfolioQuery->where('is_publish', 1);
+        }
+        if (Schema::hasColumn('portfolio', 'status')) {
+            $portfolioQuery->where('status', 'Active');
+        }
+        $portfolios = $portfolioQuery
             ->latest()
             ->take(6)
             ->get()
@@ -155,9 +159,8 @@ class PublicController extends Controller
      */
     public function blog()
     {
-        // Fetch all published blogs with all necessary fields
-        $posts = BlogPost::where('status', '!=', 'draft')
-            ->where('status', '!=', 0)
+        // Fetch all blogs with all necessary fields
+        $posts = BlogPost::query()
             ->latest()
             ->get()
             ->map(function ($post) {
@@ -165,26 +168,21 @@ class PublicController extends Controller
                     'id'               => $post->id,
                     'title'            => $post->title ?? '',
                     'slug'             => $post->slug ?? '',
-                    'content'          => $post->content ?? '',
-                    'description'      => $post->description ?? $post->content ?? '',
-                    'main_image'       => $post->main_image ?? $post->image_url ?? '',
-                    'image_url'        => $post->image_url ?? $post->main_image ?? '',
+                    'description'      => $post->description ?? '',
+                    'image'            => $post->image ?? '',
+                    'image_url'        => $post->image_url ?? '',
                     'meta_description' => $post->meta_description ?? '',
                     'meta_title'       => $post->meta_title ?? '',
                     'meta_keyword'     => $post->meta_keyword ?? '',
                     'category_id'      => $post->category_id,
                     'category_name'    => optional($post->category)->name ?? '',
-                    'tags'             => $post->tags ?? '',
                     'created_at'       => $post->created_at?->toISOString() ?? '',
                     'updated_at'       => $post->updated_at?->toISOString() ?? '',
                 ];
             });
 
         // Fetch categories with post counts
-        $categories = Category::withCount(['blogs' => function ($query) {
-            $query->where('status', '!=', 'draft')
-                  ->where('status', '!=', 0);
-        }])->get()->map(function ($category) {
+        $categories = Category::withCount('blogs')->get()->map(function ($category) {
             return [
                 'id'    => $category->id,
                 'name'  => $category->name ?? '',
@@ -221,17 +219,15 @@ class PublicController extends Controller
             'id'               => $post->id,
             'title'            => $post->title ?? '',
             'slug'             => $post->slug ?? '',
-            'content'          => $post->content ?? '',
-            'description'      => $post->description ?? $post->content ?? '',
-            'main_image'       => $post->main_image ?? $post->image_url ?? '',
-            'image_url'        => $post->image_url ?? $post->main_image ?? '',
+            'description'      => $post->description ?? '',
+            'image'            => $post->image ?? '',
+            'image_url'        => $post->image_url ?? '',
             'meta_description' => $post->meta_description ?? '',
             'meta_title'       => $post->meta_title ?? '',
             'meta_keyword'     => $post->meta_keyword ?? '',
             'og_title'         => $post->og_title ?? '',
             'og_description'   => $post->og_description ?? '',
             'category_id'      => $post->category_id,
-            'tags'             => $post->tags ?? '',
             'created_at'       => $post->created_at?->toISOString() ?? '',
             'updated_at'       => $post->updated_at?->toISOString() ?? '',
             'comments'         => $post->comments->map(function ($comment) {
@@ -248,24 +244,21 @@ class PublicController extends Controller
         ];
 
         // Previous post (older)
-        $prevPost = BlogPost::where('status', '!=', 'draft')
-            ->where('status', '!=', 0)
+        $prevPost = BlogPost::query()
             ->where('id', '<', $post->id)
             ->orderBy('id', 'desc')
             ->select('id', 'title', 'slug')
             ->first();
 
         // Next post (newer)
-        $nextPost = BlogPost::where('status', '!=', 'draft')
-            ->where('status', '!=', 0)
+        $nextPost = BlogPost::query()
             ->where('id', '>', $post->id)
             ->orderBy('id', 'asc')
             ->select('id', 'title', 'slug')
             ->first();
 
         // Recent posts for sidebar
-        $recentPosts = BlogPost::where('status', '!=', 'draft')
-            ->where('status', '!=', 0)
+        $recentPosts = BlogPost::query()
             ->where('id', '!=', $post->id)
             ->latest()
             ->take(5)
@@ -275,8 +268,8 @@ class PublicController extends Controller
                     'id'         => $p->id,
                     'title'      => $p->title ?? '',
                     'slug'       => $p->slug ?? '',
-                    'main_image' => $p->main_image ?? $p->image_url ?? '',
-                    'image_url'  => $p->image_url ?? $p->main_image ?? '',
+                    'image'      => $p->image ?? '',
+                    'image_url'  => $p->image_url ?? '',
                     'created_at' => $p->created_at?->toISOString() ?? '',
                 ];
             });
@@ -286,8 +279,7 @@ class PublicController extends Controller
         $descText  = strip_tags($postArray['description'] ?? '');
         $descShort = mb_substr($descText, 0, 160);
 
-        // Parse meta_keywords JSON to plain string
-        $metaKw = $post->meta_keywords_plain ?: "{$post->title}, {$siteName}, Web Development Blog";
+        $metaKw = $post->meta_keyword ?: "{$post->title}, {$siteName}, Web Development Blog";
 
         // Append prev/next to the post object
         $postArray['prev_post'] = $prevPost;
@@ -326,10 +318,9 @@ class PublicController extends Controller
             'id'               => $post->id,
             'title'            => $post->title ?? '',
             'slug'             => $post->slug ?? '',
-            'content'          => $post->content ?? '',
-            'description'      => $post->description ?? $post->content ?? '',
-            'main_image'       => $post->main_image ?? $post->image_url ?? '',
-            'image_url'        => $post->image_url ?? $post->main_image ?? '',
+            'description'      => $post->description ?? '',
+            'image'            => $post->image ?? '',
+            'image_url'        => $post->image_url ?? '',
             'meta_description' => $post->meta_description ?? '',
             'meta_title'       => $post->meta_title ?? '',
             'meta_keyword'     => $post->meta_keyword ?? '',
@@ -337,7 +328,6 @@ class PublicController extends Controller
             'og_description'   => $post->og_description ?? '',
             'category_id'      => $post->category_id,
             'category_name'    => optional($post->category)->name ?? '',
-            'tags'             => $post->tags ?? '',
             'created_at'       => $post->created_at?->toISOString() ?? '',
             'updated_at'       => $post->updated_at?->toISOString() ?? '',
             'comments'         => $post->comments->map(function ($comment) {
@@ -353,8 +343,7 @@ class PublicController extends Controller
             }),
         ];
 
-        $recentPosts = BlogPost::where('status', '!=', 'draft')
-            ->where('status', '!=', 0)
+        $recentPosts = BlogPost::query()
             ->latest()
             ->where('id', '!=', $post->id)
             ->take(5)
@@ -364,17 +353,14 @@ class PublicController extends Controller
                     'id'         => $p->id,
                     'title'      => $p->title ?? '',
                     'slug'       => $p->slug ?? '',
-                    'main_image' => $p->main_image ?? $p->image_url ?? '',
-                    'image_url'  => $p->image_url ?? $p->main_image ?? '',
+                    'image'      => $p->image ?? '',
+                    'image_url'  => $p->image_url ?? '',
                     'created_at' => $p->created_at?->toISOString() ?? '',
                 ];
             });
 
         // Fetch categories with post counts
-        $categories = Category::withCount(['blogs' => function ($query) {
-            $query->where('status', '!=', 'draft')
-                  ->where('status', '!=', 0);
-        }])->get()->map(function ($category) {
+        $categories = Category::withCount('blogs')->get()->map(function ($category) {
             return [
                 'id'    => $category->id,
                 'name'  => $category->name ?? '',
@@ -388,7 +374,7 @@ class PublicController extends Controller
         $descText  = strip_tags($postArray['description'] ?? '');
         $descShort = mb_substr($descText, 0, 160);
 
-        $metaKw = $post->meta_keywords_plain ?: "{$post->title}, {$siteName}, Web Development Blog";
+        $metaKw = $post->meta_keyword ?: "{$post->title}, {$siteName}, Web Development Blog";
 
         return Inertia::render('Blog/BlogDetailSidebar/index', [
             'post'        => $postArray,
@@ -418,8 +404,14 @@ class PublicController extends Controller
      */
     public function portfolio()
     {
-        $items = PortfolioItem::where('is_publish', 1)
-            ->where('status', 'Active')
+        $portfolioQuery = PortfolioItem::query();
+        if (Schema::hasColumn('portfolio', 'is_publish')) {
+            $portfolioQuery->where('is_publish', 1);
+        }
+        if (Schema::hasColumn('portfolio', 'status')) {
+            $portfolioQuery->where('status', 'Active');
+        }
+        $items = $portfolioQuery
             ->latest()
             ->get()
             ->map(function ($item) {
@@ -458,8 +450,14 @@ class PublicController extends Controller
      */
     public function portfolioList()
     {
-        $items = PortfolioItem::where('is_publish', 1)
-            ->where('status', 'Active')
+        $portfolioQuery = PortfolioItem::query();
+        if (Schema::hasColumn('portfolio', 'is_publish')) {
+            $portfolioQuery->where('is_publish', 1);
+        }
+        if (Schema::hasColumn('portfolio', 'status')) {
+            $portfolioQuery->where('status', 'Active');
+        }
+        $items = $portfolioQuery
             ->latest()
             ->get()
             ->map(function ($item) {
@@ -498,12 +496,25 @@ class PublicController extends Controller
      */
     public function portfolioDetail($slug)
     {
+        $itemQuery = PortfolioItem::query();
+        if (Schema::hasColumn('portfolio', 'is_publish')) {
+            $itemQuery->where('is_publish', 1);
+        }
+        if (Schema::hasColumn('portfolio', 'status')) {
+            $itemQuery->where('status', 'Active');
+        }
         $item = is_numeric($slug)
-            ? PortfolioItem::where('is_publish', 1)->where('status', 'Active')->findOrFail($slug)
-            : PortfolioItem::where('slug', $slug)->where('is_publish', 1)->where('status', 'Active')->firstOrFail();
+            ? $itemQuery->findOrFail($slug)
+            : $itemQuery->where('slug', $slug)->firstOrFail();
 
-        $related = PortfolioItem::where('is_publish', 1)
-            ->where('status', 'Active')
+        $relatedQuery = PortfolioItem::query();
+        if (Schema::hasColumn('portfolio', 'is_publish')) {
+            $relatedQuery->where('is_publish', 1);
+        }
+        if (Schema::hasColumn('portfolio', 'status')) {
+            $relatedQuery->where('status', 'Active');
+        }
+        $related = $relatedQuery
             ->where('id', '!=', $item->id)
             ->where('category_id', $item->category_id)
             ->take(3)
@@ -893,7 +904,14 @@ class PublicController extends Controller
         if (!$location) {
             // Check if this matches a Service (BlogPost type=1)
             $slug = strtolower($prefix) . '-' . $service;
-            $blogPost = BlogPost::where('slug', $slug)->where('type', 1)->where('status', 1)->first();
+            $blogPostQuery = BlogPost::where('slug', $slug);
+            if (Schema::hasColumn('blogs', 'type')) {
+                $blogPostQuery->where('type', 1);
+            }
+            if (Schema::hasColumn('blogs', 'status')) {
+                $blogPostQuery->where('status', 1);
+            }
+            $blogPost = $blogPostQuery->first();
             if ($blogPost) {
                 return $this->serviceDetailNew($prefix, $service);
             }
@@ -956,8 +974,14 @@ class PublicController extends Controller
             }
         }
 
-        $services = BlogPost::where('type', 1)
-            ->where('status', 1)
+        $servicesQuery = BlogPost::query();
+        if (Schema::hasColumn('blogs', 'type')) {
+            $servicesQuery->where('type', 1);
+        }
+        if (Schema::hasColumn('blogs', 'status')) {
+            $servicesQuery->where('status', 1);
+        }
+        $services = $servicesQuery
             ->latest()
             ->take(10)
             ->get(['id', 'title', 'slug']);

@@ -16,26 +16,18 @@ class BlogPost extends Model
         'category_id',
         'title',
         'slug',
-        'serial_number',
+        'description',
+        'image',
         'meta_title',
-        'meta_keywords',
-        'meta_keyword',
-        'meta_description',
         'og_title',
         'og_description',
+        'meta_keyword',
         'image_alt',
-        'type',
-        'tags',
-        'main_image',
-        'description',
-        'content',
+        'meta_description',
         'created_by',
-        'status',
     ];
 
     protected $casts = [
-        'content'    => 'string',
-        'type'       => 'integer',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -48,21 +40,7 @@ class BlogPost extends Model
         return Str::slug($title);
     }
 
-    /**
-     * Get meta_keywords as a plain comma-separated string.
-     * The DB stores them as JSON array: [{"value":"website"},...]
-     */
-    public function getMetaKeywordsPlainAttribute(): string
-    {
-        if (!$this->meta_keywords) return '';
-        $decoded = json_decode($this->meta_keywords, true);
-        if (is_array($decoded)) {
-            return implode(', ', array_column($decoded, 'value'));
-        }
-        return $this->meta_keywords;
-    }
-
-    protected $appends = [];
+    protected $appends = ['image_url'];
 
     public function category()
     {
@@ -74,38 +52,15 @@ class BlogPost extends Model
         return $this->hasMany(BlogComment::class, 'blog_id');
     }
 
-    public function getContentAttribute($value)
-    {
-        if ($value !== null) {
-            return $value;
-        }
-
-        return $this->attributes['description'] ?? '';
-    }
-
     /**
-     * Get the main image URL.
+     * Get the image URL.
      */
     public function getImageUrlAttribute(): string
     {
-        // Prevent infinite loop - check raw attribute directly
-        $mainImage = $this->attributes['main_image'] ?? null;
+        $image = $this->attributes['image'] ?? null;
         
-        if (!$mainImage) return '';
-        if (str_starts_with($mainImage, 'http')) return $mainImage;
-        return '/images/blogs/' . $mainImage;
-    }
-    
-    /**
-     * Get description attribute (fallback to content if not set).
-     */
-    public function getDescriptionAttribute(): string
-    {
-        // Check if description column exists in attributes
-        if (array_key_exists('description', $this->attributes)) {
-            return $this->attributes['description'] ?? '';
-        }
-        // Fallback to content
-        return $this->attributes['content'] ?? '';
+        if (!$image) return '';
+        if (str_starts_with($image, 'http')) return $image;
+        return '/images/blogs/' . $image;
     }
 }

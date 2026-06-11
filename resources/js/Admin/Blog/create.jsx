@@ -107,20 +107,15 @@ export default function AdminBlogCreate({ categories = [] }) {
     const { data, setData, post, processing, errors } = useForm({
         title:            '',
         slug:             '',
-        content:          '',
-        main_image:       '',
+        description:      '',
+        image:            '',
         category_id:      '',
         meta_title:       '',
         meta_keyword:     '',
-        meta_keywords:    '',
         meta_description: '',
         og_title:         '',
         og_description:   '',
         image_alt:        '',
-        tags:             '',
-        type:             1,
-        status:           1,
-        serial_number:    '',
     });
 
     const [imgPreview, setImgPreview] = useState('');
@@ -139,13 +134,13 @@ export default function AdminBlogCreate({ categories = [] }) {
         const file = e.target.files[0];
         if (!file) return;
         setImgPreview(URL.createObjectURL(file));
-        setData('main_image', file);
+        setData('image', file);
     };
 
     const getPreviewUrl = () => {
         if (imgPreview) return imgPreview;
-        if (!data.main_image || typeof data.main_image !== 'string') return null;
-        return data.main_image.startsWith('http') ? data.main_image : `/images/blogs/${data.main_image}`;
+        if (!data.image || typeof data.image !== 'string') return null;
+        return data.image.startsWith('http') ? data.image : `/images/blogs/${data.image}`;
     };
 
     const handleSubmit = (e) => {
@@ -255,7 +250,7 @@ export default function AdminBlogCreate({ categories = [] }) {
                 </div>
             </div>
 
-                    {/* Category Name + Type + Image Preview */}
+                    {/* Category Name + Image Preview */}
                     <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', marginBottom: '1.25rem' }}>
                         <div style={{ flex: 1 }}>
                             <label style={s.label}>Category Name</label>
@@ -269,30 +264,6 @@ export default function AdminBlogCreate({ categories = [] }) {
                                 {categories.map(c => (
                                     <option key={c.id} value={c.id}>{c.name}</option>
                                 ))}
-                            </select>
-                        </div>
-                        <div style={{ width: '180px' }}>
-                            <label style={s.label}>Type</label>
-                            <select
-                                className="bp-input"
-                                style={s.input}
-                                value={data.type}
-                                onChange={e => setData('type', Number(e.target.value))}
-                            >
-                                <option value={1}>Blog</option>
-                                <option value={0}>Service</option>
-                            </select>
-                        </div>
-                        <div style={{ width: '180px' }}>
-                            <label style={s.label}>Status</label>
-                            <select
-                                className="bp-input"
-                                style={s.input}
-                                value={data.status}
-                                onChange={e => setData('status', Number(e.target.value))}
-                            >
-                                <option value={1}>Published</option>
-                                <option value={0}>Draft</option>
                             </select>
                         </div>
                         <div>
@@ -360,11 +331,11 @@ export default function AdminBlogCreate({ categories = [] }) {
                         <BlogToolbar id="create-blog-toolbar" />
                         <ReactQuill
                             theme="snow"
-                            value={data.content}
-                            onChange={val => setData('content', val)}
+                            value={data.description}
+                            onChange={val => setData('description', val)}
                             modules={quillModules}
                         />
-                        {errors.content && <div style={{ color: '#d63638', fontSize: '0.78rem', marginTop: '3px' }}>{errors.content}</div>}
+                        {errors.description && <div style={{ color: '#d63638', fontSize: '0.78rem', marginTop: '3px' }}>{errors.description}</div>}
                     </div>
 
                     {/* Submit */}

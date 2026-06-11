@@ -107,26 +107,21 @@ export default function AdminBlogEdit({ post, categories = [] }) {
     const { data, setData, post: postMethod, put, processing, errors } = useForm({
         title:            post?.title            || '',
         slug:             post?.slug             || '',
-        content:          post?.content          || '',
-        main_image:       null,
+        description:      post?.description      || '',
+        image:            null,
         category_id:      post?.category_id      || '',
         meta_title:       post?.meta_title       || '',
         meta_keyword:     post?.meta_keyword     || '',
-        meta_keywords:    post?.meta_keywords    || '',
         meta_description: post?.meta_description || '',
         og_title:         post?.og_title         || '',
         og_description:   post?.og_description   || '',
         image_alt:        post?.image_alt        || '',
-        tags:             post?.tags             || '',
-        type:             post?.type             ?? 1,
-        status:           post?.status           ?? 1,
-        serial_number:    post?.serial_number    ?? 0,
         _method:          'PUT',
     });
 
     const [imgPreview, setImgPreview] = useState('');
     const [autoSlug, setAutoSlug] = useState(post?.slug || '');
-    const [currentImage, setCurrentImage] = useState(post?.main_image || '');
+    const [currentImage, setCurrentImage] = useState(post?.image || '');
     const fileRef = useRef();
 
     useEffect(() => {
@@ -143,7 +138,7 @@ export default function AdminBlogEdit({ post, categories = [] }) {
         
         const previewUrl = URL.createObjectURL(file);
         setImgPreview(previewUrl);
-        setData('main_image', file);
+        setData('image', file);
     };
 
     const getPreviewUrl = () => {
@@ -281,7 +276,7 @@ export default function AdminBlogEdit({ post, categories = [] }) {
                         </div>
                     </div>
 
-                    {/* Category Name + Type + Status + Image Preview */}
+                    {/* Category Name + Image Preview */}
                     <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
                         <div style={{ flex: 1, minWidth: '200px' }}>
                             <label style={s.label}>Category Name</label>
@@ -295,30 +290,6 @@ export default function AdminBlogEdit({ post, categories = [] }) {
                                 {categories.map(c => (
                                     <option key={c.id} value={c.id}>{c.name}</option>
                                 ))}
-                            </select>
-                        </div>
-                        <div style={{ width: '180px' }}>
-                            <label style={s.label}>Type</label>
-                            <select
-                                className="bp-input"
-                                style={s.input}
-                                value={data.type}
-                                onChange={e => setData('type', Number(e.target.value))}
-                            >
-                                <option value={1}>Blog</option>
-                                <option value={0}>Service</option>
-                            </select>
-                        </div>
-                        <div style={{ width: '180px' }}>
-                            <label style={s.label}>Status</label>
-                            <select
-                                className="bp-input"
-                                style={s.input}
-                                value={data.status}
-                                onChange={e => setData('status', Number(e.target.value))}
-                            >
-                                <option value={1}>Published</option>
-                                <option value={0}>Draft</option>
                             </select>
                         </div>
                         <div style={{ width: '180px' }}>
@@ -395,8 +366,8 @@ export default function AdminBlogEdit({ post, categories = [] }) {
                         <BlogToolbar id="edit-blog-toolbar" />
                         <ReactQuill
                             theme="snow"
-                            value={data.content}
-                            onChange={val => setData('content', val)}
+                            value={data.description}
+                            onChange={val => setData('description', val)}
                             modules={quillModules}
                         />
                     </div>

@@ -57,13 +57,10 @@ export default function BlogPage({ posts, categories, seo, setting }) {
   }, [shimmer, allPosts]);
 
   const filteredPosts = allPosts.filter(post => {
-    const matchesTag = activeTag
-      ? (post.tags ? post.tags.split(',').map(t => t.trim()).includes(activeTag) : false)
-      : true;
     const matchesCategory = activeCategoryId
       ? post.category_id === activeCategoryId
       : true;
-    return matchesTag && matchesCategory;
+    return matchesCategory;
   });
 
   const totalPages = Math.ceil(filteredPosts.length / POSTS_PER_PAGE);
@@ -85,10 +82,10 @@ export default function BlogPage({ posts, categories, seo, setting }) {
     return plain.length > 150 ? plain.slice(0, 150) + '...' : plain;
   }
 
-  function getImageUrl(mainImage) {
-    if (!mainImage) return 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/blog-fi-1.jpg';
-    if (typeof mainImage === 'string' && mainImage.startsWith('http')) return mainImage;
-    return `/images/blogs/${mainImage}`;
+  function getImageUrl(image) {
+    if (!image) return 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/blog-fi-1.jpg';
+    if (typeof image === 'string' && image.startsWith('http')) return image;
+    return `/images/blogs/${image}`;
   }
 
   function getPageNumbers() {
@@ -170,8 +167,8 @@ export default function BlogPage({ posts, categories, seo, setting }) {
                     const title = post.title || 'No title';
                     const slug = post.slug || '#';
                     const metaDescription = post.meta_description || '';
-                    const content = post.content || '';
-                    const mainImage = post.main_image || '';
+                    const description = post.description || '';
+                    const image = post.image || '';
                     return (
                       <Link
                         key={post.id || index}
@@ -183,7 +180,7 @@ export default function BlogPage({ posts, categories, seo, setting }) {
                         <div className="blog-card">
                           <div className="blog-img-wrap">
                             <img
-                              src={getImageUrl(mainImage)}
+                              src={getImageUrl(image)}
                               alt={title}
                               className="blog-img"
                               onError={e => { e.target.src = 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/blog-fi-1.jpg'; }}
@@ -194,7 +191,7 @@ export default function BlogPage({ posts, categories, seo, setting }) {
                             <p className="blog-card-excerpt">
                               {metaDescription
                                 ? (metaDescription.length > 150 ? metaDescription.slice(0, 150) + '...' : metaDescription)
-                                : getExcerpt(content)
+                                : getExcerpt(description)
                               }
                             </p>
                             <div className="blog-card-meta">

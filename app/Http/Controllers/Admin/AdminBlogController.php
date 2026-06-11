@@ -20,17 +20,12 @@ class AdminBlogController extends Controller
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('title', 'like', "%{$request->search}%")
-                  ->orWhere('slug', 'like', "%{$request->search}%")
-                  ->orWhere('tags', 'like', "%{$request->search}%");
+                  ->orWhere('slug', 'like', "%{$request->search}%");
             });
         }
 
         if ($request->filled('category_id')) {
             $query->where('category_id', $request->category_id);
-        }
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
         }
 
         $posts = $query->latest()->paginate(15)->withQueryString();
@@ -40,7 +35,7 @@ class AdminBlogController extends Controller
         return Inertia::render('Admin/Blog/index', [
             'posts'      => $posts,
             'categories' => $categories,
-            'filters'    => $request->only(['search', 'category_id', 'status']),
+            'filters'    => $request->only(['search', 'category_id']),
         ]);
     }
 
@@ -57,30 +52,25 @@ class AdminBlogController extends Controller
         $validated = $request->validate([
             'title'            => 'required|string|max:255',
             'slug'             => 'nullable|string|max:255|unique:blogs,slug',
-            'content'          => 'nullable|string',
-            'main_image'       => 'nullable|file|image|max:5120',
+            'description'      => 'nullable|string',
+            'image'            => 'nullable|file|image|max:5120',
             'category_id'      => 'nullable|integer',
-            'serial_number'    => 'nullable|integer',
             'meta_title'       => 'nullable|string|max:255',
-            'meta_keywords'    => 'nullable|string',
             'meta_keyword'     => 'nullable|string',
             'meta_description' => 'nullable|string',
             'og_title'         => 'nullable|string|max:255',
             'og_description'   => 'nullable|string',
             'image_alt'        => 'nullable|string|max:255',
-            'tags'             => 'nullable|string',
-            'type'             => 'nullable|integer',
-            'status'           => 'nullable|integer',
         ]);
 
         // Handle file upload
-        if ($request->hasFile('main_image')) {
-            $file = $request->file('main_image');
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
             $filename = time() . '_' . $file->getClientOriginalName();
             $file->move(public_path('images/blogs'), $filename);
-            $validated['main_image'] = $filename;
+            $validated['image'] = $filename;
         } else {
-            unset($validated['main_image']);
+            unset($validated['image']);
         }
 
         if (empty($validated['slug'])) {
@@ -94,16 +84,11 @@ class AdminBlogController extends Controller
             $validated['slug'] = $baseSlug . '-' . $count++;
         }
 
-        $validated['serial_number'] = $validated['serial_number'] ?? 0;
-        $validated['status']        = $validated['status'] ?? 1;
-        $validated['type']          = $validated['type'] ?? 0;
-        $validated['category_id']   = $validated['category_id'] ?: null;
-        $validated['created_by']    = Auth::id() ?: 0;
-
-        if (! Schema::hasColumn('blogs', 'content') && Schema::hasColumn('blogs', 'description')) {
-            $validated['description'] = $validated['content'] ?? null;
-            unset($validated['content']);
+        if (Schema::hasColumn('blogs', 'created_by')) {
+            $validated['created_by'] = Auth::id() ?: 0;
         }
+        
+        $validated['category_id'] = $validated['category_id'] ?: null;
 
         BlogPost::create($validated);
 
@@ -115,25 +100,19 @@ class AdminBlogController extends Controller
     {
         $categories = Category::orderBy('name')->get(['id', 'name']);
         
-        // Ensure all fields are present in the response
         $blogData = [
             'id'               => $blog->id,
             'title'            => $blog->title ?? '',
             'slug'             => $blog->slug ?? '',
-            'content'          => $blog->content ?? '',
-            'main_image'       => $blog->main_image ?? '',
+            'description'      => $blog->description ?? '',
+            'image'            => $blog->image ?? '',
             'category_id'      => $blog->category_id ?? '',
             'meta_title'       => $blog->meta_title ?? '',
             'meta_keyword'     => $blog->meta_keyword ?? '',
-            'meta_keywords'    => $blog->meta_keywords ?? '',
             'meta_description' => $blog->meta_description ?? '',
             'og_title'         => $blog->og_title ?? '',
             'og_description'   => $blog->og_description ?? '',
             'image_alt'        => $blog->image_alt ?? '',
-            'tags'             => $blog->tags ?? '',
-            'type'             => $blog->type ?? 1,
-            'status'           => $blog->status ?? 1,
-            'serial_number'    => $blog->serial_number ?? 0,
         ];
         
         return Inertia::render('Admin/Blog/edit', [
@@ -147,31 +126,25 @@ class AdminBlogController extends Controller
         $validated = $request->validate([
             'title'            => 'required|string|max:255',
             'slug'             => 'nullable|string|max:255|unique:blogs,slug,' . $blog->id,
-            'content'          => 'nullable|string',
-            'main_image'       => 'nullable|file|image|max:5120', // 5MB max
+            'description'      => 'nullable|string',
+            'image'            => 'nullable|file|image|max:5120',
             'category_id'      => 'nullable|integer',
-            'serial_number'    => 'nullable|integer',
             'meta_title'       => 'nullable|string|max:255',
-            'meta_keywords'    => 'nullable|string',
             'meta_keyword'     => 'nullable|string',
             'meta_description' => 'nullable|string',
             'og_title'         => 'nullable|string|max:255',
             'og_description'   => 'nullable|string',
             'image_alt'        => 'nullable|string|max:255',
-            'tags'             => 'nullable|string',
-            'type'             => 'nullable|integer',
-            'status'           => 'nullable|integer',
         ]);
 
         // Handle file upload
-        if ($request->hasFile('main_image')) {
-            $file = $request->file('main_image');
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
             $filename = time() . '_' . $file->getClientOriginalName();
             $file->move(public_path('images/blogs'), $filename);
-            $validated['main_image'] = $filename;
+            $validated['image'] = $filename;
         } else {
-            // Keep existing image if no new file uploaded
-            unset($validated['main_image']);
+            unset($validated['image']);
         }
 
         if (empty($validated['slug'])) {
@@ -185,20 +158,10 @@ class AdminBlogController extends Controller
             $validated['slug'] = $baseSlug . '-' . $count++;
         }
 
-        // Set default values for fields that cannot be null in database
-        $validated['serial_number'] = $validated['serial_number'] ?? 0;
-        $validated['status']        = $validated['status'] ?? 1;
-        $validated['type']          = $validated['type'] ?? 0;
         $validated['category_id']   = $validated['category_id'] ?: null;
-
-        if (! Schema::hasColumn('blogs', 'content') && Schema::hasColumn('blogs', 'description')) {
-            $validated['description'] = $validated['content'] ?? null;
-            unset($validated['content']);
-        }
 
         $blog->update($validated);
 
-        // Redirect to blog list after update with success message
         return redirect()->route('admin.blog.index')
             ->with('success', 'Blog post updated successfully.');
     }

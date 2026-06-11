@@ -150,8 +150,8 @@ export default function DashboardPage({ blogPosts: dbBlogPosts, portfolios: dbPo
       id: p.id,
       slug: p.slug,
       title: p.title,
-      excerpt: stripHtml(p.meta_description || p.content),
-      image_url: getBlogImage(p.main_image),
+      excerpt: stripHtml(p.meta_description || p.description),
+      image_url: getBlogImage(p.image),
       author: p.created_by || 'Nikhil Sharma',
       date: p.created_at ? new Date(p.created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : 'Recent',
     })) : []);
