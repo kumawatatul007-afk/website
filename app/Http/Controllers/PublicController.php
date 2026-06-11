@@ -902,17 +902,14 @@ class PublicController extends Controller
     public function keywordDetailNew($prefix, $service, $location = null)
     {
         if (!$location) {
-            // Check if this matches a Service (BlogPost type=1)
+            // Check if this matches a Service
             $slug = strtolower($prefix) . '-' . $service;
-            $blogPostQuery = BlogPost::where('slug', $slug);
-            if (Schema::hasColumn('blogs', 'type')) {
-                $blogPostQuery->where('type', 1);
+            $serviceQuery = \App\Models\Service::where('slug', $slug);
+            if (Schema::hasColumn('services', 'is_active')) {
+                $serviceQuery->where('is_active', true);
             }
-            if (Schema::hasColumn('blogs', 'status')) {
-                $blogPostQuery->where('status', 1);
-            }
-            $blogPost = $blogPostQuery->first();
-            if ($blogPost) {
+            $foundService = $serviceQuery->first();
+            if ($foundService) {
                 return $this->serviceDetailNew($prefix, $service);
             }
         }

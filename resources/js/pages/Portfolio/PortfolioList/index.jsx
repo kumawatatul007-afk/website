@@ -237,16 +237,16 @@ export default function PortfolioListPage({ items: dbItems }) {
                   <div className="pl-img-wrap">
                     <img
                       src={
-                        project.image
-                          ? (project.image.startsWith('http') ? project.image : `/uploads/portfolio/${project.image}`)
-                          : (project.image_url || 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/project-5.jpg')
+                        project.image_url
+                          ? project.image_url
+                          : (project.image ? (project.image.startsWith('http') ? project.image : `/uploads/portfolio/${project.image}`) : 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/project-5.jpg')
                       }
                       alt={project.title}
                       className="pl-img"
                       loading="lazy"
                       onError={e => { 
                         // Try uploads folder as fallback
-                        if (!e.target.src.includes('/uploads/portfolio/')) {
+                        if (!e.target.src.includes('/uploads/portfolio/') && project.image) {
                           e.target.src = `/uploads/portfolio/${project.image}`;
                         } else {
                           e.target.src = 'https://wpdemo.ajufbox.com/mora/wp-content/uploads/2024/11/project-5.jpg';

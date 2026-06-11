@@ -90,7 +90,7 @@ export default function PortfolioPage({ items: dbItems }) {
                 >
                   <div className="port-img-wrap">
                     <img
-                      src={project.image_url || project.image || 'https://via.placeholder.com/600x400?text=No+Image'}
+                      src={project.image_url || (project.image ? (project.image.startsWith('http') ? project.image : `/uploads/portfolio/${project.image}`) : 'https://via.placeholder.com/600x400?text=No+Image')}
                       alt={project.title || 'Portfolio Item'}
                       className="port-img"
                       loading="lazy"

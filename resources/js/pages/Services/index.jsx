@@ -5,15 +5,24 @@ import 'aos/dist/aos.css';
 import SEO from '../../components/SEO';
 import { ShimmerServiceCard } from '../../components/ShimmerLoader';
 
-function stripHtml(html) {
+function stripHtml(html, maxLength = null) {
   if (!html) return '';
-  return html
+  let result = html
     .replace(/<br\s*\/?>/gi, ' ').replace(/<\/p>/gi, ' ').replace(/<\/li>/gi, ' ')
     .replace(/<li[^>]*>/gi, '').replace(/<[^>]+>/g, '')
     .replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>').replace(/&rsquo;/g, "'").replace(/&ldquo;/g, '"')
     .replace(/&rdquo;/g, '"').replace(/&ndash;/g, '–').replace(/&mdash;/g, '—')
     .replace(/\s{2,}/g, ' ').trim();
+  
+  if (maxLength && result.length > maxLength) {
+    result = result.substring(0, maxLength).trim();
+    if (result.endsWith(',')) result = result.slice(0, -1);
+    if (result.endsWith('.')) result = result.slice(0, -1);
+    result += '...';
+  }
+  
+  return result;
 }
 
 const ICONS = [
@@ -49,7 +58,6 @@ const FAQS = [
 
 const PER_PAGE = 5;
 
-// "web-development" → "/service/Web/development"
 function toServiceUrl(slug) {
   if (!slug) return '/services';
   const parts = slug.split('-');
@@ -58,7 +66,6 @@ function toServiceUrl(slug) {
   return rest ? `/${prefix}/${rest}` : `/${prefix}`;
 }
 
-// Count-up hook — animates from 0 to target when element enters viewport
 function useCountUp(target, duration = 1800) {
   const [count, setCount] = useState(0);
   const ref = useRef(null);
@@ -76,7 +83,6 @@ function useCountUp(target, duration = 1800) {
           const step = (now) => {
             const elapsed = now - startTime;
             const progress = Math.min(elapsed / duration, 1);
-            // Ease-out cubic
             const eased = 1 - Math.pow(1 - progress, 3);
             setCount(Math.floor(eased * target));
             if (progress < 1) requestAnimationFrame(step);
@@ -95,13 +101,10 @@ function useCountUp(target, duration = 1800) {
   return { count, ref };
 }
 
-// Individual stat item with count-up
 function StatItem({ num, label }) {
-  // Parse: "8+" → { value: 8, suffix: '+' }, "120+" → { value: 120, suffix: '+' }, "98%" → { value: 98, suffix: '%' }, "3" → { value: 3, suffix: '' }
   const match = String(num).match(/^(\d+)(.*)$/);
   const target = match ? parseInt(match[1], 10) : 0;
   const suffix = match ? match[2] : '';
-
   const { count, ref } = useCountUp(target, 1800);
 
   return (
@@ -116,15 +119,12 @@ function generatePagination(currentPage, totalPages) {
   if (totalPages <= 7) {
     return Array.from({ length: totalPages }, (_, i) => i);
   }
-
   if (currentPage < 3) {
     return [0, 1, 2, 3, 4, '...', totalPages - 1];
   }
-
   if (currentPage >= totalPages - 3) {
     return [0, '...', totalPages - 5, totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1];
   }
-
   return [0, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages - 1];
 }
 
@@ -133,11 +133,11 @@ export default function ServicesPage({ services = [] }) {
   const [page, setPage] = useState(0);
   const [shimmer, setShimmer] = useState(true);
 
-  // Brief shimmer on mount
   useEffect(() => {
     const t = setTimeout(() => setShimmer(false), 700);
     return () => clearTimeout(t);
   }, []);
+
   const totalPages = Math.ceil(services.length / PER_PAGE);
   const paged = services.slice(page * PER_PAGE, (page + 1) * PER_PAGE);
 
@@ -377,9 +377,12 @@ export default function ServicesPage({ services = [] }) {
            SERVICE CARDS GRID
         ═══════════════════════════════════════ */
         .srv-grid {
-          display: flex; flex-direction: column; gap: 1.5rem;
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
         }
 
+        /* ── THE FIX: force two-column grid on every card ── */
         .srv-card {
           background: #ffffff;
           border-radius: 20px;
@@ -387,14 +390,17 @@ export default function ServicesPage({ services = [] }) {
           overflow: hidden;
           display: grid;
           grid-template-columns: 1fr 1fr;
-          min-height: 320px;
+          grid-template-rows: 1fr;
+          min-height: 280px;
           transition: box-shadow 0.3s ease, transform 0.3s ease;
           position: relative;
+          width: 100%;
         }
         .srv-card:hover {
           box-shadow: 0 20px 60px rgba(0,0,0,0.1);
           transform: translateY(-3px);
         }
+
         /* Even cards flip columns */
         .srv-card.srv-flip .srv-card-info  { order: 2; }
         .srv-card.srv-flip .srv-card-aside { order: 1; }
@@ -402,14 +408,19 @@ export default function ServicesPage({ services = [] }) {
         /* ── INFO PANEL ── */
         .srv-card-info {
           padding: clamp(1.8rem, 4vw, 3rem);
-          display: flex; flex-direction: column;
+          display: flex;
+          flex-direction: column;
           justify-content: space-between;
           border-right: 1px solid #f0f0f0;
+          /* KEY FIX: prevent grid blowout */
+          min-width: 0;
+          overflow: hidden;
         }
         .srv-card.srv-flip .srv-card-info {
           border-right: none;
           border-left: 1px solid #f0f0f0;
         }
+
         .srv-card-top { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.4rem; }
         .srv-card-icon-box {
           width: 52px; height: 52px; border-radius: 14px;
@@ -417,7 +428,7 @@ export default function ServicesPage({ services = [] }) {
           flex-shrink: 0; transition: transform 0.3s ease;
         }
         .srv-card:hover .srv-card-icon-box { transform: scale(1.08) rotate(-3deg); }
-        .srv-card-meta { flex: 1; }
+        .srv-card-meta { flex: 1; min-width: 0; }
         .srv-card-num {
           font-size: 0.65rem; font-weight: 700; letter-spacing: 0.2em;
           text-transform: uppercase; color: #9ca3af; margin-bottom: 0.3rem;
@@ -435,9 +446,9 @@ export default function ServicesPage({ services = [] }) {
         .srv-card-desc {
           font-size: 0.92rem; color: #555;
           line-height: 1.8; font-weight: 400;
-          flex: 1; margin-bottom: 1.6rem;
+          margin-bottom: 1.6rem;
           display: -webkit-box;
-          -webkit-line-clamp: 5;
+          -webkit-line-clamp: 3;
           -webkit-box-orient: vertical;
           overflow: hidden;
         }
@@ -461,6 +472,7 @@ export default function ServicesPage({ services = [] }) {
           letter-spacing: 0.06em; text-transform: uppercase;
           text-decoration: none; transition: all 0.2s ease;
           color: #fff;
+          white-space: nowrap;
         }
         .srv-cta-btn svg { transition: transform 0.2s ease; }
         .srv-cta-btn:hover svg { transform: translateX(4px); }
@@ -469,56 +481,20 @@ export default function ServicesPage({ services = [] }) {
         /* ── ASIDE PANEL ── */
         .srv-card-aside {
           padding: clamp(1.8rem, 4vw, 3rem);
-          display: flex; flex-direction: column;
+          display: flex;
+          flex-direction: column;
           justify-content: center;
-          position: relative; overflow: hidden;
+          position: relative;
+          overflow: hidden;
+          /* KEY FIX: prevent grid blowout + ensure visible */
+          min-width: 0;
+          min-height: 280px;
         }
         .srv-aside-bg {
           position: absolute; inset: 0;
           opacity: 0.5; pointer-events: none;
           background-image: radial-gradient(circle at 80% 20%, rgba(255,255,255,0.4) 0%, transparent 50%),
                             radial-gradient(circle at 20% 80%, rgba(255,255,255,0.2) 0%, transparent 50%);
-        }
-        .srv-aside-label {
-          font-size: 0.65rem; font-weight: 700;
-          letter-spacing: 0.2em; text-transform: uppercase;
-          color: rgba(0,0,0,0.4); margin-bottom: 1.2rem;
-          position: relative; z-index: 1;
-        }
-        .srv-features-list {
-          list-style: none; display: flex; flex-direction: column;
-          gap: 0.75rem; position: relative; z-index: 1;
-        }
-        .srv-features-list li {
-          display: flex; align-items: flex-start; gap: 10px;
-          font-size: 0.88rem; color: rgba(0,0,0,0.75);
-          font-weight: 500; line-height: 1.5;
-        }
-        .srv-feat-check {
-          flex-shrink: 0; width: 18px; height: 18px;
-          border-radius: 50%; margin-top: 1px;
-          display: flex; align-items: center; justify-content: center;
-          background: rgba(0,0,0,0.15);
-        }
-        .srv-feat-check svg { width: 9px; height: 9px; }
-
-        /* No features — decorative visual */
-        .srv-aside-visual {
-          display: flex; flex-direction: column;
-          align-items: center; justify-content: center;
-          height: 100%; gap: 1rem;
-          position: relative; z-index: 1;
-        }
-        .srv-aside-big-icon {
-          width: 80px; height: 80px; border-radius: 20px;
-          display: flex; align-items: center; justify-content: center;
-          background: rgba(0,0,0,0.12);
-        }
-        .srv-aside-big-icon svg { width: 40px; height: 40px; }
-        .srv-aside-tagline {
-          font-size: 0.8rem; font-weight: 600;
-          letter-spacing: 0.1em; text-transform: uppercase;
-          color: rgba(0,0,0,0.45); text-align: center;
         }
 
         /* ═══════════════════════════════════════
@@ -644,15 +620,20 @@ export default function ServicesPage({ services = [] }) {
         /* ═══════════════════════════════════════
            RESPONSIVE
         ═══════════════════════════════════════ */
-        @media (max-width: 768px) {
-          .srv-card { grid-template-columns: 1fr; min-height: auto; }
+        @media (max-width: 640px) {
+          .srv-card {
+            grid-template-columns: 1fr !important;
+            min-height: auto;
+          }
           .srv-card.srv-flip .srv-card-info  { order: 1; }
           .srv-card.srv-flip .srv-card-aside { order: 2; }
-          .srv-card-info { border-right: none !important; border-left: none !important; border-bottom: 1px solid #f0f0f0; }
-          .srv-card-aside { min-height: 200px; }
+          .srv-card-info {
+            border-right: none !important;
+            border-left: none !important;
+            border-bottom: 1px solid #f0f0f0;
+          }
+          .srv-card-aside { min-height: 220px; }
           .srv-section-top { flex-direction: column; align-items: flex-start; }
-        }
-        @media (max-width: 540px) {
           .srv-stat { flex: 1 1 50%; }
           .srv-stat:nth-child(2) { border-right: none; }
           .srv-hero-btns { flex-direction: column; align-items: center; }
@@ -742,7 +723,7 @@ export default function ServicesPage({ services = [] }) {
                 const gi = page * PER_PAGE + i;
                 const color = ACCENT_COLORS[gi % ACCENT_COLORS.length];
                 const isFlip = gi % 2 === 1;
-                const desc = stripHtml(service.description || service.subtitle || '');
+                const desc = stripHtml(service.description || service.subtitle || '', 200);
 
                 return (
                   <div
@@ -799,67 +780,99 @@ export default function ServicesPage({ services = [] }) {
                     {/* ASIDE PANEL */}
                     <div className="srv-card-aside" style={{ background: color.bg }}>
                       <div className="srv-aside-bg" />
-                      {service.features && service.features.length > 0 ? (
-                        <>
-                          <p className="srv-aside-label">What's Included</p>
-                          <ul className="srv-features-list">
-                            {service.features.slice(0, 8).map((feat, fi) => (
-                              <li key={fi}>
-                                <span className="srv-feat-check" style={{ background: color.light }}>
-                                  <svg viewBox="0 0 12 12" fill="none" stroke={color.accent} strokeWidth="2.5">
-                                    <polyline points="2 6 5 9 10 3" />
-                                  </svg>
-                                </span>
-                                <span style={{ color: '#374151' }}>{stripHtml(feat)}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </>
-                      ) : (
-                        <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between', gap: '1.5rem' }}>
-                          {/* Top: icon + title */}
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                            <div style={{ width: 56, height: 56, borderRadius: 14, background: color.light, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                              <span style={{ color: color.accent }}>{ICONS[gi % ICONS.length]}</span>
-                            </div>
-                            <div>
-                              <p style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.35)', marginBottom: 4 }}>Service Highlights</p>
-                              <p style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: '1.05rem', fontWeight: 700, color: '#111', letterSpacing: '-0.01em' }}>{service.title}</p>
-                            </div>
+                      <div style={{
+                        position: 'relative',
+                        zIndex: 1,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        height: '100%',
+                        justifyContent: 'space-between',
+                        gap: '1.5rem',
+                      }}>
+                        {/* Top: icon + title */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                          <div style={{
+                            width: 56, height: 56, borderRadius: 14,
+                            background: color.light,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            flexShrink: 0,
+                          }}>
+                            <span style={{ color: color.accent }}>{ICONS[gi % ICONS.length]}</span>
                           </div>
-
-                          {/* Middle: 3 highlight points */}
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', flex: 1 }}>
-                            {[
-                              'Custom solution tailored to your business goals',
-                              'Fast delivery with regular progress updates',
-                              'Post-launch support & maintenance included',
-                              'SEO-optimised & mobile-first by default',
-                            ].map((point, pi) => (
-                              <div key={pi} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-                                <span style={{ flexShrink: 0, width: 20, height: 20, borderRadius: '50%', background: color.light, display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 1 }}>
-                                  <svg viewBox="0 0 12 12" fill="none" stroke={color.accent} strokeWidth="2.5" width="9" height="9">
-                                    <polyline points="2 6 5 9 10 3" />
-                                  </svg>
-                                </span>
-                                <span style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: '0.87rem', color: '#374151', fontWeight: 500, lineHeight: 1.5 }}>{point}</span>
-                              </div>
-                            ))}
-                          </div>
-
-                          {/* Bottom: CTA strip */}
-                          <div style={{ borderTop: '1px solid rgba(0,0,0,0.08)', paddingTop: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.6rem' }}>
-                            <p style={{ fontFamily: "'Space Grotesk',sans-serif", fontSize: '0.78rem', color: 'rgba(0,0,0,0.4)', fontWeight: 500 }}>Free consultation available</p>
-                            <Link
-                              href="/contact"
-                              style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontFamily: "'Space Grotesk',sans-serif", fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: color.accent, textDecoration: 'none', borderBottom: `1.5px solid ${color.accent}`, paddingBottom: 2 }}
-                            >
-                              Discuss Project
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-                            </Link>
+                          <div style={{ minWidth: 0 }}>
+                            <p style={{
+                              fontFamily: "'Space Grotesk',sans-serif",
+                              fontSize: '0.65rem', fontWeight: 700,
+                              letterSpacing: '0.2em', textTransform: 'uppercase',
+                              color: 'rgba(0,0,0,0.35)', marginBottom: 4,
+                            }}>Service Highlights</p>
+                            <p style={{
+                              fontFamily: "'Space Grotesk',sans-serif",
+                              fontSize: '1.05rem', fontWeight: 700,
+                              color: '#111', letterSpacing: '-0.01em',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                            }}>{service.title}</p>
                           </div>
                         </div>
-                      )}
+
+                        {/* Middle: 3 highlight points */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', flex: 1 }}>
+                          {[
+                            'Custom solution tailored to your business goals',
+                            'Fast delivery with regular progress updates',
+                            'Post-launch support & maintenance included',
+                          ].map((point, pi) => (
+                            <div key={pi} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+                              <span style={{
+                                flexShrink: 0, width: 20, height: 20, borderRadius: '50%',
+                                background: color.light,
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                marginTop: 1,
+                              }}>
+                                <svg viewBox="0 0 12 12" fill="none" stroke={color.accent} strokeWidth="2.5" width="9" height="9">
+                                  <polyline points="2 6 5 9 10 3" />
+                                </svg>
+                              </span>
+                              <span style={{
+                                fontFamily: "'Space Grotesk',sans-serif",
+                                fontSize: '0.87rem', color: '#374151',
+                                fontWeight: 500, lineHeight: 1.5,
+                              }}>{point}</span>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Bottom: CTA strip */}
+                        <div style={{
+                          borderTop: '1px solid rgba(0,0,0,0.08)',
+                          paddingTop: '1.2rem',
+                          display: 'flex', alignItems: 'center',
+                          justifyContent: 'space-between',
+                          flexWrap: 'wrap', gap: '0.6rem',
+                        }}>
+                          <p style={{
+                            fontFamily: "'Space Grotesk',sans-serif",
+                            fontSize: '0.78rem', color: 'rgba(0,0,0,0.4)', fontWeight: 500,
+                          }}>Free consultation available</p>
+                          <Link
+                            href="/contact"
+                            style={{
+                              display: 'inline-flex', alignItems: 'center', gap: 6,
+                              fontFamily: "'Space Grotesk',sans-serif",
+                              fontSize: '0.75rem', fontWeight: 700,
+                              letterSpacing: '0.06em', textTransform: 'uppercase',
+                              color: color.accent, textDecoration: 'none',
+                              borderBottom: `1.5px solid ${color.accent}`,
+                              paddingBottom: 2,
+                            }}
+                          >
+                            Discuss Project
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                          </Link>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 );
@@ -869,19 +882,34 @@ export default function ServicesPage({ services = [] }) {
             {/* ── PAGINATION ── */}
             {totalPages > 1 && (
               <div className="srv-pagination">
-                <button className="srv-pg-arrow" onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0} aria-label="Previous">
+                <button
+                  className="srv-pg-arrow"
+                  onClick={() => setPage(p => Math.max(0, p - 1))}
+                  disabled={page === 0}
+                  aria-label="Previous"
+                >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 18l-6-6 6-6" /></svg>
                 </button>
                 {generatePagination(page, totalPages).map((p, i) => (
                   p === '...' ? (
                     <span key={`ellipsis-${i}`} style={{ padding: '0 8px', color: '#9ca3af', fontWeight: 600 }}>...</span>
                   ) : (
-                    <button key={p} className={`srv-pg-num${page === p ? ' active' : ''}`} onClick={() => setPage(p)} aria-label={`Page ${p + 1}`}>
+                    <button
+                      key={p}
+                      className={`srv-pg-num${page === p ? ' active' : ''}`}
+                      onClick={() => setPage(p)}
+                      aria-label={`Page ${p + 1}`}
+                    >
                       {p + 1}
                     </button>
                   )
                 ))}
-                <button className="srv-pg-arrow" onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={page === totalPages - 1} aria-label="Next">
+                <button
+                  className="srv-pg-arrow"
+                  onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
+                  disabled={page === totalPages - 1}
+                  aria-label="Next"
+                >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 18l6-6-6-6" /></svg>
                 </button>
               </div>
@@ -898,7 +926,11 @@ export default function ServicesPage({ services = [] }) {
           <p className="srv-faq-sub">Everything you need to know before hiring a web developer in Jaipur.</p>
           {FAQS.map((faq, i) => (
             <div key={i} className="srv-faq-item">
-              <button className="srv-faq-btn" onClick={() => setOpenFaq(openFaq === i ? null : i)} aria-expanded={openFaq === i}>
+              <button
+                className="srv-faq-btn"
+                onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                aria-expanded={openFaq === i}
+              >
                 {faq.q}
                 <svg className={`srv-faq-chevron${openFaq === i ? ' open' : ''}`} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <polyline points="6 9 12 15 18 9" />
