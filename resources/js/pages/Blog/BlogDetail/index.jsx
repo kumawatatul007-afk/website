@@ -11,14 +11,45 @@ export default function BlogDetailPage({ post, recentPosts = [], seo }) {
   const [subEmail, setSubEmail] = useState('');
   const [subLoading, setSubLoading] = useState(false);
   const [subError, setSubError] = useState('');
+  const [subTouched, setSubTouched] = useState(false);
+
+  // Email validation regex
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  const validateEmail = (email) => {
+    if (!email) return 'Email is required.';
+    if (!emailRegex.test(email)) return 'Please enter a valid email address (e.g., name@example.com).';
+    return '';
+  };
+
+  const handleEmailChange = (e) => {
+    const newEmail = e.target.value;
+    setSubEmail(newEmail);
+    if (subTouched) {
+      setSubError(validateEmail(newEmail));
+    }
+  };
+
+  const handleEmailBlur = () => {
+    setSubTouched(true);
+    setSubError(validateEmail(subEmail));
+  };
 
   const handleSubscribe = (e) => {
     e.preventDefault();
+    setSubTouched(true);
+    
+    const validationError = validateEmail(subEmail);
+    if (validationError) {
+      setSubError(validationError);
+      return;
+    }
+    
     setSubLoading(true);
     setSubError('');
     router.post('/newsletter-subscribe', { email: subEmail }, {
       preserveScroll: true,
-      onSuccess: () => { setSubEmail(''); setSubLoading(false); },
+      onSuccess: () => { setSubEmail(''); setSubLoading(false); setSubTouched(false); },
       onError: (errors) => { setSubError(errors.email || 'Something went wrong.'); setSubLoading(false); },
     });
   };
@@ -416,18 +447,18 @@ export default function BlogDetailPage({ post, recentPosts = [], seo }) {
                     <input
                       type="email"
                       value={subEmail}
-                      onChange={e => setSubEmail(e.target.value)}
+                      onChange={handleEmailChange}
+                      onBlur={handleEmailBlur}
                       placeholder="Enter your email"
-                      required
                       style={{
                         padding: '0.6rem 0.9rem', borderRadius: '8px',
-                        border: '1.5px solid rgba(255,255,255,0.2)',
+                        border: subError ? '1.5px solid #f87171' : '1.5px solid rgba(255,255,255,0.2)',
                         background: 'rgba(255,255,255,0.1)', color: '#fff',
                         fontSize: '0.85rem', outline: 'none', width: '100%', boxSizing: 'border-box',
                       }}
                     />
                     {subError && <span style={{ color: '#f87171', fontSize: '0.8rem' }}>{subError}</span>}
-                    <button type="submit" className="bd-btn-secondary" disabled={subLoading}>
+                    <button type="submit" className="bd-btn-secondary" disabled={subLoading || !!subError}>
                       {subLoading ? 'Subscribing...' : 'Subscribe →'}
                     </button>
                   </form>

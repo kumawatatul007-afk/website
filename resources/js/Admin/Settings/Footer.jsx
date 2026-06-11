@@ -3,53 +3,37 @@ import { router } from '@inertiajs/react';
 import { useState } from 'react';
 
 export default function AdminSettingsFooter({ footer }) {
-    const [form, setForm] = useState({
-        facebook: footer?.facebook ?? '',
-        twitter: footer?.twitter ?? '',
-        linkedin: footer?.linkedin ?? '',
-        youtube: footer?.youtube ?? '',
-        instagram: footer?.instagram ?? '',
-        footer_text: footer?.footer_text ?? '',
-        terms_condition: footer?.terms_condition ?? '',
-        impressum: footer?.impressum ?? '',
-        privacy_policy: footer?.privacy_policy ?? '',
-        footer_logo: null,
-    });
+  const [form, setForm] = useState({
+    facebook: footer?.facebook || '',
+    twitter: footer?.twitter || '',
+    linkedin: footer?.linkedin || '',
+    youtube: footer?.youtube || '',
+    instagram: footer?.instagram || '',
+    footer_text: footer?.footer_text || '',
+    terms_condition: footer?.terms_condition || '',
+    impressum: footer?.impressum || '',
+    privacy_policy: footer?.privacy_policy || '',
+  });
 
-    const [errors, setErrors] = useState({});
-    const [loading, setLoading] = useState(false);
-    const [logoPreview, setLogoPreview] = useState(footer?.footer_logo ? `/uploads/settings/${footer.footer_logo}` : null);
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
-    const set = (key, val) => setForm(f => ({ ...f, [key]: val }));
-
-    const handleAssetChange = (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            setLogoPreview(ev.target.result);
-        };
-        reader.readAsDataURL(file);
-        set('footer_logo', file);
-    };
+  const set = (key, val) => setForm(f => ({ ...f, [key]: val }));
 
     const handleSubmit = (e) => {
-        e.preventDefault();
-        setLoading(true);
-        const formData = new FormData();
-        formData.append('_method', 'PUT');
-        formData.append('facebook', form.facebook);
-        formData.append('twitter', form.twitter);
-        formData.append('linkedin', form.linkedin);
-        formData.append('youtube', form.youtube);
-        formData.append('instagram', form.instagram);
-        formData.append('footer_text', form.footer_text);
-        formData.append('terms_condition', form.terms_condition);
-        formData.append('impressum', form.impressum);
-        formData.append('privacy_policy', form.privacy_policy);
-        if (form.footer_logo) {
-            formData.append('footer_logo', form.footer_logo);
-        }
+    e.preventDefault();
+    setLoading(true);
+    const formData = new FormData();
+    formData.append('_method', 'PUT');
+    formData.append('facebook', form.facebook);
+    formData.append('twitter', form.twitter);
+    formData.append('linkedin', form.linkedin);
+    formData.append('youtube', form.youtube);
+    formData.append('instagram', form.instagram);
+    formData.append('footer_text', form.footer_text);
+    formData.append('terms_condition', form.terms_condition);
+    formData.append('impressum', form.impressum);
+    formData.append('privacy_policy', form.privacy_policy);
 
         router.post('/admin/footer', formData, {
             preserveScroll: true,
@@ -147,47 +131,6 @@ export default function AdminSettingsFooter({ footer }) {
                     min-height: 100px;
                     resize: vertical;
                 }
-                .asset-box {
-                    width: 90px;
-                    height: 90px;
-                    border-radius: 10px;
-                    border: 1.5px solid #e2e8f0;
-                    background: #f8fafc;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    position: relative;
-                    overflow: hidden;
-                    margin-top: 0.5rem;
-                    cursor: pointer;
-                }
-                .asset-box img {
-                    width: 100%;
-                    height: 100%;
-                    object-fit: contain;
-                    padding: 6px;
-                }
-                .asset-edit {
-                    position: absolute;
-                    top: 4px;
-                    right: 4px;
-                    width: 24px;
-                    height: 24px;
-                    border-radius: 50%;
-                    background: rgba(255,255,255,0.9);
-                    border: 1px solid #e2e8f0;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    cursor: pointer;
-                    font-size: 0.7rem;
-                    color: #64748b;
-                    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-                }
-                .asset-placeholder {
-                    color: #d1d5db;
-                    font-size: 2rem;
-                }
                 .btn-submit {
                     background: #2563eb;
                     color: #fff;
@@ -233,32 +176,6 @@ export default function AdminSettingsFooter({ footer }) {
 
                         <div className="form-container">
                             <form onSubmit={handleSubmit}>
-                                <div className="form-group">
-                                    <label className="form-label">Footer Logo</label>
-                                    <div 
-                                        className="asset-box" 
-                                        onClick={() => document.getElementById('footer-logo-file').click()}
-                                    >
-                                        {logoPreview ? (
-                                            <img src={logoPreview} alt="Footer Logo Preview" />
-                                        ) : (
-                                            <span className="asset-placeholder">🖼</span>
-                                        )}
-                                        <span className="asset-edit" title="Upload Footer Logo">
-                                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                                            </svg>
-                                        </span>
-                                        <input
-                                            id="footer-logo-file"
-                                            type="file"
-                                            accept="image/*"
-                                            style={{ display: 'none' }}
-                                            onChange={handleAssetChange}
-                                        />
-                                    </div>
-                                </div>
 
                                 <div className="form-grid">
                                     <div className="form-group">

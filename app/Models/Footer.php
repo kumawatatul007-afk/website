@@ -18,6 +18,5 @@ class Footer extends Model
         'terms_condition',
         'impressum',
         'privacy_policy',
-        'footer_logo',
     ];
 }

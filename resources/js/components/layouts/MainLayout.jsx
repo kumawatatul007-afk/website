@@ -103,18 +103,7 @@ export default function MainLayout({ children }) {
   }
   const logoUrl = getLogoUrl()
 
-  // Get footer logo URL from footer settings
-  const getFooterLogoUrl = () => {
-    if (!footer.footer_logo) return getLogoUrl();
-    let url;
-    if (footer.footer_logo.startsWith('http') || footer.footer_logo.startsWith('/')) {
-      url = footer.footer_logo;
-    } else {
-      url = `/uploads/settings/${footer.footer_logo}`;
-    }
-    return url;
-  }
-  const footerLogoUrl = getFooterLogoUrl();
+
 
   // Service URL helper
   const toServiceUrl = (slug) => {
@@ -681,16 +670,6 @@ export default function MainLayout({ children }) {
 
           {/* Brand + contact */}
           <div className="mora-footer-brand">
-            <Link href="/" aria-label={`${siteName} — Home`}>
-              <div className="mora-footer-logo-wrapper">
-                <img
-                  src={footerLogoUrl}
-                  alt={`${siteName} — Full Stack Developer Jaipur`}
-                  className="mora-footer-logo"
-                  onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/images/logo.png'; }}
-                />
-              </div>
-            </Link>
             <p className="mora-footer-tagline">
               {footer.footer_text || 'Freelance Full Stack Developer based in Jaipur, India. Building fast, SEO-optimised websites and apps for businesses across India and the Middle East.'}
             </p>

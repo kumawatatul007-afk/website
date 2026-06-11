@@ -30,20 +30,7 @@ class FooterController extends Controller
             'terms_condition' => 'nullable|string',
             'impressum' => 'nullable|string',
             'privacy_policy' => 'nullable|string',
-            'footer_logo' => 'nullable|file|image|mimes:jpg,jpeg,png,webp,svg|max:5120',
         ]);
-
-        $uploadPath = public_path('uploads/settings');
-        if (!file_exists($uploadPath)) {
-            mkdir($uploadPath, 0755, true);
-        }
-
-        if ($request->hasFile('footer_logo')) {
-            $logo = $request->file('footer_logo');
-            $logoName = 'footer_logo_' . time() . '.' . $logo->getClientOriginalExtension();
-            $logo->move($uploadPath, $logoName);
-            $validated['footer_logo'] = $logoName;
-        }
 
         $footer = Footer::first();
 

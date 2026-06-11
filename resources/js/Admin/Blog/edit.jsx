@@ -279,10 +279,10 @@ export default function AdminBlogEdit({ post, categories = [] }) {
                     {/* Category Name + Image Preview */}
                     <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
                         <div style={{ flex: 1, minWidth: '200px' }}>
-                            <label style={s.label}>Category Name</label>
+                            <label style={s.label}>Category Name *</label>
                             <select
                                 className="bp-input"
-                                style={s.input}
+                                style={{ ...s.input, ...(errors.category_id ? { borderColor: '#d63638' } : {}) }}
                                 value={data.category_id}
                                 onChange={e => setData('category_id', e.target.value)}
                             >
@@ -291,6 +291,7 @@ export default function AdminBlogEdit({ post, categories = [] }) {
                                     <option key={c.id} value={c.id}>{c.name}</option>
                                 ))}
                             </select>
+                            {errors.category_id && <div style={{ color: '#d63638', fontSize: '0.78rem', marginTop: '3px' }}>{errors.category_id}</div>}
                         </div>
                         <div style={{ width: '180px' }}>
                             <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileChange} />

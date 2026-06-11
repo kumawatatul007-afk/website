@@ -9,12 +9,57 @@ import { HiOutlineBriefcase, HiOutlineCommandLine, HiOutlineAcademicCap, HiOutli
 
 function ContactForm() {
   const [status, setStatus] = useState(null); // null | 'sending' | 'success' | 'error'
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [errors, setErrors] = useState({ name: '', email: '', message: '' });
+  const [touched, setTouched] = useState({ name: false, email: false, message: false });
   const formRef = useRef(null);
+
+  // Email validation regex
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  const validateField = (name, value) => {
+    if (!value) return 'This field is required.';
+    if (name === 'email' && !emailRegex.test(value)) {
+      return 'Please enter a valid email address (e.g., name@example.com).';
+    }
+    return '';
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    
+    if (touched[name]) {
+      setErrors(prev => ({ ...prev, [name]: validateField(name, value) }));
+    }
+  };
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    setTouched(prev => ({ ...prev, [name]: true }));
+    setErrors(prev => ({ ...prev, [name]: validateField(name, value) }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Validate all fields
+    const newTouched = { name: true, email: true, message: true };
+    const newErrors = {
+      name: validateField('name', formData.name),
+      email: validateField('email', formData.email),
+      message: validateField('message', formData.message),
+    };
+    
+    setTouched(newTouched);
+    setErrors(newErrors);
+    
+    // Check if any errors
+    if (newErrors.name || newErrors.email || newErrors.message) {
+      return;
+    }
+    
     setStatus('sending');
-    const fd = new FormData(e.target);
     fetch('/contact', {
       method: 'POST',
       headers: {
@@ -22,16 +67,14 @@ function ContactForm() {
         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
         'Accept': 'application/json',
       },
-      body: JSON.stringify({
-        name: fd.get('name'),
-        email: fd.get('email'),
-        message: fd.get('message'),
-      }),
+      body: JSON.stringify(formData),
     })
       .then(res => {
         if (res.ok) {
           setStatus('success');
-          formRef.current?.reset();
+          setFormData({ name: '', email: '', message: '' });
+          setTouched({ name: false, email: false, message: false });
+          setErrors({ name: '', email: '', message: '' });
           setTimeout(() => setStatus(null), 5000);
         } else {
           setStatus('error');
@@ -72,17 +115,48 @@ function ContactForm() {
       )}
       <div className="contact-field">
         <label className="contact-field-label">Name</label>
-        <input type="text" name="name" required className="contact-input" placeholder="" />
+        <input 
+          type="text" 
+          name="name" 
+          value={formData.name}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          className={`contact-input ${errors.name && touched.name ? 'error' : ''}`}
+          placeholder="" 
+        />
+        {errors.name && touched.name && <div style={{ color: '#ef4444', fontSize: '0.8rem', marginTop: '0.25rem' }}>{errors.name}</div>}
       </div>
       <div className="contact-field">
         <label className="contact-field-label">Email</label>
-        <input type="email" name="email" required className="contact-input" placeholder="" />
+        <input 
+          type="email" 
+          name="email" 
+          value={formData.email}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          className={`contact-input ${errors.email && touched.email ? 'error' : ''}`}
+          placeholder="" 
+        />
+        {errors.email && touched.email && <div style={{ color: '#ef4444', fontSize: '0.8rem', marginTop: '0.25rem' }}>{errors.email}</div>}
       </div>
       <div className="contact-field">
         <label className="contact-field-label">Message</label>
-        <textarea name="message" required className="contact-textarea" rows={5} placeholder=""></textarea>
+        <textarea 
+          name="message" 
+          value={formData.message}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          className={`contact-textarea ${errors.message && touched.message ? 'error' : ''}`}
+          rows={5} 
+          placeholder=""
+        />
+        {errors.message && touched.message && <div style={{ color: '#ef4444', fontSize: '0.8rem', marginTop: '0.25rem' }}>{errors.message}</div>}
       </div>
-      <button type="submit" className="contact-submit-btn" disabled={status === 'sending'}>
+      <button 
+        type="submit" 
+        className="contact-submit-btn" 
+        disabled={status === 'sending' || errors.name || errors.email || errors.message}
+      >
         {status === 'sending' ? 'SENDING...' : 'SEND MESSAGE'}
       </button>
     </form>
