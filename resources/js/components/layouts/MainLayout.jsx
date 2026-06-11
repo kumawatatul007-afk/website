@@ -87,10 +87,18 @@ export default function MainLayout({ children }) {
   // Get logo URL from settings
   const getLogoUrl = () => {
     if (!setting.logo) return '/images/logo.png'
+    let url
     if (setting.logo.startsWith('http') || setting.logo.startsWith('/')) {
-      return setting.logo
+      url = setting.logo
+    } else {
+      url = `/uploads/settings/${setting.logo}`
     }
-    return `/uploads/settings/${setting.logo}`
+    // Add cache-busting query string using updated_at timestamp if available
+    if (setting.updated_at) {
+      const timestamp = new Date(setting.updated_at).getTime()
+      url += `?v=${timestamp}`
+    }
+    return url
   }
   const logoUrl = getLogoUrl()
   const siteEmail   = setting.email   || 'technikhilsharma7@gmail.com'
@@ -240,18 +248,16 @@ export default function MainLayout({ children }) {
         .mora-logo-img {
           height: 48px; width: auto; max-width: 160px;
           object-fit: contain;
-          filter: brightness(0);
           transition: transform 0.3s ease, opacity 0.3s ease, filter 0.3s ease;
         }
         .mora-brand:hover .mora-logo-img {
           transform: scale(1.05);
           opacity: 0.85;
         }
-        /* Footer logo — force white */
+        /* Footer logo */
         .mora-footer-logo {
           height: 40px; width: auto; max-width: 140px;
           object-fit: contain;
-          filter: brightness(0) invert(1);
           opacity: 0.9;
           transition: opacity 0.2s ease;
         }
@@ -411,10 +417,15 @@ export default function MainLayout({ children }) {
         }
         /* Brand column */
         .mora-footer-brand { display: flex; flex-direction: column; gap: 0.4rem; }
+        .mora-footer-logo-wrapper {
+          background: white;
+          padding: 0.5rem 1rem;
+          border-radius: 0.5rem;
+          display: inline-block;
+        }
         .mora-footer-logo {
           height: 40px; width: auto; max-width: 140px;
           object-fit: contain;
-          filter: brightness(0) invert(1);
           opacity: 0.9;
         }
         .mora-footer-tagline {
@@ -647,12 +658,14 @@ export default function MainLayout({ children }) {
           {/* Brand + contact */}
           <div className="mora-footer-brand">
             <Link href="/" aria-label={`${siteName} — Home`}>
-              <img
-                src={logoUrl}
-                alt={`${siteName} — Full Stack Developer Jaipur`}
-                className="mora-footer-logo"
-                onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/images/logo.png'; }}
-              />
+              <div className="mora-footer-logo-wrapper">
+                <img
+                  src={logoUrl}
+                  alt={`${siteName} — Full Stack Developer Jaipur`}
+                  className="mora-footer-logo"
+                  onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/images/logo.png'; }}
+                />
+              </div>
             </Link>
             <p className="mora-footer-tagline">
               Freelance Full Stack Developer based in Jaipur, India. Building fast, SEO-optimised websites and apps for businesses across India and the Middle East.

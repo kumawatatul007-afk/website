@@ -197,6 +197,11 @@ export default function AdminSettingsIndex({ setting }) {
                 if (savedFavicon) {
                     updateBrowserFavicon(getAssetUrl(savedFavicon));
                 }
+                
+                // Force reload the page to refresh all props (including setting)
+                setTimeout(() => {
+                    router.reload({ preserveScroll: true });
+                }, 1000);
             },
             onError: () => {
                 setIsSubmitting(false);
