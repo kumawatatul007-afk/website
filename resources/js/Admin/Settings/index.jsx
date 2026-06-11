@@ -210,6 +210,8 @@ export default function AdminSettingsIndex({ setting }) {
         });
     };
 
+
+
     return (
         <AdminLayout title="General Settings">
             <style>{`

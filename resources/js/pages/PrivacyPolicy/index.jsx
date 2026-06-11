@@ -1,6 +1,9 @@
+import { usePage } from '@inertiajs/react'
 import SEO from '../../components/SEO'
 
 export default function PrivacyPolicy() {
+  const { props } = usePage()
+  const footer = props.footer || {}
   const siteUrl = 'https://thenikhilsharma.in'
   const lastUpdated = 'January 1, 2025'
 
@@ -55,93 +58,107 @@ export default function PrivacyPolicy() {
         <div style={{ maxWidth: '800px', margin: '0 auto', padding: '4rem 2rem' }}>
           <div style={{ background: '#fff', borderRadius: '12px', padding: '3rem', boxShadow: '0 1px 12px rgba(0,0,0,0.06)', border: '1px solid #e2e8f0' }}>
 
-            <Section title="1. Introduction">
-              <p>Welcome to <strong>thenikhilsharma.in</strong> ("Website"), operated by <strong>Nikhil Sharma</strong>, a freelance Full Stack Developer based in Jaipur, Rajasthan, India. This Privacy Policy explains how I collect, use, disclose, and safeguard your information when you visit this website or engage my services.</p>
-              <p>By using this website, you agree to the collection and use of information in accordance with this policy.</p>
-            </Section>
+            {footer.privacy_policy ? (
+              <div 
+                dangerouslySetInnerHTML={{ __html: footer.privacy_policy }}
+                style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontSize: '0.92rem',
+                  color: '#475569',
+                  lineHeight: '1.8',
+                }}
+              />
+            ) : (
+              <>
+                <Section title="1. Introduction">
+                  <p>Welcome to <strong>thenikhilsharma.in</strong> ("Website"), operated by <strong>Nikhil Sharma</strong>, a freelance Full Stack Developer based in Jaipur, Rajasthan, India. This Privacy Policy explains how I collect, use, disclose, and safeguard your information when you visit this website or engage my services.</p>
+                  <p>By using this website, you agree to the collection and use of information in accordance with this policy.</p>
+                </Section>
 
-            <Section title="2. Information I Collect">
-              <p><strong>Information you provide directly:</strong></p>
-              <ul>
-                <li>Name, email address, phone number — when you fill out the contact form</li>
-                <li>Project details and requirements — when you inquire about services</li>
-                <li>Newsletter subscription email — if you subscribe to updates</li>
-              </ul>
-              <p><strong>Information collected automatically:</strong></p>
-              <ul>
-                <li>IP address, browser type, operating system</li>
-                <li>Pages visited, time spent, referring URLs</li>
-                <li>Cookies and similar tracking technologies</li>
-              </ul>
-            </Section>
+                <Section title="2. Information I Collect">
+                  <p><strong>Information you provide directly:</strong></p>
+                  <ul>
+                    <li>Name, email address, phone number — when you fill out the contact form</li>
+                    <li>Project details and requirements — when you inquire about services</li>
+                    <li>Newsletter subscription email — if you subscribe to updates</li>
+                  </ul>
+                  <p><strong>Information collected automatically:</strong></p>
+                  <ul>
+                    <li>IP address, browser type, operating system</li>
+                    <li>Pages visited, time spent, referring URLs</li>
+                    <li>Cookies and similar tracking technologies</li>
+                  </ul>
+                </Section>
 
-            <Section title="3. How I Use Your Information">
-              <ul>
-                <li>To respond to your inquiries and provide requested services</li>
-                <li>To send project updates, invoices, and service-related communications</li>
-                <li>To send newsletters (only if you have subscribed)</li>
-                <li>To improve website performance and user experience</li>
-                <li>To analyse website traffic via Google Analytics</li>
-                <li>To comply with legal obligations</li>
-              </ul>
-            </Section>
+                <Section title="3. How I Use Your Information">
+                  <ul>
+                    <li>To respond to your inquiries and provide requested services</li>
+                    <li>To send project updates, invoices, and service-related communications</li>
+                    <li>To send newsletters (only if you have subscribed)</li>
+                    <li>To improve website performance and user experience</li>
+                    <li>To analyse website traffic via Google Analytics</li>
+                    <li>To comply with legal obligations</li>
+                  </ul>
+                </Section>
 
-            <Section title="4. Cookies">
-              <p>This website uses cookies to enhance your browsing experience. Cookies are small text files stored on your device. I use:</p>
-              <ul>
-                <li><strong>Essential cookies</strong> — required for the website to function properly</li>
-                <li><strong>Analytics cookies</strong> — Google Analytics to understand how visitors use the site</li>
-              </ul>
-              <p>You can disable cookies through your browser settings. Note that disabling cookies may affect website functionality.</p>
-            </Section>
+                <Section title="4. Cookies">
+                  <p>This website uses cookies to enhance your browsing experience. Cookies are small text files stored on your device. I use:</p>
+                  <ul>
+                    <li><strong>Essential cookies</strong> — required for the website to function properly</li>
+                    <li><strong>Analytics cookies</strong> — Google Analytics to understand how visitors use the site</li>
+                  </ul>
+                  <p>You can disable cookies through your browser settings. Note that disabling cookies may affect website functionality.</p>
+                </Section>
 
-            <Section title="5. Third-Party Services">
-              <p>I may use the following third-party services that have their own privacy policies:</p>
-              <ul>
-                <li><strong>Google Analytics</strong> — website traffic analysis</li>
-                <li><strong>Google Fonts</strong> — typography</li>
-                <li><strong>WhatsApp</strong> — direct communication</li>
-              </ul>
-              <p>I do not sell, trade, or rent your personal information to third parties.</p>
-            </Section>
+                <Section title="5. Third-Party Services">
+                  <p>I may use the following third-party services that have their own privacy policies:</p>
+                  <ul>
+                    <li><strong>Google Analytics</strong> — website traffic analysis</li>
+                    <li><strong>Google Fonts</strong> — typography</li>
+                    <li><strong>WhatsApp</strong> — direct communication</li>
+                  </ul>
+                  <p>I do not sell, trade, or rent your personal information to third parties.</p>
+                </Section>
 
-            <Section title="6. Data Security">
-              <p>I implement appropriate technical and organisational measures to protect your personal information against unauthorised access, alteration, disclosure, or destruction. However, no method of transmission over the internet is 100% secure.</p>
-            </Section>
+                <Section title="6. Data Security">
+                  <p>I implement appropriate technical and organisational measures to protect your personal information against unauthorised access, alteration, disclosure, or destruction. However, no method of transmission over the internet is 100% secure.</p>
+                </Section>
 
-            <Section title="7. Data Retention">
-              <p>I retain your personal information only for as long as necessary to fulfil the purposes outlined in this policy, or as required by law. Contact form submissions are retained for up to 2 years.</p>
-            </Section>
+                <Section title="7. Data Retention">
+                  <p>I retain your personal information only for as long as necessary to fulfil the purposes outlined in this policy, or as required by law. Contact form submissions are retained for up to 2 years.</p>
+                </Section>
 
-            <Section title="8. Your Rights">
-              <p>You have the right to:</p>
-              <ul>
-                <li>Access the personal data I hold about you</li>
-                <li>Request correction of inaccurate data</li>
-                <li>Request deletion of your data</li>
-                <li>Withdraw consent for newsletter communications at any time</li>
-                <li>Lodge a complaint with a supervisory authority</li>
-              </ul>
-              <p>To exercise these rights, contact me at <a href="mailto:technikhilsharma7@gmail.com" style={{ color: '#6366f1' }}>technikhilsharma7@gmail.com</a>.</p>
-            </Section>
+                <Section title="8. Your Rights">
+                  <p>You have the right to:</p>
+                  <ul>
+                    <li>Access the personal data I hold about you</li>
+                    <li>Request correction of inaccurate data</li>
+                    <li>Request deletion of your data</li>
+                    <li>Withdraw consent for newsletter communications at any time</li>
+                    <li>Lodge a complaint with a supervisory authority</li>
+                  </ul>
+                  <p>To exercise these rights, contact me at <a href="mailto:technikhilsharma7@gmail.com" style={{ color: '#6366f1' }}>technikhilsharma7@gmail.com</a>.</p>
+                </Section>
 
-            <Section title="9. Children's Privacy">
-              <p>This website is not directed at children under 13 years of age. I do not knowingly collect personal information from children under 13.</p>
-            </Section>
+                <Section title="9. Children's Privacy">
+                  <p>This website is not directed at children under 13 years of age. I do not knowingly collect personal information from children under 13.</p>
+                </Section>
 
-            <Section title="10. Changes to This Policy">
-              <p>I may update this Privacy Policy from time to time. Changes will be posted on this page with an updated "Last updated" date. Continued use of the website after changes constitutes acceptance of the updated policy.</p>
-            </Section>
+                <Section title="10. Changes to This Policy">
+                  <p>I may update this Privacy Policy from time to time. Changes will be posted on this page with an updated "Last updated" date. Continued use of the website after changes constitutes acceptance of the updated policy.</p>
+                </Section>
 
-            <Section title="11. Contact">
-              <p>If you have any questions about this Privacy Policy, please contact:</p>
-              <p>
-                <strong>Nikhil Sharma</strong><br />
-                Jaipur, Rajasthan, India<br />
-                Email: <a href="mailto:technikhilsharma7@gmail.com" style={{ color: '#6366f1' }}>technikhilsharma7@gmail.com</a><br />
-                Website: <a href="https://thenikhilsharma.in" style={{ color: '#6366f1' }}>thenikhilsharma.in</a>
-              </p>
-            </Section>
+                <Section title="11. Contact">
+                  <p>If you have any questions about this Privacy Policy, please contact:</p>
+                  <p>
+                    <strong>Nikhil Sharma</strong><br />
+                    Jaipur, Rajasthan, India<br />
+                    Email: <a href="mailto:technikhilsharma7@gmail.com" style={{ color: '#6366f1' }}>technikhilsharma7@gmail.com</a><br />
+                    Website: <a href="https://thenikhilsharma.in" style={{ color: '#6366f1' }}>thenikhilsharma.in</a>
+                  </p>
+                </Section>
+              </>
+            )}
 
           </div>
         </div>

@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Models\SeoPage;
 use App\Models\Setting;
+use App\Models\Footer;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -68,6 +69,14 @@ class HandleInertiaRequests extends Middleware
             \Log::warning("Settings could not be loaded: " . $e->getMessage());
         }
 
+        // Load footer data once and share globally
+        $footer = null;
+        try {
+            $footer = Footer::first();
+        } catch (\Exception $e) {
+            \Log::warning("Footer data could not be loaded: " . $e->getMessage());
+        }
+
         return [
             ...parent::share($request),
             'flash' => [
@@ -81,6 +90,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'seo'     => $seo,
             'setting' => $setting,
+            'footer' => $footer,
         ];
     }
 }

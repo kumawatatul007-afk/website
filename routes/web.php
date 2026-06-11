@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\AdminSettingController;
 use App\Http\Controllers\Admin\AdminNewsletterController;
 use App\Http\Controllers\Admin\AdminServiceController;
 use App\Http\Controllers\Admin\AdminAiController;
+use App\Http\Controllers\Admin\FooterController;
 use App\Http\Controllers\SitemapController;
 
 // ─── Admin Panel ─────────────────────────────────────────────────────────────
@@ -72,6 +73,8 @@ Route::prefix('admin')->name('admin.')->middleware(\App\Http\Middleware\AdminMid
     // Settings
     Route::get('/settings', [AdminSettingController::class, 'index'])->name('settings.index');
     Route::put('/settings', [AdminSettingController::class, 'update'])->name('settings.update');
+    Route::put('/footer', [FooterController::class, 'update'])->name('footer.update');
+    Route::get('/settings/footer', [FooterController::class, 'index'])->name('settings.footer');
     Route::get('/settings/email', [AdminSettingController::class, 'email'])->name('settings.email');
     Route::put('/settings/email', [AdminSettingController::class, 'updateEmail'])->name('settings.email.update');
     Route::post('/settings/email/test', [AdminSettingController::class, 'testEmail'])->name('settings.email.test');
@@ -172,6 +175,7 @@ Route::get('/keyword/{slug}', [PublicController::class, 'keywordDetail']);
 Route::get('/web-developer-jaipur', [PublicController::class, 'webDeveloperJaipur']);
 Route::get('/privacy-policy',   [PublicController::class, 'privacyPolicy']);
 Route::get('/terms-of-service', [PublicController::class, 'termsOfService']);
+Route::get('/impressum', [PublicController::class, 'impressum']);
 // Blog new clean URLs — /{slug} (no /blog/ prefix)
 Route::get('/{slug}', [PublicController::class, 'blogDetail'])
     ->where('slug', '[a-z0-9][a-z0-9\-]+[a-z0-9]');

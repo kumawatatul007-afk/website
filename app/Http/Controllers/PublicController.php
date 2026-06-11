@@ -727,6 +727,25 @@ class PublicController extends Controller
     }
 
     /**
+     * Impressum page
+     */
+    public function impressum()
+    {
+        $setting  = Setting::first();
+        $siteName = $setting?->website_title ?: 'Nikhil Sharma';
+
+        return Inertia::render('Impressum/index', [
+            'seo' => [
+                'title'       => "Impressum | {$siteName}",
+                'description' => "Read the impressum for {$siteName}'s website and freelance development services.",
+                'keywords'    => "Impressum, {$siteName}",
+                'canonical'   => url()->current(),
+                'robots'      => 'noindex, follow',
+            ],
+        ]);
+    }
+
+    /**
      * Convert a service slug to the new clean URL format.
      * "web-development" → "/service/Web/development"
      */
