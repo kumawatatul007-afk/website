@@ -53,7 +53,7 @@ export default function AdminSettingsFooter({ footer }) {
         <AdminLayout title="Footer Setting">
             <style>{`
                 .page-container { max-width: 1140px; width: 100%; margin: 0 auto; padding: 1.8rem 1rem 2.5rem; }
-                .page-panel { background: #fff; border-radius: 24px; padding: 1.5rem; box-shadow: 0 18px 60px rgba(15,23,42,0.06); border: 1px solid #e5e7eb; }
+                .page-panel { background: #ffffff; border-radius: 24px; padding: 1.5rem; box-shadow: 0 18px 60px rgba(15,23,42,0.06); border: 1px solid #e5e7eb; }
                 .page-header {
                     display: flex;
                     align-items: flex-start;

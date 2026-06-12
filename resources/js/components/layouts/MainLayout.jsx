@@ -670,6 +670,16 @@ export default function MainLayout({ children }) {
 
           {/* Brand + contact */}
           <div className="mora-footer-brand">
+            <Link href="/" className="mora-brand" aria-label={`${siteName} — Home`} style={{ marginBottom: '0.5rem' }}>
+              <div className="mora-footer-logo-wrapper">
+                <img
+                  src={logoUrl}
+                  alt={`${siteName} Logo`}
+                  className="mora-footer-logo"
+                  onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/images/logo.png'; }}
+                />
+              </div>
+            </Link>
             <p className="mora-footer-tagline">
               {footer.footer_text || 'Freelance Full Stack Developer based in Jaipur, India. Building fast, SEO-optimised websites and apps for businesses across India and the Middle East.'}
             </p>
