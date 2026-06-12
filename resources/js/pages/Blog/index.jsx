@@ -299,7 +299,7 @@ export default function BlogPage({ posts, categories, seo, setting }) {
             {/* Categories Widget */}
             {allCategories.length > 0 && (
               <div className="blogpage-widget" data-aos="fade-up" data-aos-delay="100" data-aos-duration="800">
-                <h3 className="blogpage-widget-title">Categories</h3>
+                <h3 className="blogpage-widget-title">Categories ({allCategories.length})</h3>
                 <ul className="blogpage-category-list">
                   {allCategories.map(category => (
                     <li key={category.id}>

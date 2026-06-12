@@ -314,7 +314,7 @@ export default function BlogDetailSidebarPage({ post: serverPost, recentPosts: s
             {allCategories.length > 0 && (
               <div className="bds-widget bds-widget--card">
                 <div className="bds-widget-inner">
-                  <h3 className="bds-widget-title">Categories</h3>
+                  <h3 className="bds-widget-title">Categories ({allCategories.length})</h3>
                   <ul className="bds-category-list">
                     {allCategories.map(category => (
                       <li key={category.id}>
