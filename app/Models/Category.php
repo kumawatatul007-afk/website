@@ -35,7 +35,7 @@ class Category extends Model
 
     public function setTextForAttribute($value)
     {
-        $this->attributes['text_for'] = strtolower($value);
+        $this->attributes['text_for'] = strtolower($value ?: 'blog');
     }
 
     public function blogs()

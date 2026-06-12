@@ -29,10 +29,18 @@ class UpdateServicesColumns extends Command
         $services = Service::all();
         
         foreach ($services as $service) {
-            $service->status = $service->status ?? 1;
-            $service->is_active = $service->is_active ?? ($service->status == 1);
-            $service->sort_order = $service->sort_order ?? $service->serial_number ?? 0;
-            $service->serial_number = $service->serial_number ?? $service->sort_order ?? 0;
+            if (\Illuminate\Support\Facades\Schema::hasColumn('services', 'status')) {
+                $service->status = $service->status ?? 1;
+            }
+            if (\Illuminate\Support\Facades\Schema::hasColumn('services', 'is_active')) {
+                $service->is_active = $service->is_active ?? ((\Illuminate\Support\Facades\Schema::hasColumn('services', 'status') && $service->status == 1) ? true : true);
+            }
+            if (\Illuminate\Support\Facades\Schema::hasColumn('services', 'sort_order')) {
+                $service->sort_order = $service->sort_order ?? $service->serial_number ?? 0;
+            }
+            if (\Illuminate\Support\Facades\Schema::hasColumn('services', 'serial_number')) {
+                $service->serial_number = $service->serial_number ?? $service->sort_order ?? 0;
+            }
             $service->save();
             $this->info("Updated service: {$service->title}");
         }

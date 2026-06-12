@@ -43,6 +43,10 @@ class AdminCategoryController extends Controller
             $validated['slug'] = Str::slug($validated['name']);
         }
 
+        if (empty($validated['text_for'])) {
+            $validated['text_for'] = 'blog';
+        }
+
         Category::create($validated);
 
         return redirect()->route('admin.categories.index')
@@ -66,6 +70,10 @@ class AdminCategoryController extends Controller
 
         if (empty($validated['slug'])) {
             $validated['slug'] = Str::slug($validated['name']);
+        }
+
+        if (empty($validated['text_for'])) {
+            $validated['text_for'] = 'blog';
         }
 
         $category->update($validated);

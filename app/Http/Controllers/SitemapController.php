@@ -23,10 +23,24 @@ class SitemapController extends Controller
     private function generateDynamicKeywords(): array
     {
         $keywords = [];
-        $prefixes = ['Best', 'Top', 'Top 10', 'Top 5', 'No1', 'Find', 'Hire'];
+        $setting = Setting::first();
+        
+        // Get prefixes from settings (check both strating_keyword and start_keyword)
+        $prefixes = [];
+        if ($setting) {
+            if ($setting->start_keyword) {
+                $prefixes = array_map('trim', explode(',', $setting->start_keyword));
+            } elseif ($setting->strating_keyword) {
+                $prefixes = array_map('trim', explode(',', $setting->strating_keyword));
+            }
+        }
+        
+        // Fallback prefixes if none in settings
+        if (empty($prefixes)) {
+            $prefixes = ['Best', 'Top', 'Top 10', 'Top 5', 'No1', 'Find', 'Hire'];
+        }
         
         // Get locations from settings
-        $setting = Setting::first();
         $locations = [];
         if ($setting && $setting->locations) {
             $locations = array_map('trim', explode(',', $setting->locations));
@@ -48,7 +62,7 @@ class SitemapController extends Controller
             ->pluck('title')
             ->toArray();
 
-        // Fallback services if none in database
+        // Fallback services if none
         if (empty($services)) {
             $services = ['Website Development', 'Mobile App Development', 'E-Commerce Solutions', 'Custom Software Development', 'Digital Marketing', 'UI UX Design'];
         }
@@ -78,14 +92,9 @@ class SitemapController extends Controller
         if ($setting && $setting->strating_keyword) {
             $all = array_merge($all, array_filter(array_map('trim', explode(',', $setting->strating_keyword))));
         }
-
-        if ($setting && $setting->service_keyword) {
-            foreach (explode(',', $setting->service_keyword) as $entry) {
-                $parts = explode('|', trim($entry), 2);
-                if (!empty(trim($parts[0] ?? ''))) {
-                    $all[] = trim($parts[0]);
-                }
-            }
+        
+        if ($setting && $setting->start_keyword) {
+            $all = array_merge($all, array_filter(array_map('trim', explode(',', $setting->start_keyword))));
         }
 
         return array_values(array_filter(array_unique($all)));
@@ -95,258 +104,40 @@ class SitemapController extends Controller
     {
         $setting = Setting::first();
 
-        $rawPrefixes = $setting && $setting->start_keyword
-            ? array_map('trim', explode(',', $setting->start_keyword))
-            : [];
+        // Get prefixes from settings only (check both strating_keyword and start_keyword)
+        $rawPrefixes = [];
+        if ($setting) {
+            if ($setting->start_keyword) {
+                $rawPrefixes = array_map('trim', explode(',', $setting->start_keyword));
+            } elseif ($setting->strating_keyword) {
+                $rawPrefixes = array_map('trim', explode(',', $setting->strating_keyword));
+            }
+        }
 
         $prefixes = array_values(array_unique(array_filter($rawPrefixes, fn($p) => trim($p) !== '')));
         
-        // If no prefixes from settings, use our full list
-        if (empty($prefixes)) {
-            $prefixes = ['Best', 'Top', 'Top 10', 'Top 5', 'No1', 'Find', 'Hire'];
-        }
-
-        // Get your actual services from database
+        // Get services from Service table
         $servicesQuery = Service::query();
         if (Schema::hasColumn('services', 'is_active')) {
             $servicesQuery->where('is_active', true);
         }
-        $yourServices = $servicesQuery
+        $serviceTypes = $servicesQuery
             ->latest()
             ->pluck('title')
             ->toArray();
-        
-        // Fallback services if none in database
-        if (empty($yourServices)) {
-            $yourServices = ['Website Development', 'Mobile App Development', 'E-Commerce Solutions', 'Custom Software Development', 'Digital Marketing', 'UI UX Design'];
-        }
 
-        // Merge with existing service types for maximum coverage
-        $serviceTypes = array_merge($yourServices, [
-            'Software Developer',
-            'Website Developer',
-            'IT Freelancer',
-            'Mobile Application Development',
-            'Web Development Company',
-            'Web Designer',
-            'App Developer',
-            'Software Engineer',
-            'Full Stack Developer',
-            'Frontend Developer',
-            'Backend Developer',
-            'UI UX Designer',
-            'Digital Marketing Agency',
-            'SEO Expert',
-            'Graphic Designer',
-            'E-commerce Developer',
-            'WordPress Developer',
-            'Laravel Developer',
-            'React Developer',
-            'Angular Developer',
-            'Vue.js Developer',
-            'Python Developer',
-            'Java Developer',
-            'PHP Developer',
-            'Node.js Developer',
-            'DevOps Engineer',
-            'Cloud Consultant',
-            'Data Analyst',
-            'Mobile App Designer',
-            'iOS Developer',
-            'Android Developer',
-            'Flutter Developer',
-            'React Native Developer',
-            'API Developer',
-            'Database Administrator',
-            'System Administrator',
-            'Network Engineer',
-            'Cybersecurity Expert',
-            'Blockchain Developer',
-            'AI ML Developer',
-            'Game Developer',
-            'QA Engineer',
-            'Software Tester',
-            'Business Analyst',
-            'Project Manager',
-            'Scrum Master',
-            'Product Manager',
-            'Technical Writer',
-            'IT Consultant',
-            'ERP Consultant',
-            'CRM Developer',
-            'Salesforce Developer',
-            'SharePoint Developer',
-            'Magento Developer',
-            'Shopify Developer',
-            'WooCommerce Developer',
-            'Drupal Developer',
-            'Joomla Developer',
-            'Content Management System Developer',
-            'CMS Developer',
-            'Progressive Web App Developer',
-            'PWA Developer',
-            'Responsive Web Designer',
-            'Bootstrap Developer',
-            'Tailwind CSS Developer',
-            'TypeScript Developer',
-            'JavaScript Developer',
-            'Ajax Developer',
-            'REST API Developer',
-            'GraphQL Developer',
-            'Microservices Developer',
-            'Docker Expert',
-            'Kubernetes Expert',
-            'AWS Developer',
-            'Azure Developer',
-            'Google Cloud Developer',
-            'Firebase Developer',
-            'MongoDB Developer',
-            'MySQL Developer',
-            'PostgreSQL Developer',
-            'Redis Developer',
-            'ElasticSearch Developer',
-            'Web3 Developer',
-            'Solidity Developer',
-            'Smart Contract Developer',
-            'NFT Developer',
-            'Metaverse Developer',
-            'AR VR Developer',
-            'Unity Developer',
-            'Unreal Engine Developer',
-            'Machine Learning Engineer',
-            'Deep Learning Engineer',
-            'Natural Language Processing Expert',
-            'Computer Vision Expert',
-            'Chatbot Developer',
-            'Voice Assistant Developer',
-            'IoT Developer',
-            'Embedded Systems Developer',
-            'Firmware Developer',
-            'Automation Engineer',
-            'RPA Developer',
-            'ETL Developer',
-            'Big Data Engineer',
-            'Data Engineer',
-            'Data Scientist',
-            'Business Intelligence Developer',
-            'Power BI Developer',
-            'Tableau Developer',
-        ]);
-
-        $locations = [
-            // Jaipur areas
-            'Jaipur','Kalwar-Road','Jagatpura','Civil-Lines','C-Scheme',
-            'Malviya-Nagar','Vaishali-Nagar','Ajmer-Road','Jhotwara','Johri-bazar',
-            'Niwaru','niwaru','mansarovar','Galta-gate','Choti-Chopad','Chandpole',
-            'Ridhi-Sidhi','Raja-park','rajapark','Pratap-Nagar','badi-chopad',
-            'johri-bazar','Sanganer','Sodala','Murlipura','Bani-Park','MI-Road',
-            'Station-Road','Gopalpura','Sitapura','Kukas','Amer','Bagru',
-            'Chomu','Shahpura-Jaipur','Bassi','Phulera','Chaksu','Sambhar',
-            'Kishangarh-Renwal','Madhorajpura','Vidhyadhar-Nagar','Shyam-Nagar',
-            'Jawahar-Nagar','Nirman-Nagar','Lal-Kothi','Tonk-Road','Durgapura',
-            'Gandhi-Path','JLN-Marg','Sikar-Road','200-Feet-Bypass','Mahapura',
-            
-            // Rajasthan cities
-            'Rajasthan','Alwar','Ajmer','Jodhpur','Udaipur','Kota','Bikaner',
-            'Bhilwara','Sikar','Tonk','Pali','Nagaur','Jaisalmer','Jhunjhunu',
-            'Hanumangarh','Ganganagar','Churu','Bharatpur','Barmer','Dhaulpur',
-            'Dungarpur','Dausa','Bundi','Banswara','Baran',
-            'Chittaurgarh','Jalor','Jhalawar','Karauli','Pratapgarh',
-            'Rajsamand','Sawai-Madhopur','Sirohi','Mount-Abu','Beawar','Makrana',
-            'Kishangarh','Nasirabad','Sujangarh','Ratangarh','Sardarshahar',
-            'Nokha','Ladnun','Didwana','Suratgarh','Padampur','Raisinghnagar',
-            'Rawatbhata','Bandikui','Fatehpur-Rajasthan','Mangrol','Bhinmal',
-            'Phalodi','Sojat','Merta','Deeg','Kuchaman','Nimbahera','Kekri',
-            
-            // Major Indian cities
-            'Bangalore','Pune','pune','Kolkata','Delhi','Mumbai','Hyderabad',
-            'Chennai','Ahmedabad','Surat','Lucknow','Bhopal','Indore','Nagpur',
-            'Patna','Chandigarh','Gurgaon','Noida','Jamshedpur','Ranchi',
-            'Coimbatore','Vadodara','Visakhapatnam','Amritsar','Ludhiana',
-            'Agra','Nashik','Faridabad','Meerut','Rajkot','Varanasi','Srinagar',
-            'Aurangabad','Dhanbad','Jabalpur','Gwalior','Vijayawada','Jodhpur',
-            'Madurai','Raipur','Kota','Guwahati','Thiruvananthapuram','Solapur',
-            'Hubli','Mysore','Tiruchirappalli','Bareilly','Aligarh','Moradabad',
-            'Jalandhar','Bhubaneswar','Salem','Warangal','Guntur','Bhiwandi',
-            'Saharanpur','Gorakhpur','Bikaner','Amravati','Noida-Extension',
-            'Greater-Noida','Ghaziabad','Thane','Navi-Mumbai','Howrah',
-            'Allahabad','Prayagraj','Kanpur','Kochi','Kozhikode','Mangalore',
-            'Belgaum','Gulbarga','Kolhapur','Jamnagar','Bhavnagar','Junagadh',
-            'Udaipur','Ajmer','Gandhidham','Anand','Nadiad','Bharuch',
-            'Valsad','Vapi','Daman','Silvassa','Panaji','Margao',
-            
-            // NCR Region
-            'Delhi-NCR','New-Delhi','South-Delhi','North-Delhi','East-Delhi',
-            'West-Delhi','Central-Delhi','Dwarka','Rohini','Pitampura',
-            'Janakpuri','Laxmi-Nagar','Nehru-Place','Connaught-Place','Karol-Bagh',
-            'Saket','Vasant-Kunj','Hauz-Khas','Green-Park','Defence-Colony',
-            'Greater-Kailash','Mayur-Vihar','Preet-Vihar','Shahdara','Uttam-Nagar',
-            'Punjabi-Bagh','Rajouri-Garden','Noida-Sector-62','Noida-Sector-63',
-            'Noida-Sector-18','Gurgaon-Sector-14','Cyber-City','Golf-Course-Road',
-            'MG-Road-Gurgaon','Sohna-Road','Manesar','Faridabad-Sector-15',
-            'Ballabgarh','Palwal','Sonipat','Panipat','Karnal','Ambala',
-            
-            // Maharashtra
-            'Mumbai-Andheri','Bandra','Powai','Goregaon','Borivali','Thane-West',
-            'Kalyan','Dombivli','Panvel','Kharghar','Vashi','Airoli',
-            'Pune-Hinjewadi','Kharadi','Wakad','Baner','Aundh','Koregaon-Park',
-            'Viman-Nagar','Hadapsar','Kothrud','Deccan','Shivaji-Nagar',
-            'Nagpur-Dharampeth','Sadar','Sitabuldi','Wardha-Road','Nashik-Road',
-            'Aurangabad-CIDCO','Jalgaon','Kolhapur-Tarabai','Sangli','Satara',
-            
-            // Karnataka
-            'Bangalore-Whitefield','Koramangala','Indiranagar','Electronic-City',
-            'BTM-Layout','HSR-Layout','Jayanagar','Marathahalli','Bellandur',
-            'Sarjapur-Road','Hebbal','Yelahanka','Rajajinagar','Malleshwaram',
-            'JP-Nagar','Banashankari','Mysore-Saraswathipuram','Vijayanagar-Mysore',
-            'Mangalore-Hampankatta','Bejai','Hubli-Dharwad','Belgaum-Camp',
-            
-            // Tamil Nadu
-            'Chennai-Anna-Nagar','T-Nagar','Velachery','Adyar','OMR','Porur',
-            'Tambaram','Chrompet','Sholinganallur','Guindy','Nungambakkam',
-            'Coimbatore-RS-Puram','Gandhipuram','Peelamedu','Saibaba-Colony',
-            'Madurai-Anna-Nagar','Pasumalai','Salem-Fairlands','Trichy-Thillai-Nagar',
-            
-            // Telangana & AP
-            'Hyderabad-Hitech-City','Gachibowli','Madhapur','Kukatpally','Ameerpet',
-            'Secunderabad','Begumpet','Banjara-Hills','Jubilee-Hills','Miyapur',
-            'Vijayawada-Benz-Circle','Labbipet','Guntur-Brodipet','Visakhapatnam-MVP',
-            'Dwaraka-Nagar','Tirupati','Kakinada','Nellore','Rajahmundry',
-            
-            // Gujarat
-            'Ahmedabad-SG-Highway','Satellite','Maninagar','Navrangpura','Vastrapur',
-            'Surat-Adajan','Vesu','Athwa','Udhna','Katargam','Rajkot-Kalawad-Road',
-            'Vadodara-Alkapuri','Sayajigunj','Jamnagar-Pandit-Nehru-Marg',
-            'Bhavnagar-Waghawadi','Anand-GIDC','Gandhinagar','Mehsana','Morbi',
-            
-            // West Bengal
-            'Kolkata-Salt-Lake','Rajarhat','New-Town','Park-Street','Ballygunge',
-            'Behala','Jadavpur','Howrah-Shibpur','Durgapur','Asansol','Siliguri',
-            
-            // States
-            'uttar-pradesh','punjab','maharashtra','Gujarat','Karnataka',
-            'Tamil-Nadu','Madhya-Pradesh','Bihar','Haryana','Telangana',
-            'Andhra-Pradesh','West-Bengal','Odisha','Kerala','Jharkhand',
-            'Assam','Uttarakhand','Himachal-Pradesh','Chhattisgarh','Goa',
-            'Jammu-Kashmir','Ladakh','Puducherry','Andaman-Nicobar',
-            'Dadra-Nagar-Haveli','Daman-Diu','Lakshadweep','Chandigarh-UT',
-        ];
-
-        // Get your locations from settings and merge them in
+        // Get locations from settings only
+        $locations = [];
         if ($setting && $setting->locations) {
-            $yourLocations = array_map('trim', explode(',', $setting->locations));
-            // Convert your locations to hyphenated format to match existing
-            $yourLocationsHyphenated = array_map(function($loc) {
-                return str_replace(' ', '-', $loc);
-            }, $yourLocations);
-            $locations = array_merge($yourLocationsHyphenated, $locations);
+            $locations = array_map('trim', explode(',', $setting->locations));
         }
 
-        // Deduplicate everything
-        $prefixes = array_unique($prefixes);
-        $serviceTypes = array_unique($serviceTypes);
-        $locations = array_unique($locations);
+        // Filter out empty values
+        $prefixes = array_filter($prefixes);
+        $serviceTypes = array_filter($serviceTypes);
+        $locations = array_filter($locations);
 
+        // Generate all combinations
         $tagUrls = [];
         foreach ($prefixes as $prefix) {
             foreach ($serviceTypes as $service) {
@@ -368,8 +159,6 @@ class SitemapController extends Controller
 
         $posts = BlogPost::whereNotNull('slug')
             ->where('slug', '!=', '')
-            ->where('status', 1)
-            ->where('type', 0)
             ->latest('updated_at')
             ->get();
 
@@ -421,8 +210,6 @@ class SitemapController extends Controller
     {
         $posts = BlogPost::whereNotNull('slug')
             ->where('slug', '!=', '')
-            ->where('status', 1)
-            ->where('type', 0)
             ->latest('updated_at')
             ->get();
 

@@ -12,7 +12,11 @@ class StripServiceContent extends Command
 
     public function handle(): void
     {
-        $services = BlogPost::where('type', 1)->get();
+        $query = BlogPost::query();
+        if (\Illuminate\Support\Facades\Schema::hasColumn('blogs', 'type')) {
+            $query->where('type', 1);
+        }
+        $services = $query->get();
 
         if ($services->isEmpty()) {
             $this->info('No service records found.');

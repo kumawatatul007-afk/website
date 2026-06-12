@@ -1,17 +1,85 @@
 import AdminLayout from '../layouts/AdminLayout';
 import { useForm, Link } from '@inertiajs/react';
+import { useState, useRef, useEffect } from 'react';
+
+function makeSlug(value) {
+    return value
+        .toString()
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+}
 
 const TYPE_OPTIONS = ['blog', 'service'];
 
 export default function AdminCategoryEdit({ category }) {
     const { data, setData, put, processing, errors } = useForm({
         name:     category.name     ?? '',
-        text_for: category.text_for ?? '',
+        text_for: category.text_for ?? 'blog',
         slug:     category.slug     ?? '',
     });
 
+    const [clientErrors, setClientErrors] = useState({});
+    const [autoSlug, setAutoSlug]         = useState(category.slug ?? '');
+
+    const nameRef    = useRef(null);
+    const typeRef    = useRef(null);
+
+    // Merge server + client errors
+    const allErrors = { ...clientErrors, ...errors };
+
+    // Auto-generate slug from name
+    useEffect(() => {
+        const nextSlug = makeSlug(data.name);
+        if (nextSlug && (!data.slug || data.slug === autoSlug)) {
+            setData('slug', nextSlug);
+            setAutoSlug(nextSlug);
+        }
+    }, [data.name]);
+
+    // Scroll to first server-side error
+    useEffect(() => {
+        if (Object.keys(errors).length > 0) {
+            setTimeout(() => {
+                if (errors.name && nameRef.current) {
+                    nameRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    nameRef.current.focus();
+                } else if (errors.text_for && typeRef.current) {
+                    typeRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    typeRef.current.focus();
+                }
+            }, 200);
+        }
+    }, [errors]);
+
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        // Client-side validation
+        const newErrors = {};
+        if (!data.name || !data.name.trim()) {
+            newErrors.name = 'Name is required.';
+        }
+        if (!data.text_for) {
+            newErrors.text_for = 'Type is required.';
+        }
+
+        if (Object.keys(newErrors).length > 0) {
+            setClientErrors(newErrors);
+            setTimeout(() => {
+                if (newErrors.name && nameRef.current) {
+                    nameRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    nameRef.current.focus();
+                } else if (newErrors.text_for && typeRef.current) {
+                    typeRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    typeRef.current.focus();
+                }
+            }, 50);
+            return;
+        }
+
+        setClientErrors({});
         put(`/admin/categories/${category.id}`);
     };
 
@@ -56,6 +124,10 @@ export default function AdminCategoryEdit({ category }) {
                     border-color: #6366f1;
                     box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
                 }
+                .form-input.err, .form-select.err {
+                    border-color: #dc2626;
+                    box-shadow: 0 0 0 3px rgba(220,38,38,0.10);
+                }
                 .form-select { appearance: none; -webkit-appearance: none; cursor: pointer; }
                 .hint { font-size: 0.72rem; color: #94a3b8; margin-top: 0.2rem; }
                 .error { font-size: 0.75rem; color: #dc2626; margin-top: 0.25rem; }
@@ -92,27 +164,35 @@ export default function AdminCategoryEdit({ category }) {
                     <Link href="/admin/categories" className="btn-cancel">← Back</Link>
                 </div>
 
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} noValidate>
 
                     {/* Name */}
                     <div className="form-group">
                         <label>Name *</label>
                         <input
-                            className="form-input"
+                            ref={nameRef}
+                            className={`form-input ${allErrors.name ? 'err' : ''}`}
                             value={data.name}
-                            onChange={e => setData('name', e.target.value)}
+                            onChange={e => {
+                                setData('name', e.target.value);
+                                if (clientErrors.name) setClientErrors(prev => ({ ...prev, name: '' }));
+                            }}
                             placeholder="e.g. Web Development"
                         />
-                        {errors.name && <span className="error">{errors.name}</span>}
+                        {allErrors.name && <span className="error">{allErrors.name}</span>}
                     </div>
 
                     {/* Type */}
                     <div className="form-group">
-                        <label>Type (text_for)</label>
+                        <label>Type *</label>
                         <select
-                            className="form-select"
+                            ref={typeRef}
+                            className={`form-select ${allErrors.text_for ? 'err' : ''}`}
                             value={data.text_for}
-                            onChange={e => setData('text_for', e.target.value)}
+                            onChange={e => {
+                                setData('text_for', e.target.value);
+                                if (clientErrors.text_for) setClientErrors(prev => ({ ...prev, text_for: '' }));
+                            }}
                             style={{
                                 backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E\")",
                                 backgroundRepeat: 'no-repeat',
@@ -126,20 +206,23 @@ export default function AdminCategoryEdit({ category }) {
                             ))}
                         </select>
                         <span className="hint">Which section does this category belong to?</span>
-                        {errors.text_for && <span className="error">{errors.text_for}</span>}
+                        {allErrors.text_for && <span className="error">{allErrors.text_for}</span>}
                     </div>
 
                     {/* Slug */}
                     <div className="form-group">
                         <label>Slug (URL)</label>
                         <input
-                            className="form-input"
+                            className={`form-input ${allErrors.slug ? 'err' : ''}`}
                             value={data.slug}
-                            onChange={e => setData('slug', e.target.value)}
+                            onChange={e => {
+                                setData('slug', e.target.value);
+                                setAutoSlug('');
+                            }}
                             placeholder="e.g. web-development"
                         />
                         <span className="hint">Leave empty to auto-generate from name</span>
-                        {errors.slug && <span className="error">{errors.slug}</span>}
+                        {allErrors.slug && <span className="error">{allErrors.slug}</span>}
                     </div>
 
                     <div className="form-actions">

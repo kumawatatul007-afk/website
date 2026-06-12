@@ -30,7 +30,11 @@ class FormatServiceContent extends Command
 
         if ($slug) {
             // Format specific service
-            $service = BlogPost::where('slug', $slug)->where('type', 1)->first();
+            $query = BlogPost::where('slug', $slug);
+            if (\Illuminate\Support\Facades\Schema::hasColumn('blogs', 'type')) {
+                $query->where('type', 1);
+            }
+            $service = $query->first();
             
             if (!$service) {
                 $this->error("Service with slug '{$slug}' not found!");
@@ -41,7 +45,11 @@ class FormatServiceContent extends Command
             $this->info("✓ Formatted service: {$service->title}");
         } else {
             // Format all services
-            $services = BlogPost::where('type', 1)->get();
+            $query = BlogPost::query();
+            if (\Illuminate\Support\Facades\Schema::hasColumn('blogs', 'type')) {
+                $query->where('type', 1);
+            }
+            $services = $query->get();
             
             if ($services->isEmpty()) {
                 $this->warn('No services found!');

@@ -41,8 +41,6 @@ class CountSitemapUrls extends Command
         // Count other URLs
         $posts = BlogPost::whereNotNull('slug')
             ->where('slug', '!=', '')
-            ->where('status', 1)
-            ->where('type', 0)
             ->count();
 
         $portfolios = PortfolioItem::where('is_publish', 1)->count();

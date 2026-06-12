@@ -88,29 +88,35 @@ const BlogToolbar = ({ id }) => (
     </div>
 );
 
-// Quill modules को component के बाहर define करें ताकि re-render पर recreate न हो
 const quillModules = {
     toolbar: { container: '#edit-service-toolbar' },
 };
 
-export default function AdminServiceEdit({ service }) {
+export default function AdminServiceEdit({ service, categories = [] }) {
     const { data, setData, processing, errors } = useForm({
-        title: service.title ?? '',
-        slug: service.slug ?? '',
+        title:            service.title            ?? '',
+        slug:             service.slug             ?? '',
         meta_description: service.meta_description ?? '',
-        meta_keyword: service.meta_keyword ?? '',
-        tags: service.tags ?? '',
-        content: service.content ?? service.description ?? '',
-        main_image: service.main_image ?? service.image ?? '',
-        main_image_file: null,
-        serial_number: service.serial_number ?? 100,
-        status: service.status ?? 1,
-        category_id: service.category_id ?? '',
+        meta_keyword:     service.meta_keyword     ?? '',
+        tags:             service.tags             ?? '',
+        content:          service.content          ?? service.description ?? '',
+        main_image:       service.main_image       ?? service.image       ?? '',
+        main_image_file:  null,
+        serial_number:    service.serial_number    ?? 100,
+        status:           service.status           ?? 1,
+        category_id:      service.category_id      ?? '',
     });
 
-    const fileInputRef = useRef(null);
+    const fileInputRef  = useRef(null);
+    const titleRef      = useRef(null);
+    const categoryRef   = useRef(null);
+
     const [filePreviewUrl, setFilePreviewUrl] = useState(null);
-    const [autoSlug, setAutoSlug] = useState(service.slug ?? '');
+    const [autoSlug, setAutoSlug]             = useState(service.slug ?? '');
+    const [clientErrors, setClientErrors]     = useState({});   // ← client-side errors
+
+    // Merge server + client errors
+    const allErrors = { ...clientErrors, ...errors };
 
     const resolveServiceImageUrl = useCallback((image) => {
         if (!image) return null;
@@ -123,25 +129,13 @@ export default function AdminServiceEdit({ service }) {
     const handleFileChange = useCallback((e) => {
         const file = e.target.files?.[0];
         if (!file) return;
-
-        if (filePreviewUrl) {
-            URL.revokeObjectURL(filePreviewUrl);
-        }
-
+        if (filePreviewUrl) URL.revokeObjectURL(filePreviewUrl);
         const objectUrl = URL.createObjectURL(file);
         setFilePreviewUrl(objectUrl);
-        
-        // एक ही setData call में दोनों values update करें
-        setData(prevData => ({
-            ...prevData,
-            main_image: file.name,
-            main_image_file: file,
-        }));
+        setData(prev => ({ ...prev, main_image: file.name, main_image_file: file }));
     }, [filePreviewUrl, setData]);
 
-    const openFilePicker = useCallback(() => {
-        fileInputRef.current?.click();
-    }, []);
+    const openFilePicker = useCallback(() => fileInputRef.current?.click(), []);
 
     // Auto-slug generation
     useEffect(() => {
@@ -152,67 +146,82 @@ export default function AdminServiceEdit({ service }) {
         }
     }, [data.title, data.slug, autoSlug, setData]);
 
-    // Cleanup file preview URL on unmount
+    // Cleanup preview URL on unmount
     useEffect(() => {
-        return () => {
-            if (filePreviewUrl) {
-                URL.revokeObjectURL(filePreviewUrl);
-            }
-        };
+        return () => { if (filePreviewUrl) URL.revokeObjectURL(filePreviewUrl); };
     }, [filePreviewUrl]);
 
     const handleImageInputChange = useCallback((e) => {
         const value = e.target.value;
-        setData(prevData => ({
-            ...prevData,
-            main_image: value,
-            main_image_file: null,
-        }));
-        if (filePreviewUrl) {
-            URL.revokeObjectURL(filePreviewUrl);
-            setFilePreviewUrl(null);
-        }
+        setData(prev => ({ ...prev, main_image: value, main_image_file: null }));
+        if (filePreviewUrl) { URL.revokeObjectURL(filePreviewUrl); setFilePreviewUrl(null); }
     }, [filePreviewUrl, setData]);
 
-    const handleContentChange = useCallback((val) => {
-        setData('content', val);
-    }, [setData]);
+    const handleContentChange = useCallback((val) => setData('content', val), [setData]);
 
-    // Scroll to first error when validation fails
+    // Scroll to first server-side error
     useEffect(() => {
         if (Object.keys(errors).length > 0) {
-            // Wait for DOM to update with errors
             setTimeout(() => {
-                const firstErrorInput = document.querySelector('.form-input.err, .form-textarea.err, select.err');
-                const firstErrorMsg = document.querySelector('.error');
-                const firstError = firstErrorInput || firstErrorMsg;
-                if (firstError) {
-                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                if (errors.title && titleRef.current) {
+                    titleRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    titleRef.current.focus();
+                } else if (errors.category_id && categoryRef.current) {
+                    categoryRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    categoryRef.current.focus();
+                } else {
+                    const firstErr = document.querySelector('.form-input.err, .form-textarea.err, select.err, .error');
+                    if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
             }, 200);
         }
     }, [errors]);
 
+    // ─── Submit with client-side validation ───────────────────────────────────
     const handleSubmit = useCallback((e) => {
         e.preventDefault();
 
+        // Validate title and category before hitting server
+        const newErrors = {};
+        if (!data.title || !data.title.trim()) {
+            newErrors.title = 'Title is required.';
+        }
+        if (!data.category_id || String(data.category_id).trim() === '') {
+            newErrors.category_id = 'Category is required.';
+        }
+
+        if (Object.keys(newErrors).length > 0) {
+            setClientErrors(newErrors);
+            setTimeout(() => {
+                if (newErrors.title && titleRef.current) {
+                    titleRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    titleRef.current.focus();
+                } else if (newErrors.category_id && categoryRef.current) {
+                    categoryRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    categoryRef.current.focus();
+                }
+            }, 50);
+            return; // Server ko request nahi jayegi
+        }
+
+        // Validation passed – clear client errors and submit
+        setClientErrors({});
+
         const payload = new FormData();
-        payload.append('_method', 'PUT');
-        payload.append('title', data.title || '');
-        payload.append('slug', data.slug || '');
+        payload.append('_method',          'PUT');
+        payload.append('title',            data.title            || '');
+        payload.append('slug',             data.slug             || '');
         payload.append('meta_description', data.meta_description || '');
-        payload.append('meta_keyword', data.meta_keyword || '');
-        payload.append('tags', data.tags || '');
-        payload.append('content', data.content || '');
-        payload.append('main_image', data.main_image || '');
-        
+        payload.append('meta_keyword',     data.meta_keyword     || '');
+        payload.append('tags',             data.tags             || '');
+        payload.append('content',          data.content          || '');
+        payload.append('main_image',       data.main_image       || '');
         if (data.main_image_file instanceof File) {
             payload.append('main_image_file', data.main_image_file);
         }
-        
         payload.append('serial_number', String(data.serial_number ?? ''));
-        payload.append('status', String(data.status ?? 1));
-        payload.append('category_id', String(data.category_id ?? ''));
+        payload.append('status',        String(data.status        ?? 1));
+        payload.append('category_id',   String(data.category_id   ?? ''));
 
         router.post(`/admin/services/${service.id}`, payload, {
             preserveScroll: true,
@@ -234,8 +243,6 @@ export default function AdminServiceEdit({ service }) {
                 .form-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.75rem; flex-wrap: wrap; gap:1rem; }
                 .form-title { font-size: 1.1rem; font-weight: 700; color: #0f172a; margin: 0 0 0.5rem 0; }
                 .id-badge { display: inline-flex; align-items: center; justify-content: center; background: #eef2ff; color: #4338ca; font-size: 0.75rem; font-weight: 700; padding: 0.55rem 0.9rem; border-radius: 999px; }
-                .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap:1.25rem; }
-                @media (max-width: 980px) { .form-grid { grid-template-columns:1fr; } }
                 .section-grid { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 1.5rem; margin-bottom: 1.5rem; }
                 .form-grid-two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
                 @media (max-width: 980px) { 
@@ -245,9 +252,9 @@ export default function AdminServiceEdit({ service }) {
                 .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
                 .form-group.full { grid-column: 1 / -1; }
                 .form-label { font-size: 0.78rem; font-weight:700; color:#374151; letter-spacing:0.08em; text-transform: uppercase; margin-bottom: 0.25rem; }
-                .form-input, .form-textarea { width: 100%; padding: 0.95rem 1rem; border-radius:14px; border:1px solid #e5e7eb; font-size:0.95rem; color:#0f172a; background:#fff; outline: none; transition:border-color 0.2s, box-shadow 0.2s; box-sizing: border-box; }
-                .form-input:focus, .form-textarea:focus { border-color: #2563eb; box-shadow: 0 0 0 4px rgba(37,99,235,0.12); }
-                .form-input.err, .form-textarea.err, select.err { border-color: #dc2626; }
+                .form-input, .form-textarea, .form-select { width: 100%; padding: 0.95rem 1rem; border-radius:14px; border:1px solid #e5e7eb; font-size:0.95rem; color:#0f172a; background:#fff; outline: none; transition:border-color 0.2s, box-shadow 0.2s; box-sizing: border-box; }
+                .form-input:focus, .form-textarea:focus, .form-select:focus { border-color: #2563eb; box-shadow: 0 0 0 4px rgba(37,99,235,0.12); }
+                .form-input.err, .form-textarea.err, .form-select.err { border-color: #dc2626; box-shadow: 0 0 0 3px rgba(220,38,38,0.10); }
                 .form-textarea { min-height: 100px; resize: vertical; }
                 .error { font-size:0.82rem; color:#dc2626; margin-top: 0.25rem; }
                 .hint { font-size:0.85rem; color:#6b7280; margin-top: 0.25rem; }
@@ -272,8 +279,6 @@ export default function AdminServiceEdit({ service }) {
                 .image-placeholder svg { width: 48px; height: 48px; opacity: 0.5; }
                 .upload-action { position: absolute; top: 10px; right: 10px; width: 36px; height: 36px; border-radius: 10px; background: #fff; border: 1px solid #d1d5db; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1rem; transition: background 0.2s; }
                 .upload-action:hover { background: #f1f5f9; }
-                
-                /* Quill Editor Styles */
                 #edit-service-toolbar { padding: 4px 6px; background: #f6f7f7; border: 1px solid #c5c5c5; border-bottom: none; border-radius: 3px 3px 0 0; }
                 .ck-row { display: flex; align-items: center; flex-wrap: wrap; gap: 2px; min-height: 30px; }
                 .ck-row2 { border-top: 1px solid #ddd; padding-top: 3px; margin-top: 3px; }
@@ -285,7 +290,6 @@ export default function AdminServiceEdit({ service }) {
                 .ql-container.ql-snow { border-color: #c5c5c5; border-radius: 0 0 3px 3px; min-height: 200px; font-size: 0.9rem; }
                 .ql-container.ql-snow .ql-editor { min-height: 180px; line-height: 1.7; color: #2c3338; }
                 .ql-editor.ql-blank::before { font-style: normal; color: #9ca3af; }
-                
                 .content-editor-wrapper { margin-top: 1.5rem; }
             `}</style>
 
@@ -308,8 +312,9 @@ export default function AdminServiceEdit({ service }) {
                         </div>
                     </div>
 
-                    <form onSubmit={handleSubmit} encType="multipart/form-data">
+                    <form onSubmit={handleSubmit} noValidate encType="multipart/form-data">
                         <div className="section-grid">
+                            {/* ── Image Panel ── */}
                             <div className="image-panel">
                                 <div className="image-preview">
                                     {previewUrl ? (
@@ -325,134 +330,171 @@ export default function AdminServiceEdit({ service }) {
                                             <small>Click upload to add image</small>
                                         </div>
                                     )}
-                                    <button 
-                                        type="button" 
-                                        className="upload-action" 
-                                        onClick={openFilePicker} 
+                                    <button
+                                        type="button"
+                                        className="upload-action"
+                                        onClick={openFilePicker}
                                         title="Upload image"
                                         aria-label="Upload image"
                                     >
                                         ⬆
                                     </button>
                                 </div>
-                                <input 
-                                    ref={fileInputRef} 
-                                    type="file" 
-                                    accept="image/*" 
-                                    style={{ display: 'none' }} 
-                                    onChange={handleFileChange} 
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    accept="image/*"
+                                    style={{ display: 'none' }}
+                                    onChange={handleFileChange}
                                 />
                                 <div className="form-group">
                                     <label className="form-label" htmlFor="main_image_input">Main Image (filename or URL)</label>
-                                    <input 
+                                    <input
                                         id="main_image_input"
-                                        className={`form-input ${errors.main_image ? 'err' : ''}`} 
+                                        className={`form-input ${allErrors.main_image ? 'err' : ''}`}
                                         value={data.main_image}
                                         onChange={handleImageInputChange}
-                                        placeholder="e.g. 1637216446.png or https://..." 
+                                        placeholder="e.g. 1637216446.png or https://..."
                                     />
-                                    {errors.main_image && <div className="error">{errors.main_image}</div>}
+                                    {allErrors.main_image && <div className="error">{allErrors.main_image}</div>}
                                 </div>
                             </div>
 
+                            {/* ── Right Fields ── */}
                             <div className="form-grid-two">
+
+                                {/* Title – required */}
                                 <div className="form-group">
                                     <label className="form-label" htmlFor="title_input">Title *</label>
-                                    <input 
+                                    <input
+                                        ref={titleRef}
                                         id="title_input"
-                                        className={`form-input ${errors.title ? 'err' : ''}`} 
+                                        className={`form-input ${allErrors.title ? 'err' : ''}`}
                                         value={data.title}
-                                        onChange={e => setData('title', e.target.value)} 
-                                        required
+                                        onChange={e => {
+                                            setData('title', e.target.value);
+                                            // Error turant clear ho jaye jab user type kare
+                                            if (clientErrors.title) setClientErrors(prev => ({ ...prev, title: '' }));
+                                        }}
                                     />
-                                    {errors.title && <div className="error">{errors.title}</div>}
+                                    {allErrors.title && <div className="error">{allErrors.title}</div>}
                                 </div>
 
+                                {/* Slug */}
                                 <div className="form-group">
                                     <label className="form-label" htmlFor="slug_input">Slug (URL)</label>
-                                    <input 
+                                    <input
                                         id="slug_input"
-                                        className={`form-input ${errors.slug ? 'err' : ''}`} 
+                                        className={`form-input ${allErrors.slug ? 'err' : ''}`}
                                         value={data.slug}
                                         onChange={e => {
                                             setData('slug', e.target.value);
-                                            setAutoSlug(''); // Manual edit करने पर auto-slug बंद
-                                        }} 
+                                            setAutoSlug('');
+                                        }}
                                     />
                                     <span className="hint">Leave blank to auto-generate from title</span>
-                                    {errors.slug && <div className="error">{errors.slug}</div>}
+                                    {allErrors.slug && <div className="error">{allErrors.slug}</div>}
                                 </div>
 
+                                {/* Meta Description */}
                                 <div className="form-group">
                                     <label className="form-label" htmlFor="meta_desc_input">Meta Description</label>
-                                    <textarea 
+                                    <textarea
                                         id="meta_desc_input"
-                                        className={`form-textarea ${errors.meta_description ? 'err' : ''}`} 
-                                        rows={3} 
+                                        className={`form-textarea ${allErrors.meta_description ? 'err' : ''}`}
+                                        rows={3}
                                         value={data.meta_description}
-                                        onChange={e => setData('meta_description', e.target.value)} 
+                                        onChange={e => setData('meta_description', e.target.value)}
                                     />
-                                    {errors.meta_description && <div className="error">{errors.meta_description}</div>}
+                                    {allErrors.meta_description && <div className="error">{allErrors.meta_description}</div>}
                                 </div>
 
+                                {/* Meta Keywords */}
                                 <div className="form-group">
                                     <label className="form-label" htmlFor="meta_keyword_input">Meta Keywords</label>
-                                    <input 
+                                    <input
                                         id="meta_keyword_input"
-                                        className={`form-input ${errors.meta_keyword ? 'err' : ''}`} 
+                                        className={`form-input ${allErrors.meta_keyword ? 'err' : ''}`}
                                         value={data.meta_keyword}
-                                        onChange={e => setData('meta_keyword', e.target.value)} 
+                                        onChange={e => setData('meta_keyword', e.target.value)}
                                     />
-                                    {errors.meta_keyword && <div className="error">{errors.meta_keyword}</div>}
+                                    {allErrors.meta_keyword && <div className="error">{allErrors.meta_keyword}</div>}
                                 </div>
 
+                                {/* Tags */}
                                 <div className="form-group">
                                     <label className="form-label" htmlFor="tags_input">Tags</label>
-                                    <input 
+                                    <input
                                         id="tags_input"
-                                        className={`form-input ${errors.tags ? 'err' : ''}`} 
+                                        className={`form-input ${allErrors.tags ? 'err' : ''}`}
                                         value={data.tags}
                                         onChange={e => setData('tags', e.target.value)}
-                                        placeholder="website, software, application" 
+                                        placeholder="website, software, application"
                                     />
                                     <span className="hint">Comma-separated tags</span>
-                                    {errors.tags && <div className="error">{errors.tags}</div>}
+                                    {allErrors.tags && <div className="error">{allErrors.tags}</div>}
                                 </div>
 
+                                {/* Serial Number */}
                                 <div className="form-group">
                                     <label className="form-label" htmlFor="serial_input">Serial / Sort Order</label>
-                                    <input 
+                                    <input
                                         id="serial_input"
-                                        className={`form-input ${errors.serial_number ? 'err' : ''}`} 
-                                        type="number" 
-                                        min="0" 
+                                        className={`form-input ${allErrors.serial_number ? 'err' : ''}`}
+                                        type="number"
+                                        min="0"
                                         value={data.serial_number}
-                                        onChange={e => setData('serial_number', parseInt(e.target.value, 10) || 0)} 
+                                        onChange={e => setData('serial_number', parseInt(e.target.value, 10) || 0)}
                                     />
-                                    {errors.serial_number && <div className="error">{errors.serial_number}</div>}
+                                    {allErrors.serial_number && <div className="error">{allErrors.serial_number}</div>}
                                 </div>
 
+                                {/* Category – required */}
                                 <div className="form-group">
-                                    <label className="form-label" htmlFor="category_input">Category ID</label>
-                                    <input 
-                                        id="category_input"
-                                        className={`form-input ${errors.category_id ? 'err' : ''}`} 
-                                        type="number" 
-                                        min="1" 
-                                        value={data.category_id}
-                                        onChange={e => setData('category_id', e.target.value)} 
-                                    />
-                                    {errors.category_id && <div className="error">{errors.category_id}</div>}
+                                    <label className="form-label" htmlFor="category_input">Category *</label>
+                                    {categories.length > 0 ? (
+                                        <select
+                                            ref={categoryRef}
+                                            id="category_input"
+                                            className={`form-select ${allErrors.category_id ? 'err' : ''}`}
+                                            value={data.category_id}
+                                            onChange={e => {
+                                                setData('category_id', e.target.value);
+                                                // Error turant clear ho jaye jab user select kare
+                                                if (clientErrors.category_id) setClientErrors(prev => ({ ...prev, category_id: '' }));
+                                            }}
+                                        >
+                                            <option value="">Select category</option>
+                                            {categories.map(cat => (
+                                                <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                            ))}
+                                        </select>
+                                    ) : (
+                                        <input
+                                            ref={categoryRef}
+                                            id="category_input"
+                                            className={`form-input ${allErrors.category_id ? 'err' : ''}`}
+                                            type="number"
+                                            min="1"
+                                            value={data.category_id}
+                                            onChange={e => {
+                                                setData('category_id', e.target.value);
+                                                if (clientErrors.category_id) setClientErrors(prev => ({ ...prev, category_id: '' }));
+                                            }}
+                                        />
+                                    )}
+                                    {allErrors.category_id && <div className="error">{allErrors.category_id}</div>}
                                 </div>
 
+                                {/* Status Toggle */}
                                 <div className="form-group">
                                     <label className="form-label">Status</label>
                                     <div className="toggle-row">
                                         <label className="toggle">
-                                            <input 
-                                                type="checkbox" 
+                                            <input
+                                                type="checkbox"
                                                 checked={Number(data.status) === 1}
-                                                onChange={e => setData('status', e.target.checked ? 1 : 0)} 
+                                                onChange={e => setData('status', e.target.checked ? 1 : 0)}
                                             />
                                             <span className="toggle-slider" />
                                         </label>
@@ -464,6 +506,7 @@ export default function AdminServiceEdit({ service }) {
                             </div>
                         </div>
 
+                        {/* ── Content Editor ── */}
                         <div className="content-editor-wrapper">
                             <div className="form-group full">
                                 <label className="form-label">Content (Full Description)</label>
@@ -475,7 +518,7 @@ export default function AdminServiceEdit({ service }) {
                                     modules={quillModules}
                                     placeholder="Enter service description..."
                                 />
-                                {errors.content && <div className="error">{errors.content}</div>}
+                                {allErrors.content && <div className="error">{allErrors.content}</div>}
                             </div>
                         </div>
 

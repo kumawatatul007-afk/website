@@ -12,6 +12,8 @@ class Setting extends Model
         'title',
         'website_title',
         'strating_keyword',
+        'start_keyword',
+        'service_keyword',
         'locations',
         'email',
         'phone',
