@@ -109,7 +109,7 @@ export default function AdminSettingsIndex({ setting }) {
     ];
 
     const [startingKeywords, setStartingKeywords] = useState(() => {
-        const keywords = setting?.strating_keyword || setting?.start_keyword;
+        const keywords = setting?.strating_keyword;
         if (keywords) {
             const parsed = keywords.split(',').map(s => s.trim()).filter(Boolean);
             return parsed.length ? parsed : defaultStartKeywords;
@@ -178,7 +178,6 @@ export default function AdminSettingsIndex({ setting }) {
         formData.append('preloader', data.preloader);
         formData.append('address', data.address);
         formData.append('strating_keyword', startingKeywords.join(','));
-        formData.append('start_keyword', startingKeywords.join(','));
         formData.append('locations', locations.join(','));
 
         if (data.logo)    formData.append('logo', data.logo);
